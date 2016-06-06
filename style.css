@@ -1,0 +1,105 @@
+body {
+    background-color: #333;
+    font-family:"Ubuntu";
+    margin:0;
+    padding:0;
+    text-align:center;
+}
+
+p {
+    color: #fff;
+    font-size:16px;
+}
+
+ /* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+  color: #fff;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.2s;
+  height:62px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.accordion:hover { }
+
+/* Style the accordion panel. Note: hidden by default */
+div.panel {
+  transition: height ease 1.0s;
+  overflow:hidden;
+  height:0px;
+}
+
+/* The "show" class is added to the accordion panel when the user clicks on one of the buttons. This will show the panel content */
+div.panel.show {
+  display: block !important;
+}
+
+.tariff-block {
+  color:#fff;
+  padding-top:10px;
+  padding-bottom:10px;
+  text-align:left;
+}
+
+.tariff-time {
+  font-weight:bold;
+  font-size:18px;
+}
+
+.tariff-desc {
+  font-weight:normal;
+  font-size:12px;
+}
+
+.status {
+  font-size:38px;
+  font-weight:bold;
+  color:#fff;
+}
+
+.title {
+  padding:18px;
+  font-size:22px;
+  color:#fff;
+}
+
+.panel-inner {
+  padding:20px;
+  color:#fff;
+}
+
+/* --- Icon Bar --- */
+
+.icon-bar {
+  width: 100%;
+  text-align: center;
+  background-color: #555;
+  overflow: auto;
+}
+
+.icon-bar a {
+  width: 20%;
+  padding: 12px 0;
+  float: left;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 22px;
+}
+
+.icon-bar a:hover {
+  background-color: #000;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+@media (max-width: 450px) { }
+    
+@media (min-width: 450px) and (max-width: 960px) { }
+
+@media (min-width: 960px) { }
