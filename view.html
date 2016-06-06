@@ -6,10 +6,13 @@
     <title>Cyd Ynni</title>
 
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <script language="javascript" type="text/javascript" src="jquery-1.9.1.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
+    <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/vis.helper.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/graph_bars.js"></script>
   </head>
   <body>
   
@@ -58,7 +61,14 @@
   <div class="accordion" style="background-color:#1b872a"><div class="title">Hydro</div></div>
   <div class="panel" style="background-color:#1b872a">
     <div class="panel-inner">
-      LOW POWER
+    
+      <div style="height:100px; overflow:hidden">
+          <div class="status"><span id="hydrostatus"></span></div>
+          <p>Currently generating <b><span id="power"></span> kW</b></p>
+      </div>
+        <div id="placeholder_bound" style="height:100%">
+              <canvas id="placeholder"></canvas>
+        </div>
     </div>
   </div>
 
@@ -75,6 +85,8 @@
   </body>
 </html>
 
+<script language="javascript" type="text/javascript" src="hydro.js"></script>
+
 <script>
 
 var panel_height = $(window).height() - 62*3 - 50;
@@ -84,17 +96,22 @@ var height = $(window).height() - 62*3 - 50;
 $("#oktouse").height(height);
 
 $(".accordion").click(function() {
+  // Hide and disable all panels
   $(".panel").attr("active",0);
   $(".panel").height(0);
   
+  // Show only clicked panel
+  panel_height = $(window).height() - 62*3 - 50;
   $(this).next().attr("active",1);
   $(this).next().height(panel_height);
+  graph_resize(panel_height-40-100);
 });
 
 $(window).resize(function(){
-  var height = $(window).height() - 62*3 - 50;
-  panel_height = height;
+  panel_height = $(window).height() - 62*3 - 50;
   $(".panel[active=1]").height(panel_height);
+  graph_resize(panel_height-40-100);
 });
 
 </script>
+
