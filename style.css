@@ -77,12 +77,12 @@ div.panel.show {
 .icon-bar {
   width: 100%;
   text-align: center;
-  background-color: #555;
+  background-color: #ccc;
   overflow: auto;
 }
 
 .icon-bar a {
-  width: 20%;
+  width: 25%;
   padding: 12px 0;
   float: left;
   transition: all 0.3s ease;
@@ -91,11 +91,11 @@ div.panel.show {
 }
 
 .icon-bar a:hover {
-  background-color: #000;
+  background-color: #bbb;
 }
 
 .active {
-  background-color: #4CAF50;
+  background-color: #ddd;
 }
 
 @media (max-width: 450px) { }

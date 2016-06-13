@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyd Ynni</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <!--[if IE]><script language="javascript" type="text/javascript" src="lib/flot/excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/vis.helper.js"></script>
+    <script language="javascript" type="text/javascript" src="lib/graph_bars.js"></script>
+  </head>
+  <body>
+  
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  
+  <!-- OK TO USE? TAB ------------------------------------------------------->
+  <div class="view" view="hydro">
+  
+  <div class="accordion" style="background-color:#27c93f"><div class="title">OK to use? </div></div>
+  <div style="background-color:#27c93f" class="panel">
+    <div class="panel-inner">
+      <br><br>
+      <p>If possible</p>
+
+      <img src="images/el-dont-use-icon.png" style="width:100px">
+      <div class="status">WAIT</div>
+      <p>until <b>10<span style="font-size:12px">AM</span></b> <span style="font-size:12px">(39 MINUTES)</span></p>
+      <br>
+      <p>After that the next best time to use power<br>is <b>9pm - 11pm.</b></p>
+    </div>
+  </div>
+  
+  <!-- TARIFF TAB ------------------------------------------------------->
+
+  <div class="accordion" style="background-color:#22a835"><div class="title">Tariffs</div></div>
+  <div class="panel"  style="background-color:#22a835">
+    <div class="panel-inner">
+      <div class="tariff-block">
+        <div class="tariff-time">6AM - 11AM</div>
+        <div class="tariff-desc">BREAKFAST PEAK - 13 PENCE PER UNIT</div>
+      </div>
+      <div class="tariff-block">
+        <div class="tariff-time">11AM - 5PM</div>
+        <div class="tariff-desc">MIDDLE OF THE DAY - 11 PENCE PER UNIT</div>
+      </div>
+      <div class="tariff-block">
+        <div class="tariff-time">5PM - 9PM</div>
+        <div class="tariff-desc">EVENING PEAK - 15.4 PENCE PER UNIT</div>
+      </div>
+      <div class="tariff-block">
+        <div class="tariff-time">11PM - 6AM</div>
+        <div class="tariff-desc">OVERNIGHT - 8.3 PENCE PER UNIT</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- HYDRO TAB ------------------------------------------------------->
+
+  <div class="accordion" style="background-color:#1b872a"><div class="title">Hydro</div></div>
+  <div class="panel" style="background-color:#1b872a">
+    <div class="panel-inner">
+    
+      <div style="height:100px; overflow:hidden">
+          <div class="status"><span id="hydrostatus"></span></div>
+          <p>Currently generating <b><span id="power"></span> kW</b></p>
+      </div>
+        <div id="placeholder_bound" style="height:100%">
+              <canvas id="placeholder"></canvas>
+        </div>
+    </div>
+  </div>
+  
+  </div>
+  
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  
+  <div class="view" view="household" style="display:none">
+    <!-- STATUS TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#29abe2"><div class="title">Status</div></div>
+    <div style="background-color:#29abe2" class="panel">
+      <div class="panel-inner">
+        <br><br>
+        <p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
+        <img id="star1" src="images/star20.png" style="width:45px">
+        <img id="star2" src="images/star20.png" style="width:45px">
+        <img id="star3" src="images/star20.png" style="width:45px">
+        <img id="star4" src="images/star20.png" style="width:45px">
+        <img id="star5" src="images/star20.png" style="width:45px">
+        <p id="statusmsg"></p>
+      </div>
+    </div>
+    
+    <!-- SAVING TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#1988b7"><div class="title">Saving</div></div>
+    <div class="panel"  style="background-color:#1988b7">
+      <div class="panel-inner">
+        <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
+        <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
+      </div>
+    </div>
+    
+    <!-- BREAKDOWN TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#146f95"><div class="title">Breakdown</div></div>
+    <div class="panel" style="background-color:#146f95">
+      <div class="panel-inner">
+        <p><b>Your electricity use</b></p>
+        <p><b><span class="hydrokwh">0</span> kWh</b> - Hydro Power: 7p/kWh</p>
+        <p><b><span class="morningkwh"></span> kWh</b> - Morning Price (6am - 11am): 12p/kWh</p>
+        <p><b><span class="middaykwh"></span> kWh</b> - Midday Price (11am - 4am): 10p/kWh</p>
+        <p><b><span class="eveningkwh"></span> kWh</b> - Evening Price (4pm - 8pm): 14p/kWh</p>
+        <p><b><span class="overnightkwh"></span> kWh</b> - Overnight Price (8pm - 6am): 7.25p/kWh</p>
+      </div>
+    </div>
+  </div>
+  
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  
+  <div class="view" view="bethesda" style="display:none">
+    <!-- STATUS TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#ffdc00"><div class="title">Status</div></div>
+    <div style="background-color:#ffdc00" class="panel">
+      <div class="panel-inner">
+       
+      </div>
+    </div>
+    
+    <!-- SAVING TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#ffc800"><div class="title">Saving</div></div>
+    <div class="panel"  style="background-color:#ffc800">
+      <div class="panel-inner">
+      
+      </div>
+    </div>
+    
+    <!-- BREAKDOWN TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#ffb400"><div class="title">Breakdown</div></div>
+    <div class="panel" style="background-color:#ffb400">
+      <div class="panel-inner">
+      
+      </div>
+    </div>
+  </div>
+
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  
+  <div class="icon-bar">
+    <a class="icon-bar-item active" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" view="tips" href="#tips"><img src="images/el-bulb-icon.png" style="width:22px"></a>
+  </div>
+
+  </body>
+</html>
+
+<script language="javascript" type="text/javascript" src="js/hydro.js"></script>
+<script language="javascript" type="text/javascript" src="js/household.js"></script>
+<script>
+
+var panel_height = $(window).height() - 62*3 - 50;
+var view = "hydro";
+var height = $(window).height() - 62*3 - 50;
+$(".view[view=hydro] .panel").first().height(height);
+$(".view[view=household] .panel").first().height(height);
+$(".view[view=bethesda] .panel").first().height(height);
+
+$(".accordion").click(function() {
+  // Hide and disable all panels
+  $(".view[view="+view+"] .panel").attr("active",0);
+  $(".view[view="+view+"] .panel").height(0);
+  
+  // Show only clicked panel
+  panel_height = $(window).height() - 62*3 - 50;
+  $(this).next().attr("active",1);
+  $(this).next().height(panel_height);
+  graph_resize(panel_height-40-100);
+});
+
+$(window).resize(function(){
+  panel_height = $(window).height() - 62*3 - 50;
+  $(".panel[active=1]").height(panel_height);
+  graph_resize(panel_height-40-100);
+});
+
+$(".icon-bar-item").click(function(){
+  view = $(this).attr("view");
+  $(".view").hide();
+  $(".view[view="+view+"]").show();
+});
+
+</script>
+

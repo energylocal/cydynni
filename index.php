@@ -12,6 +12,8 @@ http://openenergymonitor.org
 
 */
 
+require "household_process.php";
+
 $redis = new Redis();
 $connected = $redis->connect("127.0.0.1");
 
@@ -27,7 +29,19 @@ switch ($q)
 {   
     case "":
         header('Content-Type: text/html');
-        print file_get_contents("view.html");
+        print file_get_contents("pages/hydro.html");
+        break;
+        
+    case "household":
+        header('Content-Type: text/html');
+        print file_get_contents("pages/household.html");
+        break;
+        
+    case "household/data":
+        header('Content-Type: application/json');
+        $apikey = "";
+        $id = 1;
+        print json_encode(get_household_data($apikey,$id));
         break;
 
     case "data":
