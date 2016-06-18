@@ -12,58 +12,124 @@ http://openenergymonitor.org
 
 */
 
+error_reporting(E_ALL);
+ini_set('display_errors', 'on');
+
+// ---------------------------------------------------------
+require "settings.php";
+require "core.php";
 require "household_process.php";
+$path = get_application_path();
+$mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
+// ---------------------------------------------------------
+require("user_model.php");
+$user = new User($mysqli);
+session_start();
+$session = $user->status();
+// ---------------------------------------------------------
 
 $redis = new Redis();
 $connected = $redis->connect("127.0.0.1");
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'on');
-
 $q = "";
 if (isset($_GET['q'])) $q = $_GET['q'];
 
+$format = "html";
+$content = "Sorry page not found";
 
 $logger = new EmonLogger();
 switch ($q)
 {   
     case "":
-        header('Content-Type: text/html');
-        print file_get_contents("pages/hydro.html");
-        break;
-        
-    case "household":
-        header('Content-Type: text/html');
-        print file_get_contents("pages/household.html");
-        break;
-        
-    case "household/data":
-        header('Content-Type: application/json');
-        $apikey = "";
-        $id = 1;
-        print json_encode(get_household_data($apikey,$id));
+        $format = "html";
+        $content = view("pages/client.php",array('session'=>$session));
         break;
 
+    case "admin":
+        $format = "html";
+        $content = view("pages/admin.php",array('session'=>$session));
+        break;
+                
+    case "household/data":
+        if ($session && isset($session['apikey']) && isset($session['feedid'])) {
+            $format = "json";
+            $content = get_household_data($session['apikey'],$session['feedid']);
+        }
+        break;
+
+
+    // ------------------------------------------------------------------------
+    // Emoncms.org feed    
+    // ------------------------------------------------------------------------
     case "data":
-        header('Content-Type: application/json');
+        $format = "json";
         // Interval
         if (isset($_GET['interval']))
-            print file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&interval=".get("interval")."&skipmissing=".get("skipmissing")."&limitinterval=".get("limitinterval")."&apikey=".get("apikey"));
+            $content = json_decode(file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&interval=".get("interval")."&skipmissing=".get("skipmissing")."&limitinterval=".get("limitinterval")."&apikey=".get("apikey")));
         // Mode
         if (isset($_GET['mode']))
-            print file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&mode=".get("mode")."&apikey=".get("apikey"));
+            $content = json_decode(file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&mode=".get("mode")."&apikey=".get("apikey")));
+        break;
+
+    case "average":
+        $format = "json";
+        // Interval
+        if (isset($_GET['interval']))
+            $content = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&interval=".get("interval")."&skipmissing=".get("skipmissing")."&limitinterval=".get("limitinterval")."&apikey=".get("apikey")));
+        // Mode
+        if (isset($_GET['mode']))
+            $content = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&mode=".get("mode")."&apikey=".get("apikey")));
+            
+        break;
+                
+    case "value":
+        $format = "text";
+        $content = file_get_contents("https://emoncms.org/feed/value.json?id=".get("id")."&apikey=".get("apikey"));
         break;
         
-    case "value":
-        header('Content-Type: text/plain');
-        print file_get_contents("https://emoncms.org/feed/value.json?id=".get("id")."&apikey=".get("apikey"));
+    // ------------------------------------------------------------------------
+    // User    
+    // ------------------------------------------------------------------------
+    case "status":
+        $format = "json";
+        $content = $session;
+        break;
+
+    case "register":
+        $format = "text";
+        $content = $user->register(get('email'),get('password'),get('apikey'),get('feedid'));
+        break;
+                
+    case "login":
+        $format = "json";
+        $content = $user->login(get('email'),get('password'));
+        break;
+        
+    case "logout":
+        $format = "text";
+        $content = $user->logout();
+        break;
+        
+    case "admin/users":
+        $format = "json";
+        if ($session['admin']) $content = $user->userlist();
+        break;
 }
-    
-function get($index) {
-    $val = null;
-    if (isset($_GET[$index])) $val = $_GET[$index];
-    if (get_magic_quotes_gpc()) $val = stripslashes($val);
-    return $val;
+
+switch ($format) 
+{
+    case "html":
+        header('Content-Type: text/html');
+        print $content;
+        break;
+    case "text":
+        header('Content-Type: text/plain');
+        print $content;
+        break;
+    case "json":
+        header('Content-Type: application/json');
+        print json_encode($content);
+        break;
 }
 
 class EmonLogger {

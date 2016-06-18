@@ -6,6 +6,10 @@ body {
     text-align:center;
 }
 
+.container {
+margin: 0 auto;
+}
+
 p {
     color: #fff;
     font-size:16px;
@@ -20,7 +24,7 @@ p {
   border: none;
   outline: none;
   transition: 0.2s;
-  height:62px;
+  height:54px;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -62,7 +66,7 @@ div.panel.show {
 }
 
 .title {
-  padding:18px;
+  padding:14px;
   font-size:22px;
   color:#fff;
 }
@@ -98,8 +102,57 @@ div.panel.show {
   background-color: #ddd;
 }
 
-@media (max-width: 450px) { }
-    
-@media (min-width: 450px) and (max-width: 960px) { }
+/* --- Tables --- */
 
-@media (min-width: 960px) { }
+table {
+  width:100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  text-align:left;
+  border: 1px solid #fff;
+  padding:6px 13px;
+}
+
+.login-box {
+  text-align:center;
+  background-color:rgba(255,255,255,0.2); 
+  width:300px; 
+  margin: 0 auto;
+  border-radius: 15px;
+  padding:10px;
+}
+
+#logout {
+  float:right; 
+  padding:18px; 
+  color:#fff;
+}
+
+#logout:hover {
+  cursor:pointer;
+}
+
+@media (max-width: 450px) {
+  .container {
+    /*width: 450px;*/
+    width: 100%;
+  }
+  
+  .panel-inner {
+    padding-top:0px;
+  }
+}
+    
+@media (min-width: 450px) and (max-width: 960px) {
+  .container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 960px) {
+  .container {
+    width: 960px;
+  }
+}
