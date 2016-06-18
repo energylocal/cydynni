@@ -40,9 +40,13 @@ class User
     {
         if ($email==null) return "Email address missing";
         if ($password==null) return "Password missing";
+        if (!ctype_alnum($apikey)) return "Apikey must be alpha-numeric";
+        if (!is_numeric($feedid)) return "Feed id must be numeric";
+        
         // Validate email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
         if (strlen($password) < 4 || strlen($password) > 250) return "Password length error";
+        $feedid = (int) $feedid;
 
         $stmt = $this->mysqli->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
