@@ -97,7 +97,7 @@ switch ($q)
 
     case "register":
         $format = "text";
-        $content = $user->register(get('email'),get('password'),get('apikey'),get('feedid'));
+        if ($session['admin']) $content = $user->register(get('email'),get('password'),get('apikey'),get('feedid'));
         break;
                 
     case "login":
