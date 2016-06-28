@@ -117,11 +117,11 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#1988b7; color:#333;"><div class="title">Saving</div></div>
+    <div class="accordion" style="background-color:#1988b7"><div class="title">Saving</div></div>
     <div class="panel"  style="background-color:#1988b7">
       <div class="panel-inner">
-        <p>We have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
-        <p>We have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
+        <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
+        <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
     
@@ -140,7 +140,7 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
-  <div class="view" view="bethesda" style="display:none">
+  <div class="view" view="bethesda" style="display:none; color:#3b6358;">
     <!-- STATUS TAB ------------------------------------------------------->
     <div class="accordion" style="background-color:#ffdc00"><div class="title">Status</div></div>
     <div style="background-color:#ffdc00" class="panel">
@@ -159,8 +159,8 @@
     <div class="accordion" style="background-color:#ffc800"><div class="title">Saving</div></div>
     <div class="panel"  style="background-color:#ffc800">
       <div class="panel-inner">
-        <p>You have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
-        <p>You have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>
+        <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
+        <p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
     

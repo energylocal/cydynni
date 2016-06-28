@@ -17,7 +17,6 @@ p {
 
  /* Style the buttons that are used to open and close the accordion panel */
 .accordion {
-  color: #fff;
   cursor: pointer;
   width: 100%;
   text-align: left;
@@ -43,7 +42,6 @@ div.panel.show {
 }
 
 .tariff-block {
-  color:#fff;
   padding-top:10px;
   padding-bottom:10px;
   text-align:left;
@@ -62,18 +60,15 @@ div.panel.show {
 .status {
   font-size:38px;
   font-weight:bold;
-  color:#fff;
 }
 
 .title {
   padding:14px;
   font-size:22px;
-  color:#fff;
 }
 
 .panel-inner {
   padding:20px;
-  color:#fff;
 }
 
 /* --- Icon Bar --- */
