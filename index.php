@@ -56,6 +56,23 @@ switch ($q)
             $content = get_household_data($session['apikey'],$session['feedid']);
         }
         break;
+        
+    case "community/data":
+        $format = "json";
+        $users = $user->userlist();
+        
+        $data = array("morningkwh"=>0, "middaykwh"=>0, "eveningkwh"=>0, "overnightkwh"=>0, "totalkwh"=>0);
+        foreach ($users as $u) {
+            $userdata = get_household_data($u->apikey,$u->feedid);
+            $data["morningkwh"] += $userdata["morningkwh"];
+            $data["middaykwh"] += $userdata["middaykwh"];
+            $data["eveningkwh"] += $userdata["eveningkwh"];
+            $data["overnightkwh"] += $userdata["overnightkwh"];
+            $data["totalkwh"] += $userdata["totalkwh"];
+        }
+        $content = $data;
+         
+        break;
 
 
     // ------------------------------------------------------------------------

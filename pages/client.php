@@ -117,11 +117,11 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#1988b7"><div class="title">Saving</div></div>
+    <div class="accordion" style="background-color:#1988b7; color:#333;"><div class="title">Saving</div></div>
     <div class="panel"  style="background-color:#1988b7">
       <div class="panel-inner">
-        <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
-        <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
+        <p>We have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
+        <p>We have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
     
@@ -131,17 +131,7 @@
       <div class="panel-inner">
         
         <style> .bd {margin-bottom:5px;} </style>
-        <div style="margin: 0 auto; width:300px; text-align:left;">
-        <canvas id="piegraph" width=200 height=200 style="float:right"></canvas>
-        <div class="bd"><b>Hydro</b><br><span class="hydrokwh">0</span> kWh</div>
-        <div class="bd"><b>Morning</b><br><span class="morningkwh">0</span> kWh</div>
-        <div class="bd"><b>Midday</b><br><span class="middaykwh">0</span> kWh</div>
-        <div class="bd"><b>Evening</b><br><span class="eveningkwh">0</span> kWh</div>
-        <div class="bd"><b>Overnight</b><br><span class="overnightkwh">0</span> kWh</div>
-        
-        
-        <div style="clear:both"></div>
-        </div>
+        <canvas id="piegraph" width=400 height=400 ></canvas>
         
       </div>
     </div>
@@ -155,7 +145,13 @@
     <div class="accordion" style="background-color:#ffdc00"><div class="title">Status</div></div>
     <div style="background-color:#ffdc00" class="panel">
       <div class="panel-inner">
-       
+        <p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
+        <img id="community_star1" src="images/star20.png" style="width:45px">
+        <img id="community_star2" src="images/star20.png" style="width:45px">
+        <img id="community_star3" src="images/star20.png" style="width:45px">
+        <img id="community_star4" src="images/star20.png" style="width:45px">
+        <img id="community_star5" src="images/star20.png" style="width:45px">
+        <p id="community_statusmsg"></p>
       </div>
     </div>
     
@@ -163,7 +159,8 @@
     <div class="accordion" style="background-color:#ffc800"><div class="title">Saving</div></div>
     <div class="panel"  style="background-color:#ffc800">
       <div class="panel-inner">
-      
+        <p>You have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
+        <p>You have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
     
@@ -171,7 +168,8 @@
     <div class="accordion" style="background-color:#ffb400"><div class="title">Breakdown</div></div>
     <div class="panel" style="background-color:#ffb400">
       <div class="panel-inner">
-      
+        <style> .bd {margin-bottom:5px;} </style>
+        <canvas id="community_piegraph" width=400 height=400 ></canvas>
       </div>
     </div>
   </div>
@@ -191,6 +189,7 @@
 
 <script language="javascript" type="text/javascript" src="js/hydro.js"></script>
 <script language="javascript" type="text/javascript" src="js/household.js"></script>
+<script language="javascript" type="text/javascript" src="js/community.js"></script>
 <script language="javascript" type="text/javascript" src="js/user.js"></script>
 <script>
 
@@ -247,6 +246,7 @@ $(".icon-bar-item").click(function(){
 // Hydro
 update();
 load();
+community_load();
 
 status_update();
 setInterval(status_update,10000);

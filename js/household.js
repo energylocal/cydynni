@@ -36,11 +36,15 @@ function household_load()
           var costsaving = totalcostflatrate - totalcost;
           $(".costsaving").html(costsaving.toFixed(1));
           
-          var data = [];
-          data.push(result.morningkwh);
-          data.push(result.middaykwh);
-          data.push(result.eveningkwh);
-          data.push(result.overnightkwh);
+          
+          var data = [
+            {name:"AM PEAK", value: result.morningkwh, color:"rgba(255,255,255,0.8)"},
+            {name:"DAYTIME", value: result.middaykwh, color:"rgba(255,255,255,0.6)"},
+            {name:"PM PEAK", value: result.eveningkwh, color:"rgba(255,255,255,0.9)"},
+            {name:"NIGHT", value: result.overnightkwh, color:"rgba(255,255,255,0.4)"},
+            // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
+          ];
+          
           piegraph("piegraph",data);
           
       } 
@@ -48,8 +52,11 @@ function household_load()
 }
 
 function piegraph(element,data) {
+    var size = 400;
+    var mid = size * 0.5;
+
     var total = 0;
-    for (z in data) total += data[z];
+    for (z in data) total += data[z].value;
     
     var c = document.getElementById(element);  
     var ctx = c.getContext("2d");
@@ -58,22 +65,39 @@ function piegraph(element,data) {
     var l = -Math.PI *0.5;
     var alphainc = 0.6/data.length;
     var alpha = 1.0;
+
+    ctx.textAlign = "center";
+    ctx.font="15px Arial"
     
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
     for (z in data) {
-      x += data[z];
+      x += data[z].value;
+      
       var lastl = l
       l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
     
+      var tl = (l + lastl)*-0.5 + (Math.PI *0.5);
+      var labelx = mid+Math.sin(tl)*160;
+      var labely = mid+Math.cos(tl)*160;
+      
+      ctx.fillStyle = "#fff";
+      ctx.fillText(data[z].name,labelx,labely-3);
+      ctx.fillText(data[z].value.toFixed(1)+" kWh",labelx,labely+15);
+    
       alpha -= alphainc;
-      ctx.fillStyle = "rgba(255,255,255,"+alpha+")";
+      console.log(alpha);
+      ctx.fillStyle = data[z].color;
       ctx.beginPath();
-      ctx.moveTo(100,100);
-      ctx.arc(100,100,100,lastl,l,false);
+      ctx.arc(mid,mid,110,lastl,l,false);
+      ctx.arc(mid,mid,45,l,lastl,true);
       ctx.fill();
+      ctx.stroke();
     }
+    
+    ctx.fillStyle = "#fff";
 
-    ctx.fillStyle = "#146f95";
-    ctx.beginPath();
-    ctx.arc(100,100,60,0,2*Math.PI,false);
-    ctx.fill();
+    ctx.fillText("THIS WEEK",mid,mid-3);
+    ctx.fillText(Math.round(total)+" kWh",mid,mid+15);
 }
+

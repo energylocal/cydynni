@@ -1,18 +1,18 @@
 body {
-    background-color: #333;
-    font-family:"Ubuntu";
-    margin:0;
-    padding:0;
-    text-align:center;
+  background-color: #333;
+  font-family:"Ubuntu";
+  margin:0;
+  padding:0;
+  text-align:center;
+  color: #fff;
 }
 
 .container {
-margin: 0 auto;
+  margin: 0 auto;
 }
 
 p {
-    color: #fff;
-    font-size:16px;
+  font-size:16px;
 }
 
  /* Style the buttons that are used to open and close the accordion panel */
