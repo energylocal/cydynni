@@ -86,7 +86,7 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#29abe2"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title">Status</div></div>
+    <div class="accordion" style="background-color:#29abe2"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Status</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div style="background-color:#29abe2" class="panel">
       <div class="panel-inner">
         
@@ -117,7 +117,7 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#1988b7"><div class="title">Saving</div></div>
+    <div class="accordion" style="background-color:#1988b7"><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="background-color:#1988b7">
       <div class="panel-inner">
         <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
@@ -142,7 +142,7 @@
   
   <div class="view" view="bethesda" style="display:none; color:#3b6358;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#ffdc00"><div class="title">Status</div></div>
+    <div class="accordion" style="background-color:#ffdc00"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div style="background-color:#ffdc00" class="panel">
       <div class="panel-inner">
         <p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
@@ -156,7 +156,7 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#ffc800"><div class="title">Saving</div></div>
+    <div class="accordion" style="background-color:#ffc800"><div class="title" style="display:inline-block">Saving</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="background-color:#ffc800">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
@@ -242,6 +242,11 @@ $(".view[view=household] .panel").first().height(height);
 $(".view[view=bethesda] .panel").first().height(height);
 $(".view[view=tips] .panel").first().height(height+accordionheight*2);
 
+$(".view").each(function() {
+   $(this).find(".panel-summary").first().hide();
+});
+
+
 $(".accordion").click(function() {
   if (view=="household" && !session) {
 
@@ -249,6 +254,8 @@ $(".accordion").click(function() {
     // Hide and disable all panels
     $(".view[view="+view+"] .panel").attr("active",0);
     $(".view[view="+view+"] .panel").height(0);
+    $(".panel-summary").show();
+    $(this).find(".panel-summary").hide();
     // Show only clicked panel
     panel_height = $(window).height() - accordionheight*3 - iconbarheight;
     $(this).next().attr("active",1);

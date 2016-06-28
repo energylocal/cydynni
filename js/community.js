@@ -14,10 +14,21 @@ function community_load()
           if (prc>90) setTimeout(function() { $("#community_star5").attr("src","images/star.png"); }, 400);
           
           setTimeout(function() {
-              if (prc<33) $("#community_statusmsg").html("We are missing out");
-              if (prc>=33 && prc<66) $("#community_statusmsg").html("We are doing <b>OK</b>");
-              if (prc>=66) $("#community_statusmsg").html("We are doing <b>GREAT!</b>");
+              if (prc<33) {
+                  $("#community_statusmsg").html("We are missing out");
+                  $("#community_status_summary").html("We are missing out");
+              }
+              if (prc>=33 && prc<66) {
+                  $("#community_statusmsg").html("We are doing <b>OK</b>");
+                  $("#community_status_summary").html("We are doing <b>OK</b>");
+              }
+              if (prc>=66) {
+                  $("#community_statusmsg").html("We are doing <b>GREAT!</b>");
+                  $("#community_status_summary").html("We are doing <b>GREAT!</b>");
+              }
           }, 400);
+          
+          
           
           var totalcost = 0;
           totalcost += result.morningkwh * 0.12;
@@ -29,8 +40,8 @@ function community_load()
           
           var totalcostflatrate = result.totalkwh * 0.12;
           var costsaving = totalcostflatrate - totalcost;
-          $(".community_costsaving").html(costsaving.toFixed(1));
-          
+          $(".community_costsaving").html(costsaving.toFixed(2));
+          $("#community_saving_summary").html("£"+costsaving.toFixed(2)+" LAST WEEK");
           
           var data = [
             {name:"AM PEAK", value: result.morningkwh, color:"#ffdc00"},

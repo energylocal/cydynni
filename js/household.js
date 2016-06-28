@@ -14,9 +14,18 @@ function household_load()
           if (prc>90) setTimeout(function() { $("#star5").attr("src","images/star.png"); }, 400);
           
           setTimeout(function() {
-              if (prc<33) $("#statusmsg").html("You're missing out<br>HELP ME IMPROVE");
-              if (prc>=33 && prc<66) $("#statusmsg").html("You're doing <b>OK</b>");
-              if (prc>=66) $("#statusmsg").html("You're doing <b>GREAT</b>");
+              if (prc<33) {
+                  $("#statusmsg").html("You're missing out<br>HELP ME IMPROVE");
+                  $("#household_status_summary").html("You're missing out<br>HELP ME IMPROVE");
+              }
+              if (prc>=33 && prc<66) {
+                  $("#statusmsg").html("You're doing <b>OK</b>");
+                  $("#household_status_summary").html("You're doing <b>OK</b>");
+              }
+              if (prc>=66) {
+                  $("#statusmsg").html("You're doing <b>GREAT</b>");
+                  $("#household_status_summary").html("You're doing <b>GREAT</b>");
+              }
           }, 400);
           
           $(".morningkwh").html(result.morningkwh.toFixed(1));
@@ -35,7 +44,7 @@ function household_load()
           var totalcostflatrate = result.totalkwh * 0.12;
           var costsaving = totalcostflatrate - totalcost;
           $(".costsaving").html(costsaving.toFixed(1));
-          
+          $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" LAST WEEK");
           
           var data = [
             {name:"AM PEAK", value: result.morningkwh, color:"rgba(255,255,255,0.8)"},
