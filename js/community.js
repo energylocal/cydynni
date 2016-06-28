@@ -33,14 +33,19 @@ function community_load()
           
           
           var data = [
-            {name:"AM PEAK", value: result.morningkwh, color:"rgba(255,255,255,0.8)"},
-            {name:"DAYTIME", value: result.middaykwh, color:"rgba(255,255,255,0.6)"},
-            {name:"PM PEAK", value: result.eveningkwh, color:"rgba(255,255,255,0.9)"},
-            {name:"NIGHT", value: result.overnightkwh, color:"rgba(255,255,255,0.4)"},
+            {name:"AM PEAK", value: result.morningkwh, color:"#ffdc00"},
+            {name:"DAYTIME", value: result.middaykwh, color:"#29abe2"},
+            {name:"PM PEAK", value: result.eveningkwh, color:"#c92760"},
+            {name:"NIGHT", value: result.overnightkwh, color:"#274e3f"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
-          piegraph("community_piegraph",data);
+          var options = {
+            "color": "#3b6358",
+            "centertext": "THIS WEEK"
+          };  
+          
+          piegraph("community_piegraph",data,options);
           
       } 
   });
