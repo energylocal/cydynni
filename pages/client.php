@@ -177,6 +177,30 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
+  <div class="view" view="tips" style="display:none; color:#fff;">
+    <!-- STATUS TAB ------------------------------------------------------->
+    <div class="accordion" style="background-color:#284e3f"><div class="title">Tips</div></div>
+    <div class="panel" style="background-color:#284e3f">
+      <div class="panel-inner">
+        <div id="tip1" style="width:300px; margin: 0 auto;">
+          <img src="images/dishwasher.png">
+          <h1>DISHWASHER</h1>
+          <div style="text-align:left">
+          <p>Time your dishwasher cycles to avoid morning and evening peaks. Take advantage of local [renewable] power and low prices in the daytime (11am-5pm) and overnight (8pm-6am)</p>
+          
+          <div style="float:left; padding:10px; background-color:#527165"><b>&#60; PREVIOUS</b></div>
+          
+          <div style="float:right; padding:10px; background-color:#527165"><b>NEXT TIP ></b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  
   <div class="icon-bar">
     <a class="icon-bar-item" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
@@ -216,6 +240,7 @@ var height = $(window).height() - accordionheight*3 - iconbarheight;
 $(".view[view=hydro] .panel").first().height(height);
 $(".view[view=household] .panel").first().height(height);
 $(".view[view=bethesda] .panel").first().height(height);
+$(".view[view=tips] .panel").first().height(height+accordionheight*2);
 
 $(".accordion").click(function() {
   if (view=="household" && !session) {
