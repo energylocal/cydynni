@@ -21,9 +21,18 @@ function update()
         success: function(data_in) { 
             power = 1*data_in;
             $("#power").html(power.toFixed(1));
-            if (power>=50) $("#hydrostatus").html("HIGH");
-            else if (power>=25) $("#hydrostatus").html("MEDIUM");
-            else if (power<25) $("#hydrostatus").html("LOW");
+            if (power>=50) {
+                $("#hydrostatus").html("HIGH");
+                $("#hydro_summary").html("HIGH POWER");
+            }
+            else if (power>=25) {
+                $("#hydrostatus").html("MEDIUM");
+                $("#hydro_summary").html("MEDIUM POWER");
+            }
+            else if (power<25) {
+                $("#hydrostatus").html("LOW");
+                $("#hydro_summary").html("LOW POWER");
+            }
         }
     });
 }

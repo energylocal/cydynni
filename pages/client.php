@@ -21,7 +21,7 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
   
-  <div class="accordion" style="background-color:#27c93f"><div class="title">OK to use? </div></div>
+  <div class="accordion" style="background-color:#27c93f"><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div style="background-color:#27c93f" class="panel">
     <div class="panel-inner">
       <p id="status-pre">If possible</p>
@@ -35,7 +35,7 @@
   
   <!-- TARIFF TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:#22a835"><div class="title">Tariffs</div></div>
+  <div class="accordion" style="background-color:#22a835"><div class="title" style="display:inline-block">Tariffs</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel"  style="background-color:#22a835">
     <div class="panel-inner">
       <div class="tariff-block">
@@ -63,7 +63,7 @@
   
   <!-- HYDRO TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:#1b872a"><div class="title">Hydro</div></div>
+  <div class="accordion" style="background-color:#1b872a"><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel" style="background-color:#1b872a">
     <div class="panel-inner">
     
@@ -306,29 +306,35 @@ function status_update() {
   if (tariff=="morning") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
+      $("#tariff_summary").html("NOW: AM PEAK");
   
-      var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINUTES";
+      var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
       
       $("#status-next").html("After that the next best time to use power<br>is <b>8pm - 6am.</b>");
+      $("#cydynni_summary").html("WAIT "+time_to_wait);
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="midday") {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
+      $("#tariff_summary").html("NOW: DAYTIME");
       
-      var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINUTES";
+      var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+      $("#cydynni_summary").html(time_to_wait+" MORE");
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="evening") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
+      $("#tariff_summary").html("NOW: PM PEAK");
       
-      var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINUTES";
+      var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+      $("#cydynni_summary").html("WAIT "+time_to_wait);
   }
   
   // If evening peak then wait until overnight tariff
@@ -336,12 +342,15 @@ function status_update() {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
       
+      $("#tariff_summary").html("NOW: NIGHT");
+      
       if (hour>6) {
-          var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINUTES";
+          var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
       } else {
-          var time_to_wait = (6-(hour+1))+" HOURS, "+(60-minutes)+" MINUTES";
+          var time_to_wait = (6-(hour+1))+" HOURS, "+(60-minutes)+" MINS";
       }
       $("#status-until").html("until <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+      $("#cydynni_summary").html(time_to_wait+" MORE");
   }
   
   $(".tariff-img").hide();
