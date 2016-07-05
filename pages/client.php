@@ -21,8 +21,8 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
   
-  <div class="accordion" style="background-color:#27c93f"><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div style="background-color:#27c93f" class="panel">
+  <div class="accordion" style="background-color:rgb(39,201,63)"><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel" style="background-color:rgb(39,201,63)">
     <div class="panel-inner">
       <p id="status-pre">If possible</p>
 
@@ -35,8 +35,8 @@
   
   <!-- TARIFF TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:#22a835"><div class="title" style="display:inline-block">Tariffs</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div class="panel"  style="background-color:#22a835">
+  <div class="accordion" style="background-color:rgb(33,145,110)"><div class="title" style="display:inline-block">Tariffs</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel" style="background-color:rgb(33,145,110)">
     <div class="panel-inner">
       <div class="tariff-block">
         <img class="tariff-img" tariff="morning" src="images/now.png" style="width:40px; margin-right:10px; float:left">
@@ -63,8 +63,8 @@
   
   <!-- HYDRO TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:#1b872a"><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div class="panel" style="background-color:#1b872a">
+  <div class="accordion" style="background-color:rgb(39,78,63)"><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel" style="background-color:rgb(39,78,63)">
     <div class="panel-inner">
     
       <div style="height:120px; overflow:hidden">
@@ -86,8 +86,8 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#29abe2"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Status</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div style="background-color:#29abe2" class="panel">
+    <div class="accordion" style="background-color:rgb(41,171,226)"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Status</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div style="background-color:rgb(41,171,226)" class="panel">
       <div class="panel-inner">
         
         <div id="household-status-block">
@@ -117,8 +117,8 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#1988b7"><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel"  style="background-color:#1988b7">
+    <div class="accordion" style="background-color:rgb(100,171,255)"><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel"  style="background-color:rgb(100,171,255)">
       <div class="panel-inner">
         <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
         <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
@@ -126,8 +126,8 @@
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#146f95"><div class="title">Breakdown</div></div>
-    <div class="panel" style="background-color:#146f95">
+    <div class="accordion" style="background-color:rgb(0,71,121)"><div class="title">Breakdown</div></div>
+    <div class="panel" style="background-color:rgb(0,71,121)">
       <div class="panel-inner">
         
         <style> .bd {margin-bottom:5px;} </style>
@@ -142,8 +142,8 @@
   
   <div class="view" view="bethesda" style="display:none; color:#3b6358;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#ffdc00"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div style="background-color:#ffdc00" class="panel">
+    <div class="accordion" style="background-color:rgb(255,220,0)"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div style="background-color:rgb(255,220,0)" class="panel">
       <div class="panel-inner">
         <p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
         <img id="community_star1" src="images/star20.png" style="width:45px">
@@ -156,8 +156,8 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#ffc800"><div class="title" style="display:inline-block">Saving</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel"  style="background-color:#ffc800">
+    <div class="accordion" style="background-color:rgb(255,117,0); color:#fff;"><div class="title" style="display:inline-block">Saving</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel"  style="background-color:rgb(255,117,0); color:#fff;">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
         <p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>
@@ -165,8 +165,8 @@
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#ffb400"><div class="title">Breakdown</div></div>
-    <div class="panel" style="background-color:#ffb400">
+    <div class="accordion" style="background-color:rgb(142,77,0); color:#fff;"><div class="title">Breakdown</div></div>
+    <div class="panel" style="background-color:rgb(142,77,0); color:#fff;">
       <div class="panel-inner">
         <style> .bd {margin-bottom:5px;} </style>
         <canvas id="community_piegraph" width=400 height=400 ></canvas>
@@ -182,17 +182,61 @@
     <div class="accordion" style="background-color:#284e3f"><div class="title">Tips</div></div>
     <div class="panel" style="background-color:#284e3f">
       <div class="panel-inner">
-        <div id="tip1" style="width:300px; margin: 0 auto;">
-          <img src="images/dishwasher.png">
-          <h1>DISHWASHER</h1>
+        <!-- TIP 1 -->
+        <div class="tip" tipid=1 style="width:320px; margin: 0 auto;">
+          <img src="images/light-bulb-3.png" style="width:70%">
+          <h1>LED LIGHTS</h1>
           <div style="text-align:left">
-          <p>Time your dishwasher cycles to avoid morning and evening peaks. Take advantage of local [renewable] power and low prices in the daytime (11am-5pm) and overnight (8pm-6am)</p>
-          
-          <div style="float:left; padding:10px; background-color:#527165"><b>&#60; PREVIOUS</b></div>
-          
-          <div style="float:right; padding:10px; background-color:#527165"><b>NEXT TIP ></b></div>
+          <p>LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house</p>
           </div>
         </div>
+        <!-- TIP 2 -->
+        <div class="tip" tipid=2 style="width:320px; margin: 0 auto; display:none">
+          <img src="images/washing-machine.png" style="width:70%">
+          <h1>WASHING MACHINE</h1>
+          <div style="text-align:left">
+          <p>The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
+          </div>
+        </div>
+        <!-- TIP 3 -->
+        <div class="tip" tipid=3 style="width:320px; margin: 0 auto; display:none">
+          <img src="images/dishwasher.png" style="width:70%">
+          <h1>DISHWASHER</h1>
+          <div style="text-align:left">
+          <p>The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
+          </div>
+        </div>
+        <!-- TIP 4 -->
+        <div class="tip" tipid=4 style="width:320px; margin: 0 auto; display:none">
+          <img src="images/slow-cooker.png" style="width:70%">
+          <h1>SLOW COOKING</h1>
+          <div style="text-align:left">
+          <p>Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven. </p>
+          </div>
+        </div>
+        <!-- TIP 5 -->
+        <div class="tip" tipid=5 style="width:320px; margin: 0 auto; display:none">
+          <img src="images/lamp-6.png" style="width:70%">
+          <h1>LIGHTS</h1>
+          <div style="text-align:left">
+          <p>Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.</p>
+          </div>
+        </div>
+        <!-- TIP 6 -->
+        <div class="tip" tipid=6 style="width:320px; margin: 0 auto; display:none">
+          
+          <img src="images/stove.png" style="width:70%">
+          <h1>COOKING</h1>
+          <div style="text-align:left">
+          <p>Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.</p>
+          </div>
+        </div>
+        
+        <div style="width:320px; margin: 0 auto">
+          <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b>&#60; PREVIOUS</b></div>
+          <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b>NEXT TIP ></b></div>
+        </div>
+          
       </div>
     </div>
     
@@ -224,6 +268,8 @@ console.log(session);
 
 var accordionheight = 54;
 var iconbarheight = 51;
+
+var tipid = 1;
 
 if (!session) {
   $("#household-status-block").hide();
@@ -357,5 +403,18 @@ function status_update() {
   $(".tariff-img[tariff="+tariff+"]").show();
 }
 
+$("#previous-tip").click(function(){
+    tipid--;
+    if (tipid<1) tipid = 6;
+    $(".tip").hide();
+    $(".tip[tipid="+tipid+"]").show();
+});
+
+$("#next-tip").click(function(){
+    tipid++;
+    if (tipid>6) tipid = 1;
+    $(".tip").hide();
+    $(".tip[tipid="+tipid+"]").show();
+});
 </script>
 
