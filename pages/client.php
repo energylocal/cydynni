@@ -86,7 +86,7 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(41,171,226)"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Status</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="background-color:rgb(41,171,226)"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Performance</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div style="background-color:rgb(41,171,226)" class="panel">
       <div class="panel-inner">
         
@@ -355,7 +355,7 @@ function status_update() {
       $("#tariff_summary").html("NOW: AM PEAK");
   
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+      $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
       
       $("#status-next").html("After that the next best time to use power<br>is <b>8pm - 6am.</b>");
       $("#cydynni_summary").html("WAIT "+time_to_wait);
@@ -379,7 +379,7 @@ function status_update() {
       $("#tariff_summary").html("NOW: PM PEAK");
       
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+      $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
       $("#cydynni_summary").html("WAIT "+time_to_wait);
   }
   
