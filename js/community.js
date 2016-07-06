@@ -1,3 +1,5 @@
+var community_pie_data = [];
+
 function community_load()
 {
   $.ajax({                                      
@@ -30,8 +32,6 @@ function community_load()
               }
           }, 400);
           
-          
-          
           var totalcost = 0;
           totalcost += result.morningkwh * 0.12;
           totalcost += result.middaykwh * 0.10;
@@ -46,19 +46,33 @@ function community_load()
           $("#community_saving_summary").html("£"+totalcost.toFixed(2)+" LAST WEEK");
           
           var data = [
-            {name:"MORNING PEAK", value: result.morningkwh, color:"#ffdc00"},
+            {name:"MORNING", value: result.morningkwh, color:"#ffdc00"},
             {name:"MIDDAY", value: result.middaykwh, color:"#29abe2"},
-            {name:"EVENING PEAK", value: result.eveningkwh, color:"#c92760"},
+            {name:"EVENING", value: result.eveningkwh, color:"#c92760"},
             {name:"OVERNIGHT", value: result.overnightkwh, color:"#274e3f"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
-          var options = {
-            "color": "#fff",
-            "centertext": "THIS WEEK"
-          };  
-          
-          piegraph("community_piegraph",data,options);
+          community_pie_data = data;
+          community_pie_draw();
       } 
   });
+}
+
+function community_pie_draw() {
+    var width = $("#community_piegraph_bound").width();
+    if (width>400) width = 400;
+    $("#community_piegraph").attr('width',width);
+    var height = width*0.9;
+    $('#community_piegraph_bound').attr("height",height);
+    $('#community_piegraph').attr("height",height);
+    
+    var options = {
+      color: "#fff",
+      centertext: "THIS WEEK",
+      width: width,
+      height: height
+    };  
+    
+    piegraph("community_piegraph",community_pie_data,options);
 }

@@ -129,11 +129,12 @@
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="background-color:rgb(0,71,121)"><div class="title">Breakdown</div></div>
     <div class="panel" style="background-color:rgb(0,71,121)">
-      <div class="panel-inner">
+      <div class="panel-inner" style="">
         
         <style> .bd {margin-bottom:5px;} </style>
-        <canvas id="piegraph" width=400 height=400 ></canvas>
-        
+        <div id="household_piegraph_bound">
+          <canvas id="household_piegraph"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -141,7 +142,7 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
-  <div class="view" view="bethesda" style="display:none; color:#3b6358;">
+  <div class="view" view="bethesda" style="display:none; color:#3b6358">
     <!-- STATUS TAB ------------------------------------------------------->
     <div class="accordion" style="background-color:rgb(255,220,0)"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div style="background-color:rgb(255,220,0)" class="panel">
@@ -168,10 +169,12 @@
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="background-color:rgb(142,77,0); color:#fff;"><div class="title">Breakdown</div></div>
-    <div class="panel" style="background-color:rgb(142,77,0); color:#fff;">
+    <div class="panel" style="background-color:rgb(142,77,0); color:#fff">
       <div class="panel-inner">
         <style> .bd {margin-bottom:5px;} </style>
-        <canvas id="community_piegraph" width=400 height=400 ></canvas>
+        <div id="community_piegraph_bound">
+          <canvas id="community_piegraph"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -275,7 +278,6 @@
 
 var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
-console.log(session);
 
 var accordionheight = 54;
 var iconbarheight = 51;
@@ -318,6 +320,8 @@ $(".accordion").click(function() {
     $(this).next().attr("active",1);
     $(this).next().height(panel_height);
     if (view=="hydro") graph_resize(panel_height-40-120);
+    if (view=="household") household_pie_draw();
+    if (view=="bethesda") community_pie_draw();
   }
 });
 
@@ -325,6 +329,8 @@ $(window).resize(function(){
   panel_height = $(window).height() - accordionheight*3 - iconbarheight;
   $(".panel[active=1]").height(panel_height);
   if (view=="hydro") graph_resize(panel_height-40-120);
+  if (view=="household") household_pie_draw();
+  if (view=="bethesda") community_pie_draw();
 });
 
 $(".icon-bar-item").click(function(){

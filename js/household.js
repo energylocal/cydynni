@@ -1,3 +1,5 @@
+var household_pie_data = [];
+
 function household_load()
 {
   $.ajax({                                      
@@ -47,19 +49,33 @@ function household_load()
           $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" LAST WEEK");
           
           var data = [
-            {name:"MORNING PEAK", value: result.morningkwh, color:"rgba(255,255,255,0.8)"},
+            {name:"MORNING", value: result.morningkwh, color:"rgba(255,255,255,0.8)"},
             {name:"MIDDAY", value: result.middaykwh, color:"rgba(255,255,255,0.6)"},
-            {name:"EVENING PEAK", value: result.eveningkwh, color:"rgba(255,255,255,0.9)"},
+            {name:"EVENING", value: result.eveningkwh, color:"rgba(255,255,255,0.9)"},
             {name:"OVERNIGHT", value: result.overnightkwh, color:"rgba(255,255,255,0.4)"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
-          var options = {
-            "color": "#fff",
-            "centertext": "THIS WEEK"
-          }; 
-          
-          piegraph("piegraph",data,options);
+          household_pie_data = data;
+          household_pie_draw();
       } 
   });
+}
+
+function household_pie_draw() {
+    var width = $("#household_piegraph_bound").width();
+    if (width>400) width = 400;
+    $("#household_piegraph").attr('width',width);
+    var height = width*0.9;
+    $('#household_piegraph_bound').attr("height",height);
+    $('#household_piegraph').attr("height",height);
+    
+    var options = {
+      color: "#fff",
+      centertext: "THIS WEEK",
+      width: width,
+      height: height
+    }; 
+
+    piegraph("household_piegraph",household_pie_data,options);
 }
