@@ -7,6 +7,8 @@ function community_load()
           var prc = Math.round(100*((result.overnightkwh + result.middaykwh) / result.totalkwh));
           $("#community_prclocal").html(prc);
           
+          $("#community_score").html(prc);
+          
           if (prc>20) $("#community_star1").attr("src","images/star.png");
           if (prc>40) setTimeout(function() { $("#community_star2").attr("src","images/star.png"); }, 100);
           if (prc>60) setTimeout(function() { $("#community_star3").attr("src","images/star.png"); }, 200);
@@ -14,17 +16,17 @@ function community_load()
           if (prc>90) setTimeout(function() { $("#community_star5").attr("src","images/star.png"); }, 400);
           
           setTimeout(function() {
-              if (prc<33) {
-                  $("#community_statusmsg").html("We are missing out");
-                  $("#community_status_summary").html("We are missing out");
+              if (prc<30) {
+                  $("#community_statusmsg").html("We are using power in a very expensive way");
+                  $("#community_status_summary").html("As a community we are MISSING OUT");
               }
-              if (prc>=33 && prc<66) {
-                  $("#community_statusmsg").html("We are doing <b>OK</b>");
-                  $("#community_status_summary").html("We are doing <b>OK</b>");
+              if (prc>=30 && prc<70) {
+                  $("#community_statusmsg").html("Are we making the most of hydro? Can we adjust some activities away from peak times?");
+                  $("#community_status_summary").html("As a community we are <b>DOING OK</b>");
               }
-              if (prc>=66) {
-                  $("#community_statusmsg").html("We are doing <b>GREAT!</b>");
-                  $("#community_status_summary").html("We are doing <b>GREAT!</b>");
+              if (prc>=70) {
+                  $("#community_statusmsg").html("We are doing really well to use hydro power and at cheaper power");
+                  $("#community_status_summary").html("As a community we are <b>DOING WELL</b>");
               }
           }, 400);
           
@@ -41,23 +43,22 @@ function community_load()
           var totalcostflatrate = result.totalkwh * 0.12;
           var costsaving = totalcostflatrate - totalcost;
           $(".community_costsaving").html(costsaving.toFixed(2));
-          $("#community_saving_summary").html("£"+costsaving.toFixed(2)+" LAST WEEK");
+          $("#community_saving_summary").html("£"+totalcost.toFixed(2)+" LAST WEEK");
           
           var data = [
-            {name:"AM PEAK", value: result.morningkwh, color:"#ffdc00"},
-            {name:"DAYTIME", value: result.middaykwh, color:"#29abe2"},
-            {name:"PM PEAK", value: result.eveningkwh, color:"#c92760"},
-            {name:"NIGHT", value: result.overnightkwh, color:"#274e3f"},
+            {name:"MORNING PEAK", value: result.morningkwh, color:"#ffdc00"},
+            {name:"MIDDAY", value: result.middaykwh, color:"#29abe2"},
+            {name:"EVENING PEAK", value: result.eveningkwh, color:"#c92760"},
+            {name:"OVERNIGHT", value: result.overnightkwh, color:"#274e3f"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
           var options = {
-            "color": "#3b6358",
+            "color": "#fff",
             "centertext": "THIS WEEK"
           };  
           
           piegraph("community_piegraph",data,options);
-          
       } 
   });
 }

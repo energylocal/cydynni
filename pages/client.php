@@ -35,28 +35,28 @@
   
   <!-- TARIFF TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:rgb(33,145,110)"><div class="title" style="display:inline-block">Tariffs</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="accordion" style="background-color:rgb(33,145,110)"><div class="title" style="display:inline-block">Electricity Prices</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel" style="background-color:rgb(33,145,110)">
     <div class="panel-inner">
       <div class="tariff-block">
         <img class="tariff-img" tariff="morning" src="images/now.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">6AM - 11AM</div>
-        <div class="tariff-desc">MORNING PEAK - 12 PENCE PER UNIT</div>
+        <div class="tariff-desc">MORNING PEAK PRICE - 12 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="midday" src="images/now.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">11AM - 4PM</div>
-        <div class="tariff-desc">MIDDLE OF THE DAY - 10 PENCE PER UNIT</div>
+        <div class="tariff-desc">MIDDAY PRICE - 10 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="evening" src="images/now.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">4PM - 8PM</div>
-        <div class="tariff-desc">EVENING PEAK - 14 PENCE PER UNIT</div>
+        <div class="tariff-desc">EVENING PEAK PRICE - 14 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="overnight" src="images/now.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">8PM - 6AM</div>
-        <div class="tariff-desc">OVERNIGHT - 7.25 PENCE PER UNIT</div>
+        <div class="tariff-desc">OVERNIGHT PRICE - 7.25 PENCE PER UNIT</div>
       </div>
     </div>
   </div>
@@ -91,7 +91,8 @@
       <div class="panel-inner">
         
         <div id="household-status-block">
-          <p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
+          <p>Over the last week you scored: <b><span id="household_score"></span></b>/100</p>
+          <!--<p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
           <img id="star1" src="images/star20.png" style="width:45px">
           <img id="star2" src="images/star20.png" style="width:45px">
           <img id="star3" src="images/star20.png" style="width:45px">
@@ -102,8 +103,8 @@
         
         <div id="login-block" style="text-align:center">
           <div class="login-box">
-          <h2>Login</h2>
-          <p>Please login to view household data</p>
+          <h2>Welcome!</h2>
+          <p>Please sign in to see your energy data</p>
           <p>
             <input id="email" type="text" placeholder="Email..."><br><br>
             <input id="password" type="password" placeholder="Password..."><br><br>
@@ -145,7 +146,8 @@
     <div class="accordion" style="background-color:rgb(255,220,0)"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div style="background-color:rgb(255,220,0)" class="panel">
       <div class="panel-inner">
-        <p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>
+        <p>Over the last week we scored: <b><span id="community_score"></span></b>/100</p>
+        <!--<p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
         <img id="community_star1" src="images/star20.png" style="width:45px">
         <img id="community_star2" src="images/star20.png" style="width:45px">
         <img id="community_star3" src="images/star20.png" style="width:45px">
@@ -156,11 +158,11 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(255,117,0); color:#fff;"><div class="title" style="display:inline-block">Saving</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="background-color:rgb(255,117,0); color:#fff;"><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="background-color:rgb(255,117,0); color:#fff;">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
-        <p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>
+        <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>
     
@@ -231,7 +233,16 @@
           <p>Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.</p>
           </div>
         </div>
-        
+        <!-- TIP 7 -->
+        <div class="tip" tipid=7 style="width:320px; margin: 0 auto; display:none">
+          
+          <img src="images/fridge-2.png" style="width:70%">
+          <h1>FRIDGE/FREEZER</h1>
+          <div style="text-align:left">
+          <p>Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.</p>
+          </div>
+        </div>
+           
         <div style="width:320px; margin: 0 auto">
           <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b>&#60; PREVIOUS</b></div>
           <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b>NEXT TIP ></b></div>
@@ -246,10 +257,10 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
   <div class="icon-bar">
-    <a class="icon-bar-item" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
-    <a class="icon-bar-item" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
-    <a class="icon-bar-item" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
-    <a class="icon-bar-item" view="tips" href="#tips"><img src="images/el-bulb-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" title="Ok to Use?" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" title="My Household" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" title="Community performance" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" title="Tips" view="tips" href="#tips"><img src="images/el-bulb-icon.png" style="width:22px"></a>
   </div>
 
   </body>
@@ -405,14 +416,14 @@ function status_update() {
 
 $("#previous-tip").click(function(){
     tipid--;
-    if (tipid<1) tipid = 6;
+    if (tipid<1) tipid = 7;
     $(".tip").hide();
     $(".tip[tipid="+tipid+"]").show();
 });
 
 $("#next-tip").click(function(){
     tipid++;
-    if (tipid>6) tipid = 1;
+    if (tipid>7) tipid = 1;
     $(".tip").hide();
     $(".tip[tipid="+tipid+"]").show();
 });
