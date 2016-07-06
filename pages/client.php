@@ -186,7 +186,7 @@
       <div class="panel-inner">
         <!-- TIP 1 -->
         <div class="tip" tipid=1 style="width:320px; margin: 0 auto;">
-          <img src="images/light-bulb-3.png" style="width:70%">
+          <img src="images/light-bulb-3.png" class="tipimage">
           <h1>LED LIGHTS</h1>
           <div style="text-align:left">
           <p>LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house</p>
@@ -194,7 +194,7 @@
         </div>
         <!-- TIP 2 -->
         <div class="tip" tipid=2 style="width:320px; margin: 0 auto; display:none">
-          <img src="images/washing-machine.png" style="width:70%">
+          <img src="images/washing-machine.png" class="tipimage">
           <h1>WASHING MACHINE</h1>
           <div style="text-align:left">
           <p>The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
@@ -202,7 +202,7 @@
         </div>
         <!-- TIP 3 -->
         <div class="tip" tipid=3 style="width:320px; margin: 0 auto; display:none">
-          <img src="images/dishwasher.png" style="width:70%">
+          <img src="images/dishwasher.png" class="tipimage">
           <h1>DISHWASHER</h1>
           <div style="text-align:left">
           <p>The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
@@ -210,7 +210,7 @@
         </div>
         <!-- TIP 4 -->
         <div class="tip" tipid=4 style="width:320px; margin: 0 auto; display:none">
-          <img src="images/slow-cooker.png" style="width:70%">
+          <img src="images/slow-cooker.png" class="tipimage">
           <h1>SLOW COOKING</h1>
           <div style="text-align:left">
           <p>Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven. </p>
@@ -218,7 +218,7 @@
         </div>
         <!-- TIP 5 -->
         <div class="tip" tipid=5 style="width:320px; margin: 0 auto; display:none">
-          <img src="images/lamp-6.png" style="width:70%">
+          <img src="images/lamp-6.png" class="tipimage">
           <h1>LIGHTS</h1>
           <div style="text-align:left">
           <p>Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.</p>
@@ -227,7 +227,7 @@
         <!-- TIP 6 -->
         <div class="tip" tipid=6 style="width:320px; margin: 0 auto; display:none">
           
-          <img src="images/stove.png" style="width:70%">
+          <img src="images/stove.png" class="tipimage">
           <h1>COOKING</h1>
           <div style="text-align:left">
           <p>Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.</p>
@@ -236,7 +236,7 @@
         <!-- TIP 7 -->
         <div class="tip" tipid=7 style="width:320px; margin: 0 auto; display:none">
           
-          <img src="images/fridge-2.png" style="width:70%">
+          <img src="images/fridge-2.png" class="tipimage">
           <h1>FRIDGE/FREEZER</h1>
           <div style="text-align:left">
           <p>Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.</p>
@@ -363,7 +363,7 @@ function status_update() {
   if (tariff=="morning") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
-      $("#tariff_summary").html("NOW: AM PEAK");
+      $("#tariff_summary").html("NOW: MORNING PEAK");
   
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
@@ -376,7 +376,7 @@ function status_update() {
   if (tariff=="midday") {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
-      $("#tariff_summary").html("NOW: DAYTIME");
+      $("#tariff_summary").html("NOW: MIDDAY");
       
       var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
@@ -387,7 +387,7 @@ function status_update() {
   if (tariff=="evening") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
-      $("#tariff_summary").html("NOW: PM PEAK");
+      $("#tariff_summary").html("NOW: EVENING PEAK");
       
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
@@ -399,7 +399,7 @@ function status_update() {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
       
-      $("#tariff_summary").html("NOW: NIGHT");
+      $("#tariff_summary").html("NOW: OVERNIGHT");
       
       if (hour>6) {
           var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";

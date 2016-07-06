@@ -129,6 +129,10 @@ table, th, td {
   cursor:pointer;
 }
 
+.tipimage {
+    width:70%;
+}
+
 @media (max-width: 450px) {
   .container {
     /*width: 450px;*/
@@ -137,6 +141,14 @@ table, th, td {
   
   .panel-inner {
     padding-top:0px;
+  }
+
+  .tipimage {
+      width:58%;
+  }
+  
+  h1 {
+      font-size:26px;
   }
 }
     
