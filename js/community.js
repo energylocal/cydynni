@@ -11,11 +11,11 @@ function community_load()
           
           $("#community_score").html(prc);
           
-          if (prc>20) $("#community_star1").attr("src","images/star.png");
-          if (prc>40) setTimeout(function() { $("#community_star2").attr("src","images/star.png"); }, 100);
-          if (prc>60) setTimeout(function() { $("#community_star3").attr("src","images/star.png"); }, 200);
-          if (prc>80) setTimeout(function() { $("#community_star4").attr("src","images/star.png"); }, 300);
-          if (prc>90) setTimeout(function() { $("#community_star5").attr("src","images/star.png"); }, 400);
+          if (prc>20) $("#community_star1").attr("src","images/staryellow.png");
+          if (prc>40) setTimeout(function() { $("#community_star2").attr("src","images/staryellow.png"); }, 100);
+          if (prc>60) setTimeout(function() { $("#community_star3").attr("src","images/staryellow.png"); }, 200);
+          if (prc>80) setTimeout(function() { $("#community_star4").attr("src","images/staryellow.png"); }, 300);
+          if (prc>90) setTimeout(function() { $("#community_star5").attr("src","images/staryellow.png"); }, 400);
           
           setTimeout(function() {
               if (prc<30) {
@@ -68,7 +68,7 @@ function community_pie_draw() {
     $('#community_piegraph').attr("height",height);
     
     var options = {
-      color: "#fff",
+      color: "#3b6358",
       centertext: "THIS WEEK",
       width: width,
       height: height

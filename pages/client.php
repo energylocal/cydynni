@@ -5,6 +5,8 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat&amp;lang=en" />
+    
     <title>Cyd Ynni</title>
     <link rel="stylesheet" type="text/css" href="theme/style.css" />
     <link rel="stylesheet" type="text/css" href="theme/forms.css" />
@@ -21,8 +23,8 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
   
-  <div class="accordion" style="background-color:rgb(39,201,63)"><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div class="panel" style="background-color:rgb(39,201,63)">
+  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel" style="#fff">
     <div class="panel-inner">
       <p id="status-pre">If possible</p>
 
@@ -35,8 +37,8 @@
   
   <!-- TARIFF TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:rgb(33,145,110)"><div class="title" style="display:inline-block">Electricity Prices</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div class="panel" style="background-color:rgb(33,145,110)">
+  <div class="accordion" style="color:rgb(33,145,110)"><div style="height:10px; background-color:rgb(33,145,110)"></div><div class="title" style="display:inline-block">Electricity Prices</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel">
     <div class="panel-inner">
       <div class="tariff-block">
         <img class="tariff-img" tariff="morning" src="images/now.png" style="width:40px; margin-right:10px; float:left">
@@ -63,19 +65,17 @@
   
   <!-- HYDRO TAB ------------------------------------------------------->
 
-  <div class="accordion" style="background-color:rgb(39,78,63)"><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-  <div class="panel" style="background-color:rgb(39,78,63)">
+  <div class="accordion" style="color:rgb(39,78,63)"><div style="height:10px; background-color:rgb(39,78,63)"></div><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="panel">
     <div class="panel-inner">
-    
       <div style="height:120px; overflow:hidden">
-          <div class="status"><span id="hydrostatus"></span></div>
-          <p>Currently generating <b><span id="power"></span> kW</b></p>
-          
-          <p>LAST 24 HOURS</p>
+        <div class="status"><span id="hydrostatus"></span></div>
+        <p>Currently generating <b><span id="power"></span> kW</b></p>
+        <p>LAST 24 HOURS</p>
       </div>
-        <div id="placeholder_bound" style="height:100%">
-              <canvas id="placeholder"></canvas>
-        </div>
+      <div id="placeholder_bound" style="height:100%">
+        <canvas id="placeholder"></canvas>
+      </div>
     </div>
   </div>
   
@@ -86,18 +86,18 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(41,171,226)"><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Performance</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div style="background-color:rgb(41,171,226)" class="panel">
+    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Performance</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
         
         <div id="household-status-block">
           <p>Over the last week you scored: <b><span id="household_score"></span></b>/100</p>
           <!--<p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
-          <img id="star1" src="images/star20.png" style="width:45px">
-          <img id="star2" src="images/star20.png" style="width:45px">
-          <img id="star3" src="images/star20.png" style="width:45px">
-          <img id="star4" src="images/star20.png" style="width:45px">
-          <img id="star5" src="images/star20.png" style="width:45px">
+          <img id="star1" src="images/star20blue.png" style="width:45px">
+          <img id="star2" src="images/star20blue.png" style="width:45px">
+          <img id="star3" src="images/star20blue.png" style="width:45px">
+          <img id="star4" src="images/star20blue.png" style="width:45px">
+          <img id="star5" src="images/star20blue.png" style="width:45px">
           <p id="statusmsg"></p>
         </div>
         
@@ -118,8 +118,8 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(100,171,255)"><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel"  style="background-color:rgb(100,171,255)">
+    <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel"  style="">
       <div class="panel-inner">
         <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
         <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
@@ -127,8 +127,8 @@
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(0,71,121)"><div class="title">Breakdown</div></div>
-    <div class="panel" style="background-color:rgb(0,71,121)">
+    <div class="accordion" style="color:rgb(0,71,121)"><div style="height:10px; background-color:rgb(0,71,121)"></div><div class="title">Breakdown</div></div>
+    <div class="panel">
       <div class="panel-inner" style="">
         
         <style> .bd {margin-bottom:5px;} </style>
@@ -142,25 +142,25 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
-  <div class="view" view="bethesda" style="display:none; color:#3b6358">
+  <div class="view" view="bethesda" style="display:none;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(255,220,0)"><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div style="background-color:rgb(255,220,0)" class="panel">
+    <div class="accordion" style="color:rgb(255,220,0)"><div style="height:10px; background-color:rgb(255,220,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel">
       <div class="panel-inner">
         <p>Over the last week we scored: <b><span id="community_score"></span></b>/100</p>
         <!--<p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
-        <img id="community_star1" src="images/star20.png" style="width:45px">
-        <img id="community_star2" src="images/star20.png" style="width:45px">
-        <img id="community_star3" src="images/star20.png" style="width:45px">
-        <img id="community_star4" src="images/star20.png" style="width:45px">
-        <img id="community_star5" src="images/star20.png" style="width:45px">
+        <img id="community_star1" src="images/star20yellow.png" style="width:45px">
+        <img id="community_star2" src="images/star20yellow.png" style="width:45px">
+        <img id="community_star3" src="images/star20yellow.png" style="width:45px">
+        <img id="community_star4" src="images/star20yellow.png" style="width:45px">
+        <img id="community_star5" src="images/star20yellow.png" style="width:45px">
         <p id="community_statusmsg"></p>
       </div>
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(255,117,0); color:#fff;"><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel"  style="background-color:rgb(255,117,0); color:#fff;">
+    <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
@@ -168,8 +168,8 @@
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:rgb(142,77,0); color:#fff;"><div class="title">Breakdown</div></div>
-    <div class="panel" style="background-color:rgb(142,77,0); color:#fff">
+    <div class="accordion" style="color:rgb(142,77,0);"><div style="height:10px; background-color:rgb(142,77,0)"></div><div class="title">Breakdown</div></div>
+    <div class="panel">
       <div class="panel-inner">
         <style> .bd {margin-bottom:5px;} </style>
         <div id="community_piegraph_bound">
@@ -279,7 +279,7 @@
 var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
 
-var accordionheight = 54;
+var accordionheight = 64;
 var iconbarheight = 51;
 
 var tipid = 1;

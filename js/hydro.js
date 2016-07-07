@@ -71,7 +71,7 @@ function load() {
                     if (hydro_data[z][1]<0) hydro_data[z][1]=0;
 
                 series = [];
-                series.push({data:hydro_data, color:"rgba(255,255,255,0.5)"});
+                series.push({data:hydro_data, color:"rgba(39,78,63,0.5)"});
                 
                 draw();
             }
