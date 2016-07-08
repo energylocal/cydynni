@@ -33,6 +33,26 @@ class User
         return $users;
     }
     
+    private function getbyemail($email) {
+        $stmt = $this->mysqli->prepare("SELECT id,email,password,salt,admin,apikey,feedid FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows!=1) return false;
+        
+        $stmt->bind_result($id,$email,$dbhash,$salt,$admin,$apikey,$feedid);
+        $u = $stmt->fetch();
+        return array(
+            "id"=>$id,
+            "email"=>$email,
+            "dbhash"=>$dbhash,
+            "salt"=>$salt,
+            "admin"=>$admin,
+            "apikey"=>$apikey,
+            "feedid"=>$feedid
+        );
+    }
+    
     //---------------------------------------------------------------------------------------
     // User login
     //---------------------------------------------------------------------------------------
@@ -72,33 +92,82 @@ class User
     
     //---------------------------------------------------------------------------------------
     // User login
-    //---------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------    
     public function login($email,$password)
     {        
         if ($email==null) return "Email address missing";
         if ($password==null) return "Password missing";
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
-
-        $stmt = $this->mysqli->prepare("SELECT id,password,salt,admin,apikey,feedid FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows!=1) return "User not found";
         
-        $stmt->bind_result($id, $dbhash, $salt, $admin,$apikey,$feedid);
-        $u = $stmt->fetch();
+        if (!$u = $this->getbyemail($email)) return "User not found";
         
-        $hash = hash('sha256', $salt . hash('sha256', $password));
-        if ($hash!=$dbhash) return "Invalid password";
+        $hash = hash('sha256', $u['salt'] . hash('sha256', $password));
+        if ($hash!=$u['dbhash']) return "Invalid password";
         
         session_regenerate_id();
-        $_SESSION['userid'] = $id;
-        $_SESSION['email'] = $email;
-        $_SESSION['admin'] = $admin;
-        $_SESSION['apikey'] = $apikey;
-        $_SESSION['feedid'] = $feedid;
+        $_SESSION['userid'] = $u['id'];
+        $_SESSION['email'] = $u['email'];
+        $_SESSION['admin'] = $u['admin'];
+        $_SESSION['apikey'] = $u['apikey'];
+        $_SESSION['feedid'] = $u['feedid'];
         return $_SESSION;
     }
+
+    //---------------------------------------------------------------------------------------
+    // Forgotten password
+    //--------------------------------------------------------------------------------------- 
+    public function passwordreset($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Email address format error";
+
+        if (!$u = $this->getbyemail($email)) return "User not found";
+        $userid = $u['id'];
+
+        // Generate new random password
+        $newpass = hash('sha256',md5(uniqid(rand(), true)));
+        $newpass = substr($newpass, 0, 10);
+
+        // Hash and salt
+        $hash = hash('sha256', $newpass);
+        $salt = md5(uniqid(rand(), true));
+        $password = hash('sha256', $salt . $hash);
+
+        // Save password and salt
+        $this->mysqli->query("UPDATE users SET password = '$password', salt = '$salt' WHERE id = '$userid'");
+
+        $subject = "CydYnni password reset";                    
+        $message = "<p>A password reset was requested for your CydYnni account.</p><p>Your can now login with password: $newpass </p>";
+
+        // ------------------------------------------------------------------
+        // Email with swift
+        // ------------------------------------------------------------------
+        $have_swift = @include_once ("Swift/swift_required.php"); 
+        if (!$have_swift) {
+           $have_swift = @include_once ("swift_required.php");
+        }
+
+        if (!$have_swift){
+            print "Could not find SwiftMailer - cannot proceed";
+            exit;
+        };
+
+        global $smtp_email_settings;
+        
+        $transport = Swift_SmtpTransport::newInstance(
+            $smtp_email_settings['host'],$smtp_email_settings['port'],'ssl'
+        )->setUsername($smtp_email_settings['username'])->setPassword($smtp_email_settings['password']);
+
+        $mailer = Swift_Mailer::newInstance($transport);
+        $message = Swift_Message::newInstance()
+          ->setSubject($subject)
+          ->setFrom($smtp_email_settings['from'])
+          ->setTo(array($email))
+          ->setBody($message, 'text/html');
+        $result = $mailer->send($message);
+        // ------------------------------------------------------------------
+        return "Email sent";
+    }
+
 
     //---------------------------------------------------------------------------------------
     // Logout

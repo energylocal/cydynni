@@ -131,6 +131,11 @@ switch ($q)
         $format = "json";
         if ($session['admin']) $content = $user->userlist();
         break;
+        
+    case "passwordreset":
+        $format = "text";
+        $content = $user->passwordreset(get('email'));
+        break;
 }
 
 switch ($format) 

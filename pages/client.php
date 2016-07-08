@@ -108,9 +108,21 @@
           <p>
             <input id="email" type="text" placeholder="Email..."><br><br>
             <input id="password" type="password" placeholder="Password..."><br><br>
-            <button id="login" class="btn">Login</button>
+            <button id="login" class="btn">Login</button><br>
+            <div id="passwordreset-start" style="font-size:14px; color:rgba(255,255,255,0.8); cursor:pointer">Forgotten password?</div>
           </p>
           <div id="alert"></div>
+          </div>
+        </div>
+        
+        <div id="passwordreset-block" style="text-align:center; display:none">
+          <div class="login-box">
+          <p id="passwordreset-title"></p>
+          <p>
+            <input id="passwordreset-email" type="text" placeholder="Email..."><br><br>
+            <button id="passwordreset" class="btn">Reset password</button> <button id="passwordreset-cancel" class="btn">Cancel</button><br>
+          </p>
+          <div id="passwordreset-alert"></div>
           </div>
         </div>
         
