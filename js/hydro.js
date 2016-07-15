@@ -114,7 +114,7 @@ function bargraph(element,series)
     for (var s in series) 
     {
         var data = series[s].data;
-        for (z in data)
+        for (var z in data)
         {
             if (xmin==undefined) xmin = data[z][0];
             if (xmax==undefined) xmax = data[z][0];
@@ -127,26 +127,27 @@ function bargraph(element,series)
             if (data[z][0]<xmin) xmin = data[z][0];               
         }
     }
-    
-    ymin = 0;
-    ymax *=1.0;
-    
-    var interval = 1;
-    if (data.length>1) interval = data[1][0] - data[0][0];
-    var barwidth = ((0.75*interval) / (xmax - xmin)) * width;
-
-    var plot_width = width - padding*2 - barwidth;
-    var plot_height = height - padding*2;
         
     for (var s in series) 
     {
+
         ctx.fillStyle = series[s].color;
         var data = series[s].data;
         
+        ymin = 0;
+        ymax = 50;
+        
+        var interval = 1;
+        if (data.length>1) interval = data[1][0] - data[0][0];
+        var barwidth = ((0.75*interval) / (xmax - xmin)) * width;
+
+        var plot_width = width - padding*2 - barwidth;
+        var plot_height = height - padding*2;
+        
         for (var z in data) {
             var x = ((data[z][0] - xmin) / (xmax - xmin)) * plot_width;
-            var y = plot_height - (((data[z][1] - ymin) / (ymax - ymin)) * plot_height);
-            ctx.fillRect(padding+x,padding+y,barwidth,plot_height-y); 
+            var y = plot_height - ((((data[z][1] - ymin) / (ymax - ymin)) * plot_height)+1);
+            ctx.fillRect(padding+x,padding+y,barwidth,plot_height-y);
         }
     }
 }
