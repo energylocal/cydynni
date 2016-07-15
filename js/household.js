@@ -21,11 +21,11 @@ function household_load()
                   $("#household_status_summary").html("MISSING OUT");
               }
               if (prc>=30 && prc<70) {
-                  $("#statusmsg").html("Are you making the most of hydro? Can you adjust some activities away from peak times?");
+                  $("#statusmsg").html("You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?");
                   $("#household_status_summary").html("DOING OK");
               }
               if (prc>=70) {
-                  $("#statusmsg").html("You are doing really well to use hydro power and at cheaper times");
+                  $("#statusmsg").html("You’re doing really well at using hydro & cheaper power");
                   $("#household_status_summary").html("DOING WELL");
               }
           }, 400);

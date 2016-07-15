@@ -23,11 +23,11 @@ function community_load()
                   $("#community_status_summary").html("As a community we are MISSING OUT");
               }
               if (prc>=30 && prc<70) {
-                  $("#community_statusmsg").html("Are we making the most of hydro? Can we adjust some activities away from peak times?");
+                  $("#community_statusmsg").html("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?");
                   $("#community_status_summary").html("As a community we are <b>DOING OK</b>");
               }
               if (prc>=70) {
-                  $("#community_statusmsg").html("We are doing really well to use hydro power and at cheaper power");
+                  $("#community_statusmsg").html("We’re doing really well using the hydro and cheaper power");
                   $("#community_status_summary").html("As a community we are <b>DOING WELL</b>");
               }
           }, 400);

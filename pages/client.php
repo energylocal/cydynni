@@ -41,22 +41,22 @@
   <div class="panel">
     <div class="panel-inner">
       <div class="tariff-block">
-        <img class="tariff-img" tariff="morning" src="images/now.png" style="width:40px; margin-right:10px; float:left">
+        <img class="tariff-img" tariff="morning" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">6AM - 11AM</div>
-        <div class="tariff-desc">MORNING PEAK PRICE - 12 PENCE PER UNIT</div>
+        <div class="tariff-desc">MORNING PRICE - 12 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
-        <img class="tariff-img" tariff="midday" src="images/now.png" style="width:40px; margin-right:10px; float:left">
+        <img class="tariff-img" tariff="midday" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">11AM - 4PM</div>
         <div class="tariff-desc">MIDDAY PRICE - 10 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
-        <img class="tariff-img" tariff="evening" src="images/now.png" style="width:40px; margin-right:10px; float:left">
+        <img class="tariff-img" tariff="evening" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">4PM - 8PM</div>
-        <div class="tariff-desc">EVENING PEAK PRICE - 14 PENCE PER UNIT</div>
+        <div class="tariff-desc">EVENING PRICE - 14 PENCE PER UNIT</div>
       </div>
       <div class="tariff-block">
-        <img class="tariff-img" tariff="overnight" src="images/now.png" style="width:40px; margin-right:10px; float:left">
+        <img class="tariff-img" tariff="overnight" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">8PM - 6AM</div>
         <div class="tariff-desc">OVERNIGHT PRICE - 7.25 PENCE PER UNIT</div>
       </div>
@@ -71,7 +71,7 @@
       <div style="height:120px; overflow:hidden">
         <div class="status"><span id="hydrostatus"></span></div>
         <p>Currently generating <b><span id="power"></span> kW</b></p>
-        <p>LAST 24 HOURS</p>
+        <p>LAST 24 HOURS and next 12 hours</p>
       </div>
       <div id="placeholder_bound" style="height:100%">
         <canvas id="placeholder"></canvas>
@@ -99,6 +99,7 @@
           <img id="star4" src="images/star20blue.png" style="width:45px">
           <img id="star5" src="images/star20blue.png" style="width:45px">
           <p id="statusmsg"></p>
+          <!--Read more about what this means here-->
         </div>
         
         <div id="login-block" style="text-align:center">
@@ -381,35 +382,35 @@ function status_update() {
   if (tariff=="morning") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
-      $("#tariff_summary").html("NOW: MORNING PEAK");
+      $("#tariff_summary").html("Now: Morning Price");
   
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
+      $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? cheaper around midday");
       
       $("#status-next").html("After that the next best time to use power<br>is <b>8pm - 6am.</b>");
-      $("#cydynni_summary").html("WAIT "+time_to_wait);
+      $("#cydynni_summary").html("Wait until 11am");
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="midday") {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
-      $("#tariff_summary").html("NOW: MIDDAY");
+      $("#tariff_summary").html("Now: Midday Price");
       
       var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
-      $("#cydynni_summary").html(time_to_wait+" MORE");
+      $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? midday price currently available");
+      $("#cydynni_summary").html("Ok until 4pm");
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="evening") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
-      $("#tariff_summary").html("NOW: EVENING PEAK");
+      $("#tariff_summary").html("Now: Evening Price");
       
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span>");
-      $("#cydynni_summary").html("WAIT "+time_to_wait);
+      $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? overnight price coming up");
+      $("#cydynni_summary").html("Wait until 8pm");
   }
   
   // If evening peak then wait until overnight tariff
@@ -417,15 +418,15 @@ function status_update() {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
       
-      $("#tariff_summary").html("NOW: OVERNIGHT");
+      $("#tariff_summary").html("Now: Overnight Price");
       
       if (hour>6) {
           var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
       } else {
           var time_to_wait = (6-(hour+1))+" HOURS, "+(60-minutes)+" MINS";
       }
-      $("#status-until").html("until <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
-      $("#cydynni_summary").html(time_to_wait+" MORE");
+      $("#status-until").html("until <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? overnight price currently available");
+      $("#cydynni_summary").html("Ok until 6am");
   }
   
   $(".tariff-img").hide();
