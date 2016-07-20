@@ -12,14 +12,14 @@ setInterval(slowupdate,60000);
 
 function update()
 {
-    var feedid = 119861;
+    var feedid = 67087;
     $.ajax({                                      
-        url: path+"value",
-        data: "id="+feedid+"&apikey="+apikey,
+        url: path+"value?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",       
+        data: "id="+feedid,
         dataType: 'json',
         async: true,                      
         success: function(data_in) { 
-            power = 1*data_in;
+            power = 1*data_in / 75.0;
             $("#power").html(power.toFixed(1));
             if (power>=50) {
                 $("#hydrostatus").html("HIGH");
@@ -54,13 +54,11 @@ function load() {
     end = Math.floor(end / intervalms) * intervalms;
     start = Math.floor(start / intervalms) * intervalms;
     
-    var feedid = 120883;    
-    var apikeystr = "";
-    if (apikey!="") apikeystr = "?apikey="+apikey;
-    
+    var feedid = 67087;    
+
     var data = [];
     $.ajax({                                      
-        url: path+"average"+apikeystr,                         
+        url: path+"average?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
         data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
         dataType: 'json',
         async: true,                      
@@ -135,7 +133,7 @@ function bargraph(element,series)
         var data = series[s].data;
         
         ymin = 0;
-        ymax = 50;
+        //ymax = 50;
         
         var interval = 1;
         if (data.length>1) interval = data[1][0] - data[0][0];
