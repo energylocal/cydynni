@@ -102,3 +102,13 @@ function server($index)
     if (isset($_SERVER[$index])) $val = $_SERVER[$index];
     return $val;
 }
+
+function t($s) {
+    global $translation,$lang;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        echo $translation->$lang->$s;
+    } else { 
+        echo $s;
+    }
+}

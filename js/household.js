@@ -1,4 +1,5 @@
 var household_pie_data = [];
+var householdseries = [];
 
 function household_load()
 {
@@ -17,15 +18,15 @@ function household_load()
           
           setTimeout(function() {
               if (prc<30) {
-                  $("#statusmsg").html("You are using power in a very expensive way");
+                  $("#statusmsg").html(t("You are using power in a very expensive way"));
                   $("#household_status_summary").html("MISSING OUT");
               }
               if (prc>=30 && prc<70) {
-                  $("#statusmsg").html("You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?");
+                  $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?"));
                   $("#household_status_summary").html("DOING OK");
               }
               if (prc>=70) {
-                  $("#statusmsg").html("You’re doing really well at using hydro & cheaper power");
+                  $("#statusmsg").html(t("You’re doing really well at using hydro & cheaper power"));
                   $("#household_status_summary").html("DOING WELL");
               }
           }, 400);
@@ -65,10 +66,10 @@ function household_load()
 function household_pie_draw() {
     var width = $("#household_piegraph_bound").width();
     if (width>400) width = 400;
-    $("#household_piegraph").attr('width',width);
+    $("#household_piegraph_placeholder").attr('width',width);
     var height = width*0.9;
     $('#household_piegraph_bound').attr("height",height);
-    $('#household_piegraph').attr("height",height);
+    $('#household_piegraph_placeholder').attr("height",height);
     
     var options = {
       color: "#3b6358",
@@ -77,5 +78,71 @@ function household_pie_draw() {
       height: height
     }; 
 
-    piegraph("household_piegraph",household_pie_data,options);
+    piegraph("household_piegraph_placeholder",household_pie_data,options);
 }
+
+
+function household_bargraph_load() {
+
+    var end = +new Date;
+    var start = end - (3600000*24.0*1);
+    var interval = 1800;
+    var intervalms = interval * 1000;
+    end = Math.floor(end / intervalms) * intervalms;
+    start = Math.floor(start / intervalms) * intervalms;
+      
+    var data = [];
+    $.ajax({                                      
+        url: path+"average?apikey="+session.apikey,                         
+        data: "id="+session.feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
+        dataType: 'json',
+        async: true,                      
+        success: function(result) {
+            if (!result || result===null || result==="" || result.constructor!=Array) {
+                console.log("ERROR","feed.getdata invalid response: "+result);
+            } else {
+
+                var hydro_data = result;
+                // Solar values less than zero are invalid
+                for (var z in hydro_data)
+                    if (hydro_data[z][1]<0) hydro_data[z][1]=0;
+
+                householdseries = [];
+                householdseries.push({data:hydro_data, color:"rgba(0,71,121,0.7)"});
+                
+                household_bargraph_draw();
+            }
+        }
+    });
+}
+
+function household_bargraph_draw() {
+    bargraph("household_bargraph_placeholder",householdseries);
+}
+
+function household_bargraph_resize(h) {
+    width = $("#household_bargraph_bound").width();
+    $("#household_bargraph_placeholder").attr('width',width);
+    $('#household_bargraph_bound').attr("height",h);
+    $('#household_bargraph_placeholder').attr("height",h);
+    height = h;
+    household_bargraph_draw();
+}
+
+$("#view-household-bargraph").click(function(){
+    $("#view-household-bargraph").hide();
+    $("#view-household-piechart").show();
+    
+    $("#household_piegraph").hide();
+    $("#household_bargraph").show();
+    
+    household_bargraph_load();
+});
+
+$("#view-household-piechart").click(function(){
+    $("#view-household-bargraph").show();
+    $("#view-household-piechart").hide();
+    
+    $("#household_piegraph").show();
+    $("#household_bargraph").hide();
+});

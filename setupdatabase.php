@@ -25,7 +25,7 @@ print "Result: ".json_encode(db_schema_setup($mysqli,$schema,true))."\n";
 // ----------------------------------------
 // Create admin user
 // ----------------------------------------
-
-// require("user_model.php");
-// $user = new User($mysqli);
-// print $user->register("email","pass","apikey",0);
+//
+//require("user_model.php");
+//$user = new User($mysqli);
+//print $user->register("trystan.lea@gmail.com","admin","apikey",0);

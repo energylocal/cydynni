@@ -25,7 +25,6 @@ p {
   text-align: left;
   border: none;
   outline: none;
-  transition: 0.2s;
   height:64px;
   -webkit-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
   -moz-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
@@ -37,9 +36,9 @@ p {
 
 /* Style the accordion panel. Note: hidden by default */
 div.panel {
+  height: 0;
   transition: height ease 1.0s;
   overflow:hidden;
-  height:0px;
 }
 
 /* The "show" class is added to the accordion panel when the user clicks on one of the buttons. This will show the panel content */
@@ -119,9 +118,9 @@ table, th, td {
 
 .login-box {
   text-align:center;
-  /*background-color:rgb(41,171,226);*/ 
+  /*background-color:rgb(41,171,226);*/
   border: 1px solid rgb(41,171,226);
-  width:300px; 
+  width:300px;
   margin: 0 auto;
   border-radius: 15px;
   padding:10px;
@@ -129,8 +128,8 @@ table, th, td {
 }
 
 #logout {
-  float:right; 
-  padding:18px; 
+  float:right;
+  padding:18px;
   color:rgb(41,171,226);
 }
 

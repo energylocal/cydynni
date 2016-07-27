@@ -30,7 +30,7 @@
         </p>
         <div class="alert"></div>
       </div>
-    </div>  
+    </div>
     
     <div id="admin-block" style="display:none">
       <div id="logout">Logout</div>
@@ -43,7 +43,7 @@
           <tbody id="users"></tbody>
         </table>
         <br><br>
-        <p><b>Create new user:</b></p> 
+        <p><b>Create new user:</b></p>
         <p>
           <input id="register-email" type="text" placeholder="Email..."><br><br>
           <input id="register-password" type="password" placeholder="Password..."><br><br>
@@ -71,7 +71,7 @@ function load() {
     $("#login-block").hide();
     $("#admin-block").show();
 
-    $.ajax({                                      
+    $.ajax({
         url: path+"admin/users",
         dataType: 'json',
         success: function(result) {
@@ -88,15 +88,15 @@ $("#login").click(function() {
     var email = $("#email").val();
     var password = $("#password").val();
 
-    $.ajax({                                      
-        url: path+"/login",                         
+    $.ajax({
+        url: path+"/login",
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
             if (result.userid!=undefined) {
                 session = result;
                 $(".alert").html("");
-                if (session.admin) { 
+                if (session.admin) {
                     load();
                 } else {
                     logout();
@@ -114,8 +114,8 @@ $("#register").click(function() {
     var password = $("#register-password").val();
     var apikey = $("#apikey").val();
     var feedid = $("#feedid").val();
-    $.ajax({                                      
-        url: path+"register",                         
+    $.ajax({
+        url: path+"register",
         data: "email="+email+"&password="+password+"&apikey="+apikey+"&feedid="+feedid,
         dataType: 'text',
         success: function(result) {
@@ -127,7 +127,7 @@ $("#register").click(function() {
 $("#logout").click(function() { logout(); });
 
 function logout() {
-    $.ajax({                   
+    $.ajax({
         url: path+"/logout",
         dataType: 'text',
         success: function(result) {

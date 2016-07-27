@@ -88,12 +88,10 @@ function community_bargraph_load() {
     end = Math.floor(end / intervalms) * intervalms;
     start = Math.floor(start / intervalms) * intervalms;
     
-    var feedid = 67087;    
-
     var data = [];
     $.ajax({                                      
-        url: path+"average?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
-        data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
+        url: path+"community/halfhourlydata",                         
+        data: "start="+start+"&end="+end,
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -116,14 +114,14 @@ function community_bargraph_load() {
 }
 
 function community_bargraph_draw() {
-    bargraph("consumption_bargraph_placeholder",communityseries);
+    bargraph("community_bargraph_placeholder",communityseries);
 }
 
 function community_bargraph_resize(h) {
     width = $("#community_bargraph_bound").width();
-    $("#consumption_bargraph_placeholder").attr('width',width);
+    $("#community_bargraph_placeholder").attr('width',width);
     $('#community_bargraph_bound').attr("height",h);
-    $('#consumption_bargraph_placeholder').attr("height",h);
+    $('#community_bargraph_placeholder').attr("height",h);
     height = h;
     community_bargraph_draw();
 }

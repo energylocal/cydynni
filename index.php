@@ -34,6 +34,12 @@ $connected = $redis->connect("127.0.0.1");
 $q = "";
 if (isset($_GET['q'])) $q = $_GET['q'];
 
+$translation = new stdClass();
+$translation->cy = json_decode(file_get_contents("locale/cy"));
+
+$lang = "en";
+if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
+
 $format = "html";
 $content = "Sorry page not found";
 
@@ -69,6 +75,28 @@ switch ($q)
             $data["eveningkwh"] += $userdata["eveningkwh"];
             $data["overnightkwh"] += $userdata["overnightkwh"];
             $data["totalkwh"] += $userdata["totalkwh"];
+        }
+        $content = $data;
+         
+        break;
+        
+    case "community/halfhourlydata":
+        $format = "json";
+        $users = $user->userlist();
+        
+        $start = get("start");
+        $end = get("end");
+        
+        $data = array();
+        
+        foreach ($users as $u) {
+            $feedid = $u->feedid; $apikey = $u->apikey;
+            $userdata = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feedid&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=0&apikey=$apikey"));
+            for ($z=0; $z<count($userdata); $z++) {
+                if (!isset($data[$z])) $data[$z] = array(0,0);
+                $data[$z][0] = $userdata[$z][0];
+                $data[$z][1] += $userdata[$z][1];
+            }
         }
         $content = $data;
          

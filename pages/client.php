@@ -1,4 +1,4 @@
-<?php global $path; ?>
+<?php global $path, $translation, $lang; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +25,7 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
   
-  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block">OK to use?</div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel" style="#fff">
     <div class="panel-inner">
       <p id="status-pre">If possible</p>
@@ -96,7 +96,7 @@
       <div class="panel-inner">
         
         <div id="household-status-block">
-          <p>Over the last week you scored: <b><span id="household_score"></span></b>/100</p>
+          <p><?php t("Over the last week you scored");?>: <b><span id="household_score"></span></b>/100</p>
           <!--<p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
           <img id="star1" src="images/star20blue.png" style="width:45px">
           <img id="star2" src="images/star20blue.png" style="width:45px">
@@ -138,20 +138,35 @@
     <!-- SAVING TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="">
-      <div class="panel-inner">
+      <div class="panel-inner" style="color:rgb(100,171,255)">
         <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
         <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(0,71,121)"><div style="height:10px; background-color:rgb(0,71,121)"></div><div class="title">Breakdown</div></div>
+    <div class="accordion" style="color:rgb(0,71,121)">
+        <div style="height:10px; background-color:rgb(0,71,121)"></div>
+        <button id="view-household-bargraph" style="float:right; margin:10px">View Bar Graph</button>
+        <button id="view-household-piechart" style="float:right; margin:10px; display:none">View Pie Chart</button>
+        <div class="title">Breakdown</div></div>
     <div class="panel">
-      <div class="panel-inner" style="">
+      <div class="panel-inner" style="color:rgb(0,71,121)">
         
-        <style> .bd {margin-bottom:5px;} </style>
+        <div id="household_piegraph" style="text-align:left">
+        Time of use & hydro:<br>
+        <div style="text-align:center">
         <div id="household_piegraph_bound">
-          <canvas id="household_piegraph"></canvas>
+          <canvas id="household_piegraph_placeholder"></canvas>
+        </div>
+        </div>
+        </div>
+        
+        <div id="household_bargraph" style="display:none; text-align:left">
+        <div style="margin-bottom:5px">Half-hourly Demand:</div>
+        <div id="household_bargraph_bound">
+          <canvas id="household_bargraph_placeholder"></canvas>
+        </div>
         </div>
       </div>
     </div>
@@ -165,7 +180,7 @@
     <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
-        <p>Over the last week we scored: <b><span id="community_score"></span></b>/100</p>
+        <p><?php t("Over the last week we scored");?>: <b><span id="community_score"></span></b>/100</p>
         <!--<p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
         <img id="community_star1" src="images/star20yellow.png" style="width:45px">
         <img id="community_star2" src="images/star20yellow.png" style="width:45px">
@@ -206,7 +221,7 @@
         <div id="community_bargraph" style="display:none; text-align:left">
         <div style="margin-bottom:5px">Community Half-hourly Demand:</div>
         <div id="community_bargraph_bound">
-          <canvas id="consumption_bargraph_placeholder"></canvas>
+          <canvas id="community_bargraph_placeholder"></canvas>
         </div>
         </div>
         
@@ -294,7 +309,7 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
-  <div class="icon-bar" style="position:absolute; bottom:0px;">
+  <div class="icon-bar" style="">
     <a class="icon-bar-item" title="Ok to Use?" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="My Household" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="Community performance" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
@@ -315,6 +330,8 @@
 
 var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
+var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
+var lang = "<?php echo $lang; ?>";
 
 var accordionheight = 64;
 var iconbarheight = 52;
@@ -358,7 +375,10 @@ $(".accordion").click(function() {
     $(this).next().height(panel_height);
     
     if (view=="hydro") graph_resize(panel_height-120);
-    if (view=="household") household_pie_draw();
+    if (view=="household") {
+        household_pie_draw();
+        household_bargraph_resize(panel_height-40);
+    }
     if (view=="bethesda") {
         community_pie_draw();
         community_bargraph_resize(panel_height-40);
@@ -369,11 +389,16 @@ $(".accordion").click(function() {
 $(window).resize(function(){
   panel_height = $(window).height() - accordionheight*3 - iconbarheight;
   
+  if (panel_height<200) panel_height = 200;
+  
   $(".panel[active=1]").height(panel_height);
   $(".view[view=tips] .panel[active=1]").height(panel_height+accordionheight*2);
   
   if (view=="hydro") graph_resize(panel_height-120);
-  if (view=="household") household_pie_draw();
+  if (view=="household") {
+      household_pie_draw();
+      household_bargraph_resize(panel_height-40);
+  }
   if (view=="bethesda") {
       community_pie_draw();
       community_bargraph_resize(panel_height-40);
@@ -386,7 +411,10 @@ $(".icon-bar-item").click(function(){
   $(".view[view="+view+"]").show();
   
   if (view=="hydro") graph_resize(panel_height-120);
-  if (view=="household") household_pie_draw();
+  if (view=="household") {
+      household_pie_draw();
+      household_bargraph_resize(panel_height-40);
+  }
   if (view=="bethesda") {
       community_pie_draw();
       community_bargraph_resize(panel_height-40);
@@ -434,7 +462,7 @@ function status_update() {
   
   // If evening peak then wait until overnight tariff
   if (tariff=="midday") {
-      $("#status-pre").html("Now is a good time to use electricity");
+      $("#status-pre").html("<?php t('Now is a good time to use electricity'); ?>");
       $("#status-title").html("GO!");
       $("#tariff_summary").html("Now: Midday Price");
       
@@ -487,5 +515,15 @@ $("#next-tip").click(function(){
     $(".tip").hide();
     $(".tip[tipid="+tipid+"]").show();
 });
+
+function t(s) {
+
+    if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
+        return translation[lang][s];
+    } else { 
+        return s;
+    }
+}
+
 </script>
 
