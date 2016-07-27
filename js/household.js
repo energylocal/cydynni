@@ -46,7 +46,7 @@ function household_load()
           
           var totalcostflatrate = result.totalkwh * 0.12;
           var costsaving = totalcostflatrate - totalcost;
-          $(".costsaving").html(costsaving.toFixed(1));
+          $(".costsaving").html(costsaving.toFixed(2));
           $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
           
           var data = [

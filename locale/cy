@@ -27,19 +27,23 @@
 "EVENING PRICE":"PRIS MIN-NOS",
 "OVERNIGHT PRICE":"PRIS DROST-NOS",
 "PENCE PER UNIT":"CEINIOG YR UNED",
+
 "Now":"Rwan",
 "Morning Price":"Pris Bore",
 "Midday Price":"Pris canol dydd",
 "Evening Price":"Pris min-nos",
 "Overnight Price":"Pris drost-nos",
+
 "Currently generating":"Yn cynhyrchu",
 "Last 24 hours":"24 awr diwethaf",
+
 "Welcome!":"Croeso!",
 "Please sign in to see your energy data":"Mewngofnodwch i weld eich data ynni",
 "Login":"Mewngofnodi",
 "Forgotten password?":"Anghofio cyfrinair?",
 "Reset password":"Ailosod cyfrinair",
 "Cancel":"Yn ol",
+
 "View Bar Graph":"Defnydd Haner-awr",
 "View Pie Chart":"Amser Defnydd",
 "Breakdown":"Torri lawr",
@@ -48,11 +52,9 @@
 "Status":"Statws",
 "Cost":"Costau",
 "Saving":"Arbedion",
-"PREVIOUS":"BLAENOROL",
-"NEXT TIP":"TIP NESAF",
-"Tips":"Awgrymiadau",
+
 "Half-hourly Demand":"Defnydd haner-awr",
-"Logout":"Logout",
+"Logout":"Llogi Allan",
 
 "HIGH":"UCHEL",
 "MEDIUM":"CANOLIG",
@@ -75,6 +77,12 @@
 "DOING WELL":"GWNEUD YN DDA",
 "You’re doing really well at using hydro & cheaper power":"Rydych yn gwneud yn dda iawn wrth ddefnyddio hydro & pŵer rhatach",
 
+"You have used":"Rydych wedi defnyddio",
+"We have used":"Rydym wedi defnyddio",
+"in the last week<br>Costing":"yn y wythnos diwethaf<br>Yn costio",
+"You have saved":"Rydych wedi arbed",
+"compared to standard flat rate price":"yn gymharol i pris trydan arferol",
+
 "We are using power in a very expensive way":"Rydym yn defnyddio pwer mewn fordd ddrud",
 "As a community we are MISSING OUT":"Fel cymuned rydym yn COLLI ALLAN",
 "We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?":"Medran gwneud mwy i defnyddio trydan o'r hydro ac ar amseroedd rhatach. Oes bosib symyd defnydd o amseroedd big",
@@ -82,6 +90,24 @@
 "We’re doing really well using the hydro and cheaper power":"Rydym yn gwneud yn dda iawn yn ddefnyddio hydro & pŵer rhatach",
 "As a community we are <b>DOING WELL</b>":"Fel cymuned rydym yn <b>GWNEUD YN DDA</b>",
 
+"Tips":"Awgrymiadau",
+"PREVIOUS":"BLAENOROL",
+"NEXT TIP":"TIP NESAF",
+
 "LED LIGHTS":"GOLEUADAU LED",
-"LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house":"Gall goleuadau LED dorri eich costau goleuo hyd at 90%. Mae rhagor o wybodaeth ar ein gwefan ac yn y pecyn gwybodaeth"
+"LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house":"Gall goleuadau LED dorri eich costau goleuo hyd at 90%. Mae rhagor o wybodaeth ar ein gwefan ac yn y pecyn gwybodaeth",
+
+"WASHING MACHINE":"PEIRIANT GOLCHI",
+"The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)":"Gall yr amser y byddwch yn rhedeg eich peiriant golchi cael ei symud i osgoi big bore a gyda'r nos neu manteisio ar bŵer hydro a'r prisiau rhatach yn ystod y dydd ( 11:00-4:00 ) a dros nos ( 08:00-6:00 )",
+"DISHWASHER":"PEIRIANT GOLCHI LLESTRI",
+"The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)":"The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)",
+"SLOW COOKING":"COGINIO ARAF",
+"Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven.":"Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven.",
+"LIGHTS":"GOLEUADAU",
+"Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.":"Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.",
+"COOKING":"COGINIO",
+"Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.":"Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.",
+"FRIDGE/FREEZER":"OERGELL/RHEWGELL",
+"Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.":"Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run."
+
 }

@@ -139,8 +139,8 @@
     <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block"><?php echo t("Saving");?></div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="">
       <div class="panel-inner" style="color:rgb(100,171,255)">
-        <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
-        <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
+        <p><?php t("You have used");?> <b><span class="totalkwh"></span> kWh</b> <?php t("in the last week<br>Costing"); ?> <b>£<span class="totalcost"></span></b></p>
+        <p><?php t("You have saved"); ?> <b>£<span class="costsaving"></span></b> <?php t("compared to standard flat rate price"); ?></p>
       </div>
     </div>
     
@@ -195,7 +195,7 @@
     <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block"><?php echo t("Cost");?></div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
-        <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
+        <p><?php t("We have used"); ?> <b><span class="community_totalkwh"></span> kWh</b> <?php t("in the last week<br>Costing"); ?> <b>£<span class="community_totalcost"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>
