@@ -28,10 +28,10 @@
   <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel" style="#fff">
     <div class="panel-inner">
-      <p id="status-pre">If possible</p>
+      <p id="status-pre"></p>
 
       <img id="status-img" src="images/waiting-icon.jpg" style="width:100px">
-      <div id="status-title" class="status">WAIT</div>
+      <div id="status-title" class="status"></div>
       <p id="status-until"></p>
       <p id="status-next"></p>
     </div>
@@ -45,22 +45,22 @@
       <div class="tariff-block">
         <img class="tariff-img" tariff="morning" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">6AM - 11AM</div>
-        <div class="tariff-desc">MORNING PRICE - 12 PENCE PER UNIT</div>
+        <div class="tariff-desc"><?php t("MORNING PRICE"); ?> - 12 <?php t("PENCE PER UNIT");?></div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="midday" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">11AM - 4PM</div>
-        <div class="tariff-desc">MIDDAY PRICE - 10 PENCE PER UNIT</div>
+        <div class="tariff-desc"><?php t("MIDDAY PRICE"); ?> - 10 <?php t("PENCE PER UNIT");?></div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="evening" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">4PM - 8PM</div>
-        <div class="tariff-desc">EVENING PRICE - 14 PENCE PER UNIT</div>
+        <div class="tariff-desc"><?php t("EVENING PRICE"); ?> - 14 <?php t("PENCE PER UNIT");?></div>
       </div>
       <div class="tariff-block">
         <img class="tariff-img" tariff="overnight" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
         <div class="tariff-time">8PM - 6AM</div>
-        <div class="tariff-desc">OVERNIGHT PRICE - 7.25 PENCE PER UNIT</div>
+        <div class="tariff-desc"><?php t("OVERNIGHT PRICE"); ?> - 7.25 <?php t("PENCE PER UNIT");?></div>
       </div>
     </div>
   </div>
@@ -72,11 +72,11 @@
     <div class="panel-inner">
       <div style="height:80px; overflow:hidden">
         <div class="status"><span id="hydrostatus"></span></div>
-        Currently generating <b><span id="power"></span> kW</b>
+        <?php t("Currently generating"); ?> <b><span id="power"></span> kW</b>
       </div>
       
       <div style="text-align:center">
-      <div style="margin-bottom:5px">Last 24 hours:</div>
+      <div style="margin-bottom:5px"><?php t("Last 24 hours");?>:</div>
       <div id="placeholder_bound" style="height:100%">
         <canvas id="placeholder"></canvas>
       </div>
@@ -91,7 +91,7 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block"><?php t("Performance"); ?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px"><?php t("Logout");?></div><div class="title" style="display:inline-block"><?php t("Performance"); ?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
         
@@ -109,13 +109,13 @@
         
         <div id="login-block" style="text-align:center">
           <div class="login-box">
-          <h2>Welcome!</h2>
-          <p>Please sign in to see your energy data</p>
+          <h2><?php echo t("Welcome!");?></h2>
+          <p><?php echo t("Please sign in to see your energy data"); ?></p>
           <p>
             <input id="email" type="text" placeholder="Email..."><br><br>
             <input id="password" type="password" placeholder="Password..."><br><br>
-            <button id="login" class="btn">Login</button><br>
-            <div id="passwordreset-start" style="font-size:14px; color:rgba(255,255,255,0.8); cursor:pointer">Forgotten password?</div>
+            <button id="login" class="btn"><?php echo t("Login");?></button><br>
+            <div id="passwordreset-start" style="font-size:14px; color:rgba(255,255,255,0.8); cursor:pointer"><?php echo t("Forgotten password?");?></div>
           </p>
           <div id="alert"></div>
           </div>
@@ -126,7 +126,7 @@
           <p id="passwordreset-title"></p>
           <p>
             <input id="passwordreset-email" type="text" placeholder="Email..."><br><br>
-            <button id="passwordreset" class="btn">Reset password</button> <button id="passwordreset-cancel" class="btn">Cancel</button><br>
+            <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
           </p>
           <div id="passwordreset-alert"></div>
           </div>
@@ -136,7 +136,7 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block"><?php echo t("Saving");?></div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="">
       <div class="panel-inner" style="color:rgb(100,171,255)">
         <p>You have used <b><span class="totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="totalcost"></span></b></p>
@@ -147,14 +147,14 @@
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(0,71,121)">
         <div style="height:10px; background-color:rgb(0,71,121)"></div>
-        <button id="view-household-bargraph" style="float:right; margin:10px">View Bar Graph</button>
-        <button id="view-household-piechart" style="float:right; margin:10px; display:none">View Pie Chart</button>
-        <div class="title">Breakdown</div></div>
+        <button id="view-household-bargraph" style="float:right; margin:10px"><?php echo t("View Bar Graph");?></button>
+        <button id="view-household-piechart" style="float:right; margin:10px; display:none"><?php echo t("View Pie Chart");?></button>
+        <div class="title"><?php echo t("Breakdown");?></div></div>
     <div class="panel">
       <div class="panel-inner" style="color:rgb(0,71,121)">
         
         <div id="household_piegraph" style="text-align:left">
-        Time of use & hydro:<br>
+        <?php echo t("Time of use & hydro");?>:<br>
         <div style="text-align:center">
         <div id="household_piegraph_bound">
           <canvas id="household_piegraph_placeholder"></canvas>
@@ -163,7 +163,7 @@
         </div>
         
         <div id="household_bargraph" style="display:none; text-align:left">
-        <div style="margin-bottom:5px">Half-hourly Demand:</div>
+        <div style="margin-bottom:5px"><?php echo t("Half-hourly Demand");?>:</div>
         <div id="household_bargraph_bound">
           <canvas id="household_bargraph_placeholder"></canvas>
         </div>
@@ -177,7 +177,7 @@
   
   <div class="view" view="bethesda" style="display:none;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block"><?php echo t("Status");?></div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
         <p><?php t("Over the last week we scored");?>: <b><span id="community_score"></span></b>/100</p>
@@ -192,7 +192,7 @@
     </div>
     
     <!-- SAVING TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block"><?php echo t("Cost");?></div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
@@ -203,14 +203,14 @@
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(142,77,0);">
       <div style="height:10px; background-color:rgb(142,77,0)"></div>
-      <button id="view-community-bargraph" style="float:right; margin:10px">View Bar Graph</button>
-      <button id="view-community-piechart" style="float:right; margin:10px; display:none">View Pie Chart</button>
-      <div class="title">Breakdown</div>
+      <button id="view-community-bargraph" style="float:right; margin:10px"><?php echo t("View Bar Graph");?></button>
+      <button id="view-community-piechart" style="float:right; margin:10px; display:none"><?php echo t("View Pie Chart");?></button>
+      <div class="title"><?php echo t("Breakdown");?></div>
     </div>
     <div class="panel" style="color:rgb(142,77,0);">
       <div class="panel-inner">
         <div id="community_piegraph" style="text-align:left">
-        Time of use & hydro:<br>
+        <?php echo t("Time of use & hydro");?>:<br>
         <div style="text-align:center">
         <div id="community_piegraph_bound">
           <canvas id="community_piegraph_placeholder"></canvas>
@@ -219,7 +219,7 @@
         </div>
         
         <div id="community_bargraph" style="display:none; text-align:left">
-        <div style="margin-bottom:5px">Community Half-hourly Demand:</div>
+        <div style="margin-bottom:5px"><?php echo t("Community Half-hourly Demand");?>:</div>
         <div id="community_bargraph_bound">
           <canvas id="community_bargraph_placeholder"></canvas>
         </div>
@@ -234,7 +234,7 @@
   
   <div class="view" view="tips" style="display:none; color:#fff;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#284e3f"><div class="title">Tips</div></div>
+    <div class="accordion" style="background-color:#284e3f"><div class="title"><?php echo t("Tips");?></div></div>
     <div class="panel" style="background-color:#284e3f">
       <div class="panel-inner">
         <!-- TIP 1 -->
@@ -297,8 +297,8 @@
         </div>
            
         <div style="width:320px; margin: 0 auto">
-          <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b><?php t("&#60; PREVIOUS");?></b></div>
-          <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b><?php t("NEXT TIP >");?></b></div>
+          <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b>&#60; <?php t("PREVIOUS");?></b></div>
+          <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b><?php t("NEXT TIP");?>></b></div>
         </div>
           
       </div>
@@ -406,6 +406,7 @@ $(window).resize(function(){
 });
 
 $(".icon-bar-item").click(function(){
+/*
   view = $(this).attr("view");
   $(".view").hide();
   $(".view[view="+view+"]").show();
@@ -419,6 +420,24 @@ $(".icon-bar-item").click(function(){
       community_pie_draw();
       community_bargraph_resize(panel_height-40);
   }
+  */
+});
+
+$(window).on('hashchange', function() {
+    view = parse_location_hash(window.location.hash);
+    
+    $(".view").hide();
+    $(".view[view="+view+"]").show();
+    
+    if (view=="hydro") graph_resize(panel_height-120);
+    if (view=="household") {
+        household_pie_draw();
+        household_bargraph_resize(panel_height-40);
+    }
+    if (view=="bethesda") {
+        community_pie_draw();
+        community_bargraph_resize(panel_height-40);
+    }
 });
 
 // Hydro
@@ -451,7 +470,7 @@ function status_update() {
   if (tariff=="morning") {
       $("#status-pre").html(t("If possible"));
       $("#status-title").html(t("WAIT"));
-      $("#tariff_summary").html(t("Now: Morning Price"));
+      $("#tariff_summary").html(t("Now")+": "+t("Morning Price"));
   
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html(t(t("until")+" <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? cheaper around midday")));
@@ -464,7 +483,7 @@ function status_update() {
   if (tariff=="midday") {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
-      $("#tariff_summary").html(t("Now: Midday Price"));
+      $("#tariff_summary").html(t("Now")+": "+t("Midday Price"));
       
       var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? midday price currently available"));
@@ -475,7 +494,7 @@ function status_update() {
   if (tariff=="evening") {
       $("#status-pre").html(t("If possible"));
       $("#status-title").html(t("WAIT"));
-      $("#tariff_summary").html(t("Now: Evening Price"));
+      $("#tariff_summary").html(t("Now")+": "+t("Evening Price"));
       
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? overnight price coming up"));
@@ -487,7 +506,7 @@ function status_update() {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
       
-      $("#tariff_summary").html(t("Now: Overnight Price"));
+      $("#tariff_summary").html(t("Now")+": "+t("Overnight Price"));
       
       if (hour>6) {
           var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
@@ -523,6 +542,15 @@ function t(s) {
     } else { 
         return s;
     }
+}
+
+function parse_location_hash(hash)
+{
+    hash = hash.substring(1);
+    hash = hash.replace("?","/");
+    hash = hash.replace("&","/");
+    hash = hash.split("/");
+    return hash;
 }
 
 </script>
