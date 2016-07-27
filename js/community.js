@@ -1,4 +1,5 @@
 var community_pie_data = [];
+var communityseries = [];
 
 function community_load()
 {
@@ -61,11 +62,12 @@ function community_load()
 
 function community_pie_draw() {
     var width = $("#community_piegraph_bound").width();
+    var height = $("#community_piegraph_bound").height();
     if (width>400) width = 400;
-    $("#community_piegraph").attr('width',width);
+    $("#community_piegraph_placeholder").attr('width',width);
     var height = width*0.9;
     $('#community_piegraph_bound').attr("height",height);
-    $('#community_piegraph').attr("height",height);
+    $('#community_piegraph_placeholder').attr("height",height);
     
     var options = {
       color: "#3b6358",
@@ -74,5 +76,72 @@ function community_pie_draw() {
       height: height
     };  
     
-    piegraph("community_piegraph",community_pie_data,options);
+    piegraph("community_piegraph_placeholder",community_pie_data,options);
 }
+
+function community_bargraph_load() {
+
+    var end = +new Date;
+    var start = end - (3600000*24.0*1);
+    var interval = 1800;
+    var intervalms = interval * 1000;
+    end = Math.floor(end / intervalms) * intervalms;
+    start = Math.floor(start / intervalms) * intervalms;
+    
+    var feedid = 67087;    
+
+    var data = [];
+    $.ajax({                                      
+        url: path+"average?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
+        data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
+        dataType: 'json',
+        async: true,                      
+        success: function(result) {
+            if (!result || result===null || result==="" || result.constructor!=Array) {
+                console.log("ERROR","feed.getdata invalid response: "+result);
+            } else {
+
+                var hydro_data = result;
+                // Solar values less than zero are invalid
+                for (var z in hydro_data)
+                    if (hydro_data[z][1]<0) hydro_data[z][1]=0;
+
+                communityseries = [];
+                communityseries.push({data:hydro_data, color:"rgba(142,77,0,0.7)"});
+                
+                community_bargraph_draw();
+            }
+        }
+    });
+}
+
+function community_bargraph_draw() {
+    bargraph("consumption_bargraph_placeholder",communityseries);
+}
+
+function community_bargraph_resize(h) {
+    width = $("#community_bargraph_bound").width();
+    $("#consumption_bargraph_placeholder").attr('width',width);
+    $('#community_bargraph_bound').attr("height",h);
+    $('#consumption_bargraph_placeholder').attr("height",h);
+    height = h;
+    community_bargraph_draw();
+}
+
+$("#view-community-bargraph").click(function(){
+    $("#view-community-bargraph").hide();
+    $("#view-community-piechart").show();
+    
+    $("#community_piegraph").hide();
+    $("#community_bargraph").show();
+    
+    community_bargraph_load();
+});
+
+$("#view-community-piechart").click(function(){
+    $("#view-community-bargraph").show();
+    $("#view-community-piechart").hide();
+    
+    $("#community_piegraph").show();
+    $("#community_bargraph").hide();
+});

@@ -12,8 +12,8 @@ select {
   height: 38px;
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: rgba(255,255,255,0.3);
-  color:#fff;
-  border: 1px solid #fff;
+  color:#000;
+  border: 1px solid #000;
   border-radius: 6px;
   box-shadow: none;
   box-sizing: border-box; }

@@ -5,7 +5,9 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat&amp;lang=en" />
+    
     
     <title>Cyd Ynni</title>
     <link rel="stylesheet" type="text/css" href="theme/style.css" />
@@ -68,13 +70,16 @@
   <div class="accordion" style="color:rgb(39,78,63)"><div style="height:10px; background-color:rgb(39,78,63)"></div><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel">
     <div class="panel-inner">
-      <div style="height:120px; overflow:hidden">
+      <div style="height:80px; overflow:hidden">
         <div class="status"><span id="hydrostatus"></span></div>
-        <p>Currently generating <b><span id="power"></span> kW</b></p>
-        <p>LAST 24 HOURS and next 12 hours</p>
+        Currently generating <b><span id="power"></span> kW</b>
       </div>
+      
+      <div style="text-align:center">
+      <div style="margin-bottom:5px">Last 24 hours:</div>
       <div id="placeholder_bound" style="height:100%">
         <canvas id="placeholder"></canvas>
+      </div>
       </div>
     </div>
   </div>
@@ -157,8 +162,8 @@
   
   <div class="view" view="bethesda" style="display:none;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(255,220,0)"><div style="height:10px; background-color:rgb(255,220,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel">
+    <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
         <p>Over the last week we scored: <b><span id="community_score"></span></b>/100</p>
         <!--<p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
@@ -173,7 +178,7 @@
     
     <!-- SAVING TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
-    <div class="panel">
+    <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
         <p>We have used <b><span class="community_totalkwh"></span> kWh</b> in the last week<br>Costing <b>£<span class="community_totalcost"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
@@ -181,13 +186,30 @@
     </div>
     
     <!-- BREAKDOWN TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(142,77,0);"><div style="height:10px; background-color:rgb(142,77,0)"></div><div class="title">Breakdown</div></div>
-    <div class="panel">
+    <div class="accordion" style="color:rgb(142,77,0);">
+      <div style="height:10px; background-color:rgb(142,77,0)"></div>
+      <button id="view-community-bargraph" style="float:right; margin:10px">View Bar Graph</button>
+      <button id="view-community-piechart" style="float:right; margin:10px; display:none">View Pie Chart</button>
+      <div class="title">Breakdown</div>
+    </div>
+    <div class="panel" style="color:rgb(142,77,0);">
       <div class="panel-inner">
-        <style> .bd {margin-bottom:5px;} </style>
+        <div id="community_piegraph" style="text-align:left">
+        Time of use & hydro:<br>
+        <div style="text-align:center">
         <div id="community_piegraph_bound">
-          <canvas id="community_piegraph"></canvas>
+          <canvas id="community_piegraph_placeholder"></canvas>
         </div>
+        </div>
+        </div>
+        
+        <div id="community_bargraph" style="display:none; text-align:left">
+        <div style="margin-bottom:5px">Community Half-hourly Demand:</div>
+        <div id="community_bargraph_bound">
+          <canvas id="consumption_bargraph_placeholder"></canvas>
+        </div>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -272,7 +294,7 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
   
-  <div class="icon-bar">
+  <div class="icon-bar" style="position:absolute; bottom:0px;">
     <a class="icon-bar-item" title="Ok to Use?" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="My Household" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="Community performance" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
@@ -282,6 +304,8 @@
   </body>
 </html>
 
+
+<script language="javascript" type="text/javascript" src="js/bargraph.js"></script>
 <script language="javascript" type="text/javascript" src="js/pie.js"></script>
 <script language="javascript" type="text/javascript" src="js/hydro.js"></script>
 <script language="javascript" type="text/javascript" src="js/household.js"></script>
@@ -293,7 +317,7 @@ var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
 
 var accordionheight = 64;
-var iconbarheight = 51;
+var iconbarheight = 52;
 
 var tipid = 1;
 
@@ -308,11 +332,10 @@ if (!session) {
 
 var panel_height = $(window).height() - accordionheight*3 - iconbarheight;
 var view = "hydro";
-var height = $(window).height() - accordionheight*3 - iconbarheight;
-$(".view[view=hydro] .panel").first().height(height);
-$(".view[view=household] .panel").first().height(height);
-$(".view[view=bethesda] .panel").first().height(height);
-$(".view[view=tips] .panel").first().height(height+accordionheight*2);
+$(".view[view=hydro] .panel").first().height(panel_height).attr("active",1);
+$(".view[view=household] .panel").first().height(panel_height).attr("active",1);
+$(".view[view=bethesda] .panel").first().height(panel_height).attr("active",1);
+$(".view[view=tips] .panel").first().height(panel_height+accordionheight*2).attr("active",1);
 
 $(".view").each(function() {
    $(this).find(".panel-summary").first().hide();
@@ -329,27 +352,45 @@ $(".accordion").click(function() {
     $(".panel-summary").show();
     $(this).find(".panel-summary").hide();
     // Show only clicked panel
-    panel_height = $(window).height() - accordionheight*3 - iconbarheight;
     $(this).next().attr("active",1);
+    
+    panel_height = $(window).height() - accordionheight*3 - iconbarheight;
     $(this).next().height(panel_height);
-    if (view=="hydro") graph_resize(panel_height-40-120);
+    
+    if (view=="hydro") graph_resize(panel_height-120);
     if (view=="household") household_pie_draw();
-    if (view=="bethesda") community_pie_draw();
+    if (view=="bethesda") {
+        community_pie_draw();
+        community_bargraph_resize(panel_height-40);
+    }
   }
 });
 
 $(window).resize(function(){
   panel_height = $(window).height() - accordionheight*3 - iconbarheight;
+  
   $(".panel[active=1]").height(panel_height);
-  if (view=="hydro") graph_resize(panel_height-40-120);
+  $(".view[view=tips] .panel[active=1]").height(panel_height+accordionheight*2);
+  
+  if (view=="hydro") graph_resize(panel_height-120);
   if (view=="household") household_pie_draw();
-  if (view=="bethesda") community_pie_draw();
+  if (view=="bethesda") {
+      community_pie_draw();
+      community_bargraph_resize(panel_height-40);
+  }
 });
 
 $(".icon-bar-item").click(function(){
   view = $(this).attr("view");
   $(".view").hide();
   $(".view[view="+view+"]").show();
+  
+  if (view=="hydro") graph_resize(panel_height-120);
+  if (view=="household") household_pie_draw();
+  if (view=="bethesda") {
+      community_pie_draw();
+      community_bargraph_resize(panel_height-40);
+  }
 });
 
 // Hydro
