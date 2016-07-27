@@ -1,8 +1,16 @@
 {
-"OK to use?":"IAWN i defnyddio?",
+"OK to use?":"Iawn i defnyddio?",
+"Performance":"Perfformiad",
+"Electricity Prices":"Prisiau trydan",
+"If possible":"Os bosib",
+"WAIT":"AROS",
+"Why? overnight price coming up":"Pam? pris drost-nos yn dod fynu",
+"until":"tan",
 "Now is a good time to use electricity":"Mae rwan yn amser da i defnyddio trydan",
 "Over the last week you scored":"Dros yr wythnos ddiwethaf sgor chi ydi",
 "Over the last week we scored":"Dros yr wythnos ddiwethaf sgor ni ydi",
 "You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?":"Rydych yn gwneud yn iawn! drwy ddefnyddio hydro a trydan amser rhatach.<br>Allwch symud mwy o'ch defnydd i ffwrdd o'r adegau prysuraf?",
-"You’re doing really well at using hydro & cheaper power":"Rydych yn gwneud yn dda iawn wrth ddefnyddio hydro & pŵer rhatach"
+"You’re doing really well at using hydro & cheaper power":"Rydych yn gwneud yn dda iawn wrth ddefnyddio hydro & pŵer rhatach",
+"LED LIGHTS":"GOLEUADAU LED",
+"LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house":"Gall goleuadau LED dorri eich costau goleuo hyd at 90%. Mae rhagor o wybodaeth ar ein gwefan ac yn y pecyn gwybodaeth"
 }

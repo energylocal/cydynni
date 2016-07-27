@@ -39,7 +39,7 @@
   
   <!-- TARIFF TAB ------------------------------------------------------->
 
-  <div class="accordion" style="color:rgb(33,145,110)"><div style="height:10px; background-color:rgb(33,145,110)"></div><div class="title" style="display:inline-block">Electricity Prices</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="accordion" style="color:rgb(33,145,110)"><div style="height:10px; background-color:rgb(33,145,110)"></div><div class="title" style="display:inline-block"><?php echo t("Electricity Prices");?></div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel">
     <div class="panel-inner">
       <div class="tariff-block">
@@ -91,7 +91,7 @@
   
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Performance</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block"><?php t("Performance"); ?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
         
@@ -240,65 +240,65 @@
         <!-- TIP 1 -->
         <div class="tip" tipid=1 style="width:320px; margin: 0 auto;">
           <img src="images/light-bulb-3.png" class="tipimage">
-          <h1>LED LIGHTS</h1>
+          <h1><?php t("LED LIGHTS");?></h1>
           <div style="text-align:left">
-          <p>LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house</p>
+          <p><?php t("LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house");?></p>
           </div>
         </div>
         <!-- TIP 2 -->
         <div class="tip" tipid=2 style="width:320px; margin: 0 auto; display:none">
           <img src="images/washing-machine.png" class="tipimage">
-          <h1>WASHING MACHINE</h1>
+          <h1><?php t("WASHING MACHINE");?></h1>
           <div style="text-align:left">
-          <p>The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
+          <p><?php t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)");?></p>
           </div>
         </div>
         <!-- TIP 3 -->
         <div class="tip" tipid=3 style="width:320px; margin: 0 auto; display:none">
           <img src="images/dishwasher.png" class="tipimage">
-          <h1>DISHWASHER</h1>
+          <h1><?php t("DISHWASHER");?></h1>
           <div style="text-align:left">
-          <p>The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)</p>
+          <p><?php t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am)");?></p>
           </div>
         </div>
         <!-- TIP 4 -->
         <div class="tip" tipid=4 style="width:320px; margin: 0 auto; display:none">
           <img src="images/slow-cooker.png" class="tipimage">
-          <h1>SLOW COOKING</h1>
+          <h1><?php t("SLOW COOKING");?></h1>
           <div style="text-align:left">
-          <p>Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven. </p>
+          <p><?php t("Slow cookers are very energy efficient, make tasty dinners and helping you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise being using an electric oven.");?></p>
           </div>
         </div>
         <!-- TIP 5 -->
         <div class="tip" tipid=5 style="width:320px; margin: 0 auto; display:none">
           <img src="images/lamp-6.png" class="tipimage">
-          <h1>LIGHTS</h1>
+          <h1><?php t("LIGHTS");?></h1>
           <div style="text-align:left">
-          <p>Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.</p>
+          <p><?php t("Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.");?></p>
           </div>
         </div>
         <!-- TIP 6 -->
         <div class="tip" tipid=6 style="width:320px; margin: 0 auto; display:none">
           
           <img src="images/stove.png" class="tipimage">
-          <h1>COOKING</h1>
+          <h1><?php t("COOKING");?></h1>
           <div style="text-align:left">
-          <p>Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.</p>
+          <p><?php t("Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.");?></p>
           </div>
         </div>
         <!-- TIP 7 -->
         <div class="tip" tipid=7 style="width:320px; margin: 0 auto; display:none">
           
           <img src="images/fridge-2.png" class="tipimage">
-          <h1>FRIDGE/FREEZER</h1>
+          <h1><?php t("FRIDGE/FREEZER");?></h1>
           <div style="text-align:left">
-          <p>Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.</p>
+          <p><?php t("Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.");?></p>
           </div>
         </div>
            
         <div style="width:320px; margin: 0 auto">
-          <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b>&#60; PREVIOUS</b></div>
-          <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b>NEXT TIP ></b></div>
+          <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b><?php t("&#60; PREVIOUS");?></b></div>
+          <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b><?php t("NEXT TIP >");?></b></div>
         </div>
           
       </div>
@@ -449,53 +449,53 @@ function status_update() {
   
   // If morning peak then wait until midday tariff
   if (tariff=="morning") {
-      $("#status-pre").html("If possible");
-      $("#status-title").html("WAIT");
-      $("#tariff_summary").html("Now: Morning Price");
+      $("#status-pre").html(t("If possible"));
+      $("#status-title").html(t("WAIT"));
+      $("#tariff_summary").html(t("Now: Morning Price"));
   
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? cheaper around midday");
+      $("#status-until").html(t(t("until")+" <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? cheaper around midday")));
       
-      $("#status-next").html("After that the next best time to use power<br>is <b>8pm - 6am.</b>");
-      $("#cydynni_summary").html("Wait until 11am");
+      $("#status-next").html(t("After that the next best time to use power<br>is <b>8pm - 6am.</b>"));
+      $("#cydynni_summary").html(t("Wait until 11am"));
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="midday") {
-      $("#status-pre").html("<?php t('Now is a good time to use electricity'); ?>");
-      $("#status-title").html("GO!");
-      $("#tariff_summary").html("Now: Midday Price");
+      $("#status-pre").html(t("Now is a good time to use electricity"));
+      $("#status-title").html(t("GO!"));
+      $("#tariff_summary").html(t("Now: Midday Price"));
       
       var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? midday price currently available");
-      $("#cydynni_summary").html("Ok until 4pm");
+      $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? midday price currently available"));
+      $("#cydynni_summary").html(t("Ok until 4pm"));
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="evening") {
-      $("#status-pre").html("If possible");
-      $("#status-title").html("WAIT");
-      $("#tariff_summary").html("Now: Evening Price");
+      $("#status-pre").html(t("If possible"));
+      $("#status-title").html(t("WAIT"));
+      $("#tariff_summary").html(t("Now: Evening Price"));
       
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? overnight price coming up");
-      $("#cydynni_summary").html("Wait until 8pm");
+      $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? overnight price coming up"));
+      $("#cydynni_summary").html(t("Wait until 8pm"));
   }
   
   // If evening peak then wait until overnight tariff
   if (tariff=="overnight") {
-      $("#status-pre").html("Now is a good time to use electricity");
-      $("#status-title").html("GO!");
+      $("#status-pre").html(t("Now is a good time to use electricity"));
+      $("#status-title").html(t("GO!"));
       
-      $("#tariff_summary").html("Now: Overnight Price");
+      $("#tariff_summary").html(t("Now: Overnight Price"));
       
       if (hour>6) {
           var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
       } else {
           var time_to_wait = (6-(hour+1))+" HOURS, "+(60-minutes)+" MINS";
       }
-      $("#status-until").html("until <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? overnight price currently available");
-      $("#cydynni_summary").html("Ok until 6am");
+      $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
+      $("#cydynni_summary").html(t("Ok until 6am"));
   }
   
   $(".tariff-img").hide();

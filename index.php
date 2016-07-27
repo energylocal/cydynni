@@ -39,6 +39,7 @@ $translation->cy = json_decode(file_get_contents("locale/cy"));
 
 $lang = "en";
 if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
+if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $lang = "cy";
 
 $format = "html";
 $content = "Sorry page not found";
