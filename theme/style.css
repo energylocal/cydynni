@@ -37,8 +37,9 @@ p {
 /* Style the accordion panel. Note: hidden by default */
 div.panel {
   height: 0;
-  transition: height ease 1.0s;
   overflow:hidden;
+  transition: height linear 0.2s;
+
 }
 
 /* The "show" class is added to the accordion panel when the user clicks on one of the buttons. This will show the panel content */
@@ -90,7 +91,6 @@ div.panel.show {
   width: 25%;
   padding: 12px 0;
   float: left;
-  transition: all 0.3s ease;
   color: white;
   font-size: 22px;
 }

@@ -4,27 +4,41 @@
 <html lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat&amp;lang=en" />
-    
-    
     <title>Cyd Ynni</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes"
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#006400">
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" type="text/css" href="theme/style.css" />
     <link rel="stylesheet" type="text/css" href="theme/forms.css" />
     <link rel="stylesheet" type="text/css" href="theme/buttons.css" />
-    
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
   </head>
   <body>
-  
+
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
-  
+
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
-  
+
   <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
   <div class="panel" style="#fff">
     <div class="panel-inner">
@@ -36,7 +50,7 @@
       <p id="status-next"></p>
     </div>
   </div>
-  
+
   <!-- TARIFF TAB ------------------------------------------------------->
 
   <div class="accordion" style="color:rgb(33,145,110)"><div style="height:10px; background-color:rgb(33,145,110)"></div><div class="title" style="display:inline-block">Electricity Prices</div><div id="tariff_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
@@ -64,7 +78,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- HYDRO TAB ------------------------------------------------------->
 
   <div class="accordion" style="color:rgb(39,78,63)"><div style="height:10px; background-color:rgb(39,78,63)"></div><div class="title" style="display:inline-block">Hydro</div><div id="hydro_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
@@ -74,7 +88,7 @@
         <div class="status"><span id="hydrostatus"></span></div>
         Currently generating <b><span id="power"></span> kW</b>
       </div>
-      
+
       <div style="text-align:center">
       <div style="margin-bottom:5px">Last 24 hours:</div>
       <div id="placeholder_bound" style="height:100%">
@@ -83,18 +97,18 @@
       </div>
     </div>
   </div>
-  
+
   </div>
-  
+
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
-  
+
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px">Logout</div><div class="title" style="display:inline-block">Performance</div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
-        
+
         <div id="household-status-block">
           <p><?php t("Over the last week you scored");?>: <b><span id="household_score"></span></b>/100</p>
           <!--<p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
@@ -106,7 +120,7 @@
           <p id="statusmsg"></p>
           <!--Read more about what this means here-->
         </div>
-        
+
         <div id="login-block" style="text-align:center">
           <div class="login-box">
           <h2>Welcome!</h2>
@@ -120,7 +134,7 @@
           <div id="alert"></div>
           </div>
         </div>
-        
+
         <div id="passwordreset-block" style="text-align:center; display:none">
           <div class="login-box">
           <p id="passwordreset-title"></p>
@@ -131,10 +145,10 @@
           <div id="passwordreset-alert"></div>
           </div>
         </div>
-        
+
       </div>
     </div>
-    
+
     <!-- SAVING TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(100,171,255)"><div style="height:10px; background-color:rgb(100,171,255)"></div><div class="title" style="display:inline-block">Saving</div><div id="household_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel"  style="">
@@ -143,7 +157,7 @@
         <p>You have saved <b>£<span class="costsaving"></span></b> compared to standard flat rate price</p>
       </div>
     </div>
-    
+
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(0,71,121)">
         <div style="height:10px; background-color:rgb(0,71,121)"></div>
@@ -152,7 +166,7 @@
         <div class="title">Breakdown</div></div>
     <div class="panel">
       <div class="panel-inner" style="color:rgb(0,71,121)">
-        
+
         <div id="household_piegraph" style="text-align:left">
         Time of use & hydro:<br>
         <div style="text-align:center">
@@ -161,7 +175,7 @@
         </div>
         </div>
         </div>
-        
+
         <div id="household_bargraph" style="display:none; text-align:left">
         <div style="margin-bottom:5px">Half-hourly Demand:</div>
         <div id="household_bargraph_bound">
@@ -171,10 +185,10 @@
       </div>
     </div>
   </div>
-  
+
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
-  
+
   <div class="view" view="bethesda" style="display:none;">
     <!-- STATUS TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block">Status</div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
@@ -190,7 +204,7 @@
         <p id="community_statusmsg"></p>
       </div>
     </div>
-    
+
     <!-- SAVING TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(255,117,0);"><div style="height:10px; background-color:rgb(255,117,0)"></div><div class="title" style="display:inline-block">Cost</div><div id="community_saving_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(255,117,0);">
@@ -199,7 +213,7 @@
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>
-    
+
     <!-- BREAKDOWN TAB ------------------------------------------------------->
     <div class="accordion" style="color:rgb(142,77,0);">
       <div style="height:10px; background-color:rgb(142,77,0)"></div>
@@ -217,21 +231,21 @@
         </div>
         </div>
         </div>
-        
+
         <div id="community_bargraph" style="display:none; text-align:left">
         <div style="margin-bottom:5px">Community Half-hourly Demand:</div>
         <div id="community_bargraph_bound">
           <canvas id="community_bargraph_placeholder"></canvas>
         </div>
         </div>
-        
+
       </div>
     </div>
   </div>
 
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
-  
+
   <div class="view" view="tips" style="display:none; color:#fff;">
     <!-- STATUS TAB ------------------------------------------------------->
     <div class="accordion" style="background-color:#284e3f"><div class="title">Tips</div></div>
@@ -279,7 +293,7 @@
         </div>
         <!-- TIP 6 -->
         <div class="tip" tipid=6 style="width:320px; margin: 0 auto; display:none">
-          
+
           <img src="images/stove.png" class="tipimage">
           <h1>COOKING</h1>
           <div style="text-align:left">
@@ -288,27 +302,27 @@
         </div>
         <!-- TIP 7 -->
         <div class="tip" tipid=7 style="width:320px; margin: 0 auto; display:none">
-          
+
           <img src="images/fridge-2.png" class="tipimage">
           <h1>FRIDGE/FREEZER</h1>
           <div style="text-align:left">
           <p>Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.</p>
           </div>
         </div>
-           
+
         <div style="width:320px; margin: 0 auto">
           <div id="previous-tip" style="float:left; padding:10px; background-color:#527165; cursor:pointer"><b>&#60; PREVIOUS</b></div>
           <div id="next-tip" style="float:right; padding:10px; background-color:#527165; cursor:pointer"><b>NEXT TIP ></b></div>
         </div>
-          
+
       </div>
     </div>
-    
+
   </div>
-  
+
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
-  
+
   <div class="icon-bar" style="">
     <a class="icon-bar-item" title="Ok to Use?" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="My Household" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
@@ -370,10 +384,10 @@ $(".accordion").click(function() {
     $(this).find(".panel-summary").hide();
     // Show only clicked panel
     $(this).next().attr("active",1);
-    
+
     panel_height = $(window).height() - accordionheight*3 - iconbarheight;
     $(this).next().height(panel_height);
-    
+
     if (view=="hydro") graph_resize(panel_height-120);
     if (view=="household") {
         household_pie_draw();
@@ -388,12 +402,12 @@ $(".accordion").click(function() {
 
 $(window).resize(function(){
   panel_height = $(window).height() - accordionheight*3 - iconbarheight;
-  
+
   if (panel_height<200) panel_height = 200;
-  
+
   $(".panel[active=1]").height(panel_height);
   $(".view[view=tips] .panel[active=1]").height(panel_height+accordionheight*2);
-  
+
   if (view=="hydro") graph_resize(panel_height-120);
   if (view=="household") {
       household_pie_draw();
@@ -409,7 +423,7 @@ $(".icon-bar-item").click(function(){
   view = $(this).attr("view");
   $(".view").hide();
   $(".view[view="+view+"]").show();
-  
+
   if (view=="hydro") graph_resize(panel_height-120);
   if (view=="household") {
       household_pie_draw();
@@ -430,65 +444,65 @@ status_update();
 setInterval(status_update,10000);
 function status_update() {
   var time = new Date();
-  
+
   var hour = time.getHours();
   var minutes = time.getMinutes();
-  
+
   $("#status-next").html("");
-  
+
   var tariff = 0;
   if ((hour>=6) && (hour<11)) tariff = "morning";
   if ((hour>=11) && (hour<16)) tariff = "midday";
   if ((hour>=16) && (hour<20)) tariff = "evening";
   if ((hour>=20) || (hour<6)) tariff = "overnight";
-  
+
   if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon-small.jpg");
   if (tariff=="midday") $("#status-img").attr("src","images/new-tick-small.jpg");
   if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon-small.jpg");
   if (tariff=="overnight") $("#status-img").attr("src","images/new-tick-small.jpg");
-  
+
   // If morning peak then wait until midday tariff
   if (tariff=="morning") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
       $("#tariff_summary").html("Now: Morning Price");
-  
+
       var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? cheaper around midday");
-      
+
       $("#status-next").html("After that the next best time to use power<br>is <b>8pm - 6am.</b>");
       $("#cydynni_summary").html("Wait until 11am");
   }
-  
+
   // If evening peak then wait until overnight tariff
   if (tariff=="midday") {
       $("#status-pre").html("<?php t('Now is a good time to use electricity'); ?>");
       $("#status-title").html("GO!");
       $("#tariff_summary").html("Now: Midday Price");
-      
+
       var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? midday price currently available");
       $("#cydynni_summary").html("Ok until 4pm");
   }
-  
+
   // If evening peak then wait until overnight tariff
   if (tariff=="evening") {
       $("#status-pre").html("If possible");
       $("#status-title").html("WAIT");
       $("#tariff_summary").html("Now: Evening Price");
-      
+
       var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
       $("#status-until").html("until <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>Why? overnight price coming up");
       $("#cydynni_summary").html("Wait until 8pm");
   }
-  
+
   // If evening peak then wait until overnight tariff
   if (tariff=="overnight") {
       $("#status-pre").html("Now is a good time to use electricity");
       $("#status-title").html("GO!");
-      
+
       $("#tariff_summary").html("Now: Overnight Price");
-      
+
       if (hour>6) {
           var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
       } else {
@@ -497,7 +511,7 @@ function status_update() {
       $("#status-until").html("until <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>Why? overnight price currently available");
       $("#cydynni_summary").html("Ok until 6am");
   }
-  
+
   $(".tariff-img").hide();
   $(".tariff-img[tariff="+tariff+"]").show();
 }
@@ -520,10 +534,9 @@ function t(s) {
 
     if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
         return translation[lang][s];
-    } else { 
+    } else {
         return s;
     }
 }
 
 </script>
-
