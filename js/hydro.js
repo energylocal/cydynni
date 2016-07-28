@@ -22,20 +22,20 @@ function update()
             power = 1*data_in / 75.0;
             $("#power").html(power.toFixed(1));
             if (power>=50) {
-                $("#hydrostatus").html("HIGH");
-                $("#hydro_summary").html("For next 12 hours: HIGH POWER");
+                $("#hydrostatus").html(t("HIGH"));
+                $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
             }
             else if (power>=30) {
-                $("#hydrostatus").html("MEDIUM");
-                $("#hydro_summary").html("For next 12 hours: MEDIUM");
+                $("#hydrostatus").html(t("MEDIUM"));
+                $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
             }
             else if (power>=10) {
-                $("#hydrostatus").html("LOW");
-                $("#hydro_summary").html("For next 12 hours: LOW");
+                $("#hydrostatus").html(t("LOW"));
+                $("#hydro_summary").html(t("For next 12 hours: LOW"));
             }
             else {
-                $("#hydrostatus").html("VERY LOW");
-                $("#hydro_summary").html("For next 12 hours: VERY LOW");
+                $("#hydrostatus").html(t("VERY LOW"));
+                $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
             }
         }
     });

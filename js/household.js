@@ -19,15 +19,15 @@ function household_load()
           setTimeout(function() {
               if (prc<30) {
                   $("#statusmsg").html(t("You are using power in a very expensive way"));
-                  $("#household_status_summary").html("MISSING OUT");
+                  $("#household_status_summary").html(t("MISSING OUT"));
               }
               if (prc>=30 && prc<70) {
                   $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?"));
-                  $("#household_status_summary").html("DOING OK");
+                  $("#household_status_summary").html(t("DOING OK"));
               }
               if (prc>=70) {
                   $("#statusmsg").html(t("You’re doing really well at using hydro & cheaper power"));
-                  $("#household_status_summary").html("DOING WELL");
+                  $("#household_status_summary").html(t("DOING WELL"));
               }
           }, 400);
           
@@ -46,14 +46,14 @@ function household_load()
           
           var totalcostflatrate = result.totalkwh * 0.12;
           var costsaving = totalcostflatrate - totalcost;
-          $(".costsaving").html(costsaving.toFixed(1));
-          $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" LAST WEEK");
+          $(".costsaving").html(costsaving.toFixed(2));
+          $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
           
           var data = [
-            {name:"MORNING", value: result.morningkwh, color:"rgba(0,71,121,0.8)"},
-            {name:"MIDDAY", value: result.middaykwh, color:"rgba(0,71,121,0.6)"},
-            {name:"EVENING", value: result.eveningkwh, color:"rgba(0,71,121,0.9)"},
-            {name:"OVERNIGHT", value: result.overnightkwh, color:"rgba(0,71,121,0.4)"},
+            {name:t("MORNING"), value: result.morningkwh, color:"rgba(0,71,121,0.8)"},
+            {name:t("MIDDAY"), value: result.middaykwh, color:"rgba(0,71,121,0.6)"},
+            {name:t("EVENING"), value: result.eveningkwh, color:"rgba(0,71,121,0.9)"},
+            {name:t("OVERNIGHT"), value: result.overnightkwh, color:"rgba(0,71,121,0.4)"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
