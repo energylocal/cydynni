@@ -1,6 +1,10 @@
 
 function bargraph(element,series) 
 {
+    if (series[0]==undefined) return false;
+    if (width==undefined) return false;
+    if (height==undefined) return false;
+    
     var padding = 5;
     
     var c = document.getElementById(element);  

@@ -22,7 +22,7 @@ function household_load()
                   $("#household_status_summary").html(t("MISSING OUT"));
               }
               if (prc>=30 && prc<70) {
-                  $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper times of day.<br>Can you move more of your use away from peak times?"));
+                  $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
                   $("#household_status_summary").html(t("DOING OK"));
               }
               if (prc>=70) {
