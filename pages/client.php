@@ -9,21 +9,21 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="images/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#006400">
-    <link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="images/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="images/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="images/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="images/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="images/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="images/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" type="text/css" href="theme/style.css" />
     <link rel="stylesheet" type="text/css" href="theme/forms.css" />
@@ -39,7 +39,7 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
 
-  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div><div id="togglelang" style="float:right; padding:14px">CY</div></div>
   <div class="panel" style="#fff">
     <div class="panel-inner">
       <p id="status-pre"><?php echo t("If possible");?></p>
@@ -346,6 +346,11 @@ var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
+if (lang=="cy") {
+    $("#togglelang").html("EN");
+} else {
+    $("#togglelang").html("CY");
+}
 
 var accordionheight = 64;
 var iconbarheight = 52;
@@ -433,6 +438,18 @@ $(".icon-bar-item").click(function(){
       community_pie_draw();
       community_bargraph_resize(panel_height-40);
   }
+});
+
+$("#togglelang").click(function(){
+    var ilang = $(this).html();
+    if (ilang=="CY") {
+        $(this).html("EN");
+        window.location = "?lang=cy";
+    } else {
+        $(this).html("CY");
+        lang="cy";
+        window.location = "?lang=en";
+    }
 });
 
 // Hydro
