@@ -28,4 +28,4 @@ print "Result: ".json_encode(db_schema_setup($mysqli,$schema,true))."\n";
 //
 //require("user_model.php");
 //$user = new User($mysqli);
-//print $user->register("trystan.lea@gmail.com","admin","apikey",0);
+//print $user->register("mary@energylocal.co.uk","KrQ9ehllfstmCQp","apikey",0);

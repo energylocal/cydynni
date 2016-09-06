@@ -70,6 +70,7 @@ function load() {
                 var hydro_data = result;
                 // Solar values less than zero are invalid
                 for (var z in hydro_data)
+                    hydro_data[z][1] = hydro_data[z][1] / 75.0;
                     if (hydro_data[z][1]<0) hydro_data[z][1]=0;
 
                 hydroseries = [];
@@ -82,7 +83,7 @@ function load() {
 }
 
 function draw() {
-    bargraph("placeholder",hydroseries);
+    bargraph("placeholder",hydroseries," kW");
 }
 
 function graph_resize(h) {

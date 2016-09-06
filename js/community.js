@@ -114,7 +114,7 @@ function community_bargraph_load() {
 }
 
 function community_bargraph_draw() {
-    bargraph("community_bargraph_placeholder",communityseries);
+    bargraph("community_bargraph_placeholder",communityseries," W");
 }
 
 function community_bargraph_resize(h) {

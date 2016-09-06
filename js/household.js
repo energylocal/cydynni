@@ -117,7 +117,7 @@ function household_bargraph_load() {
 }
 
 function household_bargraph_draw() {
-    bargraph("household_bargraph_placeholder",householdseries);
+    bargraph("household_bargraph_placeholder",householdseries, " W");
 }
 
 function household_bargraph_resize(h) {

@@ -1,5 +1,5 @@
 
-function bargraph(element,series) 
+function bargraph(element,series,units) 
 {
     if (series[0]==undefined) return false;
     if (width==undefined) return false;
@@ -91,7 +91,7 @@ function bargraph(element,series)
     // -------------------------------------------------------------------------
     // Y-axis ticks
     // -------------------------------------------------------------------------
-    var ticksize = 500;
+    var ticksize = Math.round((ymax-ymin)/10);
     var start = Math.floor(ymin / ticksize) * ticksize;
     var end = Math.ceil(ymax / ticksize) * ticksize;
     start += ticksize;
@@ -102,7 +102,7 @@ function bargraph(element,series)
         var y = plot_height - ((((v - ymin) / (ymax - ymin)) * plot_height)+1);
         ctx.moveTo(2,padding+y);
         ctx.lineTo(7,padding+y);
-        ctx.fillText(v,5,padding+y-5);
+        ctx.fillText(v+units,5,padding+y-5);
     }
     ctx.stroke();
     // -------------------------------------------------------------------------

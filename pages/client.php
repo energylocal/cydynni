@@ -39,7 +39,7 @@
   <!-- OK TO USE? TAB ------------------------------------------------------->
   <div class="view" view="hydro">
 
-  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div><div id="togglelang" style="float:right; padding:14px">CY</div></div>
+  <div class="accordion" style="color:rgb(39,201,63)"><div style="height:10px; background-color:rgb(39,201,63)"></div><div class="title" style="display:inline-block"><?php echo t("OK to use?"); ?></div><div id="cydynni_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div><div class="togglelang" style="float:right; padding:14px">CY</div></div>
   <div class="panel" style="#fff">
     <div class="panel-inner">
       <p id="status-pre"><?php echo t("If possible");?></p>
@@ -105,7 +105,7 @@
 
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div id="logout" style="float:right; padding:14px"><?php echo t("Logout");?></div><div class="title" style="display:inline-block"><?php echo t("Performance");?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div class="togglelang" style="float:right; padding:14px">CY</div><div id="logout" style="float:right; padding:14px"><?php echo t("Logout");?></div><div class="title" style="display:inline-block"><?php echo t("Performance");?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
     <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
 
@@ -189,9 +189,9 @@
   <!---------------------------------------------------------------------------------------------------------------------------------->
   <!---------------------------------------------------------------------------------------------------------------------------------->
 
-  <div class="view" view="bethesda" style="display:none;">
+  <div class="view" view="community" style="display:none;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block"><?php echo t("Status"); ?></div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(234,200,0)"><div style="height:10px; background-color:rgb(235,200,0)"></div><div class="title" style="display:inline-block"><?php echo t("Status"); ?></div><div id="community_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div><div class="togglelang" style="float:right; padding:14px">CY</div></div>
     <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
         <p><?php t("Over the last week we scored");?>: <b><span id="community_score"></span></b>/100</p>
@@ -248,7 +248,7 @@
 
   <div class="view" view="tips" style="display:none; color:#fff;">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="background-color:#284e3f"><div class="title"><?php echo t("Tips");?></div></div>
+    <div class="accordion" style="background-color:#284e3f"><div class="togglelang" style="float:right; padding:14px">CY</div><div class="title"><?php echo t("Tips");?></div></div>
     <div class="panel" style="background-color:#284e3f">
       <div class="panel-inner">
         <!-- TIP 1 -->
@@ -326,7 +326,7 @@
   <div class="icon-bar" style="">
     <a class="icon-bar-item" title="Ok to Use?" view="hydro" href="#hydro"><img src="images/el-clock-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="My Household" view="household" href="#household"><img src="images/el-person-icon.png" style="width:22px"></a>
-    <a class="icon-bar-item" title="Community performance" view="bethesda" href="#bethesda"><img src="images/el-group-icon.png" style="width:22px"></a>
+    <a class="icon-bar-item" title="Community performance" view="community" href="#community"><img src="images/el-group-icon.png" style="width:22px"></a>
     <a class="icon-bar-item" title="Tips" view="tips" href="#tips"><img src="images/el-bulb-icon.png" style="width:22px"></a>
   </div>
 
@@ -347,10 +347,12 @@ var session = JSON.parse('<?php echo json_encode($session); ?>');
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 if (lang=="cy") {
-    $("#togglelang").html("EN");
+    $(".togglelang").html("EN");
 } else {
-    $("#togglelang").html("CY");
+    $(".togglelang").html("CY");
 }
+
+
 
 var accordionheight = 64;
 var iconbarheight = 52;
@@ -367,16 +369,24 @@ if (!session) {
 }
 
 var panel_height = $(window).height() - accordionheight*3 - iconbarheight;
+
+var req = parse_location_hash(window.location.hash);
 var view = "hydro";
+if (req[0]=="household") view = "household";
+if (req[0]=="community") view = "community";
+if (req[0]=="tips") view = "tips";
+
+$(".view").hide();
+$(".view[view="+view+"]").show();
+
 $(".view[view=hydro] .panel").first().height(panel_height).attr("active",1);
 $(".view[view=household] .panel").first().height(panel_height).attr("active",1);
-$(".view[view=bethesda] .panel").first().height(panel_height).attr("active",1);
+$(".view[view=community] .panel").first().height(panel_height).attr("active",1);
 $(".view[view=tips] .panel").first().height(panel_height+accordionheight*2).attr("active",1);
 
 $(".view").each(function() {
    $(this).find(".panel-summary").first().hide();
 });
-
 
 $(".accordion").click(function() {
   if (view=="household" && !session) {
@@ -393,15 +403,7 @@ $(".accordion").click(function() {
     panel_height = $(window).height() - accordionheight*3 - iconbarheight;
     $(this).next().height(panel_height);
 
-    if (view=="hydro") graph_resize(panel_height-120);
-    if (view=="household") {
-        household_pie_draw();
-        household_bargraph_resize(panel_height-40);
-    }
-    if (view=="bethesda") {
-        community_pie_draw();
-        community_bargraph_resize(panel_height-40);
-    }
+    draw_panel();
   }
 });
 
@@ -413,42 +415,37 @@ $(window).resize(function(){
   $(".panel[active=1]").height(panel_height);
   $(".view[view=tips] .panel[active=1]").height(panel_height+accordionheight*2);
 
-  if (view=="hydro") graph_resize(panel_height-120);
-  if (view=="household") {
-      household_pie_draw();
-      household_bargraph_resize(panel_height-40);
-  }
-  if (view=="bethesda") {
-      community_pie_draw();
-      community_bargraph_resize(panel_height-40);
-  }
+  draw_panel();
 });
 
 $(".icon-bar-item").click(function(){
   view = $(this).attr("view");
   $(".view").hide();
   $(".view[view="+view+"]").show();
+  draw_panel();
+});
 
+function draw_panel() {
   if (view=="hydro") graph_resize(panel_height-120);
   if (view=="household") {
       household_pie_draw();
       household_bargraph_resize(panel_height-40);
   }
-  if (view=="bethesda") {
+  if (view=="community") {
       community_pie_draw();
       community_bargraph_resize(panel_height-40);
   }
-});
+}
 
-$("#togglelang").click(function(){
+$(".togglelang").click(function(){
     var ilang = $(this).html();
     if (ilang=="CY") {
         $(this).html("EN");
-        window.location = "?lang=cy";
+        window.location = "?lang=cy#"+view;
     } else {
         $(this).html("CY");
         lang="cy";
-        window.location = "?lang=en";
+        window.location = "?lang=en#"+view;
     }
 });
 
@@ -484,8 +481,9 @@ function status_update() {
       $("#status-title").html(t("WAIT"));
       $("#tariff_summary").html(t("Now")+": "+t("Morning Price"));
 
-      var time_to_wait = (11 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html(t("until")+" <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? cheaper around midday"));
+      var time_to_wait = (11 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      
+      $("#status-until").html(t("until")+" <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? cheaper around midday"));
 
       $("#status-next").html(t("After that the next best time to use power<br>is <b>8pm - 6am.</b>"));
       $("#cydynni_summary").html(t("Wait until 11am"));
@@ -497,7 +495,7 @@ function status_update() {
       $("#status-title").html(t("GO!"));
       $("#tariff_summary").html(t("Now")+": "+t("Midday Price"));
 
-      var time_to_wait = (16 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
+      var time_to_wait = (16 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? midday price currently available"));
       $("#cydynni_summary").html(t("Ok until 4pm"));
   }
@@ -508,8 +506,8 @@ function status_update() {
       $("#status-title").html(t("WAIT"));
       $("#tariff_summary").html(t("Now")+": "+t("Evening Price"));
 
-      var time_to_wait = (20 - (hour+1))+" HOURS, "+(60-minutes)+" MINS";
-      $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" FROM NOW)</span><br>"+t("Why? overnight price coming up"));
+      var time_to_wait = (20 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? overnight price coming up"));
       $("#cydynni_summary").html(t("Wait until 8pm"));
   }
 
@@ -521,9 +519,9 @@ function status_update() {
       $("#tariff_summary").html(t("Now")+": "+t("Overnight Price"));
 
       if (hour>6) {
-          var time_to_wait = (24-(hour+1)+6)+" HOURS, "+(60-minutes)+" MINS";
+          var time_to_wait = (24-(hour+1)+6)+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       } else {
-          var time_to_wait = (6-(hour+1))+" HOURS, "+(60-minutes)+" MINS";
+          var time_to_wait = (6-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       }
       $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
       $("#cydynni_summary").html(t("Ok until 6am"));
@@ -554,6 +552,15 @@ function t(s) {
     } else {
         return s;
     }
+}
+
+function parse_location_hash(hash)
+{
+    hash = hash.substring(1);
+    hash = hash.replace("?","/");
+    hash = hash.replace("&","/");
+    hash = hash.split("/");
+    return hash;
 }
 
 </script>
