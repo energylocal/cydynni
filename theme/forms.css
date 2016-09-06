@@ -13,10 +13,14 @@ select {
   padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
   background-color: rgba(255,255,255,0.3);
   color:#000;
-  border: 1px solid #000;
+  /*border: 1px solid #000;*/
+  border: 1px solid rgb(41,171,226);
+  color: rgb(41,171,226);
+  
   border-radius: 6px;
   box-shadow: none;
   box-sizing: border-box; }
+  
 /* Removes awkward default styles on some inputs for iOS */
 input[type="email"],
 input[type="number"],
@@ -61,17 +65,17 @@ label > .label-body {
   font-weight: normal; }
   
 input::-webkit-input-placeholder {
-   color: #fff;
+   color: rgb(41,171,226);
 }
 
 input:-moz-placeholder { /* Firefox 18- */
-   color: #fff;  
+   color: rgb(41,171,226);  
 }
 
 input::-moz-placeholder {  /* Firefox 19+ */
-   color: #fff;  
+   color: rgb(41,171,226);  
 }
 
 input:-ms-input-placeholder {  
-   color: #fff;  
+   color: rgb(41,171,226);  
 }

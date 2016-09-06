@@ -126,10 +126,10 @@
           <h2><?php echo t("Welcome!");?></h2>
           <p><?php echo t("Please sign in to see your energy data");?></p>
           <p>
-            <input id="email" type="text" placeholder="Email..."><br><br>
-            <input id="password" type="password" placeholder="Password..."><br><br>
+            <input id="email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
+            <input id="password" type="password" placeholder="Password..." style="border: 1px solid rgb(41,171,226)"><br><br>
             <button id="login" class="btn"><?php echo t("Login");?></button><br>
-            <div id="passwordreset-start" style="font-size:14px; color:rgba(255,255,255,0.8); cursor:pointer"><?php echo t("Forgotten password?");?></div>
+            <div id="passwordreset-start" style="font-size:14px; color:rgba(255,255,255,0.8); cursor:pointer; color:rgb(41,171,226)"><?php echo t("Forgotten password?");?></div>
           </p>
           <div id="alert"></div>
           </div>
@@ -139,7 +139,7 @@
           <div class="login-box">
           <p id="passwordreset-title"></p>
           <p>
-            <input id="passwordreset-email" type="text" placeholder="Email..."><br><br>
+            <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
             <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
           </p>
           <div id="passwordreset-alert"></div>

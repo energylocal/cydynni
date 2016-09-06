@@ -118,6 +118,8 @@ class User
     //--------------------------------------------------------------------------------------- 
     public function passwordreset($email)
     {
+        // return false;
+        
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Email address format error";
 
         if (!$u = $this->getbyemail($email)) return "User not found";
@@ -141,10 +143,7 @@ class User
         // ------------------------------------------------------------------
         // Email with swift
         // ------------------------------------------------------------------
-        $have_swift = @include_once ("Swift/swift_required.php"); 
-        if (!$have_swift) {
-           $have_swift = @include_once ("swift_required.php");
-        }
+        $have_swift = @include_once ("lib/swift/swift_required.php"); 
 
         if (!$have_swift){
             print "Could not find SwiftMailer - cannot proceed";
@@ -153,9 +152,13 @@ class User
 
         global $smtp_email_settings;
         
-        $transport = Swift_SmtpTransport::newInstance(
-            $smtp_email_settings['host'],$smtp_email_settings['port'],'ssl'
-        )->setUsername($smtp_email_settings['username'])->setPassword($smtp_email_settings['password']);
+        // ---------------------------------------------------------
+        // Removed sequre connect $smtp_email_settings['port'],'ssl'
+        // Not supported by 123reg
+        // ---------------------------------------------------------
+        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
+          ->setUsername($smtp_email_settings['username'])
+          ->setPassword($smtp_email_settings['password']);
 
         $mailer = Swift_Mailer::newInstance($transport);
         $message = Swift_Message::newInstance()
