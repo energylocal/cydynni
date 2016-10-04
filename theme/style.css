@@ -1,14 +1,16 @@
 body {
-  background-color: #333;
-  font-family:"Ubuntu";
+  background-color: #fff;
+  font-family: Montserrat, Veranda, sans-serif;
   margin:0;
   padding:0;
   text-align:center;
-  color: #fff;
+  color: #3b6358;
+  
 }
 
 .container {
   margin: 0 auto;
+  min-width:360px;
 }
 
 p {
@@ -19,11 +21,14 @@ p {
 .accordion {
   cursor: pointer;
   width: 100%;
+  min-width:360px;
   text-align: left;
   border: none;
   outline: none;
-  transition: 0.2s;
-  height:54px;
+  height:64px;
+  -webkit-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -31,9 +36,10 @@ p {
 
 /* Style the accordion panel. Note: hidden by default */
 div.panel {
-  transition: height ease 1.0s;
+  height: 0;
   overflow:hidden;
-  height:0px;
+  transition: height linear 0.2s;
+
 }
 
 /* The "show" class is added to the accordion panel when the user clicks on one of the buttons. This will show the panel content */
@@ -68,7 +74,8 @@ div.panel.show {
 }
 
 .panel-inner {
-  padding:20px;
+  padding-left:14px;
+  padding-right:14px;
 }
 
 /* --- Icon Bar --- */
@@ -84,7 +91,6 @@ div.panel.show {
   width: 25%;
   padding: 12px 0;
   float: left;
-  transition: all 0.3s ease;
   color: white;
   font-size: 22px;
 }
@@ -106,23 +112,25 @@ table {
 
 table, th, td {
   text-align:left;
-  border: 1px solid #fff;
+  border: 1px solid #000;
   padding:6px 13px;
 }
 
 .login-box {
   text-align:center;
-  background-color:rgba(255,255,255,0.2); 
-  width:300px; 
+  /*background-color:rgb(41,171,226);*/
+  border: 1px solid rgb(41,171,226);
+  width:300px;
   margin: 0 auto;
   border-radius: 15px;
   padding:10px;
+  color:rgb(41,171,226);
 }
 
 #logout {
-  float:right; 
-  padding:18px; 
-  color:#fff;
+  float:right;
+  padding:18px;
+  color:rgb(41,171,226);
 }
 
 #logout:hover {
@@ -140,7 +148,6 @@ table, th, td {
   }
   
   .panel-inner {
-    padding-top:0px;
   }
 
   .tipimage {

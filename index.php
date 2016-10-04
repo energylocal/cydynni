@@ -1,4 +1,5 @@
 <?php
+
 /*
 
 Source code is released under the GNU Affero General Public License.
@@ -14,6 +15,7 @@ http://openenergymonitor.org
 
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
+date_default_timezone_set('Europe/London');
 
 // ---------------------------------------------------------
 require "settings.php";
@@ -28,11 +30,18 @@ session_start();
 $session = $user->status();
 // ---------------------------------------------------------
 
-$redis = new Redis();
-$connected = $redis->connect("127.0.0.1");
+// $redis = new Redis();
+// $connected = $redis->connect("127.0.0.1");
 
 $q = "";
 if (isset($_GET['q'])) $q = $_GET['q'];
+
+$translation = new stdClass();
+$translation->cy = json_decode(file_get_contents("locale/cy"));
+
+$lang = "en";
+if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
+if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $lang = "cy";
 
 $format = "html";
 $content = "Sorry page not found";
@@ -63,12 +72,38 @@ switch ($q)
         
         $data = array("morningkwh"=>0, "middaykwh"=>0, "eveningkwh"=>0, "overnightkwh"=>0, "totalkwh"=>0);
         foreach ($users as $u) {
-            $userdata = get_household_data($u->apikey,$u->feedid);
-            $data["morningkwh"] += $userdata["morningkwh"];
-            $data["middaykwh"] += $userdata["middaykwh"];
-            $data["eveningkwh"] += $userdata["eveningkwh"];
-            $data["overnightkwh"] += $userdata["overnightkwh"];
-            $data["totalkwh"] += $userdata["totalkwh"];
+            if ($u->feedid>0) {
+                $userdata = get_household_data($u->apikey,$u->feedid);
+                $data["morningkwh"] += $userdata["morningkwh"];
+                $data["middaykwh"] += $userdata["middaykwh"];
+                $data["eveningkwh"] += $userdata["eveningkwh"];
+                $data["overnightkwh"] += $userdata["overnightkwh"];
+                $data["totalkwh"] += $userdata["totalkwh"];
+            }
+        }
+        $content = $data;
+         
+        break;
+        
+    case "community/halfhourlydata":
+        $format = "json";
+        $users = $user->userlist();
+        
+        $start = get("start");
+        $end = get("end");
+        
+        $data = array();
+        
+        foreach ($users as $u) {
+            if ($u->feedid>0) {
+                $feedid = $u->feedid; $apikey = $u->apikey;
+                $userdata = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feedid&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=0&apikey=$apikey"));
+                for ($z=0; $z<count($userdata); $z++) {
+                    if (!isset($data[$z])) $data[$z] = array(0,0);
+                    $data[$z][0] = $userdata[$z][0];
+                    $data[$z][1] += $userdata[$z][1];
+                }
+            }
         }
         $content = $data;
          
@@ -130,6 +165,11 @@ switch ($q)
     case "admin/users":
         $format = "json";
         if ($session['admin']) $content = $user->userlist();
+        break;
+        
+    case "passwordreset":
+        $format = "text";
+        $content = $user->passwordreset(get('email'));
         break;
 }
 
