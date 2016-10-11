@@ -34,7 +34,7 @@ class User
     }
     
     private function getbyemail($email) {
-        $stmt = $this->mysqli->prepare("SELECT id,email,password,salt,admin,apikey,feedid FROM users WHERE email = ?");
+        $stmt = $this->mysqli->prepare("SELECT id,email,dbhash,salt,admin,apikey,feedid FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
@@ -76,10 +76,10 @@ class User
 
         $hash = hash('sha256', $password);
         $salt = md5(uniqid(mt_rand(), true));
-        $password = hash('sha256', $salt . $hash);
+        $dbhash = hash('sha256', $salt . $hash);
 
-        $stmt = $this->mysqli->prepare("INSERT INTO users (email, password, salt, admin,apikey,feedid) VALUES (?,?,?,0,?,?)");
-        $stmt->bind_param("sssss", $email, $password, $salt,$apikey,$feedid);
+        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin,apikey,feedid) VALUES (?,?,?,0,?,?)");
+        $stmt->bind_param("sssss", $email, $dbhash, $salt,$apikey,$feedid);
         if (!$stmt->execute()) {
             return "Error creating user";
         }
@@ -114,6 +114,53 @@ class User
     }
 
     //---------------------------------------------------------------------------------------
+    // Change password
+    //--------------------------------------------------------------------------------------- 
+    public function change_password_nocheck($userid, $new)
+    {
+        $userid = intval($userid);
+
+        if (strlen($new) < 4 || strlen($new) > 250) return "New password length error";
+
+        // 2) Save new password
+        $hash = hash('sha256', $new);
+        $salt = md5(uniqid(rand(), true));
+        $newdbhash = hash('sha256', $salt . $hash);
+        $this->mysqli->query("UPDATE users SET dbhash = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
+        return "Password changed";
+    }
+
+    //---------------------------------------------------------------------------------------
+    // Change password
+    //--------------------------------------------------------------------------------------- 
+    public function change_password($userid, $old, $new)
+    {
+        $userid = intval($userid);
+
+        if (strlen($old) < 4 || strlen($old) > 250) return "Old password length error";
+        if (strlen($new) < 4 || strlen($new) > 250) return "New password length error";
+
+        // 1) check that old password is correct
+        $result = $this->mysqli->query("SELECT dbhash, salt FROM users WHERE id = '$userid'");
+        $row = $result->fetch_object();
+        $hash = hash('sha256', $row->salt . hash('sha256', $old));
+
+        if ($hash == $row->dbhash)
+        {
+            // 2) Save new password
+            $hash = hash('sha256', $new);
+            $salt = md5(uniqid(rand(), true));
+            $newdbhash = hash('sha256', $salt . $hash);
+            $this->mysqli->query("UPDATE users SET dbhash = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
+            return "Password changed";
+        }
+        else
+        {
+            return "Old password incorect";
+        }
+    }
+
+    //---------------------------------------------------------------------------------------
     // Forgotten password
     //--------------------------------------------------------------------------------------- 
     public function passwordreset($email)
@@ -132,10 +179,10 @@ class User
         // Hash and salt
         $hash = hash('sha256', $newpass);
         $salt = md5(uniqid(rand(), true));
-        $password = hash('sha256', $salt . $hash);
+        $dbhash = hash('sha256', $salt . $hash);
 
         // Save password and salt
-        $this->mysqli->query("UPDATE users SET password = '$password', salt = '$salt' WHERE id = '$userid'");
+        $this->mysqli->query("UPDATE users SET dbhash = '$dbhash', salt = '$salt' WHERE id = '$userid'");
 
         $subject = "CydYnni password reset";                    
         $message = "<p>A password reset was requested for your CydYnni account.</p><p>Your can now login with password: $newpass </p>";
