@@ -112,7 +112,7 @@ table {
 
 table, th, td {
   text-align:left;
-  border: 1px solid #000;
+  border: 1px solid #aaa;
   padding:6px 13px;
 }
 
