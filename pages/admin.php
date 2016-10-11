@@ -10,17 +10,27 @@
     <link rel="stylesheet" type="text/css" href="theme/style.css" />
     <link rel="stylesheet" type="text/css" href="theme/forms.css" />
     <link rel="stylesheet" type="text/css" href="theme/buttons.css" />
-
+    <link rel="stylesheet" type="text/css" href="theme/admin.css" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    
   </head>
-  <body style="background-color:#29abe2; color: #fff; text-align:left">
+  <body>
+  
+    <div class="admin-top-nav">
+      <div class="container">
+        <div class="admin-top-nav-title">CydYnni App Administration</div>
+        <div class="logout">Logout</div>
+      </div>
+    </div>
     
     <div class="container">
-    <br><br>
+    <div class="inner">
+    
     <div id="login-block">
-      
+      <br><br>
       <div class="login-box">
+        
         <h2>Admin Login</h2>
         <p>
           <input id="email" type="text" placeholder="Email..."><br><br>
@@ -33,29 +43,26 @@
     </div>
     
     <div id="admin-block" style="display:none">
-      <div id="logout">Logout</div>
-      <div class="title">Admin</div>
       
-      <div style="padding:20px; color:#fff">
-      
-        <table class="table">
-          <tr><th>User ID</th><th>Email</th><th>Apikey</th><th>Feedid</th><th>Admin</th></tr>
-          <tbody id="users"></tbody>
-        </table>
-        <br><br>
-        <p><b>Create new user:</b></p>
-        <p>
-          <input id="register-email" type="text" placeholder="Email..."><br><br>
-          <input id="register-password" type="password" placeholder="Password..."><br><br>
-          <input id="apikey" type="text" placeholder="Emoncms.org read apikey"><br><br>
-          <input id="feedid" type="text" placeholder="Emoncms.org consumption feedid"><br><br>
-          <button id="register" class="btn">Create account</button>
-        </p>
-        <div class="alert"></div>
+      <h3>User list</h3>
+      <table class="table">
+        <tr><th>User ID</th><th>Email</th><th>Apikey</th><th>Feedid</th><th>Admin</th></tr>
+        <tbody id="users"></tbody>
+      </table>
+      <br><br>
+      <p><b>Create new user:</b></p>
+      <p>
+        <input id="register-email" type="text" placeholder="Email..."><br><br>
+        <input id="register-password" type="password" placeholder="Password..."><br><br>
+        <input id="apikey" type="text" placeholder="Emoncms.org read apikey"><br><br>
+        <input id="feedid" type="text" placeholder="Emoncms.org consumption feedid"><br><br>
+        <button id="register" class="btn">Create account</button>
+      </p>
+      <div class="alert"></div>
 
-      </div>
     </div>
     
+    </div>
     </div>
   
   </body>
@@ -65,7 +72,12 @@
 var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
 
-if (session.admin) load();
+if (session.admin) {
+    load();
+    $(".logout").show();
+} else {
+    $(".logout").hide();
+}
 
 function load() {
     $("#login-block").hide();
@@ -98,6 +110,7 @@ $("#login").click(function() {
                 $(".alert").html("");
                 if (session.admin) {
                     load();
+                    $(".logout").show();
                 } else {
                     logout();
                     $(".alert").html("Administrator access only");
@@ -120,11 +133,12 @@ $("#register").click(function() {
         dataType: 'text',
         success: function(result) {
             $(".alert").html(result);
+            load();
         }
     });
 });
 
-$("#logout").click(function() { logout(); });
+$(".logout").click(function() { logout(); });
 
 function logout() {
     $.ajax({
@@ -134,6 +148,7 @@ function logout() {
             $("#login-block").show();
             $("#welcome-block").hide();
             $("#admin-block").hide();
+            $(".logout").hide();
         }
     });
 }
