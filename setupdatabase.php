@@ -9,7 +9,7 @@ $schema = array();
 $schema['users'] = array(
     'id' => array('type' => 'int(11)', 'Null'=>'NO', 'Key'=>'PRI', 'Extra'=>'auto_increment'),
     'email' => array('type' => 'varchar(30)'),
-    'password' => array('type' => 'varchar(64)'),
+    'dbhash' => array('type' => 'varchar(64)'),
     'salt' => array('type' => 'varchar(32)'),
     'admin' => array('type' => 'int(11)', 'Null'=>'NO'),
     'apikey' => array('type' => 'varchar(64)'),
@@ -25,7 +25,6 @@ print "Result: ".json_encode(db_schema_setup($mysqli,$schema,true))."\n";
 // ----------------------------------------
 // Create admin user
 // ----------------------------------------
-//
-//require("user_model.php");
-//$user = new User($mysqli);
-//print $user->register("mary@energylocal.co.uk","KrQ9ehllfstmCQp","apikey",0);
+require("user_model.php");
+$user = new User($mysqli);
+print $user->register("user@email.com","admin","apikey",0);
