@@ -151,6 +151,11 @@ switch ($q)
         $format = "text";
         if ($session['admin']) $content = $user->register(get('email'),get('password'),get('apikey'),get('feedid'));
         break;
+        
+    case "registeremail":
+        $format = "text";
+        if ($session['admin']) $content = $user->registeremail(get('userid'));
+        break;
                 
     case "login":
         $format = "json";
