@@ -1,0 +1,28 @@
+.admin-top-nav {
+    background-color:#29abe2; 
+    color: #fff; 
+    text-align:left;
+    padding:10px;
+    height:20px;
+}
+
+.admin-top-nav-title {
+    float:left;
+}
+
+.logout {
+    float:right;
+    cursor:pointer;
+}
+
+.container {
+    text-align:left;
+}
+
+@media (max-width: 960px) {
+  .inner {
+    padding:20px;
+  }
+}
+
+
