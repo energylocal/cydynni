@@ -163,6 +163,67 @@ class User
     //---------------------------------------------------------------------------------------
     // Forgotten password
     //--------------------------------------------------------------------------------------- 
+    public function registeremail($userid)
+    {
+        $userid = (int) $userid;
+        $result = $this->mysqli->query("SELECT * FROM users WHERE id = '$userid'");
+        if (!$row = $result->fetch_array()) return "user not found";
+        
+        $email = $row['email'];
+        
+        // Generate new random password
+        $newpass = hash('sha256',md5(uniqid(rand(), true)));
+        $newpass = substr($newpass, 0, 10);
+
+        // Hash and salt
+        $hash = hash('sha256', $newpass);
+        $salt = md5(uniqid(rand(), true));
+        $dbhash = hash('sha256', $salt . $hash);
+
+        // Save password and salt
+        $this->mysqli->query("UPDATE users SET dbhash = '$dbhash', salt = '$salt' WHERE id = '$userid'");
+
+        $subject = "Welcome to CydYnni, account details";   
+                         
+        $message = view("emailbound.php",array(
+            "title"=>"Welcome to CydYnni",
+            "message"=>"Your can now login with email address: $email and password: $newpass"
+        ));
+
+        // ------------------------------------------------------------------
+        // Email with swift
+        // ------------------------------------------------------------------
+        $have_swift = @include_once ("lib/swift/swift_required.php"); 
+
+        if (!$have_swift){
+            print "Could not find SwiftMailer - cannot proceed";
+            exit;
+        };
+
+        global $smtp_email_settings;
+        
+        // ---------------------------------------------------------
+        // Removed sequre connect $smtp_email_settings['port'],'ssl'
+        // Not supported by 123reg
+        // ---------------------------------------------------------
+        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
+          ->setUsername($smtp_email_settings['username'])
+          ->setPassword($smtp_email_settings['password']);
+
+        $mailer = Swift_Mailer::newInstance($transport);
+        $message = Swift_Message::newInstance()
+          ->setSubject($subject)
+          ->setFrom($smtp_email_settings['from'])
+          ->setTo(array($email))
+          ->setBody($message, 'text/html');
+        $result = $mailer->send($message);
+        // ------------------------------------------------------------------
+        return "Email sent";
+    }
+    
+    //---------------------------------------------------------------------------------------
+    // Forgotten password
+    //--------------------------------------------------------------------------------------- 
     public function passwordreset($email)
     {
         // return false;
