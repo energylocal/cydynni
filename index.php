@@ -176,6 +176,15 @@ switch ($q)
         $format = "text";
         $content = $user->passwordreset(get('email'));
         break;
+        
+    case "changepassword":
+        $format = "text";
+        if ($session && isset($session['userid']) && $session['userid']>0) {
+            $content = $user->change_password($session['userid'], post("old"), post("new"));
+        } else {
+            $content = "session not valid";
+        }
+        break;
 }
 
 switch ($format) 

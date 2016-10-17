@@ -31,10 +31,10 @@ function household_load()
               }
           }, 400);
           
-          $(".morningkwh").html(result.morningkwh.toFixed(1));
-          $(".middaykwh").html(result.middaykwh.toFixed(1));
-          $(".eveningkwh").html(result.eveningkwh.toFixed(1));
-          $(".overnightkwh").html(result.overnightkwh.toFixed(1));
+          $(".morningkwh").html((1*result.morningkwh).toFixed(1));
+          $(".middaykwh").html((1*result.middaykwh).toFixed(1));
+          $(".eveningkwh").html((1*result.eveningkwh).toFixed(1));
+          $(".overnightkwh").html((1*result.overnightkwh).toFixed(1));
           
           var totalcost = 0;
           totalcost += result.morningkwh * 0.12;

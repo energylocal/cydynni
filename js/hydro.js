@@ -54,12 +54,12 @@ function load() {
     end = Math.floor(end / intervalms) * intervalms;
     start = Math.floor(start / intervalms) * intervalms;
     
-    var feedid = 67087;    
+    var feedid = 114934;    
 
     var data = [];
     $.ajax({                                      
-        url: path+"average?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
-        data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
+        url: path+"data?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
+        data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=0&limitinterval=1",
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -68,9 +68,15 @@ function load() {
             } else {
 
                 var hydro_data = result;
+                
+                for (var z in hydro_data) {
+                    console.log(hydro_data[z][1]);
+                
+                }
+                
                 // Solar values less than zero are invalid
                 for (var z in hydro_data)
-                    hydro_data[z][1] = hydro_data[z][1] / 75.0;
+                    hydro_data[z][1] = hydro_data[z][1];
                     if (hydro_data[z][1]<0) hydro_data[z][1]=0;
 
                 hydroseries = [];
@@ -83,7 +89,7 @@ function load() {
 }
 
 function draw() {
-    bargraph("placeholder",hydroseries," kW");
+    bargraph("placeholder",hydroseries," MW");
 }
 
 function graph_resize(h) {

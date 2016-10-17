@@ -9,10 +9,12 @@ $("#login").click(function() {
         success: function(result) {
             if (result.userid!=undefined) {
                 session = result;
+                $("#user-email").html(session.email);
                 // if (session.admin) { window.location = "admin"; return false; }
                 $("#login-block").hide();
                 $("#household-status-block").show();
-                $("#logout").show();
+                $(".logout").show();
+                $(".myaccount").show();
                 household_load();
             } else {
                 $("#alert").html(result);
@@ -35,15 +37,17 @@ $("#register").click(function() {
     });
 });
 
-$("#logout").click(function() {
+$(".logout").click(function() {
     $.ajax({                   
         url: path+"/logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();
             $("#household-status-block").hide();
-            $("#logout").hide();
+            $(".logout").hide();
+            $(".myaccount").hide();
             session = false;
+            window.location = "";
         }
     });
 });
@@ -81,6 +85,31 @@ $("#passwordreset").click(function() {
                 $("#passwordreset-cancel").html("Return to Login");
             }
             
+        }
+    });
+});
+
+$(".myaccount").click(function() {
+  view = "myaccount";
+  window.location ="#myaccount"
+  $(".view").hide();
+  $(".view[view="+view+"]").show();
+});
+
+$("#change-password").click(function() {
+    var current_password = $("#change-password-current").val();
+    var new_password = $("#change-password-new").val();
+    console.log(current_password);
+    console.log(new_password);
+    $("#change-password-alert").html("Request sent");
+    $.ajax({   
+        type: "POST",           
+        url: path+"changepassword",                         
+        data: "old="+current_password+"&new="+new_password,
+        dataType: 'text',
+        success: function(result) {
+            console.log(result);
+            $("#change-password-alert").html(result);
         }
     });
 });

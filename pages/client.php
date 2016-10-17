@@ -105,7 +105,14 @@
 
   <div class="view" view="household" style="display:none">
     <!-- STATUS TAB ------------------------------------------------------->
-    <div class="accordion" style="color:rgb(41,171,226)"><div style="height:10px; background-color:rgb(41,171,226)"></div><div class="togglelang" style="float:right; padding:14px">CY</div><div id="logout" style="float:right; padding:14px"><?php echo t("Logout");?></div><div class="title" style="display:inline-block"><?php echo t("Performance");?></div><div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div></div>
+    <div class="accordion" style="color:rgb(41,171,226)">
+      <div style="height:10px; background-color:rgb(41,171,226)"></div>
+      <div class="togglelang" style="float:right; padding:14px">CY</div>
+      <div class="logout" style="float:right; padding:14px"><?php echo t("Logout");?></div>
+      <div class="myaccount" style="float:right; padding:14px">My Account</div>
+      <div class="title" style="display:inline-block"><?php echo t("Performance");?></div>
+      <div id="household_status_summary" class="panel-summary" style="display:inline-block; font-size:14px"></div>
+    </div>
     <div class="panel" style="color:rgb(41,171,226)">
       <div class="panel-inner">
 
@@ -181,6 +188,33 @@
         <div id="household_bargraph_bound">
           <canvas id="household_bargraph_placeholder"></canvas>
         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <!-- MY ACCOUNT                                                                                                                   -->
+  <!---------------------------------------------------------------------------------------------------------------------------------->
+  <div class="view" view="myaccount" style="display:none">
+    <div class="accordion" style="color:rgb(41,171,226)">
+      <div style="height:10px; background-color:rgb(41,171,226)"></div>
+      <div class="togglelang" style="float:right; padding:14px">CY</div>
+      <div class="logout" style="float:right; padding:14px"><?php echo t("Logout");?></div>
+      <div class="title" style="display:inline-block"><?php echo t("My Account");?></div>
+    </div>
+    <div class="panel" style="color:rgb(41,171,226)">
+      <div class="panel-inner">
+        <div style="text-align:left">
+        <p><b>Email:</b><br><span id="user-email"></span></p>
+        <br>
+        <p><b>Change password</b><br>
+        <p>Current password<br>
+        <input id="change-password-current" type="password"></p>
+        <p>New password<br>
+        <input id="change-password-new" type="password"></p>  
+        <button id="change-password" class="btn">Change</button>   
+        <span id="change-password-alert" style="padding-left:10px"></span>   
         </div>
       </div>
     </div>
@@ -344,6 +378,9 @@
 
 var path = "<?php echo $path; ?>";
 var session = JSON.parse('<?php echo json_encode($session); ?>');
+$("#user-email").html(session.email);
+
+
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 if (lang=="cy") {
@@ -361,10 +398,11 @@ var tipid = 1;
 
 if (!session) {
   $("#household-status-block").hide();
-  $("#logout").hide();
+  $(".logout").hide();
+  $(".myaccount").hide();
 } else {
   $("#login-block").hide();
-  $("#logout").show();
+  $(".logout").show();
   household_load();
 }
 
@@ -375,6 +413,12 @@ var view = "hydro";
 if (req[0]=="household") view = "household";
 if (req[0]=="community") view = "community";
 if (req[0]=="tips") view = "tips";
+if (req[0]=="myaccount") view = "myaccount";
+
+if (view=="myaccount" && !session) {
+    view = "household";
+    window.location = "#household";
+}
 
 $(".view").hide();
 $(".view[view="+view+"]").show();
@@ -383,6 +427,7 @@ $(".view[view=hydro] .panel").first().height(panel_height).attr("active",1);
 $(".view[view=household] .panel").first().height(panel_height).attr("active",1);
 $(".view[view=community] .panel").first().height(panel_height).attr("active",1);
 $(".view[view=tips] .panel").first().height(panel_height+accordionheight*2).attr("active",1);
+$(".view[view=myaccount] .panel").first().height(panel_height+accordionheight*2).attr("active",1);
 
 $(".view").each(function() {
    $(this).find(".panel-summary").first().hide();
@@ -390,7 +435,9 @@ $(".view").each(function() {
 
 $(".accordion").click(function() {
   if (view=="household" && !session) {
-
+    // User login page
+  } else if (view=="myaccount") {
+    // My account page
   } else {
     // Hide and disable all panels
     $(".view[view="+view+"] .panel").attr("active",0);
@@ -414,7 +461,7 @@ $(window).resize(function(){
 
   $(".panel[active=1]").height(panel_height);
   $(".view[view=tips] .panel[active=1]").height(panel_height+accordionheight*2);
-
+  $(".view[view=myaccount] .panel[active=1]").height(panel_height+accordionheight*2);
   draw_panel();
 });
 
