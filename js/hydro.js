@@ -69,11 +69,6 @@ function load() {
 
                 var hydro_data = result;
                 
-                for (var z in hydro_data) {
-                    console.log(hydro_data[z][1]);
-                
-                }
-                
                 // Solar values less than zero are invalid
                 for (var z in hydro_data)
                     hydro_data[z][1] = hydro_data[z][1];

@@ -58,6 +58,11 @@ switch ($q)
         $format = "html";
         $content = view("pages/admin.php",array('session'=>$session));
         break;
+        
+    case "report":
+        $format = "html";
+        $content = view("pages/report.php",array('session'=>$session));
+        break;
                 
     case "household/data":
         if ($session && isset($session['apikey']) && isset($session['feedid'])) {

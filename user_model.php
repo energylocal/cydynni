@@ -187,7 +187,7 @@ class User
                          
         $message = view("emailbound.php",array(
             "title"=>"Welcome to CydYnni",
-            "message"=>"Your can now login with email address: $email and password: $newpass"
+            "message"=>"Your can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with email address: $email and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on 'My Account'."
         ));
 
         // ------------------------------------------------------------------
