@@ -41,7 +41,9 @@ function bargraph(element,series,units)
     }
     
     ymax *= 1.1;
+    if (ymax==0) ymax = 1;
     
+    // console.log("ymin: "+ymin+", ymax: "+ymax);
     // -------------------------------------------------------------------------
     for (var s in series) 
     {
@@ -60,7 +62,11 @@ function bargraph(element,series,units)
         
         for (var z in data) {
             var x = ((data[z][0] - xmin) / (xmax - xmin)) * plot_width;
-            var y = plot_height - ((((data[z][1] - ymin) / (ymax - ymin)) * plot_height)+1);
+            
+            var y = 0;
+            if ((ymax-ymin)>0) {
+                y = plot_height - ((((data[z][1] - ymin) / (ymax - ymin)) * plot_height)+1);
+            }
             ctx.fillRect(padding+x,padding+y,barwidth,plot_height-y);
         }
     }

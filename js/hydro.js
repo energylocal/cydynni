@@ -12,6 +12,7 @@ setInterval(slowupdate,60000);
 
 function update()
 {
+    /*
     var feedid = 67087;
     $.ajax({                                      
         url: path+"value?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",       
@@ -39,6 +40,7 @@ function update()
             }
         }
     });
+    */
 }
 
 function slowupdate() {
@@ -68,6 +70,26 @@ function load() {
 
                 var hydro_data = result;
                 
+                var power = hydro_data[hydro_data.length-1][1]*1;
+                console.log("hydro power: "+power);
+                $("#power").html(power.toFixed(1));
+                if (power>=50) {
+                    $("#hydrostatus").html(t("HIGH"));
+                    $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
+                }
+                else if (power>=30) {
+                    $("#hydrostatus").html(t("MEDIUM"));
+                    $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
+                }
+                else if (power>=10) {
+                    $("#hydrostatus").html(t("LOW"));
+                    $("#hydro_summary").html(t("For next 12 hours: LOW"));
+                }
+                else {
+                    $("#hydrostatus").html(t("VERY LOW"));
+                    $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
+                }
+                
                 // Solar values less than zero are invalid
                 for (var z in hydro_data)
                     hydro_data[z][1] = hydro_data[z][1];
@@ -77,6 +99,8 @@ function load() {
                 hydroseries.push({data:hydro_data, color:"rgba(39,78,63,0.7)"});
                 
                 draw();
+                
+
             }
         }
     });
