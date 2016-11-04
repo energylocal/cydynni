@@ -58,8 +58,7 @@ function load() {
 
     var data = [];
     $.ajax({                                      
-        url: path+"data?apikey=8f5c2d146c0c338845d2201b8fe1b0e1",                         
-        data: "id="+feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=0&limitinterval=1",
+        url: path+"hydro",
         dataType: 'json',
         async: true,                      
         success: function(result) {

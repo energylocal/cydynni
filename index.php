@@ -21,6 +21,8 @@ date_default_timezone_set('Europe/London');
 require "settings.php";
 require "core.php";
 require "household_process.php";
+require "meter_data_api.php";
+
 $path = get_application_path();
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 // ---------------------------------------------------------
@@ -118,6 +120,11 @@ switch ($q)
     // ------------------------------------------------------------------------
     // Emoncms.org feed    
     // ------------------------------------------------------------------------
+    case "hydro":
+        $format = "json";
+        $content = get_hydro_data(); 
+        break;
+    
     case "data":
         $format = "json";
         // Interval

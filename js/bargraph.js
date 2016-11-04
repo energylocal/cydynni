@@ -82,8 +82,13 @@ function bargraph(element,series,units)
             // Time label
             var d = new Date(t);
             var hour = d.getHours();
+            var month = d.getMonth();
+            var day = d.getDate();
             if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
-            ctx.fillText(hour,x+5,15);
+            
+            var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            
+            ctx.fillText(day+" "+months[month]+", "+hour,x+5,15);
         }
     }
     ctx.stroke();
