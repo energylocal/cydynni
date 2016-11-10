@@ -20,9 +20,11 @@ function get_hydro_data() {
     $data = array();
 
     foreach ($result->DATA as $row) {
-        $time = $midnightstart + (($row[1]-1) * 1800);
-        // print $time." ".$row[2]."\n";
-        $data[] = array($time*1000,(1*$row[2]));
+        if ($row[1]!=null) {
+            $time = $midnightstart + (($row[1]-1) * 1800);
+            // print $time." ".$row[2]."\n";
+            $data[] = array($time*1000,(1*$row[2]));
+        }
     }
     
     return $data;

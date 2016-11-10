@@ -76,6 +76,11 @@
         <div class="tariff-time">8PM - 6AM</div>
         <div class="tariff-desc"><?php echo t("OVERNIGHT PRICE");?> - 7.25 <?php echo t("PENCE PER UNIT");?></div>
       </div>
+      <div class="tariff-block">
+        <img class="tariff-img" tariff="hydro" src="images/now2.png" style="width:40px; margin-right:10px; float:left">
+        <div class="tariff-time">HYDRO</div>
+        <div class="tariff-desc"><?php echo t("HYDRO PRICE");?> - 7 <?php echo t("PENCE PER UNIT");?></div>
+      </div>
     </div>
   </div>
 
