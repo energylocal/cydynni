@@ -53,67 +53,46 @@ switch ($q)
 {   
     case "":
         $format = "html";
-        $content = view("pages/client.php",array('session'=>$session));
+        $content = view("pages/client.php",array('session'=>array('email'=>$session['email'])));
         break;
 
     case "admin":
         $format = "html";
-        $content = view("pages/admin.php",array('session'=>$session));
+        $content = view("pages/admin.php",array('session'=>array('email'=>$session['email'])));
         break;
         
     case "report":
         $format = "html";
-        $content = view("pages/report.php",array('session'=>$session));
+        $content = view("pages/report.php",array('session'=>array('email'=>$session['email'])));
         break;
                 
     case "household/data":
         if ($session && isset($session['apikey']) && isset($session['feedid'])) {
             $format = "json";
-            $content = get_household_data($session['apikey'],$session['feedid']);
+            $content = array(
+                "morningkwh"=>1,
+                "middaykwh"=>2,
+                "eveningkwh"=>1,
+                "overnightkwh"=>2,
+                "totalkwh"=>6
+            );
         }
         break;
         
     case "community/data":
         $format = "json";
-        $users = $user->userlist();
-        
-        $data = array("morningkwh"=>0, "middaykwh"=>0, "eveningkwh"=>0, "overnightkwh"=>0, "totalkwh"=>0);
-        foreach ($users as $u) {
-            if ($u->feedid>0) {
-                $userdata = get_household_data($u->apikey,$u->feedid);
-                $data["morningkwh"] += $userdata["morningkwh"];
-                $data["middaykwh"] += $userdata["middaykwh"];
-                $data["eveningkwh"] += $userdata["eveningkwh"];
-                $data["overnightkwh"] += $userdata["overnightkwh"];
-                $data["totalkwh"] += $userdata["totalkwh"];
-            }
-        }
-        $content = $data;
-         
+        $content = array(
+            "morningkwh"=>100,
+            "middaykwh"=>200,
+            "eveningkwh"=>100,
+            "overnightkwh"=>200,
+            "totalkwh"=>600
+        );
         break;
         
     case "community/halfhourlydata":
         $format = "json";
-        $users = $user->userlist();
-        
-        $start = get("start");
-        $end = get("end");
-        
-        $data = array();
-        
-        foreach ($users as $u) {
-            if ($u->feedid>0) {
-                $feedid = $u->feedid; $apikey = $u->apikey;
-                $userdata = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feedid&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=0&apikey=$apikey"));
-                for ($z=0; $z<count($userdata); $z++) {
-                    if (!isset($data[$z])) $data[$z] = array(0,0);
-                    $data[$z][0] = $userdata[$z][0];
-                    $data[$z][1] += $userdata[$z][1];
-                }
-            }
-        }
-        $content = $data;
-         
+        $content = get_meter_data($meter_data_api_baseurl,1,$meter_data_api_hydrotoken,4);
         break;
 
 
@@ -122,35 +101,15 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "hydro":
         $format = "json";
-        $content = get_hydro_data(); 
+        $content = get_meter_data($meter_data_api_baseurl,1,$meter_data_api_hydrotoken,4);
         break;
     
     case "data":
         $format = "json";
-        // Interval
-        if (isset($_GET['interval']))
-            $content = json_decode(file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&interval=".get("interval")."&skipmissing=".get("skipmissing")."&limitinterval=".get("limitinterval")."&apikey=".get("apikey")));
-        // Mode
-        if (isset($_GET['mode']))
-            $content = json_decode(file_get_contents("https://emoncms.org/feed/data.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&mode=".get("mode")."&apikey=".get("apikey")));
+        if ($session && isset($session['apikey']))
+            $content = get_meter_data($meter_data_api_baseurl,$session['feedid'],$session['apikey'],4);
         break;
-
-    case "average":
-        $format = "json";
-        // Interval
-        if (isset($_GET['interval']))
-            $content = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&interval=".get("interval")."&skipmissing=".get("skipmissing")."&limitinterval=".get("limitinterval")."&apikey=".get("apikey")));
-        // Mode
-        if (isset($_GET['mode']))
-            $content = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=".get("id")."&start=".get("start")."&end=".get("end")."&mode=".get("mode")."&apikey=".get("apikey")));
-            
-        break;
-                
-    case "value":
-        $format = "text";
-        $content = file_get_contents("https://emoncms.org/feed/value.json?id=".get("id")."&apikey=".get("apikey"));
-        break;
-        
+    
     // ------------------------------------------------------------------------
     // User    
     // ------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 <?php
 if (php_sapi_name()!="cli") { echo "Please run from command line..."; die; }
 
-require "settings.php";
-require "lib/dbschemasetup.php";
+require "../settings.php";
+require "../lib/dbschemasetup.php";
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 
 $schema = array();
@@ -12,7 +12,7 @@ $schema['users'] = array(
     'dbhash' => array('type' => 'varchar(64)'),
     'salt' => array('type' => 'varchar(32)'),
     'admin' => array('type' => 'int(11)', 'Null'=>'NO'),
-    'apikey' => array('type' => 'varchar(64)'),
+    'apikey' => array('type' => 'varchar(128)'),
     'feedid' => array('type' => 'int(11)', 'Null'=>'NO')
 );
 
@@ -25,6 +25,6 @@ print "Result: ".json_encode(db_schema_setup($mysqli,$schema,true))."\n";
 // ----------------------------------------
 // Create admin user
 // ----------------------------------------
-require("user_model.php");
-$user = new User($mysqli);
-print $user->register("user@email.com","admin","apikey",0);
+//require("user_model.php");
+//$user = new User($mysqli);
+//print $user->register("user@email.com","admin","apikey",0);

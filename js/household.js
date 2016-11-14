@@ -93,8 +93,7 @@ function household_bargraph_load() {
       
     var data = [];
     $.ajax({                                      
-        url: path+"average?apikey="+session.apikey,                         
-        data: "id="+session.feedid+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=1&limitinterval=1",
+        url: path+"data",
         dataType: 'json',
         async: true,                      
         success: function(result) {

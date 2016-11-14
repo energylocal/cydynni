@@ -45,8 +45,8 @@
     <div id="admin-block" style="display:none">
       
       <h3>User list</h3>
-      <table class="table">
-        <tr><th>User ID</th><th>Email</th><th>Apikey</th><th>Feedid</th><th>Admin</th></tr>
+      <table class="table" style="table-layout: fixed; width: 100%">
+        <tr><th style="width:50px">User</th><th style="width:250px">Email</th><th>Token</th><th style="width:80px">UID</th><th style="width:50px">Admin</th></tr>
         <tbody id="users"></tbody>
       </table>
       <br><br>
@@ -54,8 +54,8 @@
       <p>
         <input id="register-email" type="text" placeholder="Email..."><br><br>
         <input id="register-password" type="password" placeholder="Password..."><br><br>
-        <input id="apikey" type="text" placeholder="Emoncms.org read apikey"><br><br>
-        <input id="feedid" type="text" placeholder="Emoncms.org consumption feedid"><br><br>
+        <input id="apikey" type="text" placeholder="Meter Token"><br><br>
+        <input id="feedid" type="text" placeholder="Meter UID"><br><br>
         <button id="register" class="btn">Create account</button>
       </p>
       <div class="alert"></div>
@@ -89,7 +89,7 @@ function load() {
         success: function(result) {
             var out = "";
             for (var z in result) {
-                out += "<tr><td>"+result[z].id+"</td><td>"+result[z].email+"</td><td>"+result[z].apikey+"</td><td>"+result[z].feedid+"</td><td>"+result[z].admin+"</td></tr>";
+                out += "<tr><td>"+result[z].id+"</td><td>"+result[z].email+"</td><td style='text-wrap:normal;word-wrap:break-word'>"+result[z].apikey+"</td><td>"+result[z].feedid+"</td><td>"+result[z].admin+"</td></tr>";
             }
             $("#users").html(out);
         }

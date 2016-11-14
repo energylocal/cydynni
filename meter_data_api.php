@@ -1,8 +1,7 @@
 <?php
 
-function get_hydro_data() {
-    global $meter_data_api_baseurl, $meter_data_api_hydrotoken;
-    $str = file_get_contents($meter_data_api_baseurl."1-$meter_data_api_hydrotoken-4");
+function get_meter_data($baseurl,$uid,$token,$dataid) {
+    $str = file_get_contents($baseurl."$uid-$token-$dataid");
 
     $result = json_decode(substr($str,2));
 
