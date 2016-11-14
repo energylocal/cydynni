@@ -53,17 +53,20 @@ switch ($q)
 {   
     case "":
         $format = "html";
-        $content = view("pages/client.php",array('session'=>array('email'=>$session['email'])));
+        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
+        $content = view("pages/client.php",array('session'=>$rsession));
         break;
 
     case "admin":
         $format = "html";
-        $content = view("pages/admin.php",array('session'=>array('email'=>$session['email'])));
+        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
+        $content = view("pages/admin.php",array('session'=>$rsession));
         break;
         
     case "report":
         $format = "html";
-        $content = view("pages/report.php",array('session'=>array('email'=>$session['email'])));
+        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
+        $content = view("pages/report.php",array('session'=>$rsession));
         break;
                 
     case "household/data":
