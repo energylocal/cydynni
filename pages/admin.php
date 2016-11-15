@@ -89,7 +89,9 @@ function load() {
         success: function(result) {
             var out = "";
             for (var z in result) {
-                out += "<tr><td>"+result[z].id+"</td><td>"+result[z].email+"</td><td style='text-wrap:normal;word-wrap:break-word'>"+result[z].apikey+"</td><td>"+result[z].feedid+"</td><td>"+result[z].admin+"</td></tr>";
+                out += "<tr><td>"+result[z].id+"</td><td>"+result[z].email+"</td><td style='text-wrap:normal;word-wrap:break-word'>"+result[z].apikey+"</td><td>"+result[z].feedid+"</td><td>"+result[z].admin+"</td>";
+                out += "<td><button class='registeremail' userid='"+result[z].id+"' style='font-size:12px'>Send Welcome Email</button></td>";
+                out += "</tr>";
             }
             $("#users").html(out);
         }
@@ -134,6 +136,18 @@ $("#register").click(function() {
         success: function(result) {
             $(".alert").html(result);
             load();
+        }
+    });
+});
+
+$("body").on("click",".registeremail",function(){
+    var userid = $(this).attr("userid");
+    $.ajax({
+        url: path+"registeremail",
+        data: "userid="+userid,
+        dataType: 'text',
+        success: function(result) {
+            $(".alert").html(result);
         }
     });
 });
