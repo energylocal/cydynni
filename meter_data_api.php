@@ -1,9 +1,15 @@
 <?php
 
 function get_meter_data($baseurl,$uid,$token,$dataid) {
-    $str = file_get_contents($baseurl."$uid-$token-$dataid");
 
+    // Fetch data from data server
+    $str = @file_get_contents($baseurl."$uid-$token-$dataid");
+    
+    // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
+    
+    // if json failed to decode return blank array
+    if ($result==null) return array();
 
     $date = $result->DATA[0][0];
     $date = str_replace(",","",$date);
@@ -26,5 +32,14 @@ function get_meter_data($baseurl,$uid,$token,$dataid) {
         }
     }
     
+    return $data;
+}
+
+// For offline development
+function get_meter_data_offline($baseurl,$uid,$token,$dataid) {
+    $data = array();
+    for ($i=0; $i<48; $i++) {
+        $data[] = array($i,0);
+    }
     return $data;
 }

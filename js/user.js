@@ -90,10 +90,10 @@ $("#passwordreset").click(function() {
 });
 
 $(".myaccount").click(function() {
-  view = "myaccount";
+  page = "myaccount";
   window.location ="#myaccount"
-  $(".view").hide();
-  $(".view[view="+view+"]").show();
+  $(".page").hide();
+  $(".page[page="+page+"]").show();
 });
 
 $("#change-password").click(function() {

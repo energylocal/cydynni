@@ -50,10 +50,10 @@ function household_load()
           $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
           
           var data = [
-            {name:t("MORNING"), value: result.morningkwh, color:"rgba(0,71,121,0.8)"},
-            {name:t("MIDDAY"), value: result.middaykwh, color:"rgba(0,71,121,0.6)"},
-            {name:t("EVENING"), value: result.eveningkwh, color:"rgba(0,71,121,0.9)"},
-            {name:t("OVERNIGHT"), value: result.overnightkwh, color:"rgba(0,71,121,0.4)"},
+            {name:t("MORNING"), value: result.morningkwh, color:"#ffdc00"},
+            {name:t("MIDDAY"), value: result.middaykwh, color:"#29abe2"},
+            {name:t("EVENING"), value: result.eveningkwh, color:"#c92760"},
+            {name:t("OVERNIGHT"), value: result.overnightkwh, color:"#274e3f"},
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
@@ -113,6 +113,11 @@ function household_bargraph_load() {
             }
         }
     });
+}
+
+function household_resize(panel_height) {
+    household_pie_draw();
+    household_bargraph_resize(panel_height-40);
 }
 
 function household_bargraph_draw() {

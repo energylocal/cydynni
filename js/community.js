@@ -1,5 +1,6 @@
 var community_pie_data = [];
 var communityseries = [];
+var community_score = -1;
 
 function community_load()
 {
@@ -8,6 +9,8 @@ function community_load()
       dataType: 'json',                  
       success: function(result) {
           var prc = Math.round(100*((result.overnightkwh + result.middaykwh) / result.totalkwh));
+          community_score = prc;
+          
           $("#community_prclocal").html(prc);
           
           $("#community_score").html(prc);
@@ -21,16 +24,14 @@ function community_load()
           setTimeout(function() {
               if (prc<30) {
                   $("#community_statusmsg").html(t("We are using power in a very expensive way"));
-                  $("#community_status_summary").html(t("As a community we are MISSING OUT"));
               }
               if (prc>=30 && prc<70) {
                   $("#community_statusmsg").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
-                  $("#community_status_summary").html(t("As a community we are <b>DOING OK</b>"));
               }
               if (prc>=70) {
                   $("#community_statusmsg").html(t("We’re doing really well using the hydro and cheaper power"));
-                  $("#community_status_summary").html(t("As a community we are <b>DOING WELL</b>"));
               }
+              community_resize();
           }, 400);
           
           var totalcost = 0;
@@ -113,8 +114,38 @@ function community_bargraph_load() {
     });
 }
 
-function community_bargraph_draw() {
-    bargraph("community_bargraph_placeholder",communityseries," W");
+function community_resize(panel_height) 
+{
+    community_pie_draw();
+    community_bargraph_resize(panel_height-40);
+
+    var width = $(window).width();
+    
+    var shorter_summary = 480;
+
+    if (community_score!=-1) {
+        if (community_score<30) {
+            if (width>shorter_summary) { 
+                $("#community_status_summary").html(t("As a community we are MISSING OUT"));
+            } else {
+                $("#community_status_summary").html(t("We are MISSING OUT"));
+            }
+        }
+        if (community_score>=30 && community_score<70) {
+            if (width>shorter_summary) { 
+                $("#community_status_summary").html(t("As a community we are <b>DOING OK</b>"));
+            } else {
+                $("#community_status_summary").html(t("We are <b>DOING OK</b>"));
+            }
+        }
+        if (community_score>=70) {
+            if (width>shorter_summary) { 
+                $("#community_status_summary").html(t("As a community we are <b>DOING WELL</b>"));
+            } else {
+                $("#community_status_summary").html(t("We are <b>DOING WELL</b>"));
+            }
+        }
+    }
 }
 
 function community_bargraph_resize(h) {
@@ -124,6 +155,10 @@ function community_bargraph_resize(h) {
     $('#community_bargraph_placeholder').attr("height",h);
     height = h;
     community_bargraph_draw();
+}
+
+function community_bargraph_draw() {
+    bargraph("community_bargraph_placeholder",communityseries," W");
 }
 
 $("#view-community-bargraph").click(function(){
