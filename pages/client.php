@@ -45,14 +45,13 @@
     <div class="summary_bound"><div id="cydynni_summary" class="panel-summary"></div></div>
     <div class="togglelang">CY</div>
   </div>
-  <div class="panel" style="#fff">
-    <div class="panel-inner">
-      <p id="status-pre"><?php echo t("If possible");?></p>
-
-      <img id="status-img" src="images/waiting-icon.jpg" style="width:100px">
+  <div id="panel-status" class="panel" style="#fff">
+    <div id="panel-inner-status" class="panel-inner">
+      <p id="status-pre" style="margin-top:5px; margin-bottom:5px;"><?php echo t("If possible");?></p>
+      <img id="status-img" src="images/waiting-icon-small2.jpg" style="width:75px; padding:10px">
       <div id="status-title" class="status"><?php echo t("WAIT");?></div>
-      <p id="status-until"></p>
-      <p id="status-next"></p>
+      <p id="status-until" style="margin-top:5px; margin-bottom:5px;"></p>
+      <p id="status-next" style="margin-top:5px; margin-bottom:5px;"></p>
     </div>
   </div>
 
@@ -571,6 +570,10 @@ function resize() {
     $(".page[page=tips] .panel[active=1]").height(panel_height+pagesectionheight*2);
     $(".page[page=myaccount] .panel[active=1]").height(panel_height+pagesectionheight*2);
     draw_panel();
+    
+    var ph = (panel_height - $("#panel-inner-status").height())*0.3;
+    if (ph<20) ph=0;
+    $("#panel-inner-status").css("margin-top",ph);
 }
 
 // -----------------------------------------------------------------------

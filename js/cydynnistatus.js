@@ -12,10 +12,10 @@ function cydynnistatus_update() {
   if ((hour>=16) && (hour<20)) tariff = "evening";
   if ((hour>=20) || (hour<6)) tariff = "overnight";
 
-  if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon-small.jpg");
-  if (tariff=="midday") $("#status-img").attr("src","images/new-tick-small.jpg");
-  if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon-small.jpg");
-  if (tariff=="overnight") $("#status-img").attr("src","images/new-tick-small.jpg");
+  if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon-small2.jpg");
+  if (tariff=="midday") $("#status-img").attr("src","images/new-tick-small2.jpg");
+  if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon-small2.jpg");
+  if (tariff=="overnight") $("#status-img").attr("src","images/new-tick-small2.jpg");
 
   // If morning peak then wait until midday tariff
   if (tariff=="morning") {
