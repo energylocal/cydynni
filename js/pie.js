@@ -1,5 +1,5 @@
 
-function piegraph(element,data,options) {
+function piegraph(element,data,hydro,options) {
     var size = options.width;
     var midx = options.width * 0.4;
     var midy = options.height * 0.5;
@@ -43,7 +43,7 @@ function piegraph(element,data,options) {
     ctx.font=Math.round(0.0375*size*0.8)+"px Arial";
     ctx.fillText("HYDRO",midx,midy-8);
     ctx.font=Math.round(0.0375*size)+"px Arial";
-    ctx.fillText(50+" kWh",midx,midy+8);
+    ctx.fillText(hydro+" kWh",midx,midy+8);
     //-------------------------------------------------------
     
     midx = options.width * 0.4;
@@ -77,8 +77,10 @@ function piegraph(element,data,options) {
       var labelx = midx+Math.sin(tl)*size*0.15;
       var labely = midy+Math.cos(tl)*size*0.15;
       
-      var prc = 100*(data[z].value/total);
-      ctx.fillText(Math.round(prc)+"%",labelx,labely+5);
+      if (data[z].value>0) {
+        var prc = 100*(data[z].value/total);
+        ctx.fillText(Math.round(prc)+"%",labelx,labely+5);
+      }
     }
     
     for (z in data) {
@@ -96,13 +98,16 @@ function piegraph(element,data,options) {
       if (labelx<textlength*0.5) labelx = textlength*0.5;
       if (labelx>((options.width*0.75) - textlength*0.5)) labelx = (options.width*0.75)-textlength*0.5;
       
-       if (labely>(window.height)) labely = (window.height);
+      if (labely>(window.height)) labely = (window.height);
       
-      ctx.fillStyle = "rgba(255,255,255,0.3)";
-      ctx.fillRect(labelx-(textlength/2),labely-20,textlength,40);
-      ctx.fillStyle = options.color;
-      ctx.fillText(data[z].name,labelx,labely-3);
-      ctx.fillText(data[z].value.toFixed(1)+" kWh",labelx,labely+15);
+      // Pie chart label
+      if (data[z].value>0) {
+        ctx.fillStyle = "rgba(255,255,255,0.3)";
+        ctx.fillRect(labelx-(textlength/2),labely-20,textlength,40);
+        ctx.fillStyle = options.color;
+        ctx.fillText(data[z].name,labelx,labely-3);
+        ctx.fillText(data[z].value.toFixed(1)+" kWh",labelx,labely+15);
+      }
     }
 
     

@@ -1,6 +1,7 @@
 var community_pie_data = [];
 var communityseries = [];
 var community_score = -1;
+var community_hydro_use = 0;
 
 function community_load()
 {
@@ -55,6 +56,7 @@ function community_load()
             // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
           ];
           
+          community_hydro_use = result.hydrokwh
           community_pie_data = data;
           community_pie_draw();
       } 
@@ -77,7 +79,7 @@ function community_pie_draw() {
       height: height
     };  
     
-    piegraph("community_piegraph_placeholder",community_pie_data,options);
+    piegraph("community_piegraph_placeholder",community_pie_data,community_hydro_use,options);
 }
 
 function community_bargraph_load() {

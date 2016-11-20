@@ -187,8 +187,8 @@
     </div>
     <div class="panel"  style="">
       <div class="panel-inner" style="color:rgb(100,171,255)">
-        <p><?php echo t("You have used");?> <b><span class="totalkwh"></span> kWh</b> <?php echo t("in the last week<br>Costing");?> <b>£<span class="totalcost"></span></b></p>
-        <p><?php echo t("You have saved");?> <b>£<span class="costsaving"></span></b> <?php echo t("compared to standard flat rate price");?></p>
+        <p><?php echo t("You have used");?> <b><span class="totalkwh"></span> kWh</b> <?php echo t("in the last day. Costing");?> <b>£<span class="totalcost"></span></b></p>
+        <p><?php echo t("You have saved");?> <b>£<span class="costsaving"></span></b> <?php echo t("compared with 12p/kWh reference price");?></p>
       </div>
     </div>
 
@@ -278,12 +278,12 @@
     <!-- SAVING TAB ------------------------------------------------------->
     <div class="pagesection" style="color:rgb(255,117,0);">
       <div style="height:10px; background-color:rgb(255,117,0)"></div>
-      <div class="title"><?php echo t("Cost"); ?></div>
+      <div class="title"><?php echo t("Value"); ?></div>
       <div class="summary_bound"><div id="community_saving_summary" class="panel-summary"></div></div>
     </div>
     <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
-        <p><?php echo t("We have used"); ?> <b><span class="community_totalkwh"></span> kWh</b> <?php echo t("in the last week<br>Costing"); ?> <b>£<span class="community_totalcost"></span></b></p>
+        <p><?php echo t("Value of hydro power retained in the community"); ?> <b>£<span class="community_totalcost"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>

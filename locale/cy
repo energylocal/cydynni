@@ -85,9 +85,11 @@
 
 "You have used":"Rydych wedi defnyddio",
 "We have used":"Rydym wedi defnyddio",
-"in the last week<br>Costing":"yn y wythnos diwethaf<br>Yn costio",
+"in the last day. Costing":"yn y diwrnod diwethaf. Yn costio",
+"in the last week. Costing":"yn y wythnos diwethaf. Yn costio",
 "You have saved":"Rydych wedi arbed",
 "compared to standard flat rate price":"o’i gymharu â’r pris trydan arferol",
+"compared with 12p/kWh reference price":"o’i gymharu â’r pris trydan 12p/kWh",
 
 "We are using power in a very expensive way":"Rydym yn defnyddio pŵer mewn ffordd ddrud iawn",
 "As a community we are MISSING OUT":"Fel cymuned rydym yn COLLI ALLAN",
@@ -98,7 +100,8 @@
 "We’re doing really well using the hydro and cheaper power":"Rydym yn gwneud yn dda iawn o ran defnyddio’r hydro a phŵer rhatach",
 "As a community we are <b>DOING WELL</b>":"Fel cymuned rydym yn <b>GWNEUD YN DDA</b>",
 "We are <b>DOING WELL</b>":"Rydym yn <b>GWNEUD YN DDA</b>",
-
+"Value":"Gwerth",
+"Value of hydro power retained in the community":"Gwerth pwer hydro wedi e'i gadw yn y gymuned",
 
 "Tips":"Awgrymiadau",
 "PREVIOUS":"BLAENOROL",

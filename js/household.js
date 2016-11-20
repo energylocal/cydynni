@@ -1,4 +1,5 @@
 var household_pie_data = [];
+var household_hydro_use = 0;
 var householdseries = [];
 
 function household_load()
@@ -7,7 +8,7 @@ function household_load()
       url: path+"household/data",
       dataType: 'json',                  
       success: function(result) {
-          var prc = Math.round(100*((result.overnightkwh + result.middaykwh) / result.totalkwh));
+          var prc = Math.round(100*((result.kwh.overnight + result.kwh.midday) / result.kwh.total));
           $("#prclocal").html(prc);
           $("#household_score").html(prc);
           if (prc>20) $("#star1").attr("src","images/starblue.png");
@@ -31,32 +32,27 @@ function household_load()
               }
           }, 400);
           
-          $(".morningkwh").html((1*result.morningkwh).toFixed(1));
-          $(".middaykwh").html((1*result.middaykwh).toFixed(1));
-          $(".eveningkwh").html((1*result.eveningkwh).toFixed(1));
-          $(".overnightkwh").html((1*result.overnightkwh).toFixed(1));
+          $(".morningkwh").html((1*result.kwh.morning).toFixed(1));
+          $(".middaykwh").html((1*result.kwh.midday).toFixed(1));
+          $(".eveningkwh").html((1*result.kwh.evening).toFixed(1));
+          $(".overnightkwh").html((1*result.kwh.overnight).toFixed(1));
           
-          var totalcost = 0;
-          totalcost += result.morningkwh * 0.12;
-          totalcost += result.middaykwh * 0.10;
-          totalcost += result.eveningkwh * 0.14;
-          totalcost += result.overnightkwh * 0.0725;
-          $(".totalcost").html(totalcost.toFixed(2));
-          $(".totalkwh").html(result.totalkwh.toFixed(1));
+          $(".totalcost").html(result.cost.total.toFixed(2));
+          $(".totalkwh").html(result.kwh.total.toFixed(1));
           
-          var totalcostflatrate = result.totalkwh * 0.12;
-          var costsaving = totalcostflatrate - totalcost;
+          var totalcostflatrate = result.kwh.total * 0.12;
+          var costsaving = totalcostflatrate - result.cost.total;
           $(".costsaving").html(costsaving.toFixed(2));
           $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
           
           var data = [
-            {name:t("MORNING"), value: result.morningkwh, color:"#ffdc00"},
-            {name:t("MIDDAY"), value: result.middaykwh, color:"#29abe2"},
-            {name:t("EVENING"), value: result.eveningkwh, color:"#c92760"},
-            {name:t("OVERNIGHT"), value: result.overnightkwh, color:"#274e3f"},
-            // {name:"HYDRO", value: 2.0, color:"rgba(255,255,255,0.2)"}   
+            {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
+            {name:t("MIDDAY"), value: result.kwh.midday, color:"#29abe2"},
+            {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
+            {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
           ];
           
+          household_hydro_use = result.kwh.hydro;
           household_pie_data = data;
           household_pie_draw();
       } 
@@ -78,7 +74,7 @@ function household_pie_draw() {
       height: height
     }; 
 
-    piegraph("household_piegraph_placeholder",household_pie_data,options);
+    piegraph("household_piegraph_placeholder",household_pie_data,household_hydro_use,options);
 }
 
 

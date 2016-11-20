@@ -67,6 +67,7 @@ function bargraph(element,series,units)
             if ((ymax-ymin)>0) {
                 y = plot_height - ((((data[z][1] - ymin) / (ymax - ymin)) * plot_height)+1);
             }
+            
             ctx.fillRect(padding+x,padding+y,barwidth,plot_height-y);
         }
     }
@@ -78,7 +79,10 @@ function bargraph(element,series,units)
     var tstart = Math.floor(xmin / ticksize) * ticksize;
     var tend = Math.ceil(xmax / ticksize) * ticksize;
     
+    ctx.fillStyle = series[0].color;
     ctx.beginPath();
+    var xspacing = ((ticksize) / (xmax - xmin)) * plot_width;
+    console.log(xspacing);
     for (var t=tstart; t<=tend; t+=ticksize) {
         var x = ((t - xmin) / (xmax - xmin)) * plot_width;
         if (x>0) {
@@ -94,7 +98,11 @@ function bargraph(element,series,units)
             
             var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
             
-            ctx.fillText(day+" "+months[month]+", "+hour,x+5,15);
+            if (xspacing>70) {
+                ctx.fillText(day+" "+months[month]+", "+hour,x+5,15);
+            } else {
+                ctx.fillText(hour,x+5,15);
+            }
         }
     }
     ctx.stroke();

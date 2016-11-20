@@ -72,13 +72,10 @@ switch ($q)
     case "household/data":
         if ($session && isset($session['apikey']) && isset($session['feedid'])) {
             $format = "json";
-            $content = array(
-                "morningkwh"=>1,
-                "middaykwh"=>2,
-                "eveningkwh"=>1,
-                "overnightkwh"=>2,
-                "totalkwh"=>6
-            );
+            
+            $content = array();
+            $content["kwh"] = get_household_net_consumption($meter_data_api_baseurl,$session['apikey']);
+            $content["cost"] = get_household_net_charge($meter_data_api_baseurl,$session['apikey']);
         }
         break;
         
@@ -89,13 +86,14 @@ switch ($q)
             "middaykwh"=>200,
             "eveningkwh"=>100,
             "overnightkwh"=>200,
-            "totalkwh"=>600
+            "hydrokwh"=>300,
+            "totalkwh"=>900
         );
         break;
         
     case "community/halfhourlydata":
         $format = "json";
-        $content = get_meter_data($meter_data_api_baseurl,1,$meter_data_api_hydrotoken,4);
+        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
 
 
@@ -104,13 +102,13 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "hydro":
         $format = "json";
-        $content = get_meter_data($meter_data_api_baseurl,1,$meter_data_api_hydrotoken,4);
+        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
     
     case "data":
         $format = "json";
         if ($session && isset($session['apikey']))
-            $content = get_meter_data($meter_data_api_baseurl,$session['feedid'],$session['apikey'],4);
+            $content = get_meter_data($meter_data_api_baseurl,$session['apikey']);
         break;
     
     // ------------------------------------------------------------------------
