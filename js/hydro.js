@@ -1,29 +1,13 @@
-width = $("#placeholder_bound").width();
-$("#placeholder").attr('width',width);
+/*
+
+Hydro section
+
+*/
 
 var hydroseries = [];
-var power = 0;
-var kwh = 0;
-
-setInterval(hydro_update,10000);
-setInterval(hydro_slowupdate,60000);
-
-function hydro_update() { }
-
-function hydro_slowupdate() {
-    hydro_load();
-}
+setInterval(hydro_load,60000);
 
 function hydro_load() {
-
-    var end = +new Date;
-    var start = end - (3600000*24.0*1);
-    var interval = 1800;
-    var intervalms = interval * 1000;
-    end = Math.floor(end / intervalms) * intervalms;
-    start = Math.floor(start / intervalms) * intervalms;
-    
-    var feedid = 114934;    
 
     var data = [];
     $.ajax({                                      
@@ -32,7 +16,7 @@ function hydro_load() {
         async: true,                      
         success: function(result) {
             if (!result || result===null || result==="" || result.constructor!=Array) {
-                console.log("ERROR","feed.getdata invalid response: "+result);
+                console.log("ERROR","invalid response: "+result);
             } else {
 
                 var hydro_data = result;
@@ -40,7 +24,6 @@ function hydro_load() {
                 
                 if (hydro_data.length>0) {
                     
-                    // Solar values less than zero are invalid
                     for (var z in hydro_data)
                         hydro_data[z][1] = ((hydro_data[z][1] * 3600000) / 1800) * 0.001;
                         if (hydro_data[z][1]<0) hydro_data[z][1]=0;
@@ -49,7 +32,6 @@ function hydro_load() {
                     var power = hydro_data[hydro_data.length-1][1]*1;
                     var time = hydro_data[hydro_data.length-1][0]*1;
                     
-                    console.log("hydro power: "+power);
                     $("#power").html(power.toFixed(1));
                     
                     if (power>=50) {
@@ -86,18 +68,16 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("placeholder",hydroseries," kW");
+    bargraph("hydro_bargraph_placeholder",hydroseries," kW");
 }
 
 function hydro_resize(panel_height) {
     var h = panel_height-120;
-    
-    width = $("#placeholder_bound").width();
-    $("#placeholder").attr('width',width);
-    $('#placeholder_bound').attr("height",h);
-    $('#placeholder').attr("height",h);
-    height = h;
-    
+    width = $("#hydro_bargraph_placeholder_bound").width();
+    $("#hydro_bargraph_placeholder").attr('width',width);
+    $('#hydro_bargraph_placeholder_bound').attr("height",h);
+    $('#hydro_bargraph_placeholder').attr("height",h);
+    height = h
     hydro_draw(); 
 }
 

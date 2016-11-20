@@ -6,9 +6,10 @@ Source code is released under the GNU Affero General Public License.
 See COPYRIGHT.txt and LICENSE.txt.
 
 ---------------------------------------------------------------------
-OpenEnergyMonitor VirtualSmartGrid - Open source virtual smart grid renewable energy aggregation and sharing concept with a focus on carbon metrics.
+CydYnni App - community energy smart grid web app
+part of the EnergyLocal CydYnni project in Bethesda North Wales
 
-Part of the OpenEnergyMonitor project:
+Developed by OpenEnergyMonitor:
 http://openenergymonitor.org
 
 */
@@ -20,7 +21,6 @@ date_default_timezone_set('Europe/London');
 // ---------------------------------------------------------
 require "settings.php";
 require "core.php";
-require "household_process.php";
 require "meter_data_api.php";
 
 $path = get_application_path();
@@ -31,9 +31,6 @@ $user = new User($mysqli);
 session_start();
 $session = $user->status();
 // ---------------------------------------------------------
-
-// $redis = new Redis();
-// $connected = $redis->connect("127.0.0.1");
 
 $q = "";
 if (isset($_GET['q'])) $q = $_GET['q'];
@@ -82,12 +79,8 @@ switch ($q)
     case "community/data":
         $format = "json";
         $content = array(
-            "morningkwh"=>100,
-            "middaykwh"=>200,
-            "eveningkwh"=>100,
-            "overnightkwh"=>200,
-            "hydrokwh"=>300,
-            "totalkwh"=>900
+          "kwh"=>array("morning"=>100,"midday"=>200,"evening"=>100,"overnight"=>200,"hydro"=>300,"total"=>900),
+          "cost"=>array("morning"=>10,"midday"=>20,"evening"=>10,"overnight"=>20,"hydro"=>30,"total"=>90)
         );
         break;
         

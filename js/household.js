@@ -1,3 +1,9 @@
+/*
+
+Household page
+
+*/
+
 var household_pie_data = [];
 var household_hydro_use = 0;
 var householdseries = [];
@@ -8,43 +14,49 @@ function household_load()
       url: path+"household/data",
       dataType: 'json',                  
       success: function(result) {
-          var prc = Math.round(100*((result.kwh.overnight + result.kwh.midday) / result.kwh.total));
-          $("#prclocal").html(prc);
-          $("#household_score").html(prc);
-          if (prc>20) $("#star1").attr("src","images/starblue.png");
-          if (prc>40) setTimeout(function() { $("#star2").attr("src","images/starblue.png"); }, 100);
-          if (prc>60) setTimeout(function() { $("#star3").attr("src","images/starblue.png"); }, 200);
-          if (prc>80) setTimeout(function() { $("#star4").attr("src","images/starblue.png"); }, 300);
-          if (prc>90) setTimeout(function() { $("#star5").attr("src","images/starblue.png"); }, 400);
+      
+          // 1. Determine score
+          // Calculated as amount of power consumed at times off peak times and from hydro
+          var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
+
+          // Display score as number of stars
+          // setTimeout fn used to animate
+          $("#household_score").html(score);
+          if (score>20) $("#star1").attr("src","images/starblue.png");
+          if (score>40) setTimeout(function() { $("#star2").attr("src","images/starblue.png"); }, 100);
+          if (score>60) setTimeout(function() { $("#star3").attr("src","images/starblue.png"); }, 200);
+          if (score>80) setTimeout(function() { $("#star4").attr("src","images/starblue.png"); }, 300);
+          if (score>90) setTimeout(function() { $("#star5").attr("src","images/starblue.png"); }, 400);
           
+          // Show status summary ( below score stars )
           setTimeout(function() {
-              if (prc<30) {
+              if (score<30) {
                   $("#statusmsg").html(t("You are using power in a very expensive way"));
                   $("#household_status_summary").html(t("MISSING OUT"));
               }
-              if (prc>=30 && prc<70) {
+              if (score>=30 && score<70) {
                   $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
                   $("#household_status_summary").html(t("DOING OK"));
               }
-              if (prc>=70) {
+              if (score>=70) {
                   $("#statusmsg").html(t("You’re doing really well at using hydro & cheaper power"));
                   $("#household_status_summary").html(t("DOING WELL"));
               }
           }, 400);
           
-          $(".morningkwh").html((1*result.kwh.morning).toFixed(1));
-          $(".middaykwh").html((1*result.kwh.midday).toFixed(1));
-          $(".eveningkwh").html((1*result.kwh.evening).toFixed(1));
-          $(".overnightkwh").html((1*result.kwh.overnight).toFixed(1));
-          
+          // 2nd ssection showing total consumption and cost
           $(".totalcost").html(result.cost.total.toFixed(2));
           $(".totalkwh").html(result.kwh.total.toFixed(1));
           
+          // Saving calculation
           var totalcostflatrate = result.kwh.total * 0.12;
           var costsaving = totalcostflatrate - result.cost.total;
           $(".costsaving").html(costsaving.toFixed(2));
+          
+          // Summary for saving section
           $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
           
+          // Pie graph
           var data = [
             {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
             {name:t("MIDDAY"), value: result.kwh.midday, color:"#29abe2"},
@@ -79,13 +91,6 @@ function household_pie_draw() {
 
 
 function household_bargraph_load() {
-
-    var end = +new Date;
-    var start = end - (3600000*24.0*1);
-    var interval = 1800;
-    var intervalms = interval * 1000;
-    end = Math.floor(end / intervalms) * intervalms;
-    start = Math.floor(start / intervalms) * intervalms;
       
     var data = [];
     $.ajax({                                      
@@ -94,17 +99,15 @@ function household_bargraph_load() {
         async: true,                      
         success: function(result) {
             if (!result || result===null || result==="" || result.constructor!=Array) {
-                console.log("ERROR","feed.getdata invalid response: "+result);
+                console.log("ERROR","invalid response: "+result);
             } else {
 
                 var hydro_data = result;
-                // Solar values less than zero are invalid
-                for (var z in hydro_data)
-                    if (hydro_data[z][1]<0) hydro_data[z][1]=0;
+                // for (var z in hydro_data)
+                //     if (hydro_data[z][1]<0) hydro_data[z][1]=0;
 
                 householdseries = [];
                 householdseries.push({data:hydro_data, color:"rgba(0,71,121,0.7)"});
-                
                 household_bargraph_draw();
             }
         }
@@ -129,6 +132,7 @@ function household_bargraph_resize(h) {
     household_bargraph_draw();
 }
 
+// View change: show bar graph
 $("#view-household-bargraph").click(function(){
     $("#view-household-bargraph").hide();
     $("#view-household-piechart").show();
@@ -139,6 +143,7 @@ $("#view-household-bargraph").click(function(){
     household_bargraph_load();
 });
 
+// View change: show pie graph
 $("#view-household-piechart").click(function(){
     $("#view-household-bargraph").show();
     $("#view-household-piechart").hide();

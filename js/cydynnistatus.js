@@ -1,3 +1,9 @@
+/*
+
+Hydro CydYnni Status page
+
+*/
+
 function cydynnistatus_update() {
   var time = new Date();
 

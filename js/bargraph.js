@@ -43,7 +43,6 @@ function bargraph(element,series,units)
     ymax *= 1.1;
     if (ymax==0) ymax = 1;
     
-    // console.log("ymin: "+ymin+", ymax: "+ymax);
     // -------------------------------------------------------------------------
     for (var s in series) 
     {
@@ -82,7 +81,7 @@ function bargraph(element,series,units)
     ctx.fillStyle = series[0].color;
     ctx.beginPath();
     var xspacing = ((ticksize) / (xmax - xmin)) * plot_width;
-    console.log(xspacing);
+    
     for (var t=tstart; t<=tend; t+=ticksize) {
         var x = ((t - xmin) / (xmax - xmin)) * plot_width;
         if (x>0) {

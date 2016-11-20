@@ -123,38 +123,34 @@ div.panel.show {
   background-color: #ddd;
 }
 
-/* --- Tables --- */
-
 table {
-  width:100%;
-  border-collapse: collapse;
+    width:100%;
+    border-collapse: collapse;
 }
 
 table, th, td {
-  text-align:left;
-  border: 1px solid #aaa;
-  padding:6px 13px;
+    text-align:left;
+    border: 1px solid #aaa;
+    padding:6px 13px;
 }
 
 .login-box {
-  text-align:center;
-  /*background-color:rgb(41,171,226);
-  border: 1px solid rgb(41,171,226);*/
-  max-width:300px;
-  margin: 0 auto;
-  border-radius: 15px;
-  padding:10px;
-  color:rgb(41,171,226);
+    text-align:center;
+    max-width:300px;
+    margin: 0 auto;
+    border-radius: 15px;
+    padding:10px;
+    color:rgb(41,171,226);
 }
 
 #logout {
-  float:right;
-  padding:18px;
-  color:rgb(41,171,226);
+    float:right;
+    padding:18px;
+    color:rgb(41,171,226);
 }
 
 #logout:hover {
-  cursor:pointer;
+    cursor:pointer;
 }
 
 .tipimage {
@@ -179,17 +175,9 @@ table, th, td {
 
 @media (max-width: 370px) {
   .container {
-    width:370px;
+      width:370px;
   }
-  
-  .panel-inner { }
-
-  .title {
-      /*
-      padding:12px;
-      font-size:18px;*/
-  }
-
+ 
   .tariff-time {
       font-size:16px;
   }
@@ -202,38 +190,17 @@ table, th, td {
       height:64px;
   }
 
-  .tip {
-      width:100%;
-  }
-  
-  .nextprevtip {
-      width:100%;
-  }
+  .tip { width:100%; }
+  .nextprevtip { width:100%; }
+  p { font-size:14px; }
+  .tip p { font-size:14px; }
 
-  p {
-      font-size:14px;
-  }
-  
-  .tip p {
-      font-size:14px;
-  }
-
-  .tipimage {
-      width:42%;
-  }
-  
-  h1 {
-      /*font-size:22px;*/
-  }
+  .tipimage { width:42%; }
   
   .login-title {
      font-weight:bold;
      font-size:22px;
      padding-top:10px;
-  }
-  
-  .panel-summary {
-    /*font-size:12px;*/
   }
 }
 

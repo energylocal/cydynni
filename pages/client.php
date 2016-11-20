@@ -108,8 +108,8 @@
 
       <div style="text-align:center">
       <div style="margin-bottom:5px"><?php echo t("Last 24 hours");?>:</div>
-      <div id="placeholder_bound" style="height:100%">
-        <canvas id="placeholder"></canvas>
+      <div id="hydro_bargraph_placeholder_bound" style="height:100%">
+        <canvas id="hydro_bargraph_placeholder"></canvas>
       </div>
       </div>
     </div>
@@ -265,7 +265,6 @@
     <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
         <p><?php t("Over the last week we scored");?>: <b><span id="community_score"></span></b>/100</p>
-        <!--<p><b><span id="community_prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
         <img id="community_star1" src="images/star20yellow.png" style="width:45px">
         <img id="community_star2" src="images/star20yellow.png" style="width:45px">
         <img id="community_star3" src="images/star20yellow.png" style="width:45px">
@@ -279,11 +278,11 @@
     <div class="pagesection" style="color:rgb(255,117,0);">
       <div style="height:10px; background-color:rgb(255,117,0)"></div>
       <div class="title"><?php echo t("Value"); ?></div>
-      <div class="summary_bound"><div id="community_saving_summary" class="panel-summary"></div></div>
+      <div class="summary_bound"><div id="community_value_summary" class="panel-summary"></div></div>
     </div>
     <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
-        <p><?php echo t("Value of hydro power retained in the community"); ?> <b>£<span class="community_totalcost"></span></b></p>
+        <p><?php echo t("Value of hydro power retained in the community today"); ?> <b>£<span class="community_hydro_value"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>
@@ -488,10 +487,8 @@ if (!session) {
   household_load();
 }
 
-hydro_update();
 hydro_load();
 community_load();
-
 resize();
 
 // cydynni.js
@@ -559,11 +556,9 @@ function resize() {
     if (panel_height<200) panel_height = 200;
     
     if (window_width<450) {
-      $(".summary_bound").hide(); 
-      console.log("hide");
+      $(".summary_bound").hide();
     } else {
       $(".summary_bound").show();
-      console.log("show");
     }
 
     $(".panel[active=1]").height(panel_height);
