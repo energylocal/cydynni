@@ -5,14 +5,14 @@ Cyd Ynni : Ynni Lleol is a community project linking up households with local co
 
 The CydYnni app is a mobile friendly web app also packaged as an android and iOS app that shows when it is a good time to use electricity in the CydYnni project.
 
-<img src="images/screenshots/1.png" style="width:30%; float:left">
-<img src="images/screenshots/2.png" style="width:30%; float:left">
-<img src="images/screenshots/3.png" style="width:30%; float:left">
-<img src="images/screenshots/4.png" style="width:30%; float:left">
-<img src="images/screenshots/5.png" style="width:30%; float:left">
-<img src="images/screenshots/6.png" style="width:30%; float:left">
-<img src="images/screenshots/7.png" style="width:30%; float:left">
-<img src="images/screenshots/8.png" style="width:30%; float:left">
+![1.png](images/screenshots/1.png)
+![2.png](images/screenshots/2.png)
+![3.png](images/screenshots/3.png)
+![4.png](images/screenshots/4.png)
+![5.png](images/screenshots/5.png)
+![1.png](images/screenshots/6.png)
+![1.png](images/screenshots/7.png)
+![1.png](images/screenshots/8.png)
 
 ### Licence
 
