@@ -44,6 +44,7 @@
     <div class="title"><?php echo t("OK to use?"); ?></div>
     <div class="summary_bound"><div id="cydynni_summary" class="panel-summary"></div></div>
     <div class="togglelang">CY</div>
+    <div style="clear:both"></div>
   </div>
   <div id="panel-status" class="panel" style="#fff">
     <div id="panel-inner-status" class="panel-inner">
@@ -61,6 +62,7 @@
     <div style="height:10px; background-color:rgb(33,145,110)"></div>
     <div class="title"><?php echo t("Electricity Prices");?></div>
     <div class="summary_bound"><div id="tariff_summary" class="panel-summary"></div></div>
+    <div style="clear:both"></div>
   </div>
   <div class="panel">
     <div class="panel-inner">
@@ -98,6 +100,7 @@
     <div style="height:10px; background-color:rgb(39,78,63)"></div>
     <div class="title">Hydro</div>
     <div class="summary_bound"><div id="hydro_summary" class="panel-summary"></div></div>
+    <div style="clear:both"></div>
   </div>
   <div class="panel">
     <div class="panel-inner">

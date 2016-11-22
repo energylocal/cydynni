@@ -37,7 +37,9 @@ p {
 /* Ok to use? etc */
 .title {
   display:inline-block;
-  padding:14px;
+  padding:0px;
+  padding-top:14px;
+  padding-left:14px;
   font-size:22px;
   float:left;
 }
