@@ -17,6 +17,16 @@ function community_load()
       success: function(result) {
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
           
+          if (result.dayoffset==1) {
+              $("#community_score_text").html(t("Yesterday we scored"));
+          } else {
+              if (result.month==undefined) {
+                  $("#community_score_text").html(t("We scored"));
+              } else {
+                  $("#community_score_text").html(t("We scored")+" "+t("on")+" "+t(result.month)+" "+result.day);
+              }
+          }
+          
           $("#community_score").html(score);
           if (score>20) $("#community_star1").attr("src","images/staryellow.png");
           if (score>40) setTimeout(function() { $("#community_star2").attr("src","images/staryellow.png"); }, 100);
@@ -92,12 +102,15 @@ function community_bargraph_load() {
                 console.log("ERROR","invalid response: "+result);
             } else {
 
-                var hydro_data = result
-                // for (var z in hydro_data)
-                //    if (hydro_data[z][1]<0) hydro_data[z][1]=0;
-
+                var community_data = result
+                var total = 0;
+                for (var z in community_data) {
+                   total += community_data[z][1];
+                }
+                console.log("Total kWh in window: "+total.toFixed(2));
+                
                 communityseries = [];
-                communityseries.push({data:hydro_data, color:"rgba(142,77,0,0.7)"});
+                communityseries.push({data:community_data, color:"rgba(142,77,0,0.7)"});
                 community_bargraph_draw();
             }
         }

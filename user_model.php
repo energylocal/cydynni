@@ -186,8 +186,8 @@ class User
         $subject = "Welcome to CydYnni, account details";   
                          
         $message = view("emailbound.php",array(
-            "title"=>"Welcome to CydYnni",
-            "message"=>"Your can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with email address: $email and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on 'My Account'."
+            "title"=>"Croeso i CydYnni, Welcome to CydYnni",
+            "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda chyfeiriad e-bost: $email a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with email address: $email and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
         ));
 
         // ------------------------------------------------------------------

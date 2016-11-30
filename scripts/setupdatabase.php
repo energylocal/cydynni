@@ -1,5 +1,5 @@
 <?php
-if (php_sapi_name()!="cli") { echo "Please run from command line..."; die; }
+die;
 
 require "../settings.php";
 require "../lib/dbschemasetup.php";
@@ -8,7 +8,7 @@ $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$my
 // -----------------------------------
 // Uncomment to delete database
 // -----------------------------------
-// $mysqli->query("DROP TABLE users");
+$mysqli->query("DROP TABLE users");
 // -----------------------------------
 
 $schema = array();

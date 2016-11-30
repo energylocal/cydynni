@@ -140,7 +140,7 @@
       <div class="panel-inner">
 
         <div id="household-status-block">
-          <p><?php t("Over the last week you scored");?>: <b><span id="household_score"></span></b>/100</p>
+          <p><span id="household_score_text"><?php echo t("Over the last week you scored"); ?></span>: <b><span id="household_score"></span></b>/100</p>
           <!--<p><b><span id="prclocal">--</span>%</b> local or off-peak power<br><span style="font-size:12px">In the last 7 days</span></p>-->
           <img id="star1" src="images/star20blue.png" style="width:45px">
           <img id="star2" src="images/star20blue.png" style="width:45px">
@@ -190,8 +190,8 @@
     </div>
     <div class="panel"  style="">
       <div class="panel-inner" style="color:rgb(100,171,255)">
-        <p><?php echo t("You have used");?> <b><span class="totalkwh"></span> kWh</b> <?php echo t("in the last day. Costing");?> <b>£<span class="totalcost"></span></b></p>
-        <p><?php echo t("You have saved");?> <b>£<span class="costsaving"></span></b> <?php echo t("compared with 12p/kWh reference price");?></p>
+        <p><?php echo t("You used");?> <b><span class="totalkwh"></span> kWh</b> <span id="household-used-date"></span> <b>£<span class="totalcost"></span></b></p>
+        <p><?php echo t("You saved");?> <b>£<span class="costsaving"></span></b> <?php echo t("compared with 12p/kWh reference price");?></p>
       </div>
     </div>
 
@@ -267,7 +267,7 @@
     </div>
     <div class="panel" style="color:rgb(235,200,0)">
       <div class="panel-inner">
-        <p><?php t("Over the last week we scored");?>: <b><span id="community_score"></span></b>/100</p>
+        <p><span id="community_score_text"><?php echo t("Over the last week we scored"); ?></span>: <b><span id="community_score"></span></b>/100</p>
         <img id="community_star1" src="images/star20yellow.png" style="width:45px">
         <img id="community_star2" src="images/star20yellow.png" style="width:45px">
         <img id="community_star3" src="images/star20yellow.png" style="width:45px">
@@ -285,7 +285,7 @@
     </div>
     <div class="panel" style="color:rgb(255,117,0);">
       <div class="panel-inner">
-        <p><?php echo t("Value of hydro power retained in the community today"); ?> <b>£<span class="community_hydro_value"></span></b></p>
+        <p><?php echo t("Value of hydro power retained in the community"); ?> <b>£<span class="community_hydro_value"></span></b></p>
         <!--<p>We have saved <b>£<span class="community_costsaving"></span></b> compared to standard flat rate price</p>-->
       </div>
     </div>

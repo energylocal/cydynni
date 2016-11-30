@@ -14,13 +14,20 @@ function household_load()
       url: path+"household/data",
       dataType: 'json',                  
       success: function(result) {
-      
+          
           // 1. Determine score
           // Calculated as amount of power consumed at times off peak times and from hydro
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
 
           // Display score as number of stars
-          // setTimeout fn used to animate
+          // setTimeout fn used to animate 
+          
+          if (result.dayoffset==1) {
+              $("#household_score_text").html(t("Yesterday you scored"));
+          } else {
+              $("#household_score_text").html(t("You scored")+" "+t("on")+" "+t(result.month)+" "+result.day);
+          }
+          
           $("#household_score").html(score);
           if (score>20) $("#star1").attr("src","images/starblue.png");
           if (score>40) setTimeout(function() { $("#star2").attr("src","images/starblue.png"); }, 100);
@@ -48,13 +55,23 @@ function household_load()
           $(".totalcost").html(result.cost.total.toFixed(2));
           $(".totalkwh").html(result.kwh.total.toFixed(1));
           
+          if (result.dayoffset==1) {
+              $("#household-used-date").html(t("yesterday. Costing"));
+          } else {
+              $("#household-used-date").html(t("on")+" "+t(result.month)+" "+result.day+". "+t("Costing"));
+          }
+          
           // Saving calculation
           var totalcostflatrate = result.kwh.total * 0.12;
           var costsaving = totalcostflatrate - result.cost.total;
           $(".costsaving").html(costsaving.toFixed(2));
           
           // Summary for saving section
-          $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("LAST WEEK"));
+          if (result.dayoffset==1) {
+              $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("YESTERDAY"));
+          } else {
+              $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t(result.month)+" "+result.day);    
+          }
           
           // Pie graph
           var data = [
@@ -102,12 +119,14 @@ function household_bargraph_load() {
                 console.log("ERROR","invalid response: "+result);
             } else {
 
-                var hydro_data = result;
-                // for (var z in hydro_data)
-                //     if (hydro_data[z][1]<0) hydro_data[z][1]=0;
-
+                var household_data = result;
+                var total = 0;
+                for (var z in household_data) {
+                   total += household_data[z][1];
+                }
+                console.log("Total kWh in window: "+total.toFixed(2));
                 householdseries = [];
-                householdseries.push({data:hydro_data, color:"rgba(0,71,121,0.7)"});
+                householdseries.push({data:household_data, color:"rgba(0,71,121,0.7)"});
                 household_bargraph_draw();
             }
         }
@@ -120,7 +139,7 @@ function household_resize(panel_height) {
 }
 
 function household_bargraph_draw() {
-    bargraph("household_bargraph_placeholder",householdseries, " W");
+    bargraph("household_bargraph_placeholder",householdseries, " kWh");
 }
 
 function household_bargraph_resize(h) {
