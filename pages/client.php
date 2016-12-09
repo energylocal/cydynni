@@ -106,6 +106,7 @@
     <div class="panel-inner">
       <div style="height:80px; overflow:hidden">
         <div class="status"><span id="hydrostatus"></span></div>
+        <!-- (<span id="kWhHH"></span> kWh/<?php echo t("half-hour");?>)-->
         <?php echo t("Currently generating");?> <b><span id="power"></span> kW</b>
       </div>
 

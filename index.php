@@ -24,12 +24,19 @@ require "core.php";
 require "meter_data_api.php";
 
 $path = get_application_path();
+//$path = "http://cydynni.org.uk/";
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 // ---------------------------------------------------------
 require("user_model.php");
 $user = new User($mysqli);
 session_start();
 $session = $user->status();
+
+if ($session) {
+    $userid = (int) $session['userid'];
+    $mysqli->query("UPDATE users SET hits=hits+1 WHERE `id`='$userid'");
+}
+
 // ---------------------------------------------------------
 
 $q = "";
@@ -117,6 +124,21 @@ switch ($q)
     case "registeremail":
         $format = "text";
         if ($session['admin']) $content = $user->registeremail(get('userid'));
+        break;
+        
+    case "admin/check-household-breakdown":
+        $format = "json";
+        if ($session['admin']) {
+            $u = $user->getbyid(get('userid'));
+            $content = get_household_consumption($meter_data_api_baseurl,$u["apikey"]);
+        }
+        break;
+        
+    case "admin/change-user-email":
+        $format = "text";
+        if ($session['admin']) {
+            $content = $user->change_email(get("userid"),get("email"));
+        }
         break;
                 
     case "login":

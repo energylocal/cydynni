@@ -45,6 +45,14 @@ function piegraph(element,data,hydro,options) {
     ctx.font=Math.round(0.0375*size)+"px Arial";
     ctx.fillText(hydro+" kWh",midx,midy+8);
     //-------------------------------------------------------
+    midx = options.width * 0.4;
+    ctx.strokeStyle = "#fff";
+    ctx.fillStyle = "#eee";
+    ctx.beginPath();
+    ctx.arc(midx,midy,size*0.2875,0,2*Math.PI,false);
+    ctx.fill();
+    ctx.stroke();
+    //-------------------------------------------------------
     
     midx = options.width * 0.4;
     ctx.strokeStyle = "#fff";

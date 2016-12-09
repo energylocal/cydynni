@@ -27,20 +27,20 @@ class User
     //---------------------------------------------------------------------------------------
     public function userlist()
     {
-        $result = $this->mysqli->query("SELECT id,email,apikey,feedid,admin FROM users");
+        $result = $this->mysqli->query("SELECT id,email,apikey,feedid,admin,welcomedate,hits,MPAN FROM users");
         $users = array();
         while($row = $result->fetch_object()) $users[] = $row;
         return $users;
     }
     
     private function getbyemail($email) {
-        $stmt = $this->mysqli->prepare("SELECT id,email,dbhash,salt,admin,apikey,feedid FROM users WHERE email = ?");
+        $stmt = $this->mysqli->prepare("SELECT id,email,dbhash,salt,admin,apikey FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows!=1) return false;
         
-        $stmt->bind_result($id,$email,$dbhash,$salt,$admin,$apikey,$feedid);
+        $stmt->bind_result($id,$email,$dbhash,$salt,$admin,$apikey);
         $u = $stmt->fetch();
         return array(
             "id"=>$id,
@@ -48,8 +48,18 @@ class User
             "dbhash"=>$dbhash,
             "salt"=>$salt,
             "admin"=>$admin,
-            "apikey"=>$apikey,
-            "feedid"=>$feedid
+            "apikey"=>$apikey
+        );
+    }
+    
+    public function getbyid($id) {
+        $id = (int) $id;
+        $result = $this->mysqli->query("SELECT email,apikey FROM users WHERE id='$id'");
+        $row = $result->fetch_array();
+        
+        return array(
+            "email"=>$row["email"],
+            "apikey"=>$row["apikey"]
         );
     }
     
@@ -109,7 +119,6 @@ class User
         $_SESSION['email'] = $u['email'];
         $_SESSION['admin'] = $u['admin'];
         $_SESSION['apikey'] = $u['apikey'];
-        $_SESSION['feedid'] = $u['feedid'];
         return $_SESSION;
     }
 
@@ -128,6 +137,14 @@ class User
         $newdbhash = hash('sha256', $salt . $hash);
         $this->mysqli->query("UPDATE users SET dbhash = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
         return "Password changed";
+    }
+    
+    public function change_email($userid, $email) 
+    {
+        $userid = (int) $userid;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
+        $this->mysqli->query("UPDATE users SET email = '$email' WHERE id = '$userid'");
+        return "Email updated";
     }
 
     //---------------------------------------------------------------------------------------

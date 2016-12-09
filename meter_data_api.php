@@ -93,12 +93,22 @@ function get_household_consumption($baseurl,$token) {
     // Domestic user’s gross consumption within the 4 defined 
     // tariff periods and their daily total
     // -------------------------------------------------------------
+    
+    // {
+    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","READINGTOTAL"],
+    //     "DATA":[["November, 30 2016 00:00:00",1.3,2.1,4.5,2.3,10.2]]
+    // }
+    
     // Fetch data from data server
+    // print $baseurl."1-$token-6";
     $str = @file_get_contents($baseurl."1-$token-6");
+    //print $str;
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
     // if json failed to decode return blank array
     if ($result==null) return "Invalid data";
+    if (!isset($result->DATA)) return "Invalid data";
+    if (!isset($result->DATA[0])) return "Invalid data";
     
     $date1 = $result->DATA[0][0];
     
@@ -107,19 +117,29 @@ function get_household_consumption($baseurl,$token) {
         "midday"=>$result->DATA[0][2],
         "evening"=>$result->DATA[0][3],
         "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5]
+        // "total"=>$result->DATA[0][5]
     );
+    
+    $total = $result->DATA[0][5];
 
     // -------------------------------------------------------------
     // Domestic user’s net consumption following the allocation of 
     // hydro output through the sharing algorithm
     // -------------------------------------------------------------
+    
+    // {   
+    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","SHARETOTAL"],
+    //     "DATA":[["November, 30 2016 00:00:00",0,0.39,0,0,0.39]]
+    // }
+    
     // Fetch data from data server
     $str = @file_get_contents($baseurl."1-$token-7");
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
     // if json failed to decode return blank array
     if ($result==null) return "Invalid data";
+    if (!isset($result->DATA)) return "Invalid data";
+    if (!isset($result->DATA[0])) return "Invalid data";
     
     $date2 = $result->DATA[0][0];
     
@@ -130,14 +150,28 @@ function get_household_consumption($baseurl,$token) {
         "midday"=>$result->DATA[0][2],
         "evening"=>$result->DATA[0][3],
         "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5],
+        //"total"=>$result->DATA[0][5],
     );
     
+    $hydro = $total - $result->DATA[0][5];
+    
+    /*
     $hydro = 0;
-    foreach ($reading as $key=>$val) $hydro += $reading[$key]-$imported[$key];
+    foreach ($reading as $key=>$val) {
+        $hydro += $reading[$key]-$imported[$key];
+    }
+    
+    $total = 0;
+    foreach ($imported as $val) {
+        $total += $val;
+    }
+    
+    $total += $hydro;
+    */
     
     $kwh = $imported;
     $kwh["hydro"] = $hydro;
+    $kwh["total"] = $total;
 
     // -------------------------------------------------------------
     // Domestic user’s net charge to be billed
@@ -149,6 +183,8 @@ function get_household_consumption($baseurl,$token) {
     $result = json_decode(substr($str,2));
     // if json failed to decode return blank array
     if ($result==null) return array();
+    if (!isset($result->DATA)) return "Invalid data";
+    if (!isset($result->DATA[0])) return "Invalid data";
     
     $date3 = $result->DATA[0][0];
     if ($date1!=$date3) return "Date mismatch";

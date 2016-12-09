@@ -8,7 +8,7 @@ $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$my
 // -----------------------------------
 // Uncomment to delete database
 // -----------------------------------
-$mysqli->query("DROP TABLE users");
+// $mysqli->query("DROP TABLE users");
 // -----------------------------------
 
 $schema = array();
@@ -19,7 +19,10 @@ $schema['users'] = array(
     'salt' => array('type' => 'varchar(32)'),
     'admin' => array('type' => 'int(11)', 'Null'=>'NO'),
     'apikey' => array('type' => 'varchar(128)'),
-    'feedid' => array('type' => 'int(11)', 'Null'=>'NO')
+    'feedid' => array('type' => 'int(11)', 'Null'=>'NO'),
+    'hits' => array('type' => 'int(11)', 'Null'=>'NO', "default"=>0),
+    'welcomedate' => array('type' => 'varchar(32)', "default"=>"not sent"),
+    'MPAN' => array('type' => 'varchar(32)', "default"=>"")
 );
 
 print "----------------------------------\n";

@@ -25,15 +25,15 @@ function hydro_load() {
                 if (hydro_data.length>0) {
                     
                     for (var z in hydro_data)
-                        hydro_data[z][1] = ((hydro_data[z][1] * 3600000) / 1800) * 0.001;
+                        // hydro_data[z][1] = ((hydro_data[z][1] * 3600000) / 1800) * 0.001;
                         if (hydro_data[z][1]<0) hydro_data[z][1]=0;
                     
                     var last_power = hydro_data[hydro_data.length-2][1]*1;   
                     var power = hydro_data[hydro_data.length-1][1]*1;
                     var time = hydro_data[hydro_data.length-1][0]*1;
                     
-                    $("#power").html(power.toFixed(1));
-                    
+                    $("#power").html(((power.toFixed(1)*3600000)/1800)*0.001);
+                    $("#kWhHH").html(power.toFixed(1));
                     if (power>=50) {
                         $("#hydrostatus").html(t("HIGH"));
                         $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
@@ -68,7 +68,7 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("hydro_bargraph_placeholder",hydroseries," kW");
+    bargraph("hydro_bargraph_placeholder",hydroseries," kWh");
 }
 
 function hydro_resize(panel_height) {

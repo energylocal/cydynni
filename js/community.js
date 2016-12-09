@@ -161,7 +161,7 @@ function community_bargraph_resize(h) {
 }
 
 function community_bargraph_draw() {
-    bargraph("community_bargraph_placeholder",communityseries," W");
+    bargraph("community_bargraph_placeholder",communityseries," kWh");
 }
 
 $("#view-community-bargraph").click(function(){
