@@ -26,7 +26,11 @@ function get_application_path()
     } elseif (server('HTTP_X_FORWARDED_PROTO') == "https") {
         // Web server is running behind a proxy which is running HTTPS
         $proto = "https";
-    }
+    } elseif (isset($_SERVER["HTTP_X_FORWARDED_SSL"]) && $_SERVER["HTTP_X_FORWARDED_SSL"] = 1) {
+        $proto = "https";
+    } elseif (isset($_SERVER["SSL"]) && $_SERVER["SSL"] = 1) {
+        $proto = "https";
+    }  
 
     if( isset( $_SERVER['HTTP_X_FORWARDED_SERVER'] ))
         $path = dirname("$proto://" . server('HTTP_X_FORWARDED_SERVER') . server('SCRIPT_NAME')) . "/";
