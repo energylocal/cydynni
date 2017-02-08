@@ -110,8 +110,29 @@ function community_bargraph_load() {
                 console.log("Total kWh in window: "+total.toFixed(2));
                 
                 communityseries = [];
+                //communityseries.push({data:hydro_data, color:"rgba(39,78,63,0.3)"});
                 communityseries.push({data:community_data, color:"rgba(142,77,0,0.7)"});
                 community_bargraph_draw();
+            
+                // Show day instead of "last 24 hour"
+                var d1 = new Date();
+                var t1 = d1.getTime()*0.001;
+                var d2 = new Date(community_data[0][0]);
+                var t2 = d2.getTime()*0.001;
+                var dayoffset = Math.floor((t1-t2)/(3600*24));
+                console.log("Days behind: "+dayoffset);
+                
+                var hour = d2.getHours();
+                var month = d2.getMonth();
+                var day = d2.getDate();
+                if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
+                var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                
+                if (dayoffset==1) {
+                    $("#community-graph-date").html(t("Yesterday")+" ("+day+" "+t(months[month])+"):");
+                } else {
+                    $("#community-graph-date").html(day+" "+months[month]);
+                }
             }
         }
     });
