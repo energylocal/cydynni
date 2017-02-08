@@ -4,6 +4,7 @@ Hydro section
 
 */
 
+var hydro_data = [];
 var hydroseries = [];
 setInterval(hydro_load,60000);
 
@@ -19,7 +20,7 @@ function hydro_load() {
                 console.log("ERROR","invalid response: "+result);
             } else {
 
-                var hydro_data = result;
+                hydro_data = result;
                 var forecast = [];
                 
                 if (hydro_data.length>0) {
@@ -52,6 +53,28 @@ function hydro_load() {
                     }
                     
                     forecast = hydro_forecaster(time,power,last_power);
+                    
+                    // Show day instead of "last 24 hour"
+                    var d1 = new Date();
+                    var t1 = d1.getTime()*0.001;
+                    var d2 = new Date(hydro_data[0][0]);
+                    var t2 = d2.getTime()*0.001;
+                    var dayoffset = Math.floor((t1-t2)/(3600*24));
+                    console.log("Days behind: "+dayoffset);
+                    
+                    var hour = d2.getHours();
+                    var month = d2.getMonth();
+                    var day = d2.getDate();
+                    if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
+                    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                    
+                    if (dayoffset==1) {
+                        $("#hydro-graph-date").html(t("Yesterday")+" ("+day+" "+t(months[month])+"):");
+                    } else {
+                        $("#hydro-graph-date").html(day+" "+months[month]);
+                    }
+                    
+                    
                 } else {
                     $("#hydrostatus").html(t("NO DATA"));
                 }
@@ -108,7 +131,7 @@ function hydro_forecaster(time,power,lastpower) {
         for (var z=0; z<forecastlength; z++) {
             var ft = time+z*timeinc;
             forecast.push([ft,0]);
-        }        
+        }
     }
     // Hydro output increasing: assume flat
     else if ((power-lastpower)>ThRising) {
