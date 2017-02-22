@@ -22,12 +22,34 @@ class User
         return $session;
     }
     
+    public function check_reportkey($reportkey)
+    {
+        $reportkey = $this->mysqli->real_escape_string($reportkey);
+        
+        $result = $this->mysqli->query("SELECT id,email,apikey FROM users WHERE reportkey='$reportkey'");
+        if ($result->num_rows == 1)
+        {
+            $row = $result->fetch_array();
+            if ($row['id'] != 0)
+            {
+                session_regenerate_id();
+                $_SESSION['userid'] = $row['id'];
+                $_SESSION['apikey'] = $row['apikey'];
+                $_SESSION['email'] = $row['email'];
+                $_SESSION['admin'] = 0;
+                $session = $_SESSION;
+                return $session;
+            }
+        }
+        return false;
+    }
+    
     //---------------------------------------------------------------------------------------
     // Status
     //---------------------------------------------------------------------------------------
     public function userlist()
     {
-        $result = $this->mysqli->query("SELECT id,email,apikey,feedid,admin,welcomedate,hits,MPAN FROM users");
+        $result = $this->mysqli->query("SELECT id,email,apikey,reportkey,admin,welcomedate,reportdate,hits,MPAN FROM users");
         $users = array();
         while($row = $result->fetch_object()) $users[] = $row;
         return $users;
@@ -66,17 +88,15 @@ class User
     //---------------------------------------------------------------------------------------
     // User login
     //---------------------------------------------------------------------------------------
-    public function register($email,$password,$apikey,$feedid)
+    public function register($email,$password,$apikey)
     {
         if ($email==null) return "Email address missing";
         if ($password==null) return "Password missing";
         if (!ctype_alnum($apikey)) return "Apikey must be alpha-numeric";
-        if (!is_numeric($feedid)) return "Feed id must be numeric";
         
         // Validate email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
         if (strlen($password) < 4 || strlen($password) > 250) return "Password length error";
-        $feedid = (int) $feedid;
 
         $stmt = $this->mysqli->prepare("SELECT id FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -88,8 +108,8 @@ class User
         $salt = md5(uniqid(mt_rand(), true));
         $dbhash = hash('sha256', $salt . $hash);
 
-        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin,apikey,feedid) VALUES (?,?,?,0,?,?)");
-        $stmt->bind_param("sssss", $email, $dbhash, $salt,$apikey,$feedid);
+        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin,apikey) VALUES (?,?,?,0,?)");
+        $stmt->bind_param("ssss", $email, $dbhash, $salt,$apikey);
         if (!$stmt->execute()) {
             return "Error creating user";
         }
@@ -235,6 +255,82 @@ class User
           ->setBody($message, 'text/html');
         $result = $mailer->send($message);
         // ------------------------------------------------------------------
+        
+        
+        $welcomedate = date("d-m-Y");
+        $this->mysqli->query("UPDATE users SET welcomedate = '$welcomedate' WHERE `id`='$userid'");
+        return "Email sent";
+    }
+    
+    
+    //---------------------------------------------------------------------------------------
+    // Report Email
+    //--------------------------------------------------------------------------------------- 
+    public function send_report_email($userid)
+    {
+        $userid = (int) $userid;
+        $result = $this->mysqli->query("SELECT * FROM users WHERE id = '$userid'");
+        if (!$row = $result->fetch_array()) return "user not found";
+        
+        $email = $row['email'];
+        
+        $month_en = "January";
+        $month_cy = "Ionawr";
+        
+        $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
+        
+        $c = "";
+        $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan the dilyn y ddolen isod:<br>";
+        $c .= "<i>Your CydYnni report for $month_en is now ready. Please login to view your report by following the link below:</i><br><br>";
+        $c .= "<a href='https://cydynni.org.uk/report?reportkey=".$row["reportkey"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
+        $c .= "<a href='https://cydynni.org.uk/report?reportkey=".$row["reportkey"]."&lang=en'>CydYnni Report (English)</a><br><br>";
+
+        $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
+        
+        $c .= "<i style='font-size:12px'>Nodwch: Ar hyn o bryd mae cyfran y hydro sydd yn gysylltiedig â'ch cyfrif yn amcangyfrif.</i><br>";
+        $c .= "<i style='font-size:12px'>Nid ywr costau yn cynnwys eich tâl dyddiol sefydlog (17.8p / dydd) a TAW (5%). Bydd y costau hyn yn cael eu hadlewyrchu yn eich bil o Coop Ynni.<br><br></i>";
+        
+        $c .= "<i style='font-size:12px'>Please note that at the moment the share of hydro assigned to you is still an estimate.</i><br>";
+        $c .= "<i style='font-size:12px'>All costs are exclusive of your daily standard charge (17.8p/day) and VAT (5%). These costs will be reflected in your bill from Coop Energy.<br><br></i>";
+        
+        $c .= "<i style='font-size:12px'>Questions? cwestiynau?, cysylltwch â: cydynni@energylocal.co.uk</i><br>";
+        
+        $message = view("emailbound.php",array(
+            "title"=>"Mae eich adroddiad CydYnni yn barod<br>Your CydYnni report is ready",
+            "message"=>$c
+        ));
+
+        // ------------------------------------------------------------------
+        // Email with swift
+        // ------------------------------------------------------------------
+        $have_swift = @include_once ("lib/swift/swift_required.php"); 
+
+        if (!$have_swift){
+            print "Could not find SwiftMailer - cannot proceed";
+            exit;
+        };
+
+        global $smtp_email_settings;
+        
+        // ---------------------------------------------------------
+        // Removed sequre connect $smtp_email_settings['port'],'ssl'
+        // Not supported by 123reg
+        // ---------------------------------------------------------
+        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
+          ->setUsername($smtp_email_settings['username'])
+          ->setPassword($smtp_email_settings['password']);
+
+        $mailer = Swift_Mailer::newInstance($transport);
+        $message = Swift_Message::newInstance()
+          ->setSubject($subject)
+          ->setFrom($smtp_email_settings['from'])
+          ->setTo(array($email))
+          ->setBody($message, 'text/html');
+        $result = $mailer->send($message);
+        // ------------------------------------------------------------------
+        
+        $reportdate = date("d-m-Y");
+        $this->mysqli->query("UPDATE users SET reportdate = '$reportdate' WHERE `id`='$userid'");
         return "Email sent";
     }
     
