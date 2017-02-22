@@ -19,12 +19,13 @@ ini_set('display_errors', 'on');
 date_default_timezone_set('Europe/London');
 
 // ---------------------------------------------------------
+$test_user = 59;
+// ---------------------------------------------------------
 require "settings.php";
 require "core.php";
 require "meter_data_api.php";
 
 $path = get_application_path();
-//$path = "http://cydynni.org.uk/";
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 // ---------------------------------------------------------
 require("user_model.php");
@@ -69,23 +70,29 @@ switch ($q)
         
     case "report":
         $format = "html";
+        if (isset($_GET["reportkey"])) $session = $user->check_reportkey($_GET["reportkey"]);
         if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
-        $content = view("pages/report.php",array('session'=>$rsession));
+        if ($session) $content = view("pages/report.php",array('session'=>$rsession));
         break;
-                
+                        
     case "household/data":
-        if ($session && isset($session['apikey']) && isset($session['feedid'])) {
+        if ($session && isset($session['apikey'])) {
             $format = "json";
             $content = get_household_consumption($meter_data_api_baseurl,$session['apikey']);
+        }
+        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_household_last_day_summary;
+        break;
+        
+    case "household/monthlydata":
+        if ($session && isset($session['apikey'])) {
+            $format = "json";
+            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['apikey']);
         }
         break;
         
     case "community/data":
         $format = "json";
-        $content = array(
-          "kwh"=>array("morning"=>100,"midday"=>200,"evening"=>100,"overnight"=>200,"hydro"=>300,"total"=>900),
-          "cost"=>array("morning"=>10,"midday"=>20,"evening"=>10,"overnight"=>20,"hydro"=>30,"total"=>90)
-        );
+        $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
         
     case "community/halfhourlydata":
@@ -93,19 +100,26 @@ switch ($q)
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
         break;
 
-
+    case "community/monthlydata":
+        $format = "json";
+        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        break;
+        
     // ------------------------------------------------------------------------
     // Emoncms.org feed    
     // ------------------------------------------------------------------------
     case "hydro":
         $format = "json";
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
+        // test user:
+        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_hydro_get_meter_data; 
         break;
     
     case "data":
         $format = "json";
-        if ($session && isset($session['apikey']))
-            $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+        if ($session && isset($session['apikey'])) $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+        // test user:
+        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_household_meter_data;
         break;
     
     // ------------------------------------------------------------------------
@@ -115,15 +129,65 @@ switch ($q)
         $format = "json";
         $content = $session;
         break;
-
-    case "register":
-        $format = "text";
-        if ($session['admin']) $content = $user->register(get('email'),get('password'),get('apikey'),get('feedid'));
+                
+    case "login":
+        $format = "json";
+        $content = $user->login(get('email'),get('password'));
         break;
         
-    case "registeremail":
+    case "logout":
         $format = "text";
-        if ($session['admin']) $content = $user->registeremail(get('userid'));
+        $content = $user->logout();
+        break;
+        
+    case "passwordreset":
+        $format = "text";
+        $content = $user->passwordreset(get('email'));
+        break;
+        
+    case "changepassword":
+        $format = "text";
+        if ($session && isset($session['userid']) && $session['userid']>0) {
+            $content = $user->change_password($session['userid'], post("old"), post("new"));
+        } else {
+            $content = "session not valid";
+        }
+        break;
+        
+    // ----------------------------------------------------------------------
+    // Administration functions
+    // ----------------------------------------------------------------------
+    case "admin/users":
+        $format = "json";
+        if ($session['admin']) {
+            $content = $user->userlist();
+        }
+        break;
+        
+    case "admin/reportlist":
+        $format = "text";
+        if ($session['admin']) {
+            $users = $user->userlist();
+            $content = "";
+            foreach ($users as $user) {
+                $content .= $user->email.", https://cydynni.org.uk/report?reportkey=".$user->reportkey."&lang=cy\n";
+            
+            }
+        }
+        break;
+        
+    case "admin/register":
+        $format = "text";
+        if ($session['admin']) {
+            $content = $user->register(get('email'),get('password'),get('apikey'));
+        }
+        break;
+        
+    case "admin/registeremail":
+        $format = "text";
+        if ($session['admin']) {
+            $content = $user->registeremail(get('userid'));
+        }
         break;
         
     case "admin/check-household-breakdown":
@@ -140,33 +204,24 @@ switch ($q)
             $content = $user->change_email(get("userid"),get("email"));
         }
         break;
-                
-    case "login":
-        $format = "json";
-        $content = $user->login(get('email'),get('password'));
-        break;
         
-    case "logout":
+    case "admin/switchuser":
         $format = "text";
-        $content = $user->logout();
+        if ($session['admin']) {
+            $userid = get("userid");
+            $_SESSION["userid"] = $userid;
+            $u = $user->getbyid($userid);
+            $_SESSION["apikey"] = $u["apikey"];
+            $_SESSION['email'] = $u['email'];
+            $content = "User switched";
+        }
+        header('Location: '."http://cydynni.org.uk/#household");
         break;
-        
-    case "admin/users":
-        $format = "json";
-        if ($session['admin']) $content = $user->userlist();
-        break;
-        
-    case "passwordreset":
+
+    case "admin/sendreport":
         $format = "text";
-        $content = $user->passwordreset(get('email'));
-        break;
-        
-    case "changepassword":
-        $format = "text";
-        if ($session && isset($session['userid']) && $session['userid']>0) {
-            $content = $user->change_password($session['userid'], post("old"), post("new"));
-        } else {
-            $content = "session not valid";
+        if ($session['admin']) {
+            $content = $user->send_report_email(get('userid'));
         }
         break;
 }
