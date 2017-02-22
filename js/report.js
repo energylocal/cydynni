@@ -1,5 +1,7 @@
-
-
+var droplet = new Image();
+droplet.src = "images/droplet.png";
+droplet.onload = function () { }
+    
 function hydrodroplet(element,value,options)
 {
     // Droplet size based on width
@@ -12,36 +14,26 @@ function hydrodroplet(element,value,options)
     var ctx = c.getContext("2d");
     ctx.clearRect(0,0,options.width,options.height);
 
-    var droplet = new Image();
-    droplet.src = "images/droplet.png";
     
-
-
     // Background grey
     ctx.fillStyle = "#eee";
     ctx.beginPath();
     ctx.arc(midx,midy,size*0.40,0,2*Math.PI,false);
     ctx.fill();
     
-    droplet.onload = function () {
-        var w = 200;
-        ctx.drawImage(droplet,midx-(w/2),midy-(w*0.6),w,w);
-        
-        ctx.textAlign = "center";
-        
-        ctx.fillStyle = "#fff";
-        ctx.font=Math.round(0.05*size)+"px Arial";
-        ctx.fillText("HYDRO",midx,midy-4);
-        ctx.font=Math.round(0.05*size)+"px Arial";
-        ctx.fillText(value+" kWh",midx,midy+12);
-    };
+    var w = options.width*0.7;
+    ctx.drawImage(droplet,midx-(w/2),midy-(w*0.6),w,w);
     
+    ctx.textAlign = "center";
     
-    
-
+    ctx.fillStyle = "#fff";
+    ctx.font=Math.round(0.05*size)+"px Arial";
+    ctx.fillText("HYDRO",midx,midy-4);
+    ctx.font=Math.round(0.05*size)+"px Arial";
+    ctx.fillText(value+" kWh",midx,midy+12);
 }
 
-function piegraph(element,data,hydro,options) {
+function piegraph(element,data,options) {
     // Pie chart size based on width
     var size = options.width;
     var midx = options.width * 0.5;
