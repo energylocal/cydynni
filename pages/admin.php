@@ -74,9 +74,11 @@
         <tr>
           <th style="width:80px">User</th>
           <th style="width:330px">Email <span style="font-size:12px">(Click to edit)</span></th>
-          <th style="width:300px">MPAN</th>
-          <th style="width:350px">Token</th>
+          <th style="width:130px">MPAN</th>
+          <th style="max-width:350px">Token</th>
+          <th style="max-width:100px">Report Key</th>
           <th style="width:140px">Welcome Email</th>
+          <th style="width:140px">Report Email</th>
           <th style="width:50px">Hits</th>
           <th></th>
         </tr>
@@ -128,7 +130,7 @@ function load() {
             for (var z in result) {
                 out += "<tr>";
                 var admin = ""; if (result[z].admin==1) admin = " (admin)";
-                out += "<td>"+result[z].id+admin+"</td>";
+                out += "<td><a href='admin/switchuser?userid="+result[z].id+"'>"+result[z].id+"</a>"+admin+"</td>";
                 out += "<td class='td-email'>";
                   out += "<input type='text' value='"+result[z].email+"' class='edit-email-input' style='border:0; color:#3b6358; padding:0px' userid='"+result[z].id+"'>";
                   out += "<button class='edit-email-save' userid='"+result[z].id+"'>Save</button>";
@@ -136,10 +138,21 @@ function load() {
                 // text-wrap:normal;word-wrap:break-word
                 out += "<td><div style=''>"+result[z].MPAN+"</div></td>";
                 out += "<td><div style='overflow:hidden'>"+result[z].apikey+"</div></td>";
-                out += "<td>"+result[z].welcomedate+" <button class='registeremail' userid='"+result[z].id+"' style='font-size:12px'>Send</button></td>";
+                out += "<td><div style='overflow:hidden'>"+result[z].reportkey+"</div></td>";
+                
+                // Register date
+                var bgcolor = "#ccffcc"; if (result[z].welcomedate=="not sent") bgcolor = "#ffcccc";
+                out += "<td><span style='font-size:12px; background-color:"+bgcolor+"'>"+result[z].welcomedate+"</span> ";
+                out += "<button class='registeremail' userid='"+result[z].id+"' style='font-size:12px'>Send</button></td>";
+                
+                // Report date
+                var bgcolor = "#ccffcc"; if (result[z].reportdate=="not sent") bgcolor = "#ffcccc";
+                out += "<td><span style='font-size:12px; background-color:"+bgcolor+"'>"+result[z].reportdate+"</span> ";
+                out += "<button class='reportemail' userid='"+result[z].id+"' style='font-size:12px'>Send</button></td>";
+                
                 out += "<td>"+result[z].hits+"</td>";
                 out += "<td>";
-                out += "Check: <button class='check-household-breakdown' userid='"+result[z].id+"' style='font-size:12px'>Household Data</button> <span style='overflow:hidden' class='household-breakdown' userid='"+result[z].id+"'></span>";
+                out += "<button class='check-household-breakdown' userid='"+result[z].id+"' style='font-size:12px'>Test</button> <span style='overflow:hidden' class='household-breakdown' userid='"+result[z].id+"'></span>";
                 out += "</td>";
                 out += "</tr>";
             }
@@ -193,7 +206,19 @@ $("#register").click(function() {
 $("body").on("click",".registeremail",function(){
     var userid = $(this).attr("userid");
     $.ajax({
-        url: path+"registeremail",
+        url: path+"admin/registeremail",
+        data: "userid="+userid,
+        dataType: 'text',
+        success: function(result) {
+            alert(result)
+        }
+    });
+});
+
+$("body").on("click",".reportemail",function(){
+    var userid = $(this).attr("userid");
+    $.ajax({
+        url: path+"admin/sendreport",
         data: "userid="+userid,
         dataType: 'text',
         success: function(result) {
