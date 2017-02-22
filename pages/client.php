@@ -111,7 +111,7 @@
       </div>
 
       <div style="text-align:center">
-      <div style="margin-bottom:5px"><?php echo t("Last 24 hours");?>:</div>
+      <div style="margin-bottom:5px" id="hydro-graph-date"><?php echo t("Last 24 hours");?>:</div>
       <div id="hydro_bargraph_placeholder_bound" style="height:100%">
         <canvas id="hydro_bargraph_placeholder"></canvas>
       </div>
@@ -310,7 +310,7 @@
         </div>
 
         <div id="community_bargraph" style="display:none; text-align:left">
-        <div style="margin-bottom:5px"><?php echo t("Community Half-hourly Demand");?>:</div>
+        <div style="margin-bottom:5px"><?php echo t("Community Half-hourly Demand");?>: <span id="community-graph-date"></span></div>
         <div id="community_bargraph_bound">
           <canvas id="community_bargraph_placeholder"></canvas>
         </div>
@@ -489,6 +489,7 @@ if (!session) {
   $("#login-block").hide();
   $(".logout").show();
   household_load();
+  setInterval(household_load,60000);
 }
 
 hydro_load();
@@ -498,6 +499,8 @@ resize();
 // cydynni.js
 cydynnistatus_update();
 setInterval(cydynnistatus_update,10000);
+
+setInterval(community_load,60000);
 
 // -----------------------------------------------------------------------
 // Navigation and page selection
