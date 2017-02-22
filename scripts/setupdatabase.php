@@ -19,6 +19,7 @@ $schema['users'] = array(
     'salt' => array('type' => 'varchar(32)'),
     'admin' => array('type' => 'int(11)', 'Null'=>'NO'),
     'apikey' => array('type' => 'varchar(128)'),
+    'reportkey' => array('type' => 'varchar(64)'),
     'feedid' => array('type' => 'int(11)', 'Null'=>'NO'),
     'hits' => array('type' => 'int(11)', 'Null'=>'NO', "default"=>0),
     'welcomedate' => array('type' => 'varchar(32)', "default"=>"not sent"),
