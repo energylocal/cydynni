@@ -5,11 +5,21 @@ Community page
 */
 
 var community_pie_data = [];
+var community_data = [];
+var exported_hydro_data = [];
+var used_hydro_data = [];
 var communityseries = [];
+
 var community_score = -1;
 var community_hydro_use = 0;
+var community_view = "piechart";
 
-function community_load()
+function community_load() {
+    if (community_view=="piechart") community_pie_load(); 
+    if (community_view=="bargraph") community_bargraph_load(); 
+}
+
+function community_pie_load()
 {
   $.ajax({                                      
       url: path+"community/data",
@@ -46,8 +56,6 @@ function community_load()
               }
               community_resize();
           }, 400);
-          
-
           
           // Hydro value retained in the community
           var hydro_value = result.kwh.hydro * 0.07;
@@ -102,18 +110,49 @@ function community_bargraph_load() {
                 console.log("ERROR","invalid response: "+result);
             } else {
 
-                var community_data = result
+                community_data = result;
                 var total = 0;
                 for (var z in community_data) {
                    total += community_data[z][1];
                 }
                 console.log("Total kWh in window: "+total.toFixed(2));
+
+                // -------------------------------------------------------------------------
+                // Colour code graph
+                // -------------------------------------------------------------------------
+                var morning = "#ffdc00";
+                var midday = "#29abe2";
+                var evening = "#c92760";
+                var overnight = "#274e3f";
+    
+                for (var z in community_data) {    
+                    var time = community_data[z][0];        
+                    var d = new Date(time);
+                    var hour = d.getHours();
+                    
+                    if (hour<6) color = overnight;
+                    if (hour>=6 && hour<11) color = morning;
+                    if (hour>=11 && hour<16) color = midday;
+                    if (hour>=16 && hour<20) color = evening;
+                    if (hour>=20) color = overnight;
+                    community_data[z][2] = color;
+                    
+                    // Calculate exported hydro
+                    used_hydro_data[z] = [time,hydro_data[z][1]];
+                    exported_hydro_data[z] = [time,0];
+                    // When available hydro is more than community consumption
+                    if (hydro_data[z][1]>community_data[z][1]) {
+                        exported_hydro_data[z][1] = hydro_data[z][1] - community_data[z][1];
+                        used_hydro_data[z][1] = community_data[z][1];
+                    }
+                }
                 
                 communityseries = [];
-                //communityseries.push({data:hydro_data, color:"rgba(39,78,63,0.3)"});
+                communityseries.push({data:exported_hydro_data, color:"rgba(0,200,0,0.2)"});
                 communityseries.push({data:community_data, color:"rgba(142,77,0,0.7)"});
+                communityseries.push({data:used_hydro_data, color:"#00cc00"});
                 community_bargraph_draw();
-            
+                
                 // Show day instead of "last 24 hour"
                 var d1 = new Date();
                 var t1 = d1.getTime()*0.001;
@@ -131,7 +170,7 @@ function community_bargraph_load() {
                 if (dayoffset==1) {
                     $("#community-graph-date").html(t("Yesterday")+" ("+day+" "+t(months[month])+"):");
                 } else {
-                    $("#community-graph-date").html(day+" "+months[month]);
+                    $("#community-graph-date").html(day+" "+t(months[month]));
                 }
             }
         }
@@ -182,23 +221,22 @@ function community_bargraph_resize(h) {
 }
 
 function community_bargraph_draw() {
-    bargraph("community_bargraph_placeholder",communityseries," kWh");
+    bargraph("community_bargraph_placeholder",communityseries," kWh","rgba(142,77,0,0.7)");
 }
 
 $("#view-community-bargraph").click(function(){
     $("#view-community-bargraph").hide();
     $("#view-community-piechart").show();
-    
     $("#community_piegraph").hide();
     $("#community_bargraph").show();
-    
+    community_view = "bargraph";
     community_bargraph_load();
 });
 
 $("#view-community-piechart").click(function(){
     $("#view-community-bargraph").show();
     $("#view-community-piechart").hide();
-    
     $("#community_piegraph").show();
     $("#community_bargraph").hide();
+    community_view = "piechart";
 });
