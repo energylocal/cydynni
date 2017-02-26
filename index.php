@@ -24,12 +24,16 @@ $test_user = 59;
 require "settings.php";
 require "core.php";
 require "meter_data_api.php";
+require "mysql_store.php";
+require "test_user.php";
 
 $path = get_application_path();
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 // ---------------------------------------------------------
 require("user_model.php");
 $user = new User($mysqli);
+
+ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
 session_start();
 $session = $user->status();
 
@@ -46,9 +50,12 @@ if (isset($_GET['q'])) $q = $_GET['q'];
 $translation = new stdClass();
 $translation->cy = json_decode(file_get_contents("locale/cy"));
 
-$lang = "en";
+$lang = "cy";
 if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
 if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $lang = "cy";
+if (isset($_GET['lang']) && $_GET['lang']=="en") $lang = "en";
+if (isset($_GET['iaith']) && $_GET['iaith']=="en") $lang = "en";
+
 
 $format = "html";
 $content = "Sorry page not found";
@@ -56,6 +63,7 @@ $content = "Sorry page not found";
 $logger = new EmonLogger();
 switch ($q)
 {   
+
     case "":
         $format = "html";
         if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
@@ -88,16 +96,21 @@ switch ($q)
             $format = "json";
             $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['apikey']);
         }
+        
+        if (isset($session["userid"]) && $session["userid"]==59) $content = json_decode('[{"month":1,"year":2017,"kwh":{"morning":8.37,"midday":12.14,"evening":34.28,"overnight":25.33,"hydro":200.78,"total":280.9},"cost":{"morning":3.89,"midday":4.98,"evening":7.56,"overnight":9.64,"total":26.07}},{"month":12,"year":2016,"kwh":{"morning":24.72,"midday":40.23,"evening":61.59,"overnight":66.16,"hydro":75.5,"total":268.2},"cost":{"morning":3.81,"midday":6.29,"evening":8.19,"overnight":9.85,"total":28.14}}]');
+        
         break;
         
     case "community/data":
         $format = "json";
-        $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        $content = json_decode(mysql_store_get($mysqli,"community:totals"));
+        //$content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
         
     case "community/halfhourlydata":
         $format = "json";
-        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
+        $content = json_decode(mysql_store_get($mysqli,"community:halfhour"));
+        //$content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
         break;
 
     case "community/monthlydata":
@@ -110,9 +123,10 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "hydro":
         $format = "json";
-        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
+        $content = json_decode(mysql_store_get($mysqli,"hydro"));
+        // get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
         // test user:
-        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_hydro_get_meter_data; 
+        // if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_hydro_get_meter_data; 
         break;
     
     case "data":
@@ -224,6 +238,21 @@ switch ($q)
             $content = $user->send_report_email(get('userid'));
         }
         break;
+        
+    case "admin/cron":
+        $format = "text";
+        // Hydro
+        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
+        mysql_store_set($mysqli,"hydro",json_encode($content));
+        // Community half-hour
+        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
+        mysql_store_set($mysqli,"community:halfhour",json_encode($content));
+        // Community totals
+        $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        mysql_store_set($mysqli,"community:totals",json_encode($content));
+        // Store Updated
+        $content = "store updated";
+        break;
 }
 
 switch ($format) 
@@ -247,4 +276,3 @@ class EmonLogger {
     public function info ($message){ }
     public function warn ($message){ }
 }
-
