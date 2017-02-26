@@ -1,6 +1,5 @@
 <?php
 die;
-
 require "../settings.php";
 require "../lib/dbschemasetup.php";
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
@@ -23,7 +22,13 @@ $schema['users'] = array(
     'feedid' => array('type' => 'int(11)', 'Null'=>'NO'),
     'hits' => array('type' => 'int(11)', 'Null'=>'NO', "default"=>0),
     'welcomedate' => array('type' => 'varchar(32)', "default"=>"not sent"),
+    'reportdate' => array('type' => 'varchar(32)', "default"=>"not sent"),
     'MPAN' => array('type' => 'varchar(32)', "default"=>"")
+);
+
+$schema['store'] = array(
+    'key' => array('type' => 'varchar(32)'),
+    'value' => array('type' => 'text')
 );
 
 print "----------------------------------\n";
