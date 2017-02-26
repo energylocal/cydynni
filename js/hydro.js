@@ -10,12 +10,15 @@ setInterval(hydro_load,60000);
 
 function hydro_load() {
 
+    // bargraph_loading("hydro_bargraph_placeholder","rgba(39,78,63,0.7)");
+    $("#hydro_bargraph_placeholder").css("background-color","rgba(39,78,63,0.7)");
     var data = [];
     $.ajax({                                      
         url: path+"hydro",
         dataType: 'json',
         async: true,                      
         success: function(result) {
+            $("#hydro_bargraph_placeholder").css("background","none");
             if (!result || result===null || result==="" || result.constructor!=Array) {
                 console.log("ERROR","invalid response: "+result);
             } else {
@@ -82,7 +85,7 @@ function hydro_load() {
                 hydroseries = [];
                 hydroseries.push({data:hydro_data, color:"rgba(39,78,63,0.7)"});
                 hydroseries.push({data:forecast, color:"rgba(39,78,63,0.2)"});
-                hydro_draw();
+                hydro_resize(panel_height);
                 
 
             }
@@ -91,7 +94,7 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("hydro_bargraph_placeholder",hydroseries," kWh");
+    bargraph("hydro_bargraph_placeholder",hydroseries," kWh","rgba(39,78,63,0.7)");
 }
 
 function hydro_resize(panel_height) {
