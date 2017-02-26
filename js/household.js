@@ -139,7 +139,7 @@ function household_resize(panel_height) {
 }
 
 function household_bargraph_draw() {
-    bargraph("household_bargraph_placeholder",householdseries, " kWh");
+    bargraph("household_bargraph_placeholder",householdseries, " kWh","rgba(0,71,121,0.7)");
 }
 
 function household_bargraph_resize(h) {
