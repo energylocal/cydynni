@@ -176,6 +176,16 @@ table, th, td {
    padding-top:15px;
 }
 
+.legend-label {
+  padding-right:10px;
+}
+
+.legend-label-box {
+  width:15px; height:15px;
+  border: 1px solid #aaa; 
+  display:inline-block;
+}
+
 @media (max-width: 370px) {
   .container {
       width:370px;
@@ -205,6 +215,15 @@ table, th, td {
      font-size:22px;
      padding-top:10px;
   }
+  
+  .legend-label {
+    font-size:12px;
+    padding-right:5px;
+  }
+  
+  .legend-label-box {
+    width:10px; height:10px;
+  }
 }
 
 @media (min-width: 370px) and (max-width: 450px) {
@@ -220,6 +239,15 @@ table, th, td {
   
   h1 {
       font-size:26px;
+  }
+
+  .legend-label {
+    font-size:12px;
+    padding-right:5px;
+  }
+  
+  .legend-label-box {
+    width:12px; height:12px;
   }
 }
     
