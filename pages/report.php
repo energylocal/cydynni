@@ -24,7 +24,7 @@
         <!-- BOX3:HYDRO ============================ -->
         <div class="column box3">
             <h2><?php echo t("Hydro Power"); ?></h2>
-            <p><?php echo t("Anytime your electricity use is<br>matched to the hydro"); ?></p>
+            <p><?php echo t("Any time your electricity use is<br>matched to the hydro"); ?></p>
             <div id="hydro_droplet_bound_m1">
               <canvas id="hydro_droplet_placeholder_m1"></canvas>
             </div>
@@ -67,8 +67,21 @@
         <div style="clear:both"></div>
         <!-- =================================== -->
         <br><br>
-        <div class="summary"><?php echo t("In");?> <span class="m1-name"></span> <?php echo t("you used a total of");?> <span id="m1_total_kwh"></span> kWh <?php echo t("of electricity costing you");?> £<span id="m1_total_cost"></span></div>
-        <!--<p>You will also pay a £5 standing charge over this time.</p>--><br>
+
+        <div style="text-align:left; padding-left:20px">
+          <h3><?php echo t("Cost breakdown: ");?><span class="m1-name"></span></h3>
+          <table style="width:100%">
+          <tr>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="m1_total_kwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span id="m1_days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px">£<span id="m1_elec_cost"></span><br>£<span id="m1_standing_charge"></span><br>£<span id="m1_vat"></span></td>
+          </tr>
+          <tr>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b><?php echo t("Total cost of electricity supply");?></b><td>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b>£<span id="m1_total_cost"></span></b></td>
+          </tr>
+          </table>
+        </div>
+
         </div>
 
       </div>
@@ -85,7 +98,7 @@
         <!-- BOX3:HYDRO ============================ -->
         <div class="column box3">
             <h2><?php echo t("Hydro Power"); ?></h2>
-            <p><?php echo t("Anytime your electricity use is<br>matched to the hydro"); ?></p>
+            <p><?php echo t("Any time your electricity use is<br>matched to the hydro"); ?></p>
             <div id="hydro_droplet_bound_m2">
               <canvas id="hydro_droplet_placeholder_m2"></canvas>
             </div>
@@ -128,8 +141,21 @@
         <div style="clear:both"></div>
         <!-- =================================== -->
         <br><br>
-        <div class="summary"><?php echo t("In");?> <span class="m2-name"></span> <?php echo t("you used a total of");?> <span id="m2_total_kwh"></span> kWh <?php echo t("of electricity costing you");?> £<span id="m2_total_cost"></span></div>
-        <!--<p>You will also pay a £5 standing charge over this time.</p>--><br>
+        
+        <div style="text-align:left; padding-left:20px;">
+          <h3><?php echo t("Cost breakdown: ");?><span class="m2-name"></span></h3>
+          <table style="width:100%">
+          <tr>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="m2_total_kwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span id="m2_days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px">£<span id="m2_elec_cost"></span><br>£<span id="m2_standing_charge"></span><br>£<span id="m2_vat"></span></td>
+          </tr>
+          <tr>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b><?php echo t("Total cost of electricity supply");?></b><td>
+            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b>£<span id="m2_total_cost"></span></b></td>
+          </tr>
+          </table>
+        </div>
+        
         </div>
 
       </div>
@@ -264,8 +290,20 @@ $.ajax({
         $("#m1_midday_cost").html((result[0].kwh.midday*0.10).toFixed(2));
         $("#m1_evening_cost").html((result[0].kwh.evening*0.14).toFixed(2));
         $("#m1_overnight_cost").html((result[0].kwh.overnight*0.0725).toFixed(2));
-        $("#m1_total_cost").html(((result[0].kwh.hydro*0.07)+(result[0].kwh.morning*0.12)+(result[0].kwh.midday*0.10)+(result[0].kwh.evening*0.14)+(result[0].kwh.overnight*0.0725)).toFixed(0));
+
+        //                   1  2  3  4  5  6  7  8  9  10 11 12
+        var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+        var m1_days = days_in_month[result[0].month-1];
+        var m1_elec_cost = (result[0].kwh.hydro*0.07)+(result[0].kwh.morning*0.12)+(result[0].kwh.midday*0.10)+(result[0].kwh.evening*0.14)+(result[0].kwh.overnight*0.0725);
+        var m1_standing_charge = 0.178*m1_days;
+        var m1_vat = (m1_elec_cost+m1_standing_charge)*0.05;
+        var m1_total_cost = m1_elec_cost + m1_standing_charge + m1_vat;
         
+        $("#m1_days").html(m1_days);
+        $("#m1_elec_cost").html((m1_elec_cost).toFixed(2));
+        $("#m1_standing_charge").html((m1_standing_charge).toFixed(2));
+        $("#m1_vat").html((m1_vat).toFixed(2));
+        $("#m1_total_cost").html((m1_total_cost).toFixed(2));
         
         $(".m1_score").html(score_m1);
         var prc = score_m1;
@@ -318,7 +356,22 @@ $.ajax({
         $("#m2_midday_cost").html((result[1].kwh.midday*0.10).toFixed(2));
         $("#m2_evening_cost").html((result[1].kwh.evening*0.14).toFixed(2));
         $("#m2_overnight_cost").html((result[1].kwh.overnight*0.0725).toFixed(2));
-        $("#m2_total_cost").html(((result[1].kwh.hydro*0.07)+(result[1].kwh.morning*0.12)+(result[1].kwh.midday*0.10)+(result[1].kwh.evening*0.14)+(result[1].kwh.overnight*0.0725)).toFixed(0));
+        
+        //                   1  2  3  4  5  6  7  8  9  10 11 12
+        var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+        var m2_days = days_in_month[result[1].month-1];
+        var m2_elec_cost = (result[1].kwh.hydro*0.07)+(result[1].kwh.morning*0.12)+(result[1].kwh.midday*0.10)+(result[1].kwh.evening*0.14)+(result[1].kwh.overnight*0.0725);
+        var m2_standing_charge = 0.178*m2_days;
+        var m2_vat = (m2_elec_cost+m2_standing_charge)*0.05;
+        var m2_total_cost = m2_elec_cost + m2_standing_charge + m2_vat;
+        
+        $("#m2_days").html(m2_days);
+        $("#m2_elec_cost").html((m2_elec_cost).toFixed(2));
+        $("#m2_standing_charge").html((m2_standing_charge).toFixed(2));
+        $("#m2_vat").html((m2_vat).toFixed(2));
+        $("#m2_total_cost").html((m2_total_cost).toFixed(2));
+        
+        
         
         
         $(".m2_score").html(score_m2);
@@ -353,6 +406,11 @@ function load_community_segment()
         dataType: 'json',      
         success: function(result) {
 
+            console.log("Community hydro M0: "+result[0].kwh.hydro);
+            console.log("Community total M0: "+result[0].kwh.total);
+            console.log("Community hydro M1: "+result[1].kwh.hydro);
+            console.log("Community total M1: "+result[1].kwh.total);            
+            
             var score_community_m1 = Math.round(100*((result[0].kwh.overnight + result[0].kwh.midday + result[0].kwh.hydro) / result[0].kwh.total));
             $(".m1_community_score").html(score_community_m1);
             var prc_community = score_community_m1;
@@ -418,7 +476,7 @@ function draw() {
     piegraph("piegraph_placeholder_m1",data_m1,options);
 
     // Hydro droplet
-    hydrodroplet("hydro_droplet_placeholder_m1",hydro_m1,{width: width,height: height});
+    hydrodroplet("hydro_droplet_placeholder_m1",(hydro_m1*1).toFixed(1),{width: width,height: height});
     
     // ------------------------------------------------------------------------------
     
@@ -446,7 +504,7 @@ function draw() {
     piegraph("piegraph_placeholder_m2",data_m2,options);
 
     // Hydro droplet
-    hydrodroplet("hydro_droplet_placeholder_m2",hydro_m2,{width: width,height: height});
+    hydrodroplet("hydro_droplet_placeholder_m2",(hydro_m2*1).toFixed(1),{width: width,height: height});
 }
 
 
