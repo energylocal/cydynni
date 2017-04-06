@@ -25,7 +25,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" type="text/css" href="theme/style.css" />
+    <link rel="stylesheet" type="text/css" href="theme/style1.css" />
     <link rel="stylesheet" type="text/css" href="theme/forms.css" />
     <link rel="stylesheet" type="text/css" href="theme/buttons.css" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
@@ -311,6 +311,20 @@
 
         <div id="community_bargraph" style="display:none; text-align:left">
         <div style="margin-bottom:5px"><?php echo t("Community Half-hourly Demand");?>: <span id="community-graph-date"></span></div>
+        
+        <div style="padding-top:5px; padding-bottom:5px">
+        
+            <div class="legend-label-box" style="background-color:#ffdc00"></div>
+            <span class="legend-label"><?php echo t("Morning");?></span>
+            <div class="legend-label-box" style="background-color:#29abe2"></div>
+            <span class="legend-label"><?php echo t("Midday");?></span>
+            <div class="legend-label-box" style="background-color:#c92760"></div>
+            <span class="legend-label"><?php echo t("Evening");?></span>
+            <div class="legend-label-box" style="background-color:#274e3f"></div>
+            <span class="legend-label"><?php echo t("Overnight");?></span>
+            <div class="legend-label-box" style="background-color:#00cc00"></div>
+            <span class="legend-label" >Hydro</span>
+        </div>
         <div id="community_bargraph_bound">
           <canvas id="community_bargraph_placeholder"></canvas>
         </div>
@@ -414,14 +428,14 @@
 </html>
 
 
-<script language="javascript" type="text/javascript" src="js/bargraph.js"></script>
+<script language="javascript" type="text/javascript" src="js/bargraph1.js"></script>
 <script language="javascript" type="text/javascript" src="js/pie.js"></script>
 <script language="javascript" type="text/javascript" src="js/user.js"></script>
 
 <script language="javascript" type="text/javascript" src="js/cydynnistatus.js"></script>
 <script language="javascript" type="text/javascript" src="js/hydro.js"></script>
 <script language="javascript" type="text/javascript" src="js/household.js"></script>
-<script language="javascript" type="text/javascript" src="js/community.js"></script>
+<script language="javascript" type="text/javascript" src="js/community1.js"></script>
 <script language="javascript" type="text/javascript" src="js/tips.js"></script>
 
 <script>
@@ -500,7 +514,7 @@ resize();
 cydynnistatus_update();
 setInterval(cydynnistatus_update,10000);
 
-setInterval(community_load,60000);
+setInterval(community_load,10000);
 
 // -----------------------------------------------------------------------
 // Navigation and page selection
