@@ -8,7 +8,15 @@ var household_pie_data = [];
 var household_hydro_use = 0;
 var householdseries = [];
 
+var household_view = "piechart";
+
 function household_load()
+{
+    if (household_view=="piechart") household_pie_load(); 
+    if (household_view=="bargraph") household_bargraph_load(); 
+}
+
+function household_pie_load()
 {
   $.ajax({                                      
       url: path+"household/data",
