@@ -243,4 +243,5 @@ $("#view-community-piechart").click(function(){
     $("#community_piegraph").show();
     $("#community_bargraph").hide();
     community_view = "piechart";
+    community_pie_load();
 });

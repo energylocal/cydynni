@@ -166,7 +166,7 @@ $("#view-household-bargraph").click(function(){
     
     $("#household_piegraph").hide();
     $("#household_bargraph").show();
-    
+    household_view = "bargraph";
     household_bargraph_load();
 });
 
@@ -177,4 +177,6 @@ $("#view-household-piechart").click(function(){
     
     $("#household_piegraph").show();
     $("#household_bargraph").hide();
+    household_view = "piechart";
+    household_pie_load(); 
 });
