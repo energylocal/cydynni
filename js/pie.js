@@ -118,7 +118,13 @@ function piegraph(element,data,hydro,options) {
       }
     }
 
-    
-    
+    var pietotal = 0;
+    for (var z in data) {
+          pietotal += data[z].value;
+    }
+    if (pietotal==0) {
+        ctx.fillStyle = "#444";
+        ctx.fillText(t("no imported power"),midx,midy+5);
+    }
 }
 
