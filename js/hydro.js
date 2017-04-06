@@ -36,17 +36,19 @@ function hydro_load() {
                     var power = hydro_data[hydro_data.length-1][1]*1;
                     var time = hydro_data[hydro_data.length-1][0]*1;
                     
-                    $("#power").html(((power.toFixed(1)*3600000)/1800)*0.001);
+                    var power_kw = ((power*3600000)/1800)*0.001;
+                    
+                    $("#power").html(Math.round(power_kw));
                     $("#kWhHH").html(power.toFixed(1));
-                    if (power>=50) {
+                    if (power_kw>=50) {
                         $("#hydrostatus").html(t("HIGH"));
                         $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
                     }
-                    else if (power>=30) {
+                    else if (power_kw>=30) {
                         $("#hydrostatus").html(t("MEDIUM"));
                         $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
                     }
-                    else if (power>=10) {
+                    else if (power_kw>=10) {
                         $("#hydrostatus").html(t("LOW"));
                         $("#hydro_summary").html(t("For next 12 hours: LOW"));
                     }
