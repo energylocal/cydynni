@@ -390,11 +390,24 @@ function decode_date($datestr) {
     $date_parts = explode(" ",$datestr);
     if (count($date_parts)!=4) return "invalid date string";
     $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
-
+    
+    $day = $date_parts[1];
+    $month = $date_parts[0];
+    $year = $date_parts[2];
+    
+    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
+    
+    $date = new DateTime();
+    $date->setTimezone(new DateTimeZone("Europe/London"));
+    $date->setDate($year,$months[$month],$day);
+    $date->setTime(0,0,0);
+    
+    //$date->modify("midnight");
+    $time = $date->getTimestamp();
     // November, 02 2016 00:00:00
     // print $date2."\n";
     // Mid night start of day
-    return strtotime($date2);
+    return $time; //strtotime($date2);
 }
 
 // -------------------------------------------------------------
