@@ -143,7 +143,7 @@ function community_bargraph_load() {
                     exported_hydro_data[z] = [time,0];
                     // When available hydro is more than community consumption
                     if (hydro_data[z][1]>community_data[z][1]) {
-                        exported_hydro_data[z][1] = hydro_data[z][1] - community_data[z][1];
+                        exported_hydro_data[z][1] = hydro_data[z][1];
                         used_hydro_data[z][1] = community_data[z][1];
                     }
                 }

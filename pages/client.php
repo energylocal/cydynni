@@ -1,4 +1,8 @@
-<?php global $path, $translation, $lang; ?>
+<?php global $path, $translation, $lang; 
+
+$v = 1;
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,9 +29,9 @@
     <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" type="text/css" href="theme/style1.css" />
-    <link rel="stylesheet" type="text/css" href="theme/forms.css" />
-    <link rel="stylesheet" type="text/css" href="theme/buttons.css" />
+    <link rel="stylesheet" type="text/css" href="theme/style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="theme/forms.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="theme/buttons.css?v=<?php echo $v; ?>" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
   </head>
@@ -428,15 +432,15 @@
 </html>
 
 
-<script language="javascript" type="text/javascript" src="js/bargraph1.js"></script>
-<script language="javascript" type="text/javascript" src="js/pie.js"></script>
-<script language="javascript" type="text/javascript" src="js/user.js"></script>
+<script language="javascript" type="text/javascript" src="js/bargraph.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
 
-<script language="javascript" type="text/javascript" src="js/cydynnistatus.js"></script>
-<script language="javascript" type="text/javascript" src="js/hydro.js"></script>
-<script language="javascript" type="text/javascript" src="js/household.js"></script>
-<script language="javascript" type="text/javascript" src="js/community1.js"></script>
-<script language="javascript" type="text/javascript" src="js/tips.js"></script>
+<script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/hydro.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/tips.js?v=<?php echo $v; ?>"></script>
 
 <script>
 
