@@ -1,7 +1,7 @@
 {
 "Hydro Power":"Pwer Hydro",
 "Extra Electricity":"Trydan Ychwanegol",
-"Anytime your electricity use is<br>matched to the hydro":"Defnydd trydan sydd<br>yn cyfateb i hydro",
+"Any time your electricity use is<br>matched to the hydro":"Defnydd trydan sydd<br>yn cyfateb i hydro",
 "Where your electricity came from this month":"Ffynhonnell eich trydan mis yma",
 "Where your electricity came from last month":"Ffynhonnell eich trydan mis ddiwethaf",
 "Use not matched to the hydro":"Defnydd trydan sydd<br>ddim yn cyfateb i hydro",
@@ -19,6 +19,15 @@
 "Your overall score is":"Eich sgôr ar y cyfan",
 "Last month we scored":"Ein sgôr ni dros y mis ddiwethaf",
 "Our overall score is":"Ein sgôr ni ar y cyfan",
+
+"no imported power":"dim pwer wedi mewnforio",
+"Cost breakdown: ":"Dadansoddiad cost: ",
+"Electricity charge":"Tâl trydan",
+"Standing charge":"Tâl sefydlog",
+"days at":"diwrnod ar",
+"day":"dydd",
+"VAT":"TAW",
+"Total cost of electricity supply":"Cyfanswm cost trydan",
 
 "January":"Ionawr",	
 "February":"Chwefror",
@@ -125,6 +134,11 @@
 "For next 12 hours: MEDIUM":"Am y 12 awr nesaf: CANOLIG",
 "For next 12 hours: LOW":"Am y 12 awr nesaf: ISEL",
 "For next 12 hours: VERY LOW":"Am y 12 awr nesaf: ISEL IAWN",
+
+"Morning":"Bore",
+"Midday":"Canol Dydd",
+"Evening":"Gyda'r nos",
+"Overnight":"Dros Nos",
 
 "MORNING":"BORE",
 "MIDDAY":"CANOL DYDD",
