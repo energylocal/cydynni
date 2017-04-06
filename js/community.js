@@ -13,6 +13,7 @@ var communityseries = [];
 var community_score = -1;
 var community_hydro_use = 0;
 var community_view = "piechart";
+var community_height = 0;
 
 function community_load() {
     if (community_view=="piechart") community_pie_load(); 
@@ -180,7 +181,7 @@ function community_bargraph_load() {
 function community_resize(panel_height) 
 {
     community_pie_draw();
-    community_bargraph_resize(panel_height-40);
+    community_bargraph_resize(panel_height-70);
 
     var width = $(window).width();
     
@@ -212,15 +213,18 @@ function community_resize(panel_height)
 }
 
 function community_bargraph_resize(h) {
-    width = $("#community_bargraph_bound").width();
-    $("#community_bargraph_placeholder").attr('width',width);
-    $('#community_bargraph_bound').attr("height",h);
-    $('#community_bargraph_placeholder').attr("height",h);
+    community_height = h
     height = h
     community_bargraph_draw();
 }
 
 function community_bargraph_draw() {
+    height = community_height
+    width = $("#community_bargraph_bound").width();
+    $("#community_bargraph_placeholder").attr('width',width);
+    $('#community_bargraph_bound').attr("height",height);
+    $('#community_bargraph_placeholder').attr("height",height);
+    
     bargraph("community_bargraph_placeholder",communityseries," kWh","rgba(142,77,0,0.7)");
 }
 
