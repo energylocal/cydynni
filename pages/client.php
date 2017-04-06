@@ -135,13 +135,14 @@ if (!session) {
 
 hydro_load();
 community_load();
+household_load();
 resize();
 
 // cydynni.js
 cydynnistatus_update();
 setInterval(cydynnistatus_update,10000);
 
-setInterval(community_load,10000);
+setInterval(community_load,60000);
 
 // -----------------------------------------------------------------------
 // Navigation and page selection
