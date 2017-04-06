@@ -88,11 +88,12 @@ class User
     //---------------------------------------------------------------------------------------
     // User login
     //---------------------------------------------------------------------------------------
-    public function register($email,$password,$apikey)
+    public function register($email,$password,$apikey,$MPAN)
     {
         if ($email==null) return "Email address missing";
         if ($password==null) return "Password missing";
         if (!ctype_alnum($apikey)) return "Apikey must be alpha-numeric";
+        if (!is_numeric($MPAN)) return "MPAN must be numeric";
         
         // Validate email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
@@ -107,9 +108,11 @@ class User
         $hash = hash('sha256', $password);
         $salt = md5(uniqid(mt_rand(), true));
         $dbhash = hash('sha256', $salt . $hash);
+        
+        $reportkey = md5(uniqid(mt_rand(), true));
 
-        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin,apikey) VALUES (?,?,?,0,?)");
-        $stmt->bind_param("ssss", $email, $dbhash, $salt,$apikey);
+        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin, apikey,MPAN,reportkey) VALUES (?,?,?,0,?,?,?)");
+        $stmt->bind_param("ssssss", $email,$dbhash,$salt,$apikey,$MPAN,$reportkey);
         if (!$stmt->execute()) {
             return "Error creating user";
         }
@@ -274,8 +277,8 @@ class User
         
         $email = $row['email'];
         
-        $month_en = "January";
-        $month_cy = "Ionawr";
+        $month_en = "February";
+        $month_cy = "Chwefror";
         
         $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
         
@@ -288,10 +291,7 @@ class User
         $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
         
         $c .= "<i style='font-size:12px'>Nodwch: Ar hyn o bryd mae cyfran y hydro sydd yn gysylltiedig â'ch cyfrif yn amcangyfrif.</i><br>";
-        $c .= "<i style='font-size:12px'>Nid ywr costau yn cynnwys eich tâl dyddiol sefydlog (17.8p / dydd) a TAW (5%). Bydd y costau hyn yn cael eu hadlewyrchu yn eich bil o Coop Ynni.<br><br></i>";
-        
         $c .= "<i style='font-size:12px'>Please note that at the moment the share of hydro assigned to you is still an estimate.</i><br>";
-        $c .= "<i style='font-size:12px'>All costs are exclusive of your daily standard charge (17.8p/day) and VAT (5%). These costs will be reflected in your bill from Coop Energy.<br><br></i>";
         
         $c .= "<i style='font-size:12px'>Questions? cwestiynau?, cysylltwch â: cydynni@energylocal.co.uk</i><br>";
         
