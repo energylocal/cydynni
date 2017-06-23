@@ -46,20 +46,20 @@
                   <td><b><?php echo t("Hydro Power");?></b><br>@ 7.0 p/kWh<br><?php echo t("You used");?> <span id="m1_hydro_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_hydro_cost"></span></td>
                 </tr>
                 <tr>
-                  <td><div class="key" style="background-color:#274e3f"></div></td>
-                  <td><b><?php echo t("Overnight Price");?></b><br>8pm <?php echo t("till"); ?> 6am<br>@ 7.25 p/kWh<br><?php echo t("You used");?> <span id="m1_overnight_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_overnight_cost"></span></td>
+                  <td><div class="key" style="background-color:#ffdc00"></div></td>
+                  <td><b><?php echo t("Morning Price");?></b><br>6am <?php echo t("till"); ?> 11am<br>@ 12.0 p/kWh<br><?php echo t("You used");?> <span id="m1_morning_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_morning_cost"></span></td>
                 </tr>
                 <tr>
                   <td><div class="key" style="background-color:#4abd3e"></div></td>
                   <td><b><?php echo t("Midday Price");?></b><br>11am <?php echo t("till"); ?> 4pm<br>@ 10.0 p/kWh<br><?php echo t("You used");?> <span id="m1_midday_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_midday_cost"></span></td>
                 </tr>
                 <tr>
-                  <td><div class="key" style="background-color:#ffdc00"></div></td>
-                  <td><b><?php echo t("Morning Price");?></b><br>6am <?php echo t("till"); ?> 11am<br>@ 12.0 p/kWh<br><?php echo t("You used");?> <span id="m1_morning_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_morning_cost"></span></td>
-                </tr>
-                <tr>
                   <td><div class="key" style="background-color:#c92760"></div></td>
                   <td><b><?php echo t("Evening Price");?></b><br>4pm <?php echo t("till"); ?> 8pm<br>@ 14.0 p/kWh<br><?php echo t("You used");?> <span id="m1_evening_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_evening_cost"></span></td>
+                </tr>
+                <tr>
+                  <td><div class="key" style="background-color:#274e3f"></div></td>
+                  <td><b><?php echo t("Overnight Price");?></b><br>8pm <?php echo t("till"); ?> 6am<br>@ 7.25 p/kWh<br><?php echo t("You used");?> <span id="m1_overnight_kwh"></span> kWh <?php echo t("costing");?> £<span id="m1_overnight_cost"></span></td>
                 </tr>
               </table>
             </div>
@@ -120,20 +120,20 @@
                   <td><b><?php echo t("Hydro Power");?></b><br>@ 7.0 p/kWh<br><?php echo t("You used");?> <span id="m2_hydro_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_hydro_cost"></span></td>
                 </tr>
                 <tr>
-                  <td><div class="key" style="background-color:#274e3f"></div></td>
-                  <td><b><?php echo t("Overnight Price");?></b><br>8pm <?php echo t("till"); ?> 6am<br>@ 7.25 p/kWh<br><?php echo t("You used");?> <span id="m2_overnight_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_overnight_cost"></span></td>
+                  <td><div class="key" style="background-color:#ffdc00"></div></td>
+                  <td><b><?php echo t("Morning Price");?></b><br>6am <?php echo t("till"); ?> 11am<br>@ 12.0 p/kWh<br><?php echo t("You used");?> <span id="m2_morning_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_morning_cost"></span></td>
                 </tr>
                 <tr>
                   <td><div class="key" style="background-color:#4abd3e"></div></td>
                   <td><b><?php echo t("Midday Price");?></b><br>11am <?php echo t("till"); ?> 4pm<br>@ 10.0 p/kWh<br><?php echo t("You used");?> <span id="m2_midday_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_midday_cost"></span></td>
                 </tr>
                 <tr>
-                  <td><div class="key" style="background-color:#ffdc00"></div></td>
-                  <td><b><?php echo t("Morning Price");?></b><br>6am <?php echo t("till"); ?> 11am<br>@ 12.0 p/kWh<br><?php echo t("You used");?> <span id="m2_morning_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_morning_cost"></span></td>
-                </tr>
-                <tr>
                   <td><div class="key" style="background-color:#c92760"></div></td>
                   <td><b><?php echo t("Evening Price");?></b><br>4pm <?php echo t("till"); ?> 8pm<br>@ 14.0 p/kWh<br><?php echo t("You used");?> <span id="m2_evening_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_evening_cost"></span></td>
+                </tr>
+                <tr>
+                  <td><div class="key" style="background-color:#274e3f"></div></td>
+                  <td><b><?php echo t("Overnight Price");?></b><br>8pm <?php echo t("till"); ?> 6am<br>@ 7.25 p/kWh<br><?php echo t("You used");?> <span id="m2_overnight_kwh"></span> kWh <?php echo t("costing");?> £<span id="m2_overnight_cost"></span></td>
                 </tr>
               </table>
             </div>

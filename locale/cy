@@ -80,6 +80,8 @@
 "Why? midday price currently available":"Pam? Pris canol dydd ar gael rŵan",
 "Why? overnight price currently available":"Pam? Pris dros nos ar gael rŵan",
 
+"last night":"neithiwr",
+"yesterday":"ddoe",
 "Yesterday":"Ddoe",
 "Yesterday you scored":"Eich sgôr chi ddoe ydi",
 "You scored":"Eich sgôr chi ydi",
@@ -102,8 +104,10 @@
 "Evening Price":"Pris Gyda'r Nos",
 "Overnight Price":"Pris Dros Nos",
 
-"Currently generating":"Yn cynhyrchu",
+"Generating":"Yn cynhyrchu",
 "Last 24 hours":"24 awr diwethaf",
+"forecasting":"rhagweld",
+"now":"rwan",
 
 "Welcome!":"Croeso!",
 "Please sign in to see your energy data":"Mewngofnodwch i weld eich data ynni",

@@ -3,6 +3,13 @@
 Hydro section
 
 */
+var demand_profile = [
+0.186,0.167,0.145,0.134,0.122,0.111,0.126,0.125,0.119,0.118,0.140,0.149,
+0.197,0.218,0.263,0.281,0.284,0.255,0.262,0.240,0.234,0.230,0.258,0.256,
+0.260,0.259,0.270,0.266,0.260,0.261,0.285,0.299,0.293,0.362,0.423,0.447,
+0.451,0.423,0.392,0.378,0.412,0.412,0.372,0.362,0.348,0.315,0.263,0.196
+];
+var number_of_users = 61;
 
 var hydro_data = [];
 var hydroseries = [];
@@ -25,30 +32,31 @@ function hydro_load() {
 
                 hydro_data = result;
                 var forecast = [];
+                var number_of_participants = 59;
                 
                 if (hydro_data.length>0) {
                     
-                    for (var z in hydro_data)
+                    for (var z in hydro_data) {
                         // hydro_data[z][1] = ((hydro_data[z][1] * 3600000) / 1800) * 0.001;
                         if (hydro_data[z][1]<0) hydro_data[z][1]=0;
+                        hydro_data[z][1] = hydro_data[z][1] / number_of_participants;
+                        hydro_data[z][1] = hydro_data[z][1] * 2 * 1000;
+                    }
                     
-                    var last_power = hydro_data[hydro_data.length-2][1]*1;   
-                    var power = hydro_data[hydro_data.length-1][1]*1;
+                    var lastkWhHH = hydro_data[hydro_data.length-2][1]*1;   
+                    var kWhHH = hydro_data[hydro_data.length-1][1]*1;
                     var time = hydro_data[hydro_data.length-1][0]*1;
                     
-                    var power_kw = ((power*3600000)/1800)*0.001;
-                    
-                    $("#power").html(Math.round(power_kw));
-                    $("#kWhHH").html(power.toFixed(1));
-                    if (power_kw>=50) {
+                    $("#kWhHH").html(kWhHH.toFixed(0));
+                    if (kWhHH>=25) {
                         $("#hydrostatus").html(t("HIGH"));
                         $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
                     }
-                    else if (power_kw>=30) {
+                    else if (kWhHH>=15) {
                         $("#hydrostatus").html(t("MEDIUM"));
                         $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
                     }
-                    else if (power_kw>=10) {
+                    else if (kWhHH>=5) {
                         $("#hydrostatus").html(t("LOW"));
                         $("#hydro_summary").html(t("For next 12 hours: LOW"));
                     }
@@ -57,11 +65,12 @@ function hydro_load() {
                         $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
                     }
                     
-                    forecast = hydro_forecaster(time,power,last_power,24);
+                    forecast = hydro_forecaster(time,kWhHH,lastkWhHH,24);
                     
                     // Show day instead of "last 24 hour"
                     var d1 = new Date();
                     var t1 = d1.getTime()*0.001;
+
                     var d2 = new Date(hydro_data[0][0]);
                     var t2 = d2.getTime()*0.001;
                     
@@ -77,19 +86,31 @@ function hydro_load() {
                     console.log("Half hours behind: "+half_hours_behind);
                     
                     // Calculate forecast up to present hour
-                    var forecastlive = hydro_forecaster(time,power,last_power,half_hours_behind);
+                    var forecastlive = hydro_forecaster(time,kWhHH,lastkWhHH,half_hours_behind);
                     var forecastlive_hydro = forecastlive[forecastlive.length-1][1];
                     console.log("Current hydro forecast: "+(forecastlive_hydro).toFixed(1)+" kWh/HH");
                     console.log("Current hydro forecast: "+(forecastlive_hydro*2).toFixed(1)+" kW");
+                    $("#power-forecast").html((forecastlive_hydro).toFixed(0));
+                    
+                    // Work out current half hour
+                    var current_half_hour = (d1.getHours()*2)+Math.floor(d1.getMinutes()/30);
+                    console.log("Current half hour: "+current_half_hour);
+                    
+                    // Find expected consumption for group for this half hour from average consumption profile
+                    var consumption_forecast = demand_profile[current_half_hour] * number_of_users;
+                    console.log("Consumption forecast: "+consumption_forecast+" kWh/HH");
+                    console.log("Consumption forecast: "+(consumption_forecast*2)+" kW");
                     
                     var hour = d2.getHours(); var month = d2.getMonth(); var day = d2.getDate();
                     if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
                     var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
                     
                     if (dayoffset==1) {
+                        $("#hydro-graph-date-1").html(t("last night"));
                         $("#hydro-graph-date").html(t("Yesterday")+" ("+day+" "+t(months[month])+"):");
                     } else {
-                        $("#hydro-graph-date").html(day+" "+months[month]);
+                        $("#hydro-graph-date-1").html(day+" "+t(months[month]));
+                        $("#hydro-graph-date").html(day+" "+t(months[month]));
                     }
                     
                     
@@ -107,11 +128,11 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("hydro_bargraph_placeholder",hydroseries," kWh","rgba(39,78,63,0.7)");
+    bargraph("hydro_bargraph_placeholder",hydroseries," W","rgba(39,78,63,0.7)");
 }
 
 function hydro_resize(panel_height) {
-    var h = panel_height-120;
+    var h = panel_height-140;
     width = $("#hydro_bargraph_placeholder_bound").width();
     $("#hydro_bargraph_placeholder").attr('width',width);
     $('#hydro_bargraph_placeholder_bound').attr("height",h);
