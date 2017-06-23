@@ -128,6 +128,11 @@ switch ($q)
         // test user:
         // if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_hydro_get_meter_data; 
         break;
+        
+    case "hydrohistory":
+        $format = "json";
+        $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
+        break;
     
     case "data":
         $format = "json";
