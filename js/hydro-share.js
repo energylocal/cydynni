@@ -32,30 +32,31 @@ function hydro_load() {
 
                 hydro_data = result;
                 var forecast = [];
+                var number_of_participants = 59;
                 
                 if (hydro_data.length>0) {
                     
-                    for (var z in hydro_data)
+                    for (var z in hydro_data) {
                         // hydro_data[z][1] = ((hydro_data[z][1] * 3600000) / 1800) * 0.001;
                         if (hydro_data[z][1]<0) hydro_data[z][1]=0;
+                        hydro_data[z][1] = hydro_data[z][1] / number_of_participants;
+                        hydro_data[z][1] = hydro_data[z][1] * 2 * 1000;
+                    }
                     
-                    var last_power = hydro_data[hydro_data.length-2][1]*1;   
-                    var power = hydro_data[hydro_data.length-1][1]*1;
+                    var lastkWhHH = hydro_data[hydro_data.length-2][1]*1;   
+                    var kWhHH = hydro_data[hydro_data.length-1][1]*1;
                     var time = hydro_data[hydro_data.length-1][0]*1;
                     
-                    var power_kw = ((power*3600000)/1800)*0.001;
-                    
-                    $("#power").html(Math.round(power_kw));
-                    $("#kWhHH").html(power.toFixed(1));
-                    if (power_kw>=50) {
+                    $("#kWhHH").html(kWhHH.toFixed(0));
+                    if (kWhHH>=25) {
                         $("#hydrostatus").html(t("HIGH"));
                         $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
                     }
-                    else if (power_kw>=30) {
+                    else if (kWhHH>=15) {
                         $("#hydrostatus").html(t("MEDIUM"));
                         $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
                     }
-                    else if (power_kw>=10) {
+                    else if (kWhHH>=5) {
                         $("#hydrostatus").html(t("LOW"));
                         $("#hydro_summary").html(t("For next 12 hours: LOW"));
                     }
@@ -64,7 +65,7 @@ function hydro_load() {
                         $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
                     }
                     
-                    forecast = hydro_forecaster(time,power,last_power,24);
+                    forecast = hydro_forecaster(time,kWhHH,lastkWhHH,24);
                     
                     // Show day instead of "last 24 hour"
                     var d1 = new Date();
@@ -85,11 +86,11 @@ function hydro_load() {
                     console.log("Half hours behind: "+half_hours_behind);
                     
                     // Calculate forecast up to present hour
-                    var forecastlive = hydro_forecaster(time,power,last_power,half_hours_behind);
+                    var forecastlive = hydro_forecaster(time,kWhHH,lastkWhHH,half_hours_behind);
                     var forecastlive_hydro = forecastlive[forecastlive.length-1][1];
                     console.log("Current hydro forecast: "+(forecastlive_hydro).toFixed(1)+" kWh/HH");
                     console.log("Current hydro forecast: "+(forecastlive_hydro*2).toFixed(1)+" kW");
-                    $("#power-forecast").html(Math.round(forecastlive_hydro*2));
+                    $("#power-forecast").html((forecastlive_hydro).toFixed(0));
                     
                     // Work out current half hour
                     var current_half_hour = (d1.getHours()*2)+Math.floor(d1.getMinutes()/30);
@@ -127,11 +128,11 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("hydro_bargraph_placeholder",hydroseries," kWh","rgba(39,78,63,0.7)");
+    bargraph("hydro_bargraph_placeholder",hydroseries," W","rgba(39,78,63,0.7)");
 }
 
 function hydro_resize(panel_height) {
-    var h = panel_height-120;
+    var h = panel_height-140;
     width = $("#hydro_bargraph_placeholder_bound").width();
     $("#hydro_bargraph_placeholder").attr('width',width);
     $('#hydro_bargraph_placeholder_bound').attr("height",h);

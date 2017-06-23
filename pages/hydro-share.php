@@ -59,16 +59,17 @@
 
   <div class="pagesection" style="color:rgb(39,78,63)">
     <div style="height:10px; background-color:rgb(39,78,63)"></div>
-    <div class="title">Hydro</div>
+    <div class="title">Your share of hydro</div>
     <div class="summary_bound"><div id="hydro_summary" class="panel-summary"></div></div>
     <div style="clear:both"></div>
   </div>
   <div class="panel">
     <div class="panel-inner">
-      <div style="height:80px; overflow:hidden">
+      <div style="height:100px; overflow:hidden">
         <div class="status"><span id="hydrostatus"></span></div>
         <!-- (<span id="kWhHH"></span> kWh/<?php echo t("half-hour");?>)-->
-        <?php echo t("Generating");?> <b><span id="power"></span> kW</b> <span id="hydro-graph-date-1"></span>, <?php echo t("forecasting"); ?> <span id="power-forecast"></span> kW <?php echo t("now"); ?></b>
+        <b><?php echo t("Your share:");?> <span id="kWhHH"></span> Watts (<span id="hydro-graph-date-1"></span>)</b><br>
+        <?php echo t("Forecasting"); ?> <span id="power-forecast"></span> Watts <?php echo t("now"); ?></b>
       </div>
 
       <div style="text-align:center">
