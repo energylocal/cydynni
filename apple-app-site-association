@@ -1,4 +1,5 @@
-"webcredentials": {
-   "apps": [    "4C898RE43H.org.openenergymonitor.cydynniapp" ]
+{
+    "webcredentials": {
+        "apps": [ "4C898RE43H.org.openenergymonitor.cydynniapp" ]
+    }
 }
-
