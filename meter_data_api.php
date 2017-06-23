@@ -49,6 +49,42 @@ function get_meter_data($baseurl,$token,$rid) {
     return $data;
 }
 
+function get_meter_data_history($baseurl,$token,$rid) {
+
+    // Fetch data from data server
+    $str = @file_get_contents($baseurl."1-$token-28?dateStart=04-Jun-2017&dateEnd=14-Jun-2017");
+    
+    // Decode JSON result remove present // at start of message.
+    $result = json_decode(substr($str,2));
+    
+    // if json failed to decode return blank array
+    if ($result==null) return array();
+
+    if (count($result->DATA)==0) return array();
+
+    $days = count($result->DATA);
+    
+    $data = array();
+    
+    for ($day=0; $day<$days; $day++) 
+    {
+        $date = $result->DATA[$day][0];
+        $midnightstart = decode_date($date);
+
+        $hh = 0;
+        for ($i=1; $i<count($result->DATA[$day]); $i++) {
+            if ($hh<48) {
+                $time = $midnightstart + ($hh * 1800);
+                $value = $result->DATA[$day][$i];
+                $data[] = array($time*1000,1*$value);
+                $hh++;
+            }
+        }
+    }
+    
+    return $data;
+}
+
 // For offline development
 function get_meter_data_offline($baseurl,$token,$dataid) {
     $data = array();
@@ -420,6 +456,7 @@ function get_household_consumption_monthly($baseurl,$token) {
     // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
     //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
     $str = @file_get_contents($baseurl."1-$token-18");
+    
     $result18 = json_decode(substr($str,2));
     if ($result18==null) return "Invalid data";
     if (!isset($result18->DATA)) return "Invalid data";
@@ -440,6 +477,7 @@ function get_household_consumption_monthly($baseurl,$token) {
     // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
     //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
     $str = @file_get_contents($baseurl."1-$token-20");
+    
     $result20 = json_decode(substr($str,2));
     if ($result20==null) return "Invalid data";
     if (!isset($result20->DATA)) return "Invalid data";
