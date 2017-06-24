@@ -65,9 +65,9 @@
           <div class="legend-label-box" style="background-color:#00cc00"></div>
           <span class="legend-label" >Hydro</span>
       </div>
-      <div id="community_bargraph_bound">
-        <canvas id="community_bargraph_placeholder"></canvas>
-      </div>
+        <div id="community_bargraph_bound" style="width:100%; height:500px;">
+          <div id="community_bargraph_placeholder" style="height:500px"></div>
+        </div>
       </div>
 
     </div>

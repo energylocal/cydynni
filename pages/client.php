@@ -34,6 +34,12 @@ $v = 5;
     <link rel="stylesheet" type="text/css" href="theme/buttons.css?v=<?php echo $v; ?>" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+
+    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/date.format.js"></script> 
+    <script type="text/javascript" src="lib/vis.helper.js"></script> 
   </head>
   <body>
 
@@ -86,6 +92,10 @@ if (page=="myaccount" && !session) {
     page = "household";
     window.location = "#household";
 }
+
+// Flot
+var flot_font_size = 12;
+var previousPoint = false;
 
 var panel_summary_show_width = 450;
 var tipid = 1;

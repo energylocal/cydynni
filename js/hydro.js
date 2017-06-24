@@ -3,6 +3,10 @@
 Hydro section
 
 */
+
+var end = 0;
+var start = 0;
+
 var demand_profile = [
 0.186,0.167,0.145,0.134,0.122,0.111,0.126,0.125,0.119,0.118,0.140,0.149,
 0.197,0.218,0.263,0.281,0.284,0.255,0.262,0.240,0.234,0.230,0.258,0.256,
@@ -17,11 +21,14 @@ setInterval(hydro_load,60000);
 
 function hydro_load() {
 
+    var history = "";
+    if (end>0 && start>0) history = "start="+start+"&end="+end;
+
     // bargraph_loading("hydro_bargraph_placeholder","rgba(39,78,63,0.7)");
-    $("#hydro_bargraph_placeholder").css("background-color","rgba(39,78,63,0.7)");
+    // $("#hydro_bargraph_placeholder").css("background-color","rgba(39,78,63,0.7)");
     var data = [];
     $.ajax({                                      
-        url: path+"hydro",
+        url: path+"hydro?"+history,
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -117,9 +124,21 @@ function hydro_load() {
                     $("#hydrostatus").html(t("NO DATA"));
                 }
                 
+                // hydroseries = [];
+                // hydroseries.push({data:hydro_data, color:"rgba(39,78,63,0.7)"});
+                // hydroseries.push({data:forecast, color:"rgba(39,78,63,0.2)"});
+                // hydro_resize(panel_height);
+
                 hydroseries = [];
-                hydroseries.push({data:hydro_data, color:"rgba(39,78,63,0.7)"});
-                hydroseries.push({data:forecast, color:"rgba(39,78,63,0.2)"});
+                hydroseries.push({
+                    data: forecast, color: "#d3dbd8",
+                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                });
+                hydroseries.push({
+                    data: hydro_data, color: "#678278",
+                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                });
+
                 hydro_resize(panel_height);
             }
         }
@@ -127,17 +146,58 @@ function hydro_load() {
 }
 
 function hydro_draw() {
-    bargraph("hydro_bargraph_placeholder",hydroseries," kWh","rgba(39,78,63,0.7)");
+
+    var options = {
+        xaxis: { 
+            mode: "time", 
+            timezone: "browser", 
+            font: {size:flot_font_size, color:"#666"}, 
+            // labelHeight:-5
+            reserveSpace:false
+        },
+        yaxis: { 
+            font: {size:flot_font_size, color:"#666"}, 
+            // labelWidth:-5
+            reserveSpace:false,
+            min:0
+        },
+        selection: { mode: "x" },
+        grid: {
+            show:true, 
+            color:"#aaa",
+            borderWidth:0,
+            hoverable: true, 
+            clickable: true
+        }
+    }
+
+    var plot = $.plot($('#hydro_bargraph_placeholder'),hydroseries,options);
+    $('#hydro_bargraph_placeholder').append("<div id='bargraph-label' style='position:absolute;left:50px;top:30px;color:#666;font-size:12px'></div>");
+
+    // bargraph("hydro_bargraph_placeholder",hydroseries," kWh","rgba(39,78,63,0.7)");
 }
 
 function hydro_resize(panel_height) {
+    
+    var window_width = $(window).width();
+    flot_font_size = 12;
+    if (window_width<450) flot_font_size = 10;
+        
+    // var h = panel_height-120;
+    // width = $("#hydro_bargraph_placeholder_bound").width();
+    // $("#hydro_bargraph_placeholder").attr('width',width);
+    // $('#hydro_bargraph_placeholder_bound').attr("height",h);
+    // $('#hydro_bargraph_placeholder').attr("height",h);
+    // height = h
+    // hydro_draw(); 
+
     var h = panel_height-120;
     width = $("#hydro_bargraph_placeholder_bound").width();
-    $("#hydro_bargraph_placeholder").attr('width',width);
-    $('#hydro_bargraph_placeholder_bound').attr("height",h);
-    $('#hydro_bargraph_placeholder').attr("height",h);
-    height = h
-    hydro_draw(); 
+    $("#hydro_bargraph_placeholder").width(width);
+    $('#hydro_bargraph_placeholder_bound').height(h);
+    $('#hydro_bargraph_placeholder').height(h);
+    height = h;
+    hydro_draw();
 }
 
 function hydro_forecaster(time,power,lastpower,forecastlength) {
@@ -211,3 +271,51 @@ function hydro_forecaster(time,power,lastpower,forecastlength) {
     
     return forecast;
 }
+
+$(".day").click(function() {
+    end = 0;
+    start = 0;
+    hydro_load();
+});
+
+$(".week").click(function() {
+    end = +new Date;
+    start = end - (3600000*24.0*7);
+    hydro_load();
+});
+
+$(".month").click(function() {
+    end = +new Date;
+    start = end - (3600000*24.0*30);
+    hydro_load();
+});
+
+$('#hydro_bargraph_placeholder').bind("plotselected", function (event, ranges) {
+    start = ranges.xaxis.from;
+    end = ranges.xaxis.to;
+    hydro_load();
+});
+
+$('#hydro_bargraph_placeholder').bind("plothover", function (event, pos, item) {
+    if (item) {
+        var z = item.dataIndex;
+        
+        if (previousPoint != item.datapoint) {
+            previousPoint = item.datapoint;
+
+            $("#tooltip").remove();
+            var itemTime = item.datapoint[0];
+            var elec_kwh = hydroseries[item.seriesIndex].data[z][1];
+            var note = "";
+            if (item.seriesIndex==0) note = "Forecast ";
+
+            var d = new Date(itemTime);
+            var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+            var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            var mins = d.getMinutes();
+            if (mins==0) mins = "00";
+            var date = d.getHours()+":"+mins+" "+days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate();
+            tooltip(item.pageX, item.pageY, date+"<br>"+note+(elec_kwh).toFixed(0)+" kWh", "#fff");
+        }
+    } else $("#tooltip").remove();
+});

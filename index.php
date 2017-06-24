@@ -123,15 +123,14 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "hydro":
         $format = "json";
-        $content = json_decode(mysql_store_get($mysqli,"hydro"));
-        // get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
-        // test user:
-        // if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_hydro_get_meter_data; 
-        break;
         
-    case "hydrohistory":
-        $format = "json";
-        $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
+        if (isset($_GET['start']) && isset($_GET['end'])) {
+            $start = (int) $_GET['start'];
+            $end = (int) $_GET['end'];
+            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
+        } else {
+            $content = json_decode(mysql_store_get($mysqli,"hydro"));
+        }
         break;
     
     case "data":

@@ -49,10 +49,13 @@ function get_meter_data($baseurl,$token,$rid) {
     return $data;
 }
 
-function get_meter_data_history($baseurl,$token,$rid) {
+function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
 
+    $start = time_to_date((int) $start*0.001);
+    $end = time_to_date((int) $end*0.001);
+   
     // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-28?dateStart=04-Jun-2017&dateEnd=14-Jun-2017");
+    $str = @file_get_contents($baseurl."1-$token-$rid?dateStart=$start&dateEnd=$end");
     
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
@@ -444,6 +447,16 @@ function decode_date($datestr) {
     // print $date2."\n";
     // Mid night start of day
     return $time; //strtotime($date2);
+}
+
+function time_to_date($time) {
+    $date = new DateTime();
+    $date->setTimezone(new DateTimeZone("Europe/London"));
+    $date->setTimestamp($time);
+    $year = $date->format('Y');
+    $month = $date->format('F');
+    $day = $date->format('d');
+    return "$day-$month-$year";
 }
 
 // -------------------------------------------------------------
