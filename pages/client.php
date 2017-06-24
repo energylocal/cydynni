@@ -1,6 +1,6 @@
 <?php global $path, $translation, $lang; 
 
-$v = 5;
+$v = 10;
 
 ?>
 
@@ -174,8 +174,10 @@ $(".pagesection").click(function() {
         // My account page
     } else {
         // Hide and disable all panels
-        $(".page[page="+page+"] .panel").attr("active",0);
-        $(".page[page="+page+"] .panel").height(0);
+        var panel = $(".page[page="+page+"] .panel");
+        panel.attr("active",0);
+        panel.height(0);
+        var panel_name = $(this).attr("name");
         
         $(".panel-summary").show();
         $(this).find(".panel-summary").hide();
@@ -187,6 +189,18 @@ $(".pagesection").click(function() {
         $(this).next().height(panel_height);
 
         draw_panel();
+        
+        if (panel_name=="hydrohistory") {
+            $(".visnav-block").show();
+        } else {
+            $(".visnav-block").hide();
+        }
+        
+        if (panel_name=="householdhistory") {
+            $(".visnav-household-block").show();
+        } else {
+            $(".visnav-household-block").hide();
+        }
     }
 });
 

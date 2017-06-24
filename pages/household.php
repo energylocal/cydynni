@@ -71,11 +71,18 @@
   </div>
 
   <!-- BREAKDOWN TAB ------------------------------------------------------->
-  <div class="pagesection" style="color:rgb(0,71,121)">
+  <div class="pagesection" name="householdhistory" style="color:rgb(0,71,121)">
       <div style="height:10px; background-color:rgb(0,71,121)"></div>
       <div id="view-household-bargraph" style="float:right; margin:10px; padding-top:3px"><img src="images/bargraphiconblue.png" style="width:24px" /></div>
       <div id="view-household-piechart" style="float:right; margin:10px; display:none; padding-top:3px"><img src="images/piechartblue.png" style="width:24px" /></div>
-      <div class="title"><?php echo t("Breakdown");?></div></div>
+      <div class="title"><?php echo t("Breakdown");?></div>
+      
+      <div class="visnav-household-block" style="display:none">
+        <div class="visnav-household household-month">MONTH</div>
+        <div class="visnav-household household-week">WEEK</div>
+        <div class="visnav-household household-day">DAY</div>
+      </div>
+  </div>    
   <div class="panel">
     <div class="panel-inner" style="color:rgb(0,71,121)">
 
@@ -90,8 +97,13 @@
 
       <div id="household_bargraph" style="display:none; text-align:left">
       <div style="margin-bottom:5px"><?php echo t("Half-hourly Demand");?>:</div>
+      <!--
       <div id="household_bargraph_bound">
         <canvas id="household_bargraph_placeholder"></canvas>
+      </div>
+      -->
+      <div id="household_bargraph_placeholder_bound" style="width:100%; height:500px;">
+        <div id="household_bargraph_placeholder" style="height:500px"></div>
       </div>
       </div>
     </div>

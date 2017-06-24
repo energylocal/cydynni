@@ -20,15 +20,14 @@ var hydroseries = [];
 setInterval(hydro_load,60000);
 
 function hydro_load() {
-
     var history = "";
-    if (end>0 && start>0) history = "start="+start+"&end="+end;
+    if (end>0 && start>0) history = "?start="+start+"&end="+end;
 
     // bargraph_loading("hydro_bargraph_placeholder","rgba(39,78,63,0.7)");
     // $("#hydro_bargraph_placeholder").css("background-color","rgba(39,78,63,0.7)");
     var data = [];
     $.ajax({                                      
-        url: path+"hydro?"+history,
+        url: path+"hydro"+history,
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -198,6 +197,7 @@ function hydro_resize(panel_height) {
     $('#hydro_bargraph_placeholder').height(h);
     height = h;
     hydro_draw();
+    
 }
 
 function hydro_forecaster(time,power,lastpower,forecastlength) {

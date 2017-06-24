@@ -135,7 +135,16 @@ switch ($q)
     
     case "data":
         $format = "json";
-        if ($session && isset($session['apikey'])) $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+        if ($session && isset($session['apikey'])) {
+        
+            if (isset($_GET['start']) && isset($_GET['end'])) {
+                $start = (int) $_GET['start'];
+                $end = (int) $_GET['end'];
+                $content = get_meter_data_history($meter_data_api_baseurl,$session['apikey'],27,$start,$end);
+            } else {
+                $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+            }
+        }
         // test user:
         if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_household_meter_data;
         break;

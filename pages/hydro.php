@@ -57,12 +57,12 @@
 
   <!-- HYDRO TAB ------------------------------------------------------->
 
-  <div class="pagesection" style="color:rgb(39,78,63)">
+  <div class="pagesection" name="hydrohistory" style="color:rgb(39,78,63)">
     <div style="height:10px; background-color:rgb(39,78,63)"></div>
     <div class="title">Hydro</div>
     <div class="summary_bound"><div id="hydro_summary" class="panel-summary"></div></div>
     
-    <div class="visnav-block">
+    <div class="visnav-block" style="display:none">
       <div class="visnav-hydro month">MONTH</div>
       <div class="visnav-hydro week">WEEK</div>
       <div class="visnav-hydro day">DAY</div>

@@ -204,6 +204,24 @@ table, th, td {
   background-color:rgba(39,78,63,0.2);
 }
 
+.visnav-household-block {
+  float:right;
+  margin-top:11px;
+  margin-right:11px;
+}
+
+.visnav-household {
+  display:inline-block;
+  border: 1px solid rgb(0,71,121);
+  padding:5px;
+  margin-left:5px;
+  cursor:pointer;
+}
+
+.visnav-household:hover {
+  background-color:rgba(0,71,121,0.2);
+}
+
 @media (max-width: 370px) {
   .container {
       width:370px;
