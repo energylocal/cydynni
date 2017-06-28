@@ -195,9 +195,10 @@ table, th, td {
 .visnav-hydro {
   display:inline-block;
   border: 1px solid rgb(39,78,63);
-  padding:5px;
-  margin-left:5px;
+  padding:3px;
+  margin-left:3px;
   cursor:pointer;
+  font-size:12px;
 }
 
 .visnav-hydro:hover {
@@ -206,20 +207,38 @@ table, th, td {
 
 .visnav-household-block {
   float:right;
-  margin-top:11px;
-  margin-right:11px;
+  margin-top:13px;
 }
 
 .visnav-household {
   display:inline-block;
   border: 1px solid rgb(0,71,121);
-  padding:5px;
-  margin-left:5px;
+  padding:4px;
+  margin-left:3px;
   cursor:pointer;
+  font-size:12px;
 }
 
 .visnav-household:hover {
   background-color:rgba(0,71,121,0.2);
+}
+
+.visnav-community-block {
+  float:right;
+  margin-top:13px;
+}
+
+.visnav-community {
+  display:inline-block;
+  border: 1px solid rgb(142,77,0);
+  padding:4px;
+  margin-left:3px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.visnav-community:hover {
+  background-color:rgba(142,77,0,0.2);
 }
 
 @media (max-width: 370px) {

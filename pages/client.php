@@ -1,6 +1,6 @@
 <?php global $path, $translation, $lang; 
 
-$v = 10;
+$v = 17;
 
 ?>
 
@@ -200,6 +200,12 @@ $(".pagesection").click(function() {
             $(".visnav-household-block").show();
         } else {
             $(".visnav-household-block").hide();
+        }
+        
+        if (panel_name=="communityhistory") {
+            $(".visnav-community-block").show();
+        } else {
+            $(".visnav-community-block").hide();
         }
     }
 });

@@ -32,11 +32,17 @@
   </div>
 
   <!-- BREAKDOWN TAB ------------------------------------------------------->
-  <div class="pagesection" style="color:rgb(142,77,0);">
+  <div class="pagesection" name="communityhistory" style="color:rgb(142,77,0);">
     <div style="height:10px; background-color:rgb(142,77,0)"></div>
     <div id="view-community-bargraph" style="float:right; margin:10px; padding-top:3px"><img src="images/bargraphiconbrown.png" style="width:24px" /></div>
     <div id="view-community-piechart" style="float:right; margin:10px; display:none; padding-top:3px"><img src="images/piechartbrown.png" style="width:24px" /></div>
     <div class="title"><?php echo t("Breakdown");?></div>
+    
+    <div class="visnav-community-block" style="display:none">
+      <div class="visnav-community community-month"><?php echo t("MONTH");?></div>
+      <div class="visnav-community community-week"><?php echo t("WEEK");?></div>
+      <div class="visnav-community community-day"><?php echo t("DAY");?></div>
+    </div>
   </div>
   <div class="panel" style="color:rgb(142,77,0);">
     <div class="panel-inner">

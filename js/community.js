@@ -4,6 +4,9 @@ Community page
 
 */
 
+var end = 0;
+var start = 0;
+
 var community_pie_data = [];
 var community_data = [];
 var exported_hydro_data = [];
@@ -100,10 +103,14 @@ function community_pie_draw() {
 }
 
 function community_bargraph_load() {
+
+    var history = "";
+    if (end>0 && start>0) history = "?start="+start+"&end="+end;
     
     var data = [];
+    
     $.ajax({                                      
-        url: path+"community/halfhourlydata",
+        url: path+"hydro"+history,
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -111,98 +118,120 @@ function community_bargraph_load() {
                 console.log("ERROR","invalid response: "+result);
             } else {
 
-                community_data = result;
-                var total = 0;
-                for (var z in community_data) {
-                   total += community_data[z][1];
+                hydro_data = result;
+                if (hydro_data.length>0) {
+                    for (var z in hydro_data)
+                        if (hydro_data[z][1]<0) hydro_data[z][1]=0;
                 }
-                console.log("Total kWh in window: "+total.toFixed(2));
+                
+                // -------------------------------------------------------------------------------
+                $.ajax({                                      
+                    url: path+"community/halfhourlydata"+history,
+                    dataType: 'json',
+                    async: true,                      
+                    success: function(result) {
+                        if (!result || result===null || result==="" || result.constructor!=Array) {
+                            console.log("ERROR","invalid response: "+result);
+                        } else {
 
-                // -------------------------------------------------------------------------
-                // Colour code graph
-                // -------------------------------------------------------------------------
-                var morning = "#ffdc00";
-                var midday = "#29abe2";
-                var evening = "#c92760";
-                var overnight = "#274e3f";
+                            community_data = result;
+                            var total = 0;
+                            for (var z in community_data) {
+                               total += community_data[z][1];
+                            }
+                            console.log("Total kWh in window: "+total.toFixed(2));
+
+                            // -------------------------------------------------------------------------
+                            // Colour code graph
+                            // -------------------------------------------------------------------------
+                            var morning = "#ffdc00";
+                            var midday = "#29abe2";
+                            var evening = "#c92760";
+                            var overnight = "#274e3f";
+                            
+                            var morning_data = [];
+                            var midday_data = [];
+                            var evening_data = [];
+                            var overnight_data = [];
+                            exported_hydro_data = [];
+                            used_hydro_data = [];
                 
-                var morning_data = [];
-                var midday_data = [];
-                var evening_data = [];
-                var overnight_data = [];
-    
-                for (var z in community_data) {    
-                    var time = community_data[z][0];      
-                    var value = community_data[z][1];     
-                    var d = new Date(time);
-                    var hour = d.getHours();
-                    
-                    if (hour<6) overnight_data.push([time,value]);
-                    if (hour>=6 && hour<11) morning_data.push([time,value]);
-                    if (hour>=11 && hour<16) midday_data.push([time,value]);
-                    if (hour>=16 && hour<20) evening_data.push([time,value]);
-                    if (hour>=20) overnight_data.push([time,value]);
-                    
-                    // Calculate exported hydro
-                    used_hydro_data[z] = [time,hydro_data[z][1]];
-                    exported_hydro_data[z] = [time,0];
-                    // When available hydro is more than community consumption
-                    if (hydro_data[z][1]>community_data[z][1]) {
-                        exported_hydro_data[z][1] = hydro_data[z][1];
-                        used_hydro_data[z][1] = community_data[z][1];
-                    }
-                }
-                
-                communityseries = [];
-                
-                communityseries.push({
-                    data: exported_hydro_data, color: "#44b3e2",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
-                communityseries.push({
-                    data: overnight_data, color: "#274e3f",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
-                communityseries.push({
-                    data: morning_data, color: "#ffdc00",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
-                communityseries.push({
-                    data: midday_data, color: "#29abe2",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
-                communityseries.push({
-                    data: evening_data, color: "#c92760",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
-                communityseries.push({
-                    data: used_hydro_data, color: "#00cc00",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                });
+                            for (var z in community_data) {    
+                                var time = community_data[z][0];      
+                                var value = community_data[z][1];     
+                                var d = new Date(time);
+                                var hour = d.getHours();
                                 
-                community_bargraph_draw();
-                
-                // Show day instead of "last 24 hour"
-                var d1 = new Date();
-                var t1 = d1.getTime()*0.001;
-                var d2 = new Date(community_data[0][0]);
-                var t2 = d2.getTime()*0.001;
-                var dayoffset = Math.floor((t1-t2)/(3600*24));
-                console.log("Days behind: "+dayoffset);
-                
-                var hour = d2.getHours();
-                var month = d2.getMonth();
-                var day = d2.getDate();
-                if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
-                var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-                
-                if (dayoffset==1) {
-                    $("#community-graph-date").html(t("Yesterday")+" ("+day+" "+t(months[month])+"):");
-                } else {
-                    $("#community-graph-date").html(day+" "+t(months[month]));
-                }
+                                if (hour<6) overnight_data.push([time,value]);
+                                if (hour>=6 && hour<11) morning_data.push([time,value]);
+                                if (hour>=11 && hour<16) midday_data.push([time,value]);
+                                if (hour>=16 && hour<20) evening_data.push([time,value]);
+                                if (hour>=20) overnight_data.push([time,value]);
+                                
+                                // Calculate exported hydro
+                                used_hydro_data[z] = [time,hydro_data[z][1]];
+                                exported_hydro_data[z] = [time,0];
+                                // When available hydro is more than community consumption
+                                if (hydro_data[z][1]>community_data[z][1]) {
+                                    exported_hydro_data[z][1] = hydro_data[z][1];
+                                    used_hydro_data[z][1] = community_data[z][1];
+                                }
+                            }
+                            
+                            communityseries = [];
+                            
+                            communityseries.push({
+                                data: exported_hydro_data, color: "#92cbe3",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: overnight_data, color: "#274e3f",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: morning_data, color: "#ffdc00",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: midday_data, color: "#29abe2",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: evening_data, color: "#c92760",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: used_hydro_data, color: "#00cc00",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                                            
+                            community_bargraph_draw();
+                            
+                            // Show day instead of "last 24 hour"
+                            var d1 = new Date();
+                            var t1 = d1.getTime()*0.001;
+                            var d2 = new Date(community_data[0][0]);
+                            var t2 = d2.getTime()*0.001;
+                            var dayoffset = Math.floor((t1-t2)/(3600*24));
+                            console.log("Days behind: "+dayoffset);
+                            
+                            var hour = d2.getHours();
+                            var month = d2.getMonth();
+                            var day = d2.getDate();
+                            if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
+                            var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                            
+                            if (dayoffset==1) {
+                                $("#community-graph-date").html(t("Yesterday")+":");
+                            } else {
+                                $("#community-graph-date").html(day+" "+t(months[month]));
+                            }
+                        }
+                    }
+                });
+            // -----------------------------------------------------------------------
             }
-        }
+       }
     });
 }
 
@@ -308,6 +337,30 @@ $("#view-community-piechart").click(function(){
     $("#community_piegraph").show();
     $("#community_bargraph").hide();
     community_view = "piechart";
+});
+
+$(".community-day").click(function() {
+    end = 0;
+    start = 0;
+    community_bargraph_load();
+});
+
+$(".community-week").click(function() {
+    end = +new Date;
+    start = end - (3600000*24.0*7);
+    community_bargraph_load();
+});
+
+$(".community-month").click(function() {
+    end = +new Date;
+    start = end - (3600000*24.0*30);
+    community_bargraph_load();
+});
+
+$('#community_bargraph_placeholder').bind("plotselected", function (event, ranges) {
+    start = ranges.xaxis.from;
+    end = ranges.xaxis.to;
+    community_bargraph_load();
 });
 
 $('#community_bargraph_placeholder').bind("plothover", function (event, pos, item) {

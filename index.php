@@ -109,8 +109,14 @@ switch ($q)
         
     case "community/halfhourlydata":
         $format = "json";
-        $content = json_decode(mysql_store_get($mysqli,"community:halfhour"));
-        //$content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
+        
+        if (isset($_GET['start']) && isset($_GET['end'])) {
+            $start = (int) $_GET['start'];
+            $end = (int) $_GET['end'];
+            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start,$end);
+        } else {
+            $content = json_decode(mysql_store_get($mysqli,"community:halfhour"));
+        }
         break;
 
     case "community/monthlydata":
