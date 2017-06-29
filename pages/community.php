@@ -39,6 +39,8 @@
     <div class="title"><?php echo t("Breakdown");?></div>
     
     <div class="visnav-community-block" style="display:none">
+      <div class="visnav-community community-left"><</div>
+      <div class="visnav-community community-right">></div>
       <div class="visnav-community community-month"><?php echo t("MONTH");?></div>
       <div class="visnav-community community-week"><?php echo t("WEEK");?></div>
       <div class="visnav-community community-day"><?php echo t("DAY");?></div>

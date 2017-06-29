@@ -252,7 +252,7 @@ $(window).resize(function(){
 });
 
 $.ajax({                                      
-    url: path+"household/monthlydata",
+    url: path+"household/summary/month",
     dataType: 'json',      
     success: function(result) {
     
@@ -402,7 +402,7 @@ load_community_segment();
 function load_community_segment()
 {
     $.ajax({                                      
-        url: path+"community/monthlydata",
+        url: path+"community/summary/month",
         dataType: 'json',      
         success: function(result) {
 

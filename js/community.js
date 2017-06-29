@@ -26,7 +26,7 @@ function community_load() {
 function community_pie_load()
 {
   $.ajax({                                      
-      url: path+"community/data",
+      url: path+"community/summary/day",
       dataType: 'json',                  
       success: function(result) {
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
@@ -126,7 +126,7 @@ function community_bargraph_load() {
                 
                 // -------------------------------------------------------------------------------
                 $.ajax({                                      
-                    url: path+"community/halfhourlydata"+history,
+                    url: path+"community/data"+history,
                     dataType: 'json',
                     async: true,                      
                     success: function(result) {
@@ -178,33 +178,87 @@ function community_bargraph_load() {
                                 }
                             }
                             
+                            // ----------------------------------------------------------------------------
+                            // HYDRO FORECAST USING YNNI PADARN PERIS DATA
+                            // ----------------------------------------------------------------------------
+                            var lasttime = hydro_data[hydro_data.length-1][0];
+                            var lastvalue = hydro_data[hydro_data.length-1][1];
+                            
+                            forecast = [];
+                            $.ajax({                                      
+                                url: path+"hydro/forecast"+history+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
+                                dataType: 'json',
+                                async: false,                      
+                                success: function(ccdata) {
+                                forecast = ccdata;
+                                
+                            }}); 
+                            
+                            // ----------------------------------------------------------------------------
+                            // CONSUMPTION FORECAST
+                            // ----------------------------------------------------------------------------
+                            var d1 = new Date();
+                            var t1 = d1.getTime()*0.001;
+                            var d3 = new Date(hydro_data[hydro_data.length-1][0]);
+                            var t3 = d3.getTime()*0.001;
+                            var half_hours_behind = Math.floor((t1 - t3) / 1800);
+                            
+                            var community_forecast_raw = [];
+                            consumption_profile = [];
+                            $.ajax({                                      
+                                url: path+"community/forecast",
+                                dataType: 'json',
+                                async: false,                      
+                                success: function(result) {
+                                    var community_forecast_raw = result;
+                                    
+                                    consumption_profile = [];
+                                    for (var h=0; h<half_hours_behind-1; h++) {
+                                        consumption_profile.push([time+((h+1)*1800*1000),community_forecast_raw[h%48]]);
+                                    }
+                            }});
+                            
+                            
                             communityseries = [];
+                            
+                            var widthprc = 0.75;
+
+                            // Forecast
+                            communityseries.push({
+                                data: forecast, color: "#d3dbd8",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                            });
+                            communityseries.push({
+                                data: consumption_profile, color: "#aaa",
+                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 0.3, lineWidth:0}
+                            });         
                             
                             communityseries.push({
                                 data: exported_hydro_data, color: "#92cbe3",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
                             communityseries.push({
                                 data: overnight_data, color: "#274e3f",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
                             communityseries.push({
                                 data: morning_data, color: "#ffdc00",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
                             communityseries.push({
                                 data: midday_data, color: "#29abe2",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
                             communityseries.push({
                                 data: evening_data, color: "#c92760",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
                             communityseries.push({
                                 data: used_hydro_data, color: "#00cc00",
-                                bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                                bars: { show: true, align: "center", barWidth: widthprc*3600*0.5*1000, fill: 1.0, lineWidth:0}
                             });
-                                            
+                            
+
                             community_bargraph_draw();
                             
                             // Show day instead of "last 24 hour"
@@ -318,8 +372,6 @@ function community_bargraph_draw() {
 
     var plot = $.plot($('#community_bargraph_placeholder'),communityseries,options);
     $('#community_bargraph_placeholder').append("<div id='bargraph-label' style='position:absolute;left:50px;top:30px;color:#666;font-size:12px'></div>");
-
-    // bargraph("community_bargraph_placeholder",communityseries," kWh","rgba(142,77,0,0.7)");
 }
 
 $("#view-community-bargraph").click(function(){
@@ -337,6 +389,20 @@ $("#view-community-piechart").click(function(){
     $("#community_piegraph").show();
     $("#community_bargraph").hide();
     community_view = "piechart";
+});
+
+$(".community-left").click(function() {
+    var time_window = end - start;
+    end -= time_window * 0.5;
+    start -= time_window * 0.5;
+    community_bargraph_load();
+});
+
+$(".community-right").click(function() {
+    var time_window = end - start;
+    end += time_window * 0.5;
+    start += time_window * 0.5;
+    community_bargraph_load();
 });
 
 $(".community-day").click(function() {

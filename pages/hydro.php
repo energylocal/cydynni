@@ -63,6 +63,8 @@
     <div class="summary_bound"><div id="hydro_summary" class="panel-summary"></div></div>
     
     <div class="visnav-block" style="display:none">
+      <div class="visnav-hydro hydro-left"><</div>
+      <div class="visnav-hydro hydro-right">></div>
       <div class="visnav-hydro month"><?php echo t("MONTH");?></div>
       <div class="visnav-hydro week"><?php echo t("WEEK");?></div>
       <div class="visnav-hydro day"><?php echo t("DAY");?></div>

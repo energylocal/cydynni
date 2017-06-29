@@ -23,7 +23,7 @@ function household_load()
 function household_pie_load()
 {    
   $.ajax({                                      
-      url: path+"household/data",
+      url: path+"household/summary/day",
       dataType: 'json',                  
       success: function(result) {
           

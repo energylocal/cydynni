@@ -17,12 +17,15 @@ function cydynnistatus_update() {
   if ((hour>=11) && (hour<16)) tariff = "midday";
   if ((hour>=16) && (hour<20)) tariff = "evening";
   if ((hour>=20) || (hour<6)) tariff = "overnight";
+  
+  if (hydro_tariff_active) tariff = "hydro";
 
   if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon-small2.jpg");
   if (tariff=="midday") $("#status-img").attr("src","images/new-tick-small2.jpg");
   if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon-small2.jpg");
   if (tariff=="overnight") $("#status-img").attr("src","images/new-tick-small2.jpg");
-
+  if (tariff=="hydro") $("#status-img").attr("src","images/new-tick-small2.jpg");
+  
   // If morning peak then wait until midday tariff
   if (tariff=="morning") {
       $("#status-pre").html(t("If possible"));
@@ -73,6 +76,15 @@ function cydynnistatus_update() {
       }
       $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
       $("#cydynni_summary").html(t("Ok until 6am"));
+  }
+  
+  // If evening peak then wait until overnight tariff
+  if (tariff=="hydro") {
+      $("#status-pre").html(t("Now is a good time to use electricity"));
+      $("#status-title").html(t("GO!"));
+      $("#tariff_summary").html(t("Now")+": "+t("Hydro Price"));
+      $("#status-until").html(t("Why? Plenty of hydro currently available"));
+      $("#cydynni_summary").html(t("Hydro available"));
   }
 
   $(".tariff-img").hide();

@@ -25,7 +25,6 @@ require "settings.php";
 require "core.php";
 require "meter_data_api.php";
 require "mysql_store.php";
-require "test_user.php";
 
 $path = get_application_path();
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
@@ -82,32 +81,108 @@ switch ($q)
         if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
         if ($session) $content = view("pages/report.php",array('session'=>$rsession));
         break;
-                        
-    case "household/data":
+  
+    // ------------------------------------------------------------------------
+    // Household 
+    // ------------------------------------------------------------------------     
+    case "household/summary/day":
         if ($session && isset($session['apikey'])) {
             $format = "json";
             $content = get_household_consumption($meter_data_api_baseurl,$session['apikey']);
         }
-        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_household_last_day_summary;
         break;
         
-    case "household/monthlydata":
+    case "household/summary/month":
         if ($session && isset($session['apikey'])) {
             $format = "json";
             $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['apikey']);
         }
+        break;
         
-        if (isset($session["userid"]) && $session["userid"]==59) $content = json_decode('[{"month":1,"year":2017,"kwh":{"morning":8.37,"midday":12.14,"evening":34.28,"overnight":25.33,"hydro":200.78,"total":280.9},"cost":{"morning":3.89,"midday":4.98,"evening":7.56,"overnight":9.64,"total":26.07}},{"month":12,"year":2016,"kwh":{"morning":24.72,"midday":40.23,"evening":61.59,"overnight":66.16,"hydro":75.5,"total":268.2},"cost":{"morning":3.81,"midday":6.29,"evening":8.19,"overnight":9.85,"total":28.14}}]');
+    // ------------------------------------------------------------------------
+    // Generic meter API    
+    // ------------------------------------------------------------------------
+    case "data":
+        $format = "json";
+        if ($session && isset($session['apikey'])) {
+            if (isset($_GET['start']) && isset($_GET['end'])) {
+                $start = (int) $_GET['start'];
+                $end = (int) $_GET['end'];
+                $content = get_meter_data_history($meter_data_api_baseurl,$session['apikey'],27,$start,$end);
+            } else {
+                $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+            }
+        }
+        break;  
         
+    // ------------------------------------------------------------------------
+    // Historic hydro API
+    // ------------------------------------------------------------------------
+    case "hydro":
+        $format = "json";
+        if (isset($_GET['start']) && isset($_GET['end'])) {
+            $start = (int) $_GET['start'];
+            $end = (int) $_GET['end'];
+            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
+        } else {
+            $content = json_decode(mysql_store_get($mysqli,"hydro"));
+        }
+        break;
+        
+    // ------------------------------------------------------------------------
+    // Special forecast API that uses hydro data from YnniPadarnPeris
+    // ------------------------------------------------------------------------
+    case "hydro/forecast":
+        $format = "json";
+
+        if (isset($_GET['lasttime'])) $forecaststart = $_GET['lasttime'];
+        if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
+        
+        if (isset($_GET['start']) && isset($_GET['end'])) {
+            $end = $_GET['end'];
+            $start = $_GET['start'];
+        
+        } else {
+            $end = time() * 1000;
+            $start = $forecaststart;
+        }
+        
+        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$forecaststart&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+        $scale = $lastvalue / (($data[0][1]*0.001)-7.8);
+        if ($scale>1.3) $scale = 1.3;
+        
+        
+        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+        
+        // Scale ynni padarn peris data and impose min/max limits
+        for ($i=0; $i<count($data); $i++) {
+            $data[$i][1] = ((($data[$i][1] * 0.001)-7.8) * $scale);
+            if ($data[$i][1]<0) $data[$i][1] = 0;
+            if ($data[$i][1]>49) $data[$i][1] = 49;
+        }
+        
+        // remove last half hour if null
+        if ($data[count($data)-2][1]==null) unset($data[count($data)-2]);
+        if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+        
+        $content = $data;
+        
+        break;
+
+    // ------------------------------------------------------------------------
+    // Community data
+    // ------------------------------------------------------------------------
+    case "community/summary/day":
+        $format = "json";
+        $content = json_decode(mysql_store_get($mysqli,"community:totals"));
+        break;
+        
+    case "community/summary/month":
+        $format = "json";
+        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
         
     case "community/data":
-        $format = "json";
-        $content = json_decode(mysql_store_get($mysqli,"community:totals"));
-        //$content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        break;
-        
-    case "community/halfhourlydata":
         $format = "json";
         
         if (isset($_GET['start']) && isset($_GET['end'])) {
@@ -119,42 +194,43 @@ switch ($q)
         }
         break;
 
-    case "community/monthlydata":
-        $format = "json";
-        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        break;
-        
     // ------------------------------------------------------------------------
-    // Emoncms.org feed    
+    // Consumption forecast based on last 7 days
     // ------------------------------------------------------------------------
-    case "hydro":
+    case "community/forecast":
         $format = "json";
+
+        $end = time();
+        $start = $end - (3600*24.0*7);
+        $data = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start*1000,$end*1000);
         
-        if (isset($_GET['start']) && isset($_GET['end'])) {
-            $start = (int) $_GET['start'];
-            $end = (int) $_GET['end'];
-            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
-        } else {
-            $content = json_decode(mysql_store_get($mysqli,"hydro"));
-        }
-        break;
-    
-    case "data":
-        $format = "json";
-        if ($session && isset($session['apikey'])) {
+        $days = count($data)/48;
         
-            if (isset($_GET['start']) && isset($_GET['end'])) {
-                $start = (int) $_GET['start'];
-                $end = (int) $_GET['end'];
-                $content = get_meter_data_history($meter_data_api_baseurl,$session['apikey'],27,$start,$end);
-            } else {
-                $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+        // Quick quality check
+        if ($days==round($days)) {
+        
+            $consumption_profile_tmp = array();
+            for ($h=0; $h<48; $h++) $consumption_profile_tmp[$h] = 0;
+            
+            $i = 0;
+            for ($d=0; $d<$days; $d++) {
+                for ($h=0; $h<48; $h++) {
+                    $consumption_profile_tmp[$h] += $data[$i][1]*1;
+                    $i++;
+                }
             }
+            
+            for ($h=0; $h<48; $h++) {
+                $consumption_profile_tmp[$h] = $consumption_profile_tmp[$h] / $days;
+                $consumption_profile[] = number_format($consumption_profile_tmp[$h],2);
+            }
+            $content = $consumption_profile;
+        } else {
+            $content = false;
         }
-        // test user:
-        if (isset($session["userid"]) && $session["userid"]==$test_user) $content = $test_user_household_meter_data;
+        
         break;
-    
+        
     // ------------------------------------------------------------------------
     // User    
     // ------------------------------------------------------------------------
