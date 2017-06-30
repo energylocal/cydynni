@@ -1,7 +1,7 @@
 <?php
-die;
-require "../settings.php";
-require "../lib/dbschemasetup.php";
+
+require "../public_html/settings.php";
+require "../public_html/lib/dbschemasetup.php";
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
 
 // -----------------------------------
