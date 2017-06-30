@@ -27,3 +27,5 @@ The CydYnni app is a mobile friendly web app also packaged as an android and iOS
 ### Licence
 
 This software is available under the GNU Affero General Public Licence see Licence and Copyright files.
+
+ln -s /home/user/cydynni/public_html /var/www/cydynni
