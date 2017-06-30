@@ -28,6 +28,10 @@ require "mysql_store.php";
 
 $path = get_application_path();
 $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
+
+$redis = new Redis();
+$connected = $redis->connect("localhost");
+        
 // ---------------------------------------------------------
 require("user_model.php");
 $user = new User($mysqli);
@@ -125,7 +129,7 @@ switch ($q)
             $end = (int) $_GET['end'];
             $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
         } else {
-            $content = json_decode(mysql_store_get($mysqli,"hydro"));
+            $content = json_decode($redis->get("hydro:data"));
         }
         break;
         
@@ -174,7 +178,7 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "community/summary/day":
         $format = "json";
-        $content = json_decode(mysql_store_get($mysqli,"community:totals"));
+        $content = json_decode($redis->get("community:summary:day"));
         break;
         
     case "community/summary/month":
@@ -190,7 +194,7 @@ switch ($q)
             $end = (int) $_GET['end'];
             $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start,$end);
         } else {
-            $content = json_decode(mysql_store_get($mysqli,"community:halfhour"));
+            $content = json_decode($redis->get("community:data"));
         }
         break;
 
@@ -338,13 +342,13 @@ switch ($q)
         $format = "text";
         // Hydro
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
-        mysql_store_set($mysqli,"hydro",json_encode($content));
+        $redis->set("hydro:data",json_encode($content));
         // Community half-hour
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
-        mysql_store_set($mysqli,"community:halfhour",json_encode($content));
+        $redis->set("community:data",json_encode($content));
         // Community totals
         $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        mysql_store_set($mysqli,"community:totals",json_encode($content));
+        $redis->set("community:summary:day",json_encode($content));
         // Store Updated
         $content = "store updated";
         break;
