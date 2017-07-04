@@ -67,6 +67,10 @@ $logger = new EmonLogger();
 switch ($q)
 {   
 
+    case "test":
+        $content = "new server";
+        break;
+
     case "":
         $format = "html";
         if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
@@ -153,10 +157,10 @@ switch ($q)
         
         $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$forecaststart&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
         $scale = $lastvalue / (($data[0][1]*0.001)-7.8);
-        if ($scale>1.3) $scale = 1.3;
+        //if ($scale>1.3) $scale = 1.3;
         
         
-        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+        // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
         
         // Scale ynni padarn peris data and impose min/max limits
         for ($i=0; $i<count($data); $i++) {
