@@ -1,6 +1,6 @@
 <?php global $path, $translation, $lang; 
 
-$v = 21;
+$v = 22;
 
 ?>
 

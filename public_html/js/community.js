@@ -192,13 +192,14 @@ function community_bargraph_load() {
                                 success: function(ccdata) {
                                 forecast = ccdata;
                                 
-                            }}); 
+                            }});
                             
                             // ----------------------------------------------------------------------------
                             // CONSUMPTION FORECAST
                             // ----------------------------------------------------------------------------
                             var d1 = new Date();
                             var t1 = d1.getTime()*0.001;
+                            if (end>0) t1 = end * 0.001;
                             var d3 = new Date(hydro_data[hydro_data.length-1][0]);
                             var t3 = d3.getTime()*0.001;
                             var half_hours_behind = Math.floor((t1 - t3) / 1800);
