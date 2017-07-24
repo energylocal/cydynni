@@ -1,6 +1,6 @@
 <?php global $path, $translation, $lang; 
 
-$v = 22;
+$v = 23;
 
 ?>
 
@@ -38,8 +38,10 @@ $v = 22;
     <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script> 
     <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script> 
     <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/jquery.flot.stack.min.js"></script>
     <script type="text/javascript" src="lib/flot/date.format.js"></script> 
     <script type="text/javascript" src="lib/vis.helper.js"></script> 
+    <script type="text/javascript" src="lib/feed.js"></script> 
   </head>
   <body>
 
@@ -104,6 +106,8 @@ var iconbarheight = 52;
 var panel_height = $(window).height() - pagesectionheight*3 - iconbarheight;
 window_width = $(window).width();
 
+var live = {};
+
 // -----------------------------------------------------------------------
 // View initialisation
 // -----------------------------------------------------------------------
@@ -143,13 +147,13 @@ if (!session) {
   setInterval(household_load,60000);
 }
 
+cydynnistatus_update();
+
 hydro_load();
 community_load();
 resize();
 
-// cydynni.js
-cydynnistatus_update();
-setInterval(cydynnistatus_update,10000);
+setInterval(cydynnistatus_update,60000);
 setInterval(community_load,60000);
 
 // -----------------------------------------------------------------------

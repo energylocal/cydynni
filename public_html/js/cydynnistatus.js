@@ -5,21 +5,26 @@ Hydro CydYnni Status page
 */
 
 function cydynnistatus_update() {
+
+  var tariff = {};
+
+  $.ajax({                                      
+      url: path+"live",
+      dataType: 'json',
+      async: false,                      
+      success: function(result) {
+          live = result;
+  }});
+  
+  tariff = live.tariff;
+
   var time = new Date();
 
   var hour = time.getHours();
   var minutes = time.getMinutes();
 
   $("#status-next").html("");
-
-  var tariff = 0;
-  if ((hour>=6) && (hour<11)) tariff = "morning";
-  if ((hour>=11) && (hour<16)) tariff = "midday";
-  if ((hour>=16) && (hour<20)) tariff = "evening";
-  if ((hour>=20) || (hour<6)) tariff = "overnight";
   
-  if (hydro_tariff_active) tariff = "hydro";
-
   if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon-small2.jpg");
   if (tariff=="midday") $("#status-img").attr("src","images/new-tick-small2.jpg");
   if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon-small2.jpg");

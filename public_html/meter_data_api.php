@@ -291,6 +291,7 @@ function get_community_consumption($baseurl,$token) {
     // Fetch data from data server
     // print $baseurl."1-$token-6";
     $str = @file_get_contents($baseurl."1-$token-13");
+    
     //print $str;
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));

@@ -34,21 +34,22 @@
   <!-- BREAKDOWN TAB ------------------------------------------------------->
   <div class="pagesection" name="communityhistory" style="color:rgb(142,77,0);">
     <div style="height:10px; background-color:rgb(142,77,0)"></div>
-    <div id="view-community-bargraph" style="float:right; margin:10px; padding-top:3px"><img src="images/bargraphiconbrown.png" style="width:24px" /></div>
-    <div id="view-community-piechart" style="float:right; margin:10px; display:none; padding-top:3px"><img src="images/piechartbrown.png" style="width:24px" /></div>
+    <div id="view-community-bargraph" style="float:right; margin:10px; display:none; padding-top:3px"><img src="images/bargraphiconbrown.png" style="width:24px" /></div>
+    <div id="view-community-piechart" style="float:right; margin:10px; padding-top:3px"><img src="images/piechartbrown.png" style="width:24px" /></div>
     <div class="title"><?php echo t("Breakdown");?></div>
     
     <div class="visnav-community-block" style="display:none">
       <div class="visnav-community community-left"><</div>
       <div class="visnav-community community-right">></div>
-      <div class="visnav-community community-month"><?php echo t("MONTH");?></div>
-      <div class="visnav-community community-week"><?php echo t("WEEK");?></div>
-      <div class="visnav-community community-day"><?php echo t("DAY");?></div>
+      <div class="visnav-community community-year"><?php echo t("Y");?></div>
+      <div class="visnav-community community-month"><?php echo t("M");?></div>
+      <div class="visnav-community community-week"><?php echo t("W");?></div>
+      <!--<div class="visnav-community community-day"><?php echo t("D");?></div>-->
     </div>
   </div>
   <div class="panel" style="color:rgb(142,77,0);">
     <div class="panel-inner">
-      <div id="community_piegraph" style="text-align:left">
+      <div id="community_piegraph" style="display:none; text-align:left">
       <?php echo t("Time of use & hydro");?>:<br>
       <div style="text-align:center">
       <div id="community_piegraph_bound">
@@ -57,22 +58,24 @@
       </div>
       </div>
 
-      <div id="community_bargraph" style="display:none; text-align:left">
+      <div id="community_bargraph" style="text-align:left">
       <div style="margin-bottom:5px"><?php echo t("Community Half-hourly Demand");?>: <span id="community-graph-date"></span></div>
-      
+     
       <div style="padding-top:5px; padding-bottom:5px">
-      
-          <div class="legend-label-box" style="background-color:#ffdc00"></div>
+          <div class="legend-label-box" style="background-color:#ffb401"></div>
           <span class="legend-label"><?php echo t("Morning");?></span>
-          <div class="legend-label-box" style="background-color:#29abe2"></div>
+          <div class="legend-label-box" style="background-color:#4dac34"></div>
           <span class="legend-label"><?php echo t("Midday");?></span>
-          <div class="legend-label-box" style="background-color:#c92760"></div>
+          <div class="legend-label-box" style="background-color:#e6602b"></div>
           <span class="legend-label"><?php echo t("Evening");?></span>
-          <div class="legend-label-box" style="background-color:#274e3f"></div>
+          <div class="legend-label-box" style="background-color:#014c2d"></div>
           <span class="legend-label"><?php echo t("Overnight");?></span>
-          <div class="legend-label-box" style="background-color:#00cc00"></div>
+          <div class="legend-label-box" style="background-color:#29aae3"></div>
           <span class="legend-label" >Hydro</span>
       </div>
+    <!--
+        <div id="legendholder" style="padding:5px 0px 0px 5px"></div>
+         -->
         <div id="community_bargraph_bound" style="width:100%; height:500px;">
           <div id="community_bargraph_placeholder" style="height:500px"></div>
         </div>

@@ -4,8 +4,6 @@ Hydro section
 
 */
 
-var hydro_tariff_active = false;
-
 var end = 0;
 var start = 0;
 var consumption_profile = [];
@@ -16,6 +14,10 @@ var hydroseries = [];
 setInterval(hydro_load,60000);
 
 function hydro_load() {
+
+    start = Math.floor((start*0.001)/1800)*1800*1000;
+    end = Math.ceil((end*0.001)/1800)*1800*1000;
+    
     var history = "";
     if (end>0 && start>0) history = "?start="+start+"&end="+end;
 
@@ -77,7 +79,7 @@ function hydro_load() {
                     
                     forecast = [];
                     $.ajax({                                      
-                        url: path+"hydro/forecast"+history+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
+                        url: path+"hydro/estimate"+history+"&lasttime="+lasttime+"&lastvalue="+lastvalue+"&interval=1800",
                         dataType: 'json',
                         async: false,                      
                         success: function(ccdata) {
@@ -85,54 +87,33 @@ function hydro_load() {
                         
                     }});
                     
-                    var forecastlive_hydro = forecast[forecast.length-1][1];  
-                    var forecastlive_hydro_kw = forecastlive_hydro * 2;  
-                    
-                    // ----------------------------------------------------------------------------
-                    // CONSUMPTION FORECAST
-                    // ----------------------------------------------------------------------------
-                    var community_forecast_raw = [];
-                    $.ajax({                                      
-                        url: path+"community/forecast",
-                        dataType: 'json',
-                        async: false,                      
-                        success: function(result) {
-                            var community_forecast_raw = result;
-                            
-                            consumption_profile = [];
-                            for (var h=0; h<half_hours_behind-1; h++) {
-                                consumption_profile.push([time+((h+1)*1800*1000),community_forecast_raw[h%48]]);
-                            }
-                    }});
-                    
-                    var consumption_forecast_now = consumption_profile[consumption_profile.length-1][1];
-                                        
-                    // ----------------------------------------------------------------------------
-                    // ----------------------------------------------------------------------------
-                    $("#power").html(Math.round(power_kw));
-                    $("#kWhHH").html(power.toFixed(1));
-                    if (forecastlive_hydro_kw>=50) {
-                        $("#hydrostatus").html(t("HIGH"));
-                        $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
-                    }
-                    else if (forecastlive_hydro_kw>=30) {
-                        $("#hydrostatus").html(t("MEDIUM"));
-                        $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
-                    }
-                    else if (forecastlive_hydro_kw>=10) {
-                        $("#hydrostatus").html(t("LOW"));
-                        $("#hydro_summary").html(t("For next 12 hours: LOW"));
-                    }
-                    else {
-                        $("#hydrostatus").html(t("VERY LOW"));
-                        $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
+                    if (live.hydro!=undefined) { 
+                        forecastlive_hydro_kw = live.hydro;
+                        // ----------------------------------------------------------------------------
+                        // ----------------------------------------------------------------------------
+                        $("#power").html(Math.round(power_kw));
+                        $("#kWhHH").html(power.toFixed(1));
+                        if (forecastlive_hydro_kw>=50) {
+                            $("#hydrostatus").html(t("HIGH"));
+                            $("#hydro_summary").html(t("For next 12 hours: HIGH POWER"));
+                        }
+                        else if (forecastlive_hydro_kw>=30) {
+                            $("#hydrostatus").html(t("MEDIUM"));
+                            $("#hydro_summary").html(t("For next 12 hours: MEDIUM"));
+                        }
+                        else if (forecastlive_hydro_kw>=10) {
+                            $("#hydrostatus").html(t("LOW"));
+                            $("#hydro_summary").html(t("For next 12 hours: LOW"));
+                        }
+                        else {
+                            $("#hydrostatus").html(t("VERY LOW"));
+                            $("#hydro_summary").html(t("For next 12 hours: VERY LOW"));
+                        }
+                        
+                        $("#power-forecast").html(Math.round(forecastlive_hydro_kw));
+                        
                     }
                     
-                    $("#power-forecast").html(Math.round(forecastlive_hydro*2));
-                    
-                    hydro_tariff_active = false;
-                    if (forecastlive_hydro > consumption_forecast_now) hydro_tariff_active = true;
-
                     var hour = d2.getHours(); var month = d2.getMonth(); var day = d2.getDate();
                     if (hour>=12) hour=(hour-12)+"pm"; else hour=hour+"am";
                     var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

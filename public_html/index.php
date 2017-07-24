@@ -13,6 +13,7 @@ Developed by OpenEnergyMonitor:
 http://openenergymonitor.org
 
 */
+define('EMONCMS_EXEC', 1);
 
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
@@ -31,7 +32,11 @@ $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$my
 
 $redis = new Redis();
 $connected = $redis->connect("localhost");
-        
+
+require "PHPFina.php";
+$phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
+$use_local_cache = true;
+
 // ---------------------------------------------------------
 require("user_model.php");
 $user = new User($mysqli);
@@ -116,6 +121,7 @@ switch ($q)
             if (isset($_GET['start']) && isset($_GET['end'])) {
                 $start = (int) $_GET['start'];
                 $end = (int) $_GET['end'];
+                
                 $content = get_meter_data_history($meter_data_api_baseurl,$session['apikey'],27,$start,$end);
             } else {
                 $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
@@ -131,52 +137,16 @@ switch ($q)
         if (isset($_GET['start']) && isset($_GET['end'])) {
             $start = (int) $_GET['start'];
             $end = (int) $_GET['end'];
-            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
+            if ($use_local_cache) {
+                $content = $phpfina->get_data(1,$start,$end,1800,1,0);
+            } else {
+                $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
+            }
         } else {
             $content = json_decode($redis->get("hydro:data"));
         }
         break;
         
-    // ------------------------------------------------------------------------
-    // Special forecast API that uses hydro data from YnniPadarnPeris
-    // ------------------------------------------------------------------------
-    case "hydro/forecast":
-        $format = "json";
-
-        if (isset($_GET['lasttime'])) $forecaststart = $_GET['lasttime'];
-        if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
-        
-        if (isset($_GET['start']) && isset($_GET['end'])) {
-            $end = $_GET['end'];
-            $start = $_GET['start'];
-        
-        } else {
-            $end = time() * 1000;
-            $start = $forecaststart;
-        }
-        
-        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$forecaststart&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
-        $scale = $lastvalue / (($data[0][1]*0.001)-7.8);
-        //if ($scale>1.3) $scale = 1.3;
-        
-        
-        // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
-        
-        // Scale ynni padarn peris data and impose min/max limits
-        for ($i=0; $i<count($data); $i++) {
-            $data[$i][1] = ((($data[$i][1] * 0.001)-7.8) * $scale);
-            if ($data[$i][1]<0) $data[$i][1] = 0;
-            if ($data[$i][1]>49) $data[$i][1] = 49;
-        }
-        
-        // remove last half hour if null
-        if ($data[count($data)-2][1]==null) unset($data[count($data)-2]);
-        if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-        
-        $content = $data;
-        
-        break;
-
     // ------------------------------------------------------------------------
     // Community data
     // ------------------------------------------------------------------------
@@ -196,39 +166,132 @@ switch ($q)
         if (isset($_GET['start']) && isset($_GET['end'])) {
             $start = (int) $_GET['start'];
             $end = (int) $_GET['end'];
-            $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start,$end);
+            
+            if ($use_local_cache) {
+                $content = $phpfina->get_data(2,$start,$end,1800,1,0);
+            } else {
+                $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start,$end);
+            }
+            
         } else {
             $content = json_decode($redis->get("community:data"));
         }
         break;
 
-    // ------------------------------------------------------------------------
-    // Consumption forecast based on last 7 days
-    // ------------------------------------------------------------------------
-    case "community/forecast":
+    case "feed/data.json":
+        $format = "json";
+        // Params
+        $id = (int) get("id");
+        $start = (int) get("start");
+        $end = (int) get("end");
+        $interval = (int) get("interval");
+        $skipmissing = (int) get("skipmissing");
+        $limitinterval = (int) get("limitinterval");
+        // Request
+        $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval"));
+        break;
+        
+    case "feed/average.json":
+        $format = "json";
+        // Params
+        $id = (int) get("id");
+        $start = (int) get("start");
+        $end = (int) get("end");
+        $interval = (int) get("interval");
+        // Request
+        $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval"));
+        break;
+        
+        
+    case "live":
+        $format = "json";
+        
+        $live = json_decode($redis->get("live"));
+        
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone("Europe/London"));
+        $date->setTimestamp(time());
+        $hour = $date->format("H");
+
+        $tariff = "";
+        if ($hour<6) $tariff = "overnight";
+        if ($hour>=6 && $hour<11) $tariff = "morning";
+        if ($hour>=11 && $hour<16) $tariff = "midday";
+        if ($hour>=16 && $hour<20) $tariff = "evening";
+        if ($hour>=20) $tariff = "overnight";
+        if ($live->hydro>=$live->community) $tariff = "hydro";
+        
+        $live->tariff = $tariff;
+        $content = $live;
+        break;
+        
+    case "hydro/estimate":
         $format = "json";
 
-        $end = time();
-        $start = $end - (3600*24.0*7);
-        $data = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start*1000,$end*1000);
+        $interval = (int) $_GET['interval'];
+        if (isset($_GET['lasttime'])) $estimatestart = $_GET['lasttime'];
+        if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
         
-        $days = count($data)/48;
+        if (isset($_GET['start']) && isset($_GET['end'])) {
+            $end = $_GET['end'];
+            $start = $_GET['start'];
         
+        } else {
+            $end = time() * 1000;
+            $start = $estimatestart;
+        }
+        
+        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+        
+        $scale = 1.1;
+        
+        // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+        
+        // Scale ynni padarn peris data and impose min/max limits
+        for ($i=0; $i<count($data); $i++) {
+            if ($data[$i][1]==null) $data[$i][1] = 0;
+            $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+            if ($data[$i][1]<0) $data[$i][1] = 0;
+            if ($data[$i][1]>49) $data[$i][1] = 49;
+        }
+        
+        // remove last half hour if null
+        if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+        // if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+        
+        
+        $content = $data;
+        
+        break;
+        
+    case "community/estimate":
+        $format = "json";
+        
+        $end = (int) $_GET['lasttime'];
+        $interval = (int) $_GET['interval'];
+        
+        $start = $end - (3600*24.0*7*1000);
+        
+        $data = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
+
+        $divisions = round((24*3600) / $interval);
+
+        $days = count($data)/$divisions;
         // Quick quality check
         if ($days==round($days)) {
         
             $consumption_profile_tmp = array();
-            for ($h=0; $h<48; $h++) $consumption_profile_tmp[$h] = 0;
+            for ($h=0; $h<$divisions; $h++) $consumption_profile_tmp[$h] = 0;
             
             $i = 0;
             for ($d=0; $d<$days; $d++) {
-                for ($h=0; $h<48; $h++) {
+                for ($h=0; $h<$divisions; $h++) {
                     $consumption_profile_tmp[$h] += $data[$i][1]*1;
                     $i++;
                 }
             }
             
-            for ($h=0; $h<48; $h++) {
+            for ($h=0; $h<$divisions; $h++) {
                 $consumption_profile_tmp[$h] = $consumption_profile_tmp[$h] / $days;
                 $consumption_profile[] = number_format($consumption_profile_tmp[$h],2);
             }

@@ -277,8 +277,8 @@ class User
         
         $email = $row['email'];
         
-        $month_en = "May";
-        $month_cy = "Mai";
+        $month_en = "June";
+        $month_cy = "Mehefin";
         
         $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
         
