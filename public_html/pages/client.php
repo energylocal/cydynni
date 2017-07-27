@@ -1,6 +1,6 @@
 <?php global $path, $translation, $lang; 
 
-$v = 23;
+$v = 25;
 
 ?>
 
@@ -76,7 +76,7 @@ $v = 23;
 <script>
 
 var path = "<?php echo $path; ?>";
-var session = JSON.parse('<?php echo json_encode($session); ?>');
+var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
@@ -136,7 +136,7 @@ $(".page").each(function() {
 });
 
 // Household page view control
-if (!session) {
+if (!session.write) {
   $("#household-status-block").hide();
   $(".logout").hide();
   $(".myaccount").hide();

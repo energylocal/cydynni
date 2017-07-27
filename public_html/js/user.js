@@ -2,15 +2,15 @@ $("#login").click(function() {
     var email = $("#email").val();
     var password = $("#password").val();
 
-    $.ajax({                                      
-        url: path+"/login",                         
+    $.ajax({
+        type: 'POST',                                    
+        url: path+"login",                         
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
             if (result.userid!=undefined) {
                 session = result;
                 $("#user-email").html(session.email);
-                // if (session.admin) { window.location = "admin"; return false; }
                 $("#login-block").hide();
                 $("#household-status-block").show();
                 $(".logout").show();
@@ -19,20 +19,6 @@ $("#login").click(function() {
             } else {
                 $("#alert").html(result);
             }
-        }
-    });
-});
-
-$("#register").click(function() {
-    var email = $("#email").val();
-    var password = $("#password").val();
-
-    $.ajax({                                      
-        url: path+"/register",                         
-        data: "email="+email+"&password="+password,
-        dataType: 'text',
-        success: function(result) {
-            $("#alert").html(result);
         }
     });
 });

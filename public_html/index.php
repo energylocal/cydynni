@@ -1,5 +1,4 @@
 <?php
-
 /*
 
 Source code is released under the GNU Affero General Public License.
@@ -13,41 +12,73 @@ Developed by OpenEnergyMonitor:
 http://openenergymonitor.org
 
 */
-define('EMONCMS_EXEC', 1);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 'on');
 date_default_timezone_set('Europe/London');
 
+define('EMONCMS_EXEC', 1);
+
 // ---------------------------------------------------------
-$test_user = 59;
 // ---------------------------------------------------------
-require "settings.php";
+
+chdir("/var/www/emoncms");
+require "process_settings.php";
 require "core.php";
-require "meter_data_api.php";
-require "mysql_store.php";
 
-$path = get_application_path();
-$mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$mysql['database']);
+// Connect to MYSQL
+$mysqli = @new mysqli($server,$username,$password,$database,$port);
+if ( $mysqli->connect_error ) {
+    echo "Can't connect to database, please verify credentials/configuration in settings.php<br />";
+    if ( $display_errors ) {
+        echo "Error message: <b>" . $mysqli->connect_error . "</b>";
+    }
+    die();
+}
+// Set charset to utf8
+$mysqli->set_charset("utf8");
 
+// Connect to Redis
 $redis = new Redis();
-$connected = $redis->connect("localhost");
+$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
+
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+
+chdir("/var/www/cydynni");
+
+require("user_model.php");
+$user = new User($mysqli);
+
+require "meter_data_api.php";
+$path = get_application_path();
 
 require "PHPFina.php";
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 $use_local_cache = true;
 
-// ---------------------------------------------------------
-require("user_model.php");
-$user = new User($mysqli);
 
-ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
-session_start();
-$session = $user->status();
+if (isset($_GET['apikey'])) {
+    $session = $user->apikey_session($_GET['apikey']);
+} else {
+    ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
 
-if ($session) {
-    $userid = (int) $session['userid'];
-    $mysqli->query("UPDATE users SET hits=hits+1 WHERE `id`='$userid'");
+    session_start();
+    $session = $user->status();
+    // $session = $user->emon_session_start();
+}
+
+// Load token
+if ($session['read']) {
+    $userid = (int) $session["userid"];
+    
+    $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
+    $row = $result->fetch_object();
+    $session["token"] = $row->token;
+    
+    $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
+    $row = $result->fetch_object();
+    $session["email"] = $row->email;
+    $session["apikey_read"] = $row->apikey_read;
 }
 
 // ---------------------------------------------------------
@@ -71,44 +102,55 @@ $content = "Sorry page not found";
 $logger = new EmonLogger();
 switch ($q)
 {   
-
+    case "session":
+        $format = "json";
+        $content = $session;
+        break;
+        
     case "test":
         $content = "new server";
         break;
 
     case "":
         $format = "html";
-        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
-        $content = view("pages/client.php",array('session'=>$rsession));
+        unset($session["token"]);
+        $content = view("pages/client.php",array('session'=>$session));
         break;
 
     case "admin":
         $format = "html";
-        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
-        $content = view("pages/admin.php",array('session'=>$rsession));
+        unset($session["token"]);
+        $content = view("pages/admin.php",array('session'=>$session));
         break;
-        
+   
     case "report":
         $format = "html";
-        if (isset($_GET["reportkey"])) $session = $user->check_reportkey($_GET["reportkey"]);
-        if ($session) $rsession = array('email'=>$session['email']); else $rsession = false;
-        if ($session) $content = view("pages/report.php",array('session'=>$rsession));
+        if ($session["read"]) {
+            unset($session["token"]);
+            $content = view("pages/report.php",array('session'=>$session));
+        } else {
+            $content = "session not valid";
+        }
         break;
   
     // ------------------------------------------------------------------------
     // Household 
     // ------------------------------------------------------------------------     
     case "household/summary/day":
-        if ($session && isset($session['apikey'])) {
-            $format = "json";
-            $content = get_household_consumption($meter_data_api_baseurl,$session['apikey']);
+        $format = "json";
+        if ($session["read"]) {
+            $content = get_household_consumption($meter_data_api_baseurl,$session['token']);
+        } else {
+            $content = "session not valid";
         }
         break;
         
     case "household/summary/month":
-        if ($session && isset($session['apikey'])) {
-            $format = "json";
-            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['apikey']);
+        $format = "json";
+        if ($session["read"]) {
+            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['token']);
+        } else {
+            $content = "session not valid";
         }
         break;
         
@@ -117,15 +159,17 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "data":
         $format = "json";
-        if ($session && isset($session['apikey'])) {
+        if ($session["read"]) {
             if (isset($_GET['start']) && isset($_GET['end'])) {
                 $start = (int) $_GET['start'];
                 $end = (int) $_GET['end'];
                 
-                $content = get_meter_data_history($meter_data_api_baseurl,$session['apikey'],27,$start,$end);
+                $content = get_meter_data_history($meter_data_api_baseurl,$session['token'],27,$start,$end);
             } else {
-                $content = get_meter_data($meter_data_api_baseurl,$session['apikey'],10);
+                $content = get_meter_data($meter_data_api_baseurl,$session['token'],10);
             }
+        } else {
+            $content = "session not valid";
         }
         break;  
         
@@ -178,6 +222,7 @@ switch ($q)
         }
         break;
 
+    // These will only work with public feeds::
     case "feed/data.json":
         $format = "json";
         // Params
@@ -297,7 +342,7 @@ switch ($q)
             }
             $content = $consumption_profile;
         } else {
-            $content = false;
+            $content = "session not valid";
         }
         
         break;
@@ -307,12 +352,13 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "status":
         $format = "json";
+        unset($session["token"]);
         $content = $session;
         break;
                 
     case "login":
         $format = "json";
-        $content = $user->login(get('email'),get('password'));
+        $content = $user->login(post('email'),post('password'));
         break;
         
     case "logout":
@@ -327,7 +373,7 @@ switch ($q)
         
     case "changepassword":
         $format = "text";
-        if ($session && isset($session['userid']) && $session['userid']>0) {
+        if ($session["write"]) {
             $content = $user->change_password($session['userid'], post("old"), post("new"));
         } else {
             $content = "session not valid";
@@ -340,28 +386,31 @@ switch ($q)
     case "admin/users":
         $format = "json";
         if ($session['admin']) {
-            $content = $user->userlist();
-        }
-        break;
-        
-    case "admin/reportlist":
-        $format = "text";
-        if ($session['admin']) {
-            $users = $user->userlist();
-            $content = "";
-            foreach ($users as $user) {
-                $content .= $user->email.", https://cydynni.org.uk/report?reportkey=".$user->reportkey."&lang=cy\n";
-            
+            // Include data from cydynni table here too
+            $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users");
+            $users = array();
+            while($row = $result->fetch_object()) {
+                $userid = $row->id;
+                // Include fields from cydynni table
+                $user_result = $mysqli->query("SELECT mpan,token,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                $user_row = $user_result->fetch_object();
+                if ($user_row) {
+                    foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                }
+                $row->hits = 0;
+                $users[] = $row;
             }
+            $content = $users;
         }
         break;
-        
-    case "admin/register":
-        $format = "text";
-        if ($session['admin']) {
-            $content = $user->register(get('email'),get('password'),get('apikey'));
-        }
-        break;
+    
+    // Register from script    
+    // case "admin/register":
+    //    $format = "text";
+    //    if ($session['admin']) {
+    //        $content = $user->register(get('email'),get('password'),get('apikey'));
+    //    }
+    //    break;
         
     case "admin/registeremail":
         $format = "text";
@@ -373,13 +422,15 @@ switch ($q)
     case "admin/check-household-breakdown":
         $format = "json";
         if ($session['admin']) {
-            $u = $user->getbyid(get('userid'));
-            $content = get_household_consumption($meter_data_api_baseurl,$u["apikey"]);
+            $userid = (int) get('userid');
+            $result = $mysqli->query("SELECT token FROM cydynni WHERE `userid`='$userid'");
+            $row = $result->fetch_object();
+            $content = get_household_consumption($meter_data_api_baseurl,$row->token);
         }
         break;
         
     case "admin/change-user-email":
-        $format = "text";
+        $format = "json";
         if ($session['admin']) {
             $content = $user->change_email(get("userid"),get("email"));
         }
@@ -388,11 +439,18 @@ switch ($q)
     case "admin/switchuser":
         $format = "text";
         if ($session['admin']) {
-            $userid = get("userid");
+            $userid = (int) get("userid");
+            
+            // fetch email
+            $u = $user->get($userid);
             $_SESSION["userid"] = $userid;
-            $u = $user->getbyid($userid);
-            $_SESSION["apikey"] = $u["apikey"];
-            $_SESSION['email'] = $u['email'];
+            $_SESSION['email'] = $u->email;
+            
+            // fetch token
+            $result = $mysqli->query("SELECT token FROM cydynni WHERE `userid`='$userid'");
+            $row = $result->fetch_object();
+            $_SESSION['token'] = $row->token;
+            
             $content = "User switched";
         }
         header('Location: '."http://cydynni.org.uk/#household");
@@ -441,4 +499,14 @@ class EmonLogger {
     public function __construct() {}
     public function info ($message){ }
     public function warn ($message){ }
+}
+
+function t($s) {
+    global $translation,$lang;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        echo $translation->$lang->$s;
+    } else { 
+        echo $s;
+    }
 }

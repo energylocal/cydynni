@@ -9,9 +9,6 @@ class User
         $this->mysqli = $mysqli;
     }
     
-    //---------------------------------------------------------------------------------------
-    // Status
-    //---------------------------------------------------------------------------------------
     public function status()
     {
         if (!isset($_SESSION['userid'])) return false;
@@ -22,105 +19,76 @@ class User
         return $session;
     }
     
-    public function check_reportkey($reportkey)
-    {
-        $reportkey = $this->mysqli->real_escape_string($reportkey);
-        
-        $result = $this->mysqli->query("SELECT id,email,apikey FROM users WHERE reportkey='$reportkey'");
-        if ($result->num_rows == 1)
-        {
-            $row = $result->fetch_array();
-            if ($row['id'] != 0)
-            {
-                session_regenerate_id();
-                $_SESSION['userid'] = $row['id'];
-                $_SESSION['apikey'] = $row['apikey'];
-                $_SESSION['email'] = $row['email'];
-                $_SESSION['admin'] = 0;
-                $session = $_SESSION;
-                return $session;
-            }
-        }
-        return false;
-    }
-    
-    //---------------------------------------------------------------------------------------
-    // Status
-    //---------------------------------------------------------------------------------------
-    public function userlist()
-    {
-        $result = $this->mysqli->query("SELECT id,email,apikey,reportkey,admin,welcomedate,reportdate,hits,MPAN FROM users");
-        $users = array();
-        while($row = $result->fetch_object()) $users[] = $row;
-        return $users;
-    }
-    
     private function getbyemail($email) {
-        $stmt = $this->mysqli->prepare("SELECT id,email,dbhash,salt,admin,apikey FROM users WHERE email = ?");
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows!=1) return false;
         
-        $stmt->bind_result($id,$email,$dbhash,$salt,$admin,$apikey);
+        $stmt->bind_result($id,$username,$email,$dbhash,$salt,$admin);
         $u = $stmt->fetch();
         return array(
             "id"=>$id,
+            "username"=>$username,
             "email"=>$email,
             "dbhash"=>$dbhash,
             "salt"=>$salt,
-            "admin"=>$admin,
-            "apikey"=>$apikey
+            "admin"=>$admin
         );
     }
     
     public function getbyid($id) {
         $id = (int) $id;
-        $result = $this->mysqli->query("SELECT email,apikey FROM users WHERE id='$id'");
+        $result = $this->mysqli->query("SELECT email FROM users WHERE id='$id'");
         $row = $result->fetch_array();
         
         return array(
-            "email"=>$row["email"],
-            "apikey"=>$row["apikey"]
+            "email"=>$row["email"]
         );
     }
     
-    //---------------------------------------------------------------------------------------
-    // User login
-    //---------------------------------------------------------------------------------------
-    public function register($email,$password,$apikey,$MPAN)
+    public function apikey_session($apikey_in)
     {
-        if ($email==null) return "Email address missing";
-        if ($password==null) return "Password missing";
-        if (!ctype_alnum($apikey)) return "Apikey must be alpha-numeric";
-        if (!is_numeric($MPAN)) return "MPAN must be numeric";
-        
-        // Validate email
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
-        if (strlen($password) < 4 || strlen($password) > 250) return "Password length error";
+        $apikey_in = $this->mysqli->real_escape_string($apikey_in);
+        $session = array();
 
-        $stmt = $this->mysqli->prepare("SELECT id FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows>0) return "User already exists";
-
-        $hash = hash('sha256', $password);
-        $salt = md5(uniqid(mt_rand(), true));
-        $dbhash = hash('sha256', $salt . $hash);
-        
-        $reportkey = md5(uniqid(mt_rand(), true));
-
-        $stmt = $this->mysqli->prepare("INSERT INTO users (email, dbhash, salt, admin, apikey,MPAN,reportkey) VALUES (?,?,?,0,?,?,?)");
-        $stmt->bind_param("ssssss", $email,$dbhash,$salt,$apikey,$MPAN,$reportkey);
-        if (!$stmt->execute()) {
-            return "Error creating user";
+        $result = $this->mysqli->query("SELECT id, username, email FROM users WHERE apikey_write='$apikey_in'");
+        if ($result->num_rows == 1)
+        {
+            $row = $result->fetch_array();
+            if ($row['id'] != 0)
+            {
+                $session['userid'] = $row['id'];
+                $session['read'] = 1;
+                $session['write'] = 1;
+                $session['admin'] = 0;
+                $session['lang'] = "en"; // API access is always in english
+                $session['email'] = $row['email'];
+                $session['username'] = $row['username'];
+            }
+        }
+        else
+        {
+            $result = $this->mysqli->query("SELECT id, username, email FROM users WHERE apikey_read='$apikey_in'");
+            if ($result->num_rows == 1)
+            {
+                $row = $result->fetch_array();
+                if ($row['id'] != 0)
+                {
+                    $session['userid'] = $row['id'];
+                    $session['read'] = 1;
+                    $session['write'] = 0;
+                    $session['admin'] = 0;
+                    $session['lang'] = "en";  // API access is always in english
+                    $session['email'] = $row['email'];
+                    $session['username'] = $row['username'];
+                }
+            }
         }
 
-        // Make the first user an admin
-        $userid = $this->mysqli->insert_id;
-        if ($userid == 1) $this->mysqli->query("UPDATE users SET admin = 1 WHERE id = '1'");
-        return $userid;
+        //----------------------------------------------------
+        return $session;
     }
     
     //---------------------------------------------------------------------------------------
@@ -139,9 +107,11 @@ class User
         
         session_regenerate_id();
         $_SESSION['userid'] = $u['id'];
+        $_SESSION['username'] = $u['username'];
         $_SESSION['email'] = $u['email'];
+        $_SESSION['read'] = 1;
+        $_SESSION['write'] = 1;
         $_SESSION['admin'] = $u['admin'];
-        $_SESSION['apikey'] = $u['apikey'];
         return $_SESSION;
     }
 
@@ -150,7 +120,7 @@ class User
     //--------------------------------------------------------------------------------------- 
     public function change_password_nocheck($userid, $new)
     {
-        $userid = intval($userid);
+        $userid = (int) $userid;
 
         if (strlen($new) < 4 || strlen($new) > 250) return "New password length error";
 
@@ -158,7 +128,7 @@ class User
         $hash = hash('sha256', $new);
         $salt = md5(uniqid(rand(), true));
         $newdbhash = hash('sha256', $salt . $hash);
-        $this->mysqli->query("UPDATE users SET dbhash = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
+        $this->mysqli->query("UPDATE users SET password = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
         return "Password changed";
     }
     
@@ -181,17 +151,17 @@ class User
         if (strlen($new) < 4 || strlen($new) > 250) return "New password length error";
 
         // 1) check that old password is correct
-        $result = $this->mysqli->query("SELECT dbhash, salt FROM users WHERE id = '$userid'");
+        $result = $this->mysqli->query("SELECT password, salt FROM users WHERE id = '$userid'");
         $row = $result->fetch_object();
         $hash = hash('sha256', $row->salt . hash('sha256', $old));
 
-        if ($hash == $row->dbhash)
+        if ($hash == $row->password)
         {
             // 2) Save new password
             $hash = hash('sha256', $new);
             $salt = md5(uniqid(rand(), true));
             $newdbhash = hash('sha256', $salt . $hash);
-            $this->mysqli->query("UPDATE users SET dbhash = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
+            $this->mysqli->query("UPDATE users SET password = '$newdbhash', salt = '$salt' WHERE id = '$userid'");
             return "Password changed";
         }
         else
@@ -221,7 +191,7 @@ class User
         $dbhash = hash('sha256', $salt . $hash);
 
         // Save password and salt
-        $this->mysqli->query("UPDATE users SET dbhash = '$dbhash', salt = '$salt' WHERE id = '$userid'");
+        $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
 
         $subject = "Welcome to CydYnni, account details";   
                          
@@ -285,8 +255,8 @@ class User
         $c = "";
         $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan the dilyn y ddolen isod:<br>";
         $c .= "<i>Your CydYnni report for $month_en is now ready. Please login to view your report by following the link below:</i><br><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?reportkey=".$row["reportkey"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?reportkey=".$row["reportkey"]."&lang=en'>CydYnni Report (English)</a><br><br>";
+        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
+        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=en'>CydYnni Report (English)</a><br><br>";
 
         $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
         
@@ -356,7 +326,7 @@ class User
         $dbhash = hash('sha256', $salt . $hash);
 
         // Save password and salt
-        $this->mysqli->query("UPDATE users SET dbhash = '$dbhash', salt = '$salt' WHERE id = '$userid'");
+        $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
 
         $subject = "CydYnni password reset";                    
         $message = "<p>A password reset was requested for your CydYnni account.</p><p>Your can now login with password: $newpass </p>";

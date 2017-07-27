@@ -73,7 +73,8 @@
       <table class="table" style="table-layout: fixed; width: 100%">
         <tr>
           <th style="width:80px">User</th>
-          <th style="width:330px">Email <span style="font-size:12px">(Click to edit)</span></th>
+          <th style="width:220px">Username</th>
+          <th style="width:260px">Email <span style="font-size:12px">(Click to edit)</span></th>
           <th style="width:130px">MPAN</th>
           <th style="max-width:350px">Token</th>
           <th style="max-width:100px">Report Key</th>
@@ -106,10 +107,11 @@
 <script>
 var path = "<?php echo $path; ?>";
 console.log(path);
-var session = JSON.parse('<?php echo json_encode($session); ?>');
+var session = <?php echo json_encode($session); ?>;
+
 var users = [];
 
-if (session.admin) {
+if (session.admin==1) {
     load();
     $(".logout").show();
 } else {
@@ -131,14 +133,15 @@ function load() {
                 out += "<tr>";
                 var admin = ""; if (result[z].admin==1) admin = " (admin)";
                 out += "<td><a href='admin/switchuser?userid="+result[z].id+"'>"+result[z].id+"</a>"+admin+"</td>";
+                out += "<td>"+result[z].username+"</td>";
                 out += "<td class='td-email'>";
                   out += "<input type='text' value='"+result[z].email+"' class='edit-email-input' style='border:0; color:#3b6358; padding:0px' userid='"+result[z].id+"'>";
                   out += "<button class='edit-email-save' userid='"+result[z].id+"'>Save</button>";
                 out += "</td>";
                 // text-wrap:normal;word-wrap:break-word
-                out += "<td><div style=''>"+result[z].MPAN+"</div></td>";
-                out += "<td><div style='overflow:hidden'>"+result[z].apikey+"</div></td>";
-                out += "<td><div style='overflow:hidden'>"+result[z].reportkey+"</div></td>";
+                out += "<td><div style=''>"+result[z].mpan+"</div></td>";
+                out += "<td><div style='overflow:hidden'>"+result[z].token+"</div></td>";
+                out += "<td><div style='overflow:hidden'>"+result[z].apikey_read+"</div></td>";
                 
                 // Register date
                 var bgcolor = "#ccffcc"; if (result[z].welcomedate=="not sent") bgcolor = "#ffcccc";
@@ -166,22 +169,15 @@ $("#login").click(function() {
     var password = $("#password").val();
 
     $.ajax({
-        url: path+"/login",
+        type: 'POST',
+        url: path+"login",
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
-            if (result.userid!=undefined) {
-                session = result;
-                $(".alert").html("");
-                if (session.admin) {
-                    load();
-                    $(".logout").show();
-                } else {
-                    logout();
-                    $(".alert").html("Administrator access only");
-                }
+            if (result.admin) {
+                window.location = path+"admin";
             } else {
-                $(".alert").html(result);
+                $(".alert").html("Administrator access only");
             }
         }
     });
