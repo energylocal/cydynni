@@ -229,9 +229,8 @@ class User
         $result = $mailer->send($message);
         // ------------------------------------------------------------------
         
-        
         $welcomedate = date("d-m-Y");
-        $this->mysqli->query("UPDATE users SET welcomedate = '$welcomedate' WHERE `id`='$userid'");
+        $this->mysqli->query("UPDATE cydynni SET welcomedate = '$welcomedate' WHERE `userid`='$userid'");
         return "Email sent";
     }
     
@@ -300,7 +299,7 @@ class User
         // ------------------------------------------------------------------
         
         $reportdate = date("d-m-Y");
-        $this->mysqli->query("UPDATE users SET reportdate = '$reportdate' WHERE `id`='$userid'");
+        $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
         return "Email sent";
     }
     

@@ -117,7 +117,7 @@ switch ($q)
         
         $scale = 1.1;
         
-        // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+        //$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
         
         // Scale ynni padarn peris data and impose min/max limits
         for ($i=0; $i<count($data); $i++) {

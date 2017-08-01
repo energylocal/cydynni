@@ -206,8 +206,10 @@ function load() {
     view.start = Math.floor(view.start / intervalms) * intervalms;
 
     // Load data from server
-    var hydro_data = feed.getaverage(1,view.start,view.end,interval,1,1);
-    var community_data = feed.getaverage(2,view.start,view.end,interval,1,1);
+    var hydro_data = feed.getaverage(1,view.start,view.end,interval,0,1);
+    var community_data = feed.getaverage(2,view.start,view.end,interval,0,1);
+    
+    console.log(hydro_data.length+" "+community_data.length);
     
     // -------------------------------------------------------------------------
     // Colour code graph
@@ -229,14 +231,20 @@ function load() {
     var total_used_hydro = 0;
     var total_community = 0;
     var total_time = 0;
+    
+    var hydro = 0;
+    var community = 0;
 
     for (var z in community_data) {    
         var time = community_data[z][0];    
         var d = new Date(time);
         var hour = d.getHours();
         
-        var hydro = hydro_data[z][1] * scale;
-        var community = community_data[z][1] * scale;
+        if (hydro_data[z]!=undefined) 
+            hydro = hydro_data[z][1] * scale;
+            
+        if (community_data[z]!=undefined) 
+            community = community_data[z][1] * scale;
         
         var overnight = 0;
         var morning = 0;

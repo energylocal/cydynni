@@ -71,6 +71,8 @@ if (isset($_GET['apikey'])) {
 if ($session['read']) {
     $userid = (int) $session["userid"];
     
+    $redis->incr("userhits:$userid");
+    
     $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
     $row = $result->fetch_object();
     $session["token"] = $row->token;
@@ -387,7 +389,7 @@ switch ($q)
         $format = "json";
         if ($session['admin']) {
             // Include data from cydynni table here too
-            $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users");
+            $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users ORDER BY id ASC");
             $users = array();
             while($row = $result->fetch_object()) {
                 $userid = $row->id;
@@ -397,7 +399,7 @@ switch ($q)
                 if ($user_row) {
                     foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
                 }
-                $row->hits = 0;
+                $row->hits = $redis->get("userhits:$userid");
                 $users[] = $row;
             }
             $content = $users;
@@ -442,7 +444,7 @@ switch ($q)
             $userid = (int) get("userid");
             
             // fetch email
-            $u = $user->get($userid);
+            $u = $user->getbyid($userid);
             $_SESSION["userid"] = $userid;
             $_SESSION['email'] = $u->email;
             
