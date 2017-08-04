@@ -1,23 +1,36 @@
 <?php
-
 /*
-
-18. User’s Monthly kWh import total.
-
-19. User’s Monthly kWh import allocated to hydro.
-
-20. User’s Monthly kWh import provided by supplier.
-
-21. User’s Monthly total cost of import.
-
-22. Community Monthly kWh import total.
-
-23. Community Monthly kWh import allocated to hydro.
-
-24. Community Monthly kWh import provided by supplier.
-
-25. Community Monthly total cost of import.
-
+  1. Sum of all generation from the latest reading date.
+  2. Generation values for the last two half-hours from the latest reading date.
+  3. Minimum, maximum & average of all generation values from the latest reading date.
+  4. Half-hourly data from the generation site for the latest day of data received.
+  5. Same as above (under development)
+  6. Domestic user’s gross consumption within the 4 defined tariff periods and their daily total.
+  7. Domestic user’s net consumption following the allocation of generation output through the sharing algorithm
+  8. Domestic user’s net charge to be billed.
+  9. Equal share of generation per tariff period (generation/number of demand premises)
+  10. Domestic user’s half-hourly demand for the latest 24 hour period.
+  11. Community half-hourly demand for the latest 24 hour period.
+  12. Not in use
+  13. Community aggregate gross demand in each tariff period for the latest 24 hour period.
+  14. Community aggregate net demand (after sharing algorithm) in each tariff period for the latest 24 hour period.
+  15. Community aggregate demand provided by generation (after sharing algorithm) in each tariff period for the latest 24 hour period.
+  16. Community data: generation offset, off-peak demand, other demand for latest 24-hour period (N.B. this data does not look right).
+  17. Domestic User’s demand offset by generation for latest 24-hour period.
+  18. User’s Monthly kWh import total.
+  19. User’s Monthly kWh import allocated to hydro.
+  20. User’s Monthly kWh import provided by supplier.
+  21. User’s Monthly total cost of import.
+  22. Community Monthly kWh import total.
+  23. Community Monthly kWh import allocated to hydro.
+  24. Community Monthly kWh import provided by supplier.
+  25. Community Monthly total cost of import.
+  26  Household historic daily summaries
+  27. Household historic meter data
+  28. Hydro history
+  29. Community history
+  30. Demand shaper signal
+  31. User list
 */
 
 function get_meter_data($baseurl,$token,$rid) {
@@ -62,13 +75,10 @@ function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
     
     // if json failed to decode return blank array
     if ($result==null) return array();
-
     if (count($result->DATA)==0) return array();
 
-    $days = count($result->DATA);
-    
+    $days = count($result->DATA); 
     $data = array();
-    
     for ($day=0; $day<$days; $day++) 
     {
         $date = $result->DATA[$day][0];
@@ -88,177 +98,33 @@ function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
     return $data;
 }
 
-// For offline development
-function get_meter_data_offline($baseurl,$token,$dataid) {
-    $data = array();
-    for ($i=0; $i<48; $i++) {
-        $data[] = array($i,0);
-    }
-    return $data;
-}
-
 // -------------------------------------------------------------
-// Domestic user’s gross consumption within the 4 defined 
-// tariff periods and their daily total
-// -------------------------------------------------------------
-function get_household_gross_consumption($baseurl,$token) {
-
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-6");
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return array();
-    
-    $data = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5]
-    );
-    
-    return $data;
-}
-
-// -------------------------------------------------------------
-// Domestic user’s net consumption following the allocation of 
-// hydro output through the sharing algorithm
-// -------------------------------------------------------------
-function get_household_net_consumption($baseurl,$token) {
-
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-7");
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return array();
-    
-    $data = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5],
-    );
-    
-    return $data;
-}
-
-// -------------------------------------------------------------
-// 
+// Last day household consumption summary
 // -------------------------------------------------------------
 function get_household_consumption($baseurl,$token) {
 
-    // -------------------------------------------------------------
-    // Domestic user’s gross consumption within the 4 defined 
-    // tariff periods and their daily total
-    // -------------------------------------------------------------
+    // 1. Fetch gross community demand in each tariff period and the total
+    if (!$gross = get_latest_day($baseurl,$token,6)) return "Invalid data";
+    // 2. Fetch net/imported community demand in each tariff period and the total
+    if (!$imported = get_latest_day($baseurl,$token,7)) return "Invalid data";
+    // 3. Fetch net charge to be billed
+    if (!$cost = get_latest_day($baseurl,$token,8)) return "Invalid data";
     
-    // {
-    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","READINGTOTAL"],
-    //     "DATA":[["November, 30 2016 00:00:00",1.3,2.1,4.5,2.3,10.2]]
-    // }
-    
-    // Fetch data from data server
-    // print $baseurl."1-$token-6";
-    $str = @file_get_contents($baseurl."1-$token-6");
-
-    //print $str;
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return "Invalid data";
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date1 = $result->DATA[0][0];
-    
-    $reading = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        // "total"=>$result->DATA[0][5]
-    );
-    
-    $total = $result->DATA[0][5];
-
-    // -------------------------------------------------------------
-    // Domestic user’s net consumption following the allocation of 
-    // hydro output through the sharing algorithm
-    // -------------------------------------------------------------
-    
-    // {   
-    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","SHARETOTAL"],
-    //     "DATA":[["November, 30 2016 00:00:00",0,0.39,0,0,0.39]]
-    // }
-    
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-7");
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return "Invalid data";
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date2 = $result->DATA[0][0];
-    
+    $date1 = $gross["date"]; unset($gross["date"]);
+    $date2 = $imported["date"]; unset($imported["date"]);
+    $date3 = $cost["date"]; unset($cost["date"]);
+    // Check that dates of latest day match
     if ($date1!=$date2) return "Date mismatch";
-    
-    $imported = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        //"total"=>$result->DATA[0][5],
-    );
-    
-    $hydro = $total - $result->DATA[0][5];
-    
-    /*
-    $hydro = 0;
-    foreach ($reading as $key=>$val) {
-        $hydro += $reading[$key]-$imported[$key];
-    }
-    
-    $total = 0;
-    foreach ($imported as $val) {
-        $total += $val;
-    }
-    
-    $total += $hydro;
-    */
-    
-    $kwh = $imported;
-    $kwh["hydro"] = $hydro;
-    $kwh["total"] = $total;
-
-    // -------------------------------------------------------------
-    // Domestic user’s net charge to be billed
-    // -------------------------------------------------------------    
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-8");
-    
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return array();
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date3 = $result->DATA[0][0];
     if ($date1!=$date3) return "Date mismatch";
     
-    $cost = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5]
-    );
-    
+    // Build import + hydro consumption object
+    // 1. start with imported data
+    $kwh = $imported;
+    // 2. hydro consumption = total - imported
+    $kwh["hydro"] = $gross["total"] - $imported["total"];
+    $kwh["total"] = $gross["total"];
+   
+    // -------------------------------------------------------------    
     $date = new DateTime();
     $date->setTimezone(new DateTimeZone("Europe/London"));
     $date->setTimestamp(time());
@@ -274,119 +140,32 @@ function get_household_consumption($baseurl,$token) {
 }
 
 // -------------------------------------------------------------
-// 
+// Last day community consumption summary
 // -------------------------------------------------------------
 function get_community_consumption($baseurl,$token) {
 
-    // -------------------------------------------------------------
-    // Domestic user’s gross consumption within the 4 defined 
-    // tariff periods and their daily total
-    // -------------------------------------------------------------
+    // 1. Fetch gross community demand in each tariff period and the total
+    if (!$gross = get_latest_day($baseurl,$token,13)) return "Invalid data";
+    // 2. Fetch net/imported community demand in each tariff period and the total
+    if (!$imported = get_latest_day($baseurl,$token,14)) return "Invalid data";
+    // 3. Fetch net charge to be billed
+    if (!$cost = get_latest_day($baseurl,$token,15)) return "Invalid data";
     
-    // {
-    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","READINGTOTAL"],
-    //     "DATA":[["November, 30 2016 00:00:00",1.3,2.1,4.5,2.3,10.2]]
-    // }
-    
-    // Fetch data from data server
-    // print $baseurl."1-$token-6";
-    $str = @file_get_contents($baseurl."1-$token-13");
-    
-    //print $str;
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return "Invalid data";
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date1 = $result->DATA[0][0];
-    
-    $reading = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        // "total"=>$result->DATA[0][5]
-    );
-    
-    $total = $result->DATA[0][5];
-
-    // -------------------------------------------------------------
-    // Domestic user’s net consumption following the allocation of 
-    // hydro output through the sharing algorithm
-    // -------------------------------------------------------------
-    
-    // {   
-    //     "COLUMNS":["READDATE","PERIOD1","PERIOD2","PERIOD3","PERIOD4","SHARETOTAL"],
-    //     "DATA":[["November, 30 2016 00:00:00",0,0.39,0,0,0.39]]
-    // }
-    
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-14");
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return "Invalid data";
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date2 = $result->DATA[0][0];
-    
+    $date1 = $gross["date"]; unset($gross["date"]);
+    $date2 = $imported["date"]; unset($imported["date"]);
+    $date3 = $cost["date"]; unset($cost["date"]);
+    // Check that dates of latest day match
     if ($date1!=$date2) return "Date mismatch";
-    
-    $imported = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        //"total"=>$result->DATA[0][5],
-    );
-    
-    $hydro = $total - $result->DATA[0][5];
-    
-    /*
-    $hydro = 0;
-    foreach ($reading as $key=>$val) {
-        $hydro += $reading[$key]-$imported[$key];
-    }
-    
-    $total = 0;
-    foreach ($imported as $val) {
-        $total += $val;
-    }
-    
-    $total += $hydro;
-    */
-    
-    $kwh = $imported;
-    $kwh["hydro"] = $hydro;
-    $kwh["total"] = $total;
-
-    // -------------------------------------------------------------
-    // Domestic user’s net charge to be billed
-    // -------------------------------------------------------------    
-    // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-15");
-    
-    // Decode JSON result remove present // at start of message.
-    $result = json_decode(substr($str,2));
-    // if json failed to decode return blank array
-    if ($result==null) return array();
-    if (!isset($result->DATA)) return "Invalid data";
-    if (!isset($result->DATA[0])) return "Invalid data";
-    
-    $date3 = $result->DATA[0][0];
     if ($date1!=$date3) return "Date mismatch";
     
-    $cost = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5]
-    );
-    
+    // Build import + hydro consumption object
+    // 1. start with imported data
+    $kwh = $imported;
+    // 2. hydro consumption = total - imported
+    $kwh["hydro"] = $gross["total"] - $imported["total"];
+    $kwh["total"] = $gross["total"];
+   
+    // -------------------------------------------------------------    
     $date = new DateTime();
     $date->setTimezone(new DateTimeZone("Europe/London"));
     $date->setTimestamp(time());
@@ -402,29 +181,35 @@ function get_community_consumption($baseurl,$token) {
 }
 
 // -------------------------------------------------------------
-// Domestic user’s net charge to be billed
+// Used by the above functions to fetch the last day
 // -------------------------------------------------------------
-function get_household_net_charge($baseurl,$token) {
+function get_latest_day($baseurl,$token,$api) {
 
     // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-8");
+    $str = @file_get_contents($baseurl."1-$token-$api");
     
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
+    
     // if json failed to decode return blank array
-    if ($result==null) return array();
+    if ($result==null) return false;
+    if (!isset($result->DATA)) return false;
+    if (!isset($result->DATA[0])) return false;
+
+    // Scan through result for latest day (order returned is not always correct)
+    $latest = 0; $latest_index = 0;
+    for ($i=0; $i<count($result->DATA); $i++) {
+        $timestamp = decode_date($result->DATA[$i][0]);
+        if ($timestamp>$latest) { $latest = $timestamp; $latest_index = $i; }
+    }
     
-    $data = array(
-        "morning"=>$result->DATA[0][1],
-        "midday"=>$result->DATA[0][2],
-        "evening"=>$result->DATA[0][3],
-        "overnight"=>$result->DATA[0][4],
-        "total"=>$result->DATA[0][5]
-    );
-    
-    return $data;
+    $day = $result->DATA[$latest_index];
+    return array("date"=>$day[0], "morning"=>$day[1], "midday"=>$day[2], "evening"=>$day[3], "overnight"=>$day[4], "total"=>$day[5]);
 }
 
+// -------------------------------------------------------------
+// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
+// -------------------------------------------------------------
 function decode_date($datestr) {
     $datestr = str_replace(",","",$datestr);
     $date_parts = explode(" ",$datestr);
@@ -450,6 +235,9 @@ function decode_date($datestr) {
     return $time; //strtotime($date2);
 }
 
+// -------------------------------------------------------------
+// Convert unix timestamp to date format 01-Jul-2017
+// -------------------------------------------------------------
 function time_to_date($time) {
     $date = new DateTime();
     $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -465,12 +253,14 @@ function time_to_date($time) {
 // -------------------------------------------------------------
 function get_household_consumption_monthly($baseurl,$token) {
 
+    $month = "JUN";
+    $months = array("JAN"=>1,"FEB"=>2,"MAR"=>3,"APR"=>4,"MAY"=>5,"JUN"=>6,"JUL"=>7,"AUG"=>8,"SEP"=>9,"OCT"=>10,"NOV"=>11,"DEC"=>12);
+    
     // API: 18 (User’s Monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
     //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
     $str = @file_get_contents($baseurl."1-$token-18");
-    
     $result18 = json_decode(substr($str,2));
     if ($result18==null) return "Invalid data";
     if (!isset($result18->DATA)) return "Invalid data";
@@ -491,7 +281,6 @@ function get_household_consumption_monthly($baseurl,$token) {
     // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
     //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
     $str = @file_get_contents($baseurl."1-$token-20");
-    
     $result20 = json_decode(substr($str,2));
     if ($result20==null) return "Invalid data";
     if (!isset($result20->DATA)) return "Invalid data";
@@ -507,43 +296,50 @@ function get_household_consumption_monthly($baseurl,$token) {
     if (!isset($result21->DATA)) return "Invalid data";
     if (!isset($result21->DATA[0])) return "Invalid data";
     
+    $month_num = $months[$month];
+    
+    $latest_month = $result18->DATA[0][5];
+    
+    $month_index_1 = $latest_month - $month_num;
+    $month_index_2 = $month_index_1 + 1;
+    
     $result = array(
         array(
-            "month"=>$result18->DATA[0][5],
-            "year"=>$result18->DATA[0][7],
+            "month"=>$result18->DATA[$month_index_1][5],
+            "year"=>$result18->DATA[$month_index_1][7],
             "kwh"=>array(
-                "morning"=>$result20->DATA[0][0],   // 20
-                "midday"=>$result20->DATA[0][1],    // 20
-                "evening"=>$result20->DATA[0][2],   // 20
-                "overnight"=>$result20->DATA[0][3], // 20
-                "hydro"=>$result19->DATA[0][4],     // 19
-                "total"=>$result18->DATA[0][4]      // 18
+                "morning"=>$result20->DATA[$month_index_1][0],   // 20
+                "midday"=>$result20->DATA[$month_index_1][1],    // 20
+                "evening"=>$result20->DATA[$month_index_1][2],   // 20
+                "overnight"=>$result20->DATA[$month_index_1][3], // 20
+                "hydro"=>$result19->DATA[$month_index_1][4],     // 19
+                "total"=>$result18->DATA[$month_index_1][4]      // 18
             ),
             "cost"=>array(
-                "morning"=>$result21->DATA[0][0],   // 21
-                "midday"=>$result21->DATA[0][1],    // 21
-                "evening"=>$result21->DATA[0][2],   // 21
-                "overnight"=>$result21->DATA[0][3], // 21
-                "total"=>$result21->DATA[0][4]      // 21
+                "morning"=>$result21->DATA[$month_index_1][0],   // 21
+                "midday"=>$result21->DATA[$month_index_1][1],    // 21
+                "evening"=>$result21->DATA[$month_index_1][2],   // 21
+                "overnight"=>$result21->DATA[$month_index_1][3], // 21
+                "total"=>$result21->DATA[$month_index_1][4]      // 21
             )
         ),
         array(
-            "month"=>$result18->DATA[1][5],
-            "year"=>$result18->DATA[1][7],
+            "month"=>$result18->DATA[$month_index_2][5],
+            "year"=>$result18->DATA[$month_index_2][7],
             "kwh"=>array(
-                "morning"=>$result20->DATA[1][0],   // 20
-                "midday"=>$result20->DATA[1][1],    // 20
-                "evening"=>$result20->DATA[1][2],   // 20
-                "overnight"=>$result20->DATA[1][3], // 20
-                "hydro"=>$result19->DATA[1][4],     // 19
-                "total"=>$result18->DATA[1][4]      // 18
+                "morning"=>$result20->DATA[$month_index_2][0],   // 20
+                "midday"=>$result20->DATA[$month_index_2][1],    // 20
+                "evening"=>$result20->DATA[$month_index_2][2],   // 20
+                "overnight"=>$result20->DATA[$month_index_2][3], // 20
+                "hydro"=>$result19->DATA[$month_index_2][4],     // 19
+                "total"=>$result18->DATA[$month_index_2][4]      // 18
             ),
             "cost"=>array(
-                "morning"=>$result21->DATA[1][0],   // 21
-                "midday"=>$result21->DATA[1][1],    // 21
-                "evening"=>$result21->DATA[1][2],   // 21
-                "overnight"=>$result21->DATA[1][3], // 21
-                "total"=>$result21->DATA[1][4]      // 21
+                "morning"=>$result21->DATA[$month_index_2][0],   // 21
+                "midday"=>$result21->DATA[$month_index_2][1],    // 21
+                "evening"=>$result21->DATA[$month_index_2][2],   // 21
+                "overnight"=>$result21->DATA[$month_index_2][3], // 21
+                "total"=>$result21->DATA[$month_index_2][4]      // 21
             )
         )
     );
@@ -636,4 +432,10 @@ function get_community_consumption_monthly($baseurl,$token) {
     return $result;
 }
 
+function get_demand_shaper($baseurl,$token) {
+
+    $str = @file_get_contents($baseurl."1-$token-30");
+    $data = json_decode(substr($str,2));
+    return $data;
+}
 

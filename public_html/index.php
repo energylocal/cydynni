@@ -138,6 +138,31 @@ switch ($q)
     // ------------------------------------------------------------------------
     // Household 
     // ------------------------------------------------------------------------     
+
+    case "epower-api":
+        $format = "text";
+        if ($session["read"]) {
+            $token = $session['token'];
+            
+            if (isset($_GET['api'])) {
+                $api = (int) $_GET['api'];
+                
+                $other = "";
+                if (isset($_GET['start']) && isset($_GET['end'])) {
+                    $other = "?dateStart=".$_GET['start']."&dateEnd=".$_GET['end'];
+                }
+
+                $result = @file_get_contents($meter_data_api_baseurl."1-$token-$api".$other);
+                $json = json_decode(substr($result,2));
+                $content = json_encode($json,JSON_PRETTY_PRINT);
+            } else {
+            
+            }
+        } else {
+            $content = "session not valid";
+        }
+        break;
+        
     case "household/summary/day":
         $format = "json";
         if ($session["read"]) {
@@ -347,6 +372,11 @@ switch ($q)
             $content = "session not valid";
         }
         
+        break;
+    
+    case "demandshaper":
+        $format = "json";
+        $content = get_demand_shaper($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
         
     // ------------------------------------------------------------------------
