@@ -134,7 +134,16 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-  
+
+    case "report2":
+        $format = "html";
+        if ($session["read"]) {
+            unset($session["token"]);
+            $content = view("pages/report2.php",array('session'=>$session));
+        } else {
+            $content = "session not valid";
+        }
+        break;  
     // ------------------------------------------------------------------------
     // Household 
     // ------------------------------------------------------------------------     
@@ -175,7 +184,18 @@ switch ($q)
     case "household/summary/month":
         $format = "json";
         if ($session["read"]) {
-            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['token']);
+            $month = get("month");
+            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['token'],$month);
+        } else {
+            $content = "session not valid";
+        }
+        break;
+        
+    case "household/summary/monthly":
+        $format = "json";
+        if ($session["read"]) {
+            $month = get("month");
+            $content = get_household_consumption_monthly_2($meter_data_api_baseurl,$session['token']);
         } else {
             $content = "session not valid";
         }
@@ -228,9 +248,16 @@ switch ($q)
         
     case "community/summary/month":
         $format = "json";
-        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        $month = get("month");
+        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken,$month);
         break;
-        
+
+    case "community/summary/monthly":
+        $format = "json";
+        $month = get("month");
+        $content = get_community_consumption_monthly_2($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        break;
+                
     case "community/data":
         $format = "json";
         

@@ -1,4 +1,11 @@
-<?php global $path, $translation, $lang; ?>
+<?php global $path, $translation, $lang; 
+
+$month = "JUN";
+if (isset($_GET['month'])) {
+    $month = $_GET['month'];
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -237,7 +244,7 @@ var path = "<?php echo $path; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 var session = <?php echo json_encode($session); ?>;
-
+var month = "<?php echo $month; ?>";
 var data_m1 = {};
 var hydro_m1 = 0;
 
@@ -252,7 +259,7 @@ $(window).resize(function(){
 });
 
 $.ajax({                                      
-    url: path+"household/summary/month?apikey="+session.apikey_read,
+    url: path+"household/summary/month?month="+month+"&apikey="+session.apikey_read,
     dataType: 'json',      
     success: function(result) {
     
@@ -402,7 +409,7 @@ load_community_segment();
 function load_community_segment()
 {
     $.ajax({                                      
-        url: path+"community/summary/month?apikey="+session.apikey_read,
+        url: path+"community/summary/month?month="+month+"&apikey="+session.apikey_read,
         dataType: 'json',      
         success: function(result) {
 

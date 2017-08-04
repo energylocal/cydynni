@@ -251,9 +251,8 @@ function time_to_date($time) {
 // -------------------------------------------------------------
 // Monthly household consumption for report
 // -------------------------------------------------------------
-function get_household_consumption_monthly($baseurl,$token) {
+function get_household_consumption_monthly($baseurl,$token,$month) {
 
-    $month = "JUN";
     $months = array("JAN"=>1,"FEB"=>2,"MAR"=>3,"APR"=>4,"MAY"=>5,"JUN"=>6,"JUL"=>7,"AUG"=>8,"SEP"=>9,"OCT"=>10,"NOV"=>11,"DEC"=>12);
     
     // API: 18 (User’s Monthly kWh import total)
@@ -347,10 +346,91 @@ function get_household_consumption_monthly($baseurl,$token) {
     return $result;
 }
 
+function get_household_consumption_monthly_2($baseurl,$token) {
+    
+    // API: 18 (User’s Monthly kWh import total)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
+    //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-18");
+    $result18 = json_decode(substr($str,2));
+    if ($result18==null) return "Invalid data";
+    if (!isset($result18->DATA)) return "Invalid data";
+    if (!isset($result18->DATA[0])) return "Invalid data";
+    
+    // API: 19 (User’s Monthly kWh import allocated to hydro)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
+    //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-19");
+    $result19 = json_decode(substr($str,2));
+    if ($result19==null) return "Invalid data";
+    if (!isset($result19->DATA)) return "Invalid data";
+    if (!isset($result19->DATA[0])) return "Invalid data";
+    
+    // API: 20 (User’s Monthly kWh import provided by supplier)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
+    //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
+    $str = @file_get_contents($baseurl."1-$token-20");
+    $result20 = json_decode(substr($str,2));
+    if ($result20==null) return "Invalid data";
+    if (!isset($result20->DATA)) return "Invalid data";
+    if (!isset($result20->DATA[0])) return "Invalid data";
+
+    // API: 21 (User’s Monthly total cost of import)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[3.89,4.98,7.56,9.64,26.07,1,"JAN",2017,31],
+    //         [3.81,6.29,8.19,9.85,28.14,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-21");
+    $result21 = json_decode(substr($str,2));
+    if ($result21==null) return "Invalid data";
+    if (!isset($result21->DATA)) return "Invalid data";
+    if (!isset($result21->DATA[0])) return "Invalid data";
+
+    $data = array();
+
+    for ($m=0; $m<count($result18->DATA); $m++) {
+    
+        $month = array();
+        
+        if ($result18->DATA[$m][5]!=$result19->DATA[$m][5]) return "date mismatch";
+        if ($result18->DATA[$m][5]!=$result20->DATA[$m][5]) return "date mismatch";
+        if ($result18->DATA[$m][5]!=$result21->DATA[$m][5]) return "date mismatch";
+        
+        $month["month"] = $result18->DATA[$m][5];
+        $month["monthdesc"] = $result18->DATA[$m][6];
+        $month["year"] = $result18->DATA[$m][7];
+        $month["days"] = $result18->DATA[$m][8];
+        
+        $v = $result18->DATA[$m];
+        $month["demand"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
+        $v = $result19->DATA[$m];
+        $month["hydro"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
+        $v = $result20->DATA[$m];
+        $month["import"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
+        $v = $result21->DATA[$m];
+        $month["cost"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
+
+        foreach ($month["demand"] as $period=>$val) {
+            $importA = $month["demand"][$period] - $month["hydro"][$period];
+            $importB = $month["import"][$period];
+            $diff = abs($importA-$importB);
+            
+            // Large errors in last three months!!
+            if ($diff>0.5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
+        }
+        
+        $data[] = $month;
+    }
+    
+    return $data;
+}
+
 // -------------------------------------------------------------
 // Monthly community consumption for report
 // -------------------------------------------------------------
-function get_community_consumption_monthly($baseurl,$token) {
+function get_community_consumption_monthly($baseurl,$token,$month) {
 
     // API: 22 (Community monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
@@ -431,6 +511,90 @@ function get_community_consumption_monthly($baseurl,$token) {
     
     return $result;
 }
+
+// -------------------------------------------------------------
+// Monthly community consumption for report
+// -------------------------------------------------------------
+function get_community_consumption_monthly_2($baseurl,$token) {
+
+    // API: 22 (Community monthly kWh import total)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
+    //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-22");
+    $result22 = json_decode(substr($str,2));
+    if ($result22==null) return "Invalid data";
+    if (!isset($result22->DATA)) return "Invalid data";
+    
+    // API: 23 (Community monthly kWh import allocated to hydro)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
+    //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-23");
+    $result23 = json_decode(substr($str,2));
+    if ($result23==null) return "Invalid data";
+    if (!isset($result23->DATA)) return "Invalid data";
+    
+    // API: 24 (Community monthly kWh import provided by supplier)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
+    //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
+    $str = @file_get_contents($baseurl."1-$token-24");
+    $result24 = json_decode(substr($str,2));
+    if ($result24==null) return "Invalid data";
+    if (!isset($result24->DATA)) return "Invalid data";
+
+    // API: 25 (Community monthly total cost of import)
+    // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
+    // "DATA":[[3.89,4.98,7.56,9.64,26.07,1,"JAN",2017,31],
+    //         [3.81,6.29,8.19,9.85,28.14,12,"DEC",2016,31]]
+    $str = @file_get_contents($baseurl."1-$token-25");
+    $result25 = json_decode(substr($str,2));
+    if ($result25==null) return "Invalid data";
+    if (!isset($result25->DATA)) return "Invalid data";
+    
+    if (json_encode($result22->COLUMNS)!=json_encode($result23->COLUMNS)) return "columns mismatch";
+    if (json_encode($result22->COLUMNS)!=json_encode($result24->COLUMNS)) return "columns mismatch";
+    if (json_encode($result22->COLUMNS)!=json_encode($result25->COLUMNS)) return "columns mismatch";
+    
+    for ($m=0; $m<count($result22->DATA); $m++) {
+    
+        $month = array();
+        
+        if ($result22->DATA[$m][0]!=$result23->DATA[$m][0]) return "date mismatch";
+        if ($result22->DATA[$m][0]!=$result24->DATA[$m][0]) return "date mismatch";
+        if ($result22->DATA[$m][0]!=$result25->DATA[$m][0]) return "date mismatch";
+        
+        $month["month"] = $result22->DATA[$m][0];
+        $month["monthdesc"] = $result22->DATA[$m][6];
+        $month["year"] = $result22->DATA[$m][7];
+        $month["days"] = $result22->DATA[$m][8];
+        
+        $v = $result22->DATA[$m];
+        $month["demand"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
+        $v = $result23->DATA[$m];
+        $month["hydro"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
+        $v = $result24->DATA[$m];
+        $month["import"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
+        $v = $result25->DATA[$m];
+        $month["cost"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
+        
+        foreach ($month["demand"] as $period=>$val) {
+            $importA = $month["demand"][$period] - $month["hydro"][$period];
+            $importB = $month["import"][$period];
+            $diff = abs($importA-$importB);
+            
+            // Large errors in last three months!!
+            //if ($diff>5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
+        }
+    
+        $data[] = $month;
+    }
+    
+    return $data;
+}
+
+
 
 function get_demand_shaper($baseurl,$token) {
 
