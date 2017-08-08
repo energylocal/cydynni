@@ -105,11 +105,10 @@ while ($row = $result_users->fetch_object())
             $end = $start + (3600*24*$days);
             print "-------------------------------\n";
         }
-        
-        // Post process accumulated kWh
-                
+            
         // Check if feed 'halfhour_consumption' has been created
         if (!$use_kwh_id = $feed->get_id($userid,"use_kwh")) {
+            print "Creating use_kwh\n";
             $result = $feed->create($userid,"cydynni","use_kwh",1,5,json_decode('{"interval":1800}'));
             if (!$result['success']) { echo "could not create feed\n"; die; }
             $use_kwh_id = $result['feedid'];

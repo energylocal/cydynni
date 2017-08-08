@@ -48,6 +48,7 @@ function accumulator($dir,$processitem)
     
     $buffer = "";
     
+    /*
     $total = 0;
     fseek($if,$om->npoints*4);
     if ($om->npoints>0) fseek($of,($om->npoints-1)*4);
@@ -57,9 +58,12 @@ function accumulator($dir,$processitem)
     if (strlen($bytes==4)) {
         $tmp = unpack("f",$bytes);
         $total = $tmp[1];
-    }
+        print "last value: $total\n";
+    }*/
+    
+    $total = 0;
         
-    for ($n=$om->npoints; $n<$im->npoints; $n++) {
+    for ($n=0; $n<$im->npoints; $n++) {
         $tmp = unpack("f",fread($if,4));
         
         if (!is_nan($tmp[1])) $value = 1*$tmp[1];
