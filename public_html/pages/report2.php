@@ -17,6 +17,11 @@ $v=1;
 
   <body>
   
+    <div class="top-nav">
+        <div class="top-nav-list"><img src="images/icon-list.png" ></div>
+        <div class="top-nav-title">CydYnni Reports</div>
+    </div>
+  
     <div class="sidenav">
       <div class="sidenav_inner">
         <div style="padding:10px; color:#fff"><b>My Reports</b></div>
@@ -24,7 +29,9 @@ $v=1;
       </div>
     </div>
   
-    <br>
+    <div style="height:60px"></div>
+  
+    <div id="wrapper">
     <div class="page">
       <div style="background-color:#d2279c; height:15px"></div>
       <div class="inner">
@@ -132,7 +139,7 @@ $v=1;
         
       </div>
     </div>
-    <br><br>
+    </div>
   </body>
 
 </html>
@@ -142,6 +149,10 @@ var path = "<?php echo $path; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 var session = <?php echo json_encode($session); ?>;
+
+var max_wrapper_width = 960;
+var sidebar_enabled = true;
+var sidebar_visible = true;
 
 var household = {};
 var community = {};
@@ -302,10 +313,59 @@ function draw() {
 }
 
 function sidebar_resize() {
+    
+    var width = $(window).width();
     var height = $(window).height();
+    
+    var sidebar_width = 250;
     var nav = 0; // $(".navbar").height();
+    
     $(".sidenav").height(height-nav);
+    
+    if (width<max_wrapper_width) {
+        hide_sidebar()
+    } else {
+        if (sidebar_enabled) show_sidebar()
+    }
 }
+
+function show_sidebar() {
+    var width = $(window).width();
+    var sidebar_width = 250;
+    sidebar_visible = true;
+    $(".sidenav").css("left",sidebar_width);
+    
+    if (width<(max_wrapper_width+2*sidebar_width)) {
+        if (width>=max_wrapper_width) {
+            $("#wrapper").css("padding-left",sidebar_width);
+        }
+        $("#wrapper").css("margin","0");
+    } else {
+        $("#wrapper").css("padding-left","0px");
+        $("#wrapper").css("margin","0 auto");
+    }
+        
+    $("#sidenav-open").hide();
+    $("#sidenav-close").hide();
+}
+
+function hide_sidebar() {
+    sidebar_visible = false;
+    $(".sidenav").css("left","0");
+    $("#wrapper").css("padding-left","0");
+    $("#wrapper").css("margin","0 auto");
+    $("#sidenav-open").show();
+}
+
+$(".top-nav-list").click(function(){
+    if (sidebar_visible) {
+        sidebar_visible = false;
+        hide_sidebar();
+    } else {
+        sidebar_visible = true;
+        show_sidebar();
+    }
+});
 
 $(window).resize(function(){
     draw();
@@ -315,6 +375,7 @@ $(window).resize(function(){
 $(window).on('hashchange',function(){
    selected_month = parseInt(location.hash.slice(1));
    load();
+   sidebar_resize();
 });
 
 function t(s) {

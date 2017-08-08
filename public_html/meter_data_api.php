@@ -418,7 +418,7 @@ function get_household_consumption_monthly_2($baseurl,$token) {
             $diff = abs($importA-$importB);
             
             // Large errors in last three months!!
-            if ($diff>0.5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
+            // if ($diff>0.5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
         }
         
         $data[] = $month;

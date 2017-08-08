@@ -56,15 +56,16 @@ require "PHPFina.php";
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 $use_local_cache = true;
 
+$apikey = false;
+if (isset($_GET['reportkey'])) $apikey = $_GET['reportkey'];
+if (isset($_GET['apikey'])) $apikey = $_GET['apikey'];
 
-if (isset($_GET['apikey'])) {
-    $session = $user->apikey_session($_GET['apikey']);
+if ($apikey) {
+    $session = $user->apikey_session($apikey);
 } else {
     ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
-
     session_start();
     $session = $user->status();
-    // $session = $user->emon_session_start();
 }
 
 // Load token
