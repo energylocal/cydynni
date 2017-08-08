@@ -154,9 +154,7 @@ function load() {
                 out += "<button class='reportemail' userid='"+result[z].id+"' style='font-size:12px'>Send</button></td>";
                 
                 out += "<td>"+result[z].hits+"</td>";
-                out += "<td>";
-                out += "<button class='check-household-breakdown' userid='"+result[z].id+"' style='font-size:12px'>Test</button> <span style='overflow:hidden' class='household-breakdown' userid='"+result[z].id+"'></span>";
-                out += "</td>";
+                out += "<td style='overflow:hidden'><pre>"+JSON.stringify(result[z].testdata)+"</pre></td>";
                 out += "</tr>";
             }
             $("#users").html(out);

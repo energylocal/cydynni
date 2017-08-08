@@ -176,7 +176,8 @@ switch ($q)
     case "household/summary/day":
         $format = "json";
         if ($session["read"]) {
-            $content = get_household_consumption($meter_data_api_baseurl,$session['token']);
+            $userid = $session["userid"];
+            $content = json_decode($redis->get("user:summary:lastday:$userid"));
         } else {
             $content = "session not valid";
         }
@@ -458,6 +459,7 @@ switch ($q)
                     foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
                 }
                 $row->hits = $redis->get("userhits:$userid");
+                $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
                 $users[] = $row;
             }
             $content = $users;
@@ -476,16 +478,6 @@ switch ($q)
         $format = "text";
         if ($session['admin']) {
             $content = $user->registeremail(get('userid'));
-        }
-        break;
-        
-    case "admin/check-household-breakdown":
-        $format = "json";
-        if ($session['admin']) {
-            $userid = (int) get('userid');
-            $result = $mysqli->query("SELECT token FROM cydynni WHERE `userid`='$userid'");
-            $row = $result->fetch_object();
-            $content = get_household_consumption($meter_data_api_baseurl,$row->token);
         }
         break;
         

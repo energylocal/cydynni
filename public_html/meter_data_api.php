@@ -136,7 +136,7 @@ function get_household_consumption($baseurl,$token) {
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"dayoffset"=>$dayoffset);
+    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"dayoffset"=>$dayoffset,"date"=>$date1, "timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------
