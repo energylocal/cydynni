@@ -78,9 +78,10 @@
       <div class="title"><?php echo t("Breakdown");?></div>
       
       <div class="visnav-household-block" style="display:none">
-        <div class="visnav-household household-month"><?php echo t("MONTH");?></div>
-        <div class="visnav-household household-week"><?php echo t("WEEK");?></div>
-        <div class="visnav-household household-day"><?php echo t("DAY");?></div>
+        <div class="visnav-household reports"><?php echo t("MY REPORTS");?></div>
+        <div class="visnav-household household-month"><?php echo t("M");?></div>
+        <div class="visnav-household household-week"><?php echo t("W");?></div>
+        <div class="visnav-household household-day"><?php echo t("D");?></div>
       </div>
   </div>    
   <div class="panel">

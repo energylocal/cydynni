@@ -234,6 +234,10 @@ $("#view-household-piechart").click(function(){
     household_pie_load(); 
 });
 
+$(".reports").click(function() {
+    window.location = path+"report";
+});
+
 $(".household-day").click(function() {
     end = 0;
     start = 0;

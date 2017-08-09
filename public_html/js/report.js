@@ -111,6 +111,7 @@ function piegraph(element,data,options) {
             ctx.font=textsize_prc+"px Arial";
             ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
           
+              /*
             // Value label
             var textlength = data[z].name.length*textsize*0.7;
             
@@ -128,6 +129,7 @@ function piegraph(element,data,options) {
             ctx.fillStyle = "#333";
             ctx.fillText(data[z].name,valuelabelx,valuelabely-3);
             ctx.fillText(data[z].value.toFixed(1)+" kWh",valuelabelx,valuelabely+15);
+            */
         }
     }
 }

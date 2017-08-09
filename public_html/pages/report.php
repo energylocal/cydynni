@@ -19,12 +19,12 @@ $v=1;
   
     <div class="top-nav">
         <div class="top-nav-list"><img src="images/icon-list.png" ></div>
-        <div class="top-nav-title">CydYnni Reports</div>
+        <div class="top-nav-title"><?php echo t("CydYnni Reports"); ?></div>
     </div>
   
     <div class="sidenav">
       <div class="sidenav_inner">
-        <div style="padding:10px; color:#fff"><b>My Reports</b></div>
+        <div style="padding:10px; color:#fff"><b><?php echo t("My Reports"); ?></b></div>
         <ul class="appmenu"></ul>
       </div>
     </div>
@@ -174,7 +174,7 @@ $.ajax({
         
         var out = "";
         for (var i=0; i<result.length; i++) {
-            out += "<li><a href='#"+i+"'>"+months[result[i].month-1]+" "+result[i].year+"</a></li>";
+            out += "<li><a href='#"+i+"'>"+t(months[result[i].month-1])+" "+result[i].year+"</a></li>";
         }
         $(".appmenu").html(out);
     

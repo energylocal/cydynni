@@ -104,16 +104,7 @@ $content = "Sorry page not found";
 
 $logger = new EmonLogger();
 switch ($q)
-{   
-    case "session":
-        $format = "json";
-        $content = $session;
-        break;
-        
-    case "test":
-        $content = "new server";
-        break;
-
+{
     case "":
         $format = "html";
         unset($session["token"]);
@@ -134,45 +125,11 @@ switch ($q)
         } else {
             $content = "session not valid";
         }
-        break; 
-
-    case "report2":
-        $format = "html";
-        if ($session["read"]) {
-            unset($session["token"]);
-            $content = view("pages/report.php",array('session'=>$session));
-        } else {
-            $content = "session not valid";
-        }
-        break;
-    // ------------------------------------------------------------------------
-    // Household 
-    // ------------------------------------------------------------------------     
-
-    case "epower-api":
-        $format = "text";
-        if ($session["read"]) {
-            $token = $session['token'];
-            
-            if (isset($_GET['api'])) {
-                $api = (int) $_GET['api'];
-                
-                $other = "";
-                if (isset($_GET['start']) && isset($_GET['end'])) {
-                    $other = "?dateStart=".$_GET['start']."&dateEnd=".$_GET['end'];
-                }
-
-                $result = @file_get_contents($meter_data_api_baseurl."1-$token-$api".$other);
-                $json = json_decode(substr($result,2));
-                $content = json_encode($json,JSON_PRETTY_PRINT);
-            } else {
-            
-            }
-        } else {
-            $content = "session not valid";
-        }
         break;
         
+    // ------------------------------------------------------------------------
+    // Household 
+    // ------------------------------------------------------------------------         
     case "household/summary/day":
         $format = "json";
         if ($session["read"]) {
@@ -287,7 +244,6 @@ switch ($q)
         $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval"));
         break;
         
-        
     case "live":
         $format = "json";
         
@@ -391,7 +347,32 @@ switch ($q)
         $format = "json";
         $content = get_demand_shaper($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
-        
+
+    /*
+    case "epower-api":
+        $format = "text";
+        if ($session["read"]) {
+            $token = $session['token'];
+            
+            if (isset($_GET['api'])) {
+                $api = (int) $_GET['api'];
+                
+                $other = "";
+                if (isset($_GET['start']) && isset($_GET['end'])) {
+                    $other = "?dateStart=".$_GET['start']."&dateEnd=".$_GET['end'];
+                }
+
+                $result = @file_get_contents($meter_data_api_baseurl."1-$token-$api".$other);
+                $json = json_decode(substr($result,2));
+                $content = json_encode($json,JSON_PRETTY_PRINT);
+            } else {
+            
+            }
+        } else {
+            $content = "session not valid";
+        }
+        break;
+    */
     // ------------------------------------------------------------------------
     // User    
     // ------------------------------------------------------------------------
