@@ -135,6 +135,14 @@ switch ($q)
         if ($session["read"]) {
             $userid = $session["userid"];
             $content = json_decode($redis->get("user:summary:lastday:$userid"));
+            
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $date->setTimestamp(time());
+            $date->modify("midnight");
+            $time = $date->getTimestamp();
+            $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+            
         } else {
             $content = "session not valid";
         }
@@ -193,6 +201,14 @@ switch ($q)
     case "community/summary/day":
         $format = "json";
         $content = json_decode($redis->get("community:summary:day"));
+        
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone("Europe/London"));
+        $date->setTimestamp(time());
+        $date->modify("midnight");
+        $time = $date->getTimestamp();
+        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        
         break;
 
     case "community/summary/monthly":
@@ -348,7 +364,7 @@ switch ($q)
         $content = get_demand_shaper($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
 
-    /*
+    
     case "epower-api":
         $format = "text";
         if ($session["read"]) {
@@ -372,7 +388,7 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-    */
+    
     // ------------------------------------------------------------------------
     // User    
     // ------------------------------------------------------------------------

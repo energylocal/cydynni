@@ -45,6 +45,12 @@ while ($row = $result_users->fetch_object())
             
             $redis->set("user:summary:lastday:$userid",json_encode($content));
             $redis->set("user:summary:history:$userid",json_encode($history));
+        } else {
+            print "invalid data\n";
         }
+
+
+    } else {
+        print "no token\n";
     }
 }

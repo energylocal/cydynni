@@ -215,7 +215,7 @@ function load()
     $("#total_kwh").html(month.demand.total.toFixed(0));
 
     // Month one costs
-    $("#hydro_cost").html((month.import.total*0.07).toFixed(2));
+    $("#hydro_cost").html((month.hydro.total*0.07).toFixed(2));
     $("#morning_cost").html((month.import.morning*0.12).toFixed(2));
     $("#midday_cost").html((month.import.midday*0.10).toFixed(2));
     $("#evening_cost").html((month.import.evening*0.14).toFixed(2));

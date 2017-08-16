@@ -123,20 +123,11 @@ function get_household_consumption($baseurl,$token) {
     // 2. hydro consumption = total - imported
     $kwh["hydro"] = $gross["total"] - $imported["total"];
     $kwh["total"] = $gross["total"];
-   
-    // -------------------------------------------------------------    
-    $date = new DateTime();
-    $date->setTimezone(new DateTimeZone("Europe/London"));
-    $date->setTimestamp(time());
-    $date->modify("midnight");
-    $time = $date->getTimestamp();
-    
-    $dayoffset = ($time - decode_date($date1))/(3600*24);
     
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"dayoffset"=>$dayoffset,"date"=>$date1, "timestamp"=>decode_date($date1));
+    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------
@@ -164,20 +155,11 @@ function get_community_consumption($baseurl,$token) {
     // 2. hydro consumption = total - imported
     $kwh["hydro"] = $gross["total"] - $imported["total"];
     $kwh["total"] = $gross["total"];
-   
-    // -------------------------------------------------------------    
-    $date = new DateTime();
-    $date->setTimezone(new DateTimeZone("Europe/London"));
-    $date->setTimestamp(time());
-    $date->modify("midnight");
-    $time = $date->getTimestamp();
-    
-    $dayoffset = ($time - decode_date($date1))/(3600*24);
     
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"dayoffset"=>$dayoffset);
+    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------
