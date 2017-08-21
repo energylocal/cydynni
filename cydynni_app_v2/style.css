@@ -1,0 +1,115 @@
+html, body {
+    height: 100%;
+}
+
+body {
+  margin:0;
+  padding:0;
+  font-family:sans-serif;
+}
+
+.app {
+  margin: 0 auto;
+  max-width:1100px;
+}
+
+.app-inner { margin: 8px;}
+
+.wrap {
+  min-height: 100%;
+  height: auto !important;
+  height:100%;
+  margin: 0 auto -100px;
+  overflow: hidden;
+}
+
+.app-title {
+  float:right; 
+  text-align:right;
+  font-size:30px; 
+  font-weight:bold; 
+  padding:10px 10px 0px 0px; 
+  color:#014655;
+}
+
+.navigation {
+  list-style-type: none;
+  margin:0;
+  padding:0;
+  overflow: hidden;
+}
+
+.navigation li {
+    display:inline-block;
+    width:25%;
+    color:#fff;
+    float:left;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.navigation li[name=forecast] div { background-color: #39aa1a; }
+.navigation li[name=household] div { background-color: #c20000; }
+.navigation li[name=community] div { background-color: #ffb401; }
+.navigation li[name=tips] div { background-color: #014656; }
+
+.navigation li > div {
+    height:50px;
+    padding:5px;
+    margin-right:8px;
+    overflow: hidden;
+}
+.navigation .active { padding-bottom:13px }
+.navigation li:last-child div { margin-right:0px; }
+
+.block {
+  padding:10px;
+  margin-bottom:8px;
+  color:#fff;
+  font-weight:bold;
+
+  height: 20px;
+  overflow:hidden;
+  transition: height linear 0.2s;
+}
+
+.expand { height:500px; }
+
+.navigation li div img { 
+  float:left;
+  height:50px;
+}
+
+.nav-text {
+  padding-top:6px;
+}
+
+.footer {
+  padding:20px;
+  height: 44px;
+  overflow:hidden;
+  color:#fff;
+  background-color:#014656;
+}
+
+@media (max-width: 750px) {
+  .nav-text {
+    display:none;
+  }
+  
+  .navigation li > div {
+    text-align:center;
+  }
+  
+  .navigation li > div > img {
+    float:none;
+  }
+  
+  .logo-mobile { display:block }
+  .logo-full { display:none }
+}
+    
+@media (min-width: 750px) {
+  .logo-mobile { display:none }
+  .logo-full { display:block }
+}
