@@ -1,0 +1,319 @@
+body {
+  background-color: #fff;
+  font-family: Montserrat, Veranda, sans-serif;
+  margin:0;
+  padding:0;
+  text-align:center;
+  color: #3b6358;
+  
+}
+
+.container {
+  margin: 0 auto;
+  /*min-width:370px;*/
+}
+
+p {
+  font-size:16px;
+}
+
+/* Contains: title, togglelang */
+.pagesection {
+  cursor: pointer;
+  width: 100%;
+  /*min-width:370px;*/
+  text-align: left;
+  border: none;
+  outline: none;
+  height:64px;
+  -webkit-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px -3px 3px 0px rgba(0,0,0,0.3);
+  /*border-bottom:1px solid #000;*/
+}
+
+.pagesection:hover { }
+
+/* Ok to use? etc */
+.title {
+  display:inline-block;
+  padding:0px;
+  padding-top:14px;
+  padding-left:14px;
+  padding-right:14px;
+  font-size:22px;
+  float:left;
+}
+
+/* Short summary: wait until... */
+.panel-summary {
+  display:inline-block; 
+  padding-top:20px;
+  font-size:14px;
+  float:left;
+}
+
+/* CY or EN */
+.togglelang {
+  display:inline-block;
+  font-size:16px;
+  padding-top:19px;
+  padding-right:14px;
+  float:right;
+}
+
+/* Style the pagesection panel. Note: hidden by default */
+div.panel {
+  height: 0;
+  overflow:hidden;
+  transition: height linear 0.2s;
+
+}
+
+/* The "show" class is added to the pagesection panel when the user clicks on one of the buttons. This will show the panel content */
+div.panel.show {
+  display: block !important;
+}
+
+.tariff-block {
+  padding-top:10px;
+  padding-bottom:10px;
+  text-align:left;
+}
+
+.tariff-time {
+  font-weight:bold;
+  font-size:18px;
+}
+
+.tariff-desc {
+  font-weight:normal;
+  font-size:12px;
+}
+
+.status {
+  font-size:38px;
+  font-weight:bold;
+}
+
+.panel-inner {
+  padding-left:14px;
+  padding-right:14px;
+}
+
+/* --- Icon Bar --- */
+
+.icon-bar {
+  width: 100%;
+  text-align: center;
+  background-color: #ddd;
+  overflow: auto;
+}
+
+.icon-bar a {
+  width: 25%;
+  padding: 12px 0;
+  float: left;
+  color: white;
+  font-size: 22px;
+}
+
+.icon-bar a:hover {
+  background-color: #bbb;
+}
+
+.active {
+  background-color: #ddd;
+}
+
+table {
+    width:100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    text-align:left;
+    border: 1px solid #aaa;
+    padding:6px 13px;
+}
+
+.login-box {
+    text-align:center;
+    max-width:300px;
+    margin: 0 auto;
+    border-radius: 15px;
+    padding:10px;
+    color:rgb(41,171,226);
+}
+
+#logout {
+    float:right;
+    padding:18px;
+    color:rgb(41,171,226);
+}
+
+#logout:hover {
+    cursor:pointer;
+}
+
+.tipimage {
+    width:70%;
+}
+
+.tip {
+    width:320px; 
+    margin: 0 auto;
+}
+
+.nextprevtip {
+    width:340px; 
+    margin: 0 auto;
+}
+
+.login-title {
+   font-weight:bold;
+   font-size:24px;
+   padding-top:15px;
+}
+
+.legend-label {
+  padding-right:10px;
+}
+
+.legend-label-box {
+  width:15px; height:15px;
+  border: 1px solid #aaa; 
+  display:inline-block;
+}
+
+.visnav-block {
+  float:right;
+  margin-top:11px;
+  margin-right:11px;
+}
+
+.visnav-hydro {
+  display:inline-block;
+  border: 1px solid rgb(39,78,63);
+  padding:3px;
+  margin-left:3px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.visnav-hydro:hover {
+  background-color:rgba(39,78,63,0.2);
+}
+
+.visnav-household-block {
+  float:right;
+  margin-top:13px;
+}
+
+.visnav-household {
+  display:inline-block;
+  border: 1px solid rgb(0,71,121);
+  padding:4px;
+  margin-left:3px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.visnav-household:hover {
+  background-color:rgba(0,71,121,0.2);
+}
+
+.visnav-community-block {
+  float:right;
+  margin-top:13px;
+}
+
+.visnav-community {
+  display:inline-block;
+  border: 1px solid rgb(142,77,0);
+  padding:4px;
+  margin-left:3px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.visnav-community:hover {
+  background-color:rgba(142,77,0,0.2);
+}
+
+@media (max-width: 370px) {
+  .container {
+      width:370px;
+  }
+ 
+  .tariff-time {
+      font-size:16px;
+  }
+
+  .tariff-desc {
+      font-size:11px;
+  }
+  
+  .pagesection {
+      height:64px;
+  }
+
+  .tip { width:100%; }
+  .nextprevtip { width:100%; }
+  p { font-size:14px; }
+  .tip p { font-size:14px; }
+
+  .tipimage { width:42%; }
+  
+  .login-title {
+     font-weight:bold;
+     font-size:22px;
+     padding-top:10px;
+  }
+  
+  .legend-label {
+    font-size:12px;
+    padding-right:5px;
+  }
+  
+  .legend-label-box {
+    width:10px; height:10px;
+  }
+}
+
+@media (min-width: 370px) and (max-width: 450px) {
+  .container {
+    width: 100%;
+  }
+  
+  .panel-inner { }
+
+  .tipimage {
+      width:58%;
+  }
+  
+  h1 {
+      font-size:26px;
+  }
+
+  .legend-label {
+    font-size:12px;
+    padding-right:5px;
+  }
+  
+  .legend-label-box {
+    width:12px; height:12px;
+  }
+}
+    
+@media (min-width: 450px) and (max-width: 960px) {
+  .container {
+    width: 100%;
+  }
+}
+
+@media (min-width: 960px) {
+  .container {
+    width: 960px;
+  }
+}

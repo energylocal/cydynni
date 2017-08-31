@@ -28,23 +28,27 @@ function cydynni_controller()
         case "live":
             $route->format = "json";
             
-            $live = json_decode($redis->get("live"));
-            
-            $date = new DateTime();
-            $date->setTimezone(new DateTimeZone("Europe/London"));
-            $date->setTimestamp(time());
-            $hour = $date->format("H");
+            if ($redis->exists("live")) {
+                $live = json_decode($redis->get("live"));
+                
+                $date = new DateTime();
+                $date->setTimezone(new DateTimeZone("Europe/London"));
+                $date->setTimestamp(time());
+                $hour = $date->format("H");
 
-            $tariff = "";
-            if ($hour<6) $tariff = "overnight";
-            if ($hour>=6 && $hour<11) $tariff = "morning";
-            if ($hour>=11 && $hour<16) $tariff = "midday";
-            if ($hour>=16 && $hour<20) $tariff = "evening";
-            if ($hour>=20) $tariff = "overnight";
-            if ($live->hydro>=$live->community) $tariff = "hydro";
-            
-            $live->tariff = $tariff;
-            $result = $live;
+                $tariff = "";
+                if ($hour<6) $tariff = "overnight";
+                if ($hour>=6 && $hour<11) $tariff = "morning";
+                if ($hour>=11 && $hour<16) $tariff = "midday";
+                if ($hour>=16 && $hour<20) $tariff = "evening";
+                if ($hour>=20) $tariff = "overnight";
+                if ($live->hydro>=$live->community) $tariff = "hydro";
+                
+                $live->tariff = $tariff;
+                $result = $live;
+            } else {
+                $result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/cydynni/live"));
+            }
             break;
             
         case "hydro-estimate":
@@ -89,7 +93,7 @@ function cydynni_controller()
         case "community-estimate":
             $route->format = "json";
             
-            $end = (int) $_GET['lasttime'];
+            $end = (int) 1*$_GET['lasttime'];
             $interval = (int) $_GET['interval'];
             
             $start = $end - (3600*24.0*7*1000);
