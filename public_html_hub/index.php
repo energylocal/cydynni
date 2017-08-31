@@ -101,9 +101,16 @@ switch ($q)
     case "":
         $format = "html";
         unset($session["token"]);
-        $content = view("pages/client.php",array('session'=>$session));
+        
+        if ($session["write"]) {
+            $content = view("pages/client.php",array('session'=>$session));
+        } else {
+            // check register status
+            $register = true; if ($user->get_number_of_users()>0) $register = false;
+            $content = view("pages/login.php",array('session'=>$session,'register'=>$register));
+        }
         break;
-   
+           
     case "report":
         $format = "html";
         if ($session["read"]) {
@@ -355,8 +362,52 @@ switch ($q)
                 
     case "login":
         $format = "json";
-        $content = $user->login(post('email'),post('password'));
+        $content = $user->login(post('username'),post('password'));
         break;
+        
+    case "register":
+        $format = "text";
+        
+        if ($user->get_number_of_users()==0)
+        {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            
+            // Send request
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL,"https://emoncms.cydynni.org.uk/user/auth.json");
+            curl_setopt($ch,CURLOPT_POST,1);
+            curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            $result = json_decode($result);
+            if ($result!=null && isset($result->success) && $result->success) {
+
+                // Fetch full account details from remote emoncms
+                $u = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/user/get.json?apikey=".$result->apikey_write));
+
+                // Register account locally
+                $result = $user->register($username, $password, $u->email);
+                
+                // Save remote account apikey to local hub
+                if ($result['success']==true) {
+                    $userid = $result['userid'];
+                    $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
+                    $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
+                    
+                    $content = "user registerd";
+                } else {
+                    $content = "error creating account";
+                }
+            } else {
+                $content = "cydynni online account not found";
+            }
+        }
+        
+        break;
+
         
     case "logout":
         $format = "text";
