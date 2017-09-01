@@ -366,7 +366,7 @@ switch ($q)
         break;
         
     case "register":
-        $format = "text";
+        $format = "json";
         
         if ($user->get_number_of_users()==0)
         {
@@ -397,12 +397,21 @@ switch ($q)
                     $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
                     $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
                     
-                    $content = "user registerd";
+                    // Trigger download of user data
+                    $sync_flag = "/tmp/emoncms-flag-sync";
+                    $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
+                    $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                    $fh = @fopen($sync_flag,"w");
+                    if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
+                    @fclose($fh);
+                    
+                    $content = array("success"=>true);
+                    
                 } else {
-                    $content = "error creating account";
+                    $content = array("success"=>false, "message"=>"error creating account");
                 }
             } else {
-                $content = "cydynni online account not found";
+                $content = array("success"=>false, "message"=>"cydynni online account not found");
             }
         }
         
@@ -432,11 +441,8 @@ switch ($q)
         $format = "text";
         // Hydro
         $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-        
         $redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
-        // Community half-hour
         $redis->set("community:data",file_get_contents("https://cydynni.org.uk/community/data"));
-        // Community totals
         $redis->set("community:summary:day",file_get_contents("https://cydynni.org.uk/community/summary/day"));
         // Store Updated
         $content = "store updated";

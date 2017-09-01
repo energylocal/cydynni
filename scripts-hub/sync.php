@@ -33,6 +33,10 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
     $result = $feed->create($userid,"cydynni",$feedname,1,5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo "could not create feed\n"; die; }
     $local_feeds[$feedname] = $result['feedid'];
+    
+    $id = $result['feedid'];
+    $mysqli->query("UPDATE feeds SET `public`=1 WHERE `id`='$id'");
+    $redis->hset("feed:$id",'public',1);
 }
 
 $feedname = "community";
@@ -40,6 +44,10 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
     $result = $feed->create($userid,"cydynni",$feedname,1,5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo "could not create feed\n"; die; }
     $local_feeds[$feedname] = $result['feedid'];
+    
+    $id = $result['feedid'];
+    $mysqli->query("UPDATE feeds SET `public`=1 WHERE `id`='$id'");
+    $redis->hset("feed:$id",'public',1);
 }
 
 $feedname = "halfhour_consumption";
@@ -74,3 +82,9 @@ print "$feedname\n";
 $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
 $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
 print "--lastvalue: ".json_encode($lastvalue)."\n";
+
+
+$redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
+$redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
+$redis->set("community:data",file_get_contents("https://cydynni.org.uk/community/data"));
+$redis->set("community:summary:day",file_get_contents("https://cydynni.org.uk/community/summary/day"));
