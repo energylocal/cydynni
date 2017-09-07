@@ -8,11 +8,32 @@ require "Lib/EmonLogger.php";
 $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 
-$schedule = array(
-    "device"=>"smartplug",
-    "end"=>18.0 + (25/60),
-    "period"=>0.0 + (15/60),
-    "interruptible"=>0
+$submit_time = false; //time();
+
+$schedules = array(
+    array(
+        "device"=>"smartplug2",
+        "end"=>9,
+        "period"=>6,
+        "interruptible"=>1,
+        "runonce"=>$submit_time,
+        "repeat"=>array(1,1,1,1,1,1,1),
+        "periods"=>array(
+            array("start"=>20.0, "end"=>21.0)
+        )
+    ),
+    array(
+        "device"=>"smartplug",
+        "end"=>9,
+        "period"=>6,
+        "interruptible"=>1,
+        "runonce"=>$submit_time,
+        "repeat"=>array(1,1,1,1,1,0,0),
+        "periods"=>array(
+            array("start"=>21+(0/60), "end"=>22+(0/60)),
+            array("start"=>8+(0/60), "end"=>8+(30/60))
+        )
+    )
 );
 
-$redis->rpush("schedules",json_encode($schedule));
+$redis->set("schedules",json_encode($schedules));

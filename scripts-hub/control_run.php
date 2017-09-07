@@ -11,16 +11,40 @@ require "Lib/EmonLogger.php";
 $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 
-// Current time
-$time = round(time()/60)*60;
+// Get time of start of day
+$date = new DateTime();
+$date->setTimezone(new DateTimeZone("Europe/London"));
+$date->setTimestamp(time());
+$date->modify("midnight");
+$daystart = $date->getTimestamp();
 
-// Load device list to check
-$device = "smartplug";
+// Schedule definition
+$schedules = json_decode($redis->get("schedules"));
 
-// Check if there is an entry for state
-$status = 0;
-$result = $redis->get("$device:$time");
-if ($result && $result==1) { $redis->del("$device:$time"); $status = 1; }
+foreach ($schedules as $schedule)
+{
+    $device = $schedule->device;
+    print "Schedule:$device";
 
-// Send control command
-file_get_contents("$host/emoncms/input/post/$device?data=status:$status&mqttpub=1&apikey=$apikey");
+    $now = time();
+    $status = 0;
+
+    foreach ($schedule->periods as $period) {
+        $start = $daystart + ($period->start * 3600);
+        $end = $daystart + ($period->end * 3600);
+        if ($now>=$start && $now<$end) $status = 1;
+    }
+
+    // If runonce is true, check if within 24h period
+    if ($schedule->runonce!==false) {
+        if (($now-$schedule->runonce)>(24*3600)) $status = 0;
+    } else {
+    // Check if schedule should be ran on this day
+        if (!$schedule->repeat[$date->format("N")-1]) $status = 0;
+    }
+
+    print " status:$status\n";
+    
+    // Send control command
+    file_get_contents("$host/emoncms/input/post/$device?data=status:$status&mqttpub=1&apikey=$apikey");
+}
