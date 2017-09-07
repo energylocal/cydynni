@@ -19,10 +19,6 @@ function t($c) {return $c;}
     <script type="text/javascript" src="lib/vis.helper.js"></script> 
     <script type="text/javascript" src="lib/feed.js"></script> 
     
-    
-    <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
-    
-    
     <link rel="stylesheet" type="text/css" href="style.css" />
 
   </head>
@@ -45,6 +41,8 @@ function t($c) {return $c;}
             <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px">Tips</div></div></li>
         </ul>
         
+        <!--------------------------------------------------------->
+        
         <div class="page" name="forecast">
             <div class="block expand" style="background-color:#39aa1a">
                 <div class="block-title">Forecast</div>
@@ -63,8 +61,8 @@ function t($c) {return $c;}
                       <span class="legend-label" >Hydro</span>
                   </div>
                   
-                  <div id="community_bargraph_bound" style="width:100%; height:500px;">
-                    <div id="community_bargraph_placeholder" style="height:500px"></div>
+                  <div id="community_bargraph_bound" style="width:100%; height:405px;">
+                    <div id="community_bargraph_placeholder" style="height:405px"></div>
                   </div>
 
                 </div>
@@ -82,6 +80,8 @@ function t($c) {return $c;}
                 </div>
             </div>
         </div>
+
+        <!--------------------------------------------------------->
         
         <div class="page" name="household">
             <div class="block" style="background-color:#c20000">
@@ -104,11 +104,42 @@ function t($c) {return $c;}
             </div>
         </div>
         
+        <!--------------------------------------------------------->
+        
         <div class="page" name="community">
-            <div class="block" style="background-color:#ffb401">The Community</div>
-            <div class="block" style="background-color:#ff7900">Extra Electricity</div>
-            <div class="block" style="background-color:#ec4f00">Extra Electricity</div>
+            <div class="block" style="background-color:#ffb401">
+                <div class="block-title">Your score and savings</div>
+                <div class="block-content" style="text-align:center">
+                    <p><span id="community_score_text"><?php echo t("Over the last seven days we<br>scored"); ?></span>:<br><span id="community_score">50</span>/100</p>
+                    <img id="community_star1" src="images/staryellow.png" style="width:45px">
+                    <img id="community_star2" src="images/staryellow.png" style="width:45px">
+                    <img id="community_star3" src="images/star20yellow.png" style="width:45px">
+                    <img id="community_star4" src="images/star20yellow.png" style="width:45px">
+                    <img id="community_star5" src="images/star20yellow.png" style="width:45px">
+                    <p id="community_statusmsg"></p>
+                </div>
+            </div>
+            <div class="block" style="background-color:#ff7900">
+                <div class="block-title">Community breakdown</div>
+                <div class="block-content">
+                
+                    <div class="box2">
+                      <div id="hydro_droplet_bound" style="margin: 0 auto">
+                        <canvas id="hydro_droplet_placeholder"></canvas>
+                      </div>
+                    </div>
+                
+                    <div class="box2">
+                      <div id="community_piegraph_bound" style="width:100%; height:405px; margin: 0 auto">
+                          <canvas id="community_piegraph_placeholder"></canvas>
+                      </div>
+                    </div>
+                    
+                </div>
+            </div>
         </div>
+
+        <!--------------------------------------------------------->
         
         <div class="page" name="tips">
             <div class="block" style="background-color:#014656">Tips</div>
@@ -125,11 +156,16 @@ function t($c) {return $c;}
         <div>Energy Local</div>
     </div>
 </div></div>
-    
+
 </body>
 </html>
 
+<script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
+    
 <script>
+
+$(".block").addClass("expand");
 
 var path = "http://localhost/cydynni/";
 
@@ -153,10 +189,22 @@ function show_page(page) {
     $(".page[name="+page+"]").show();
 }
 
+$(window).resize(function(){
+    resize();
+});
+
+function resize() {
+    window_height = $(window).height();
+    window_width = $(window).width();
+    community_bargraph_resize();   
+    community_pie_draw();
+}
+
 // Flot
 var flot_font_size = 12;
 var previousPoint = false;
 
+community_summary_load();
 community_bargraph_load();
 
 function t(c) {return c;}

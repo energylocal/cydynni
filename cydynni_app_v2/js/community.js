@@ -23,6 +23,108 @@ var community_height = 0;
 view.end = +new Date;
 view.start = view.end - (3600000*24.0*7);
 
+function community_summary_load()
+{
+  $.ajax({                                      
+      url: path+"community/summary/day",
+      dataType: 'json',                  
+      success: function(result) {
+          
+          if (result!="Invalid data") {
+          
+              var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
+              
+              if (result.dayoffset==1) {
+                  $("#community_score_text").html(t("Yesterday we scored"));
+              } else {
+                  if (result.month==undefined) {
+                      $("#community_score_text").html(t("We scored"));
+                  } else {
+                      $("#community_score_text").html(t("We scored")+" "+t("on")+" "+t(result.month)+" "+result.day);
+                  }
+              }
+              
+              $("#community_score").html(score);
+              if (score>20) $("#community_star1").attr("src","images/staryellow.png");
+              if (score>40) setTimeout(function() { $("#community_star2").attr("src","images/staryellow.png"); }, 100);
+              if (score>60) setTimeout(function() { $("#community_star3").attr("src","images/staryellow.png"); }, 200);
+              if (score>80) setTimeout(function() { $("#community_star4").attr("src","images/staryellow.png"); }, 300);
+              if (score>90) setTimeout(function() { $("#community_star5").attr("src","images/staryellow.png"); }, 400);
+              
+              setTimeout(function() {
+                  if (score<30) {
+                      $("#community_statusmsg").html(t("We are using power in a very expensive way"));
+                  }
+                  if (score>=30 && score<70) {
+                      $("#community_statusmsg").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+                  }
+                  if (score>=70) {
+                      $("#community_statusmsg").html(t("We’re doing really well using the hydro and cheaper power"));
+                  }
+                  community_resize();
+              }, 400);
+              
+              // Hydro value retained in the community
+              var hydro_value = result.kwh.hydro * 0.07;
+              
+              // 2nd ssection showing total consumption and cost
+              $(".community_hydro_value").html((hydro_value).toFixed(2));
+              $("#community_value_summary").html("£"+(hydro_value).toFixed(2)+" "+t("kept in the community"));
+              
+              // Community pie chart
+              community_pie_data = [
+                {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
+                {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
+                {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
+                {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
+              ];
+              
+              community_hydro_use = result.kwh.hydro
+              
+              community_pie_draw();
+          } 
+          else
+          {
+          
+          }
+      } 
+  });
+}
+
+function community_pie_draw() {
+
+    var width = $("#piegraph_bound").width();
+    var height = $("#piegraph_bound").height();
+    if (width>400) width = 400;
+    var height = width*0.9;
+    
+    width = 300;
+    height = 300;
+    
+    $("#community_piegraph_placeholder").attr('width',width);
+    $('#piegraph_bound').attr("height",height);
+    $('#community_piegraph_placeholder').attr("height",height);
+    
+    $("#hydro_droplet_placeholder").attr('width',width);
+    $('#hydro_droplet_bound').attr("height",height);
+    $('#hydro_droplet_placeholder').attr("height",height);
+    
+    var options = {
+      color: "#3b6358",
+      centertext: "THIS WEEK",
+      width: width,
+      height: height
+    };
+    
+    // Pie chart
+    piegraph("community_piegraph_placeholder",community_pie_data,options);
+
+    // Hydro droplet
+    hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
+    
+}
+
+
 function community_bargraph_load() {
 
     var npoints = 200;
@@ -173,9 +275,6 @@ function community_bargraph_load() {
                     community_estimate.push([time+(h*interval*1000),community_estimate_raw[h%l]*scale]);
                 }
         }});
-        
-        // var hydro_now = hydro_estimate[hydro_estimate.length-1][1];
-        // var community_now = community_estimate[community_estimate.length-1][1];
        
     }
     // ----------------------------------------------------------------------------
@@ -222,52 +321,11 @@ function community_bargraph_load() {
     });
     
     community_bargraph_draw();
-    
-    // var full_output = (total_time/3600) * 100
-    // $("#hydro_capacity_factor").html(Math.round((total_hydro/full_output)*100));
-    
-    // $("#total_hydro").html(Math.round(total_hydro));
-    // $("#total_community").html(Math.round(total_community));
-    // $("#total_used_hydro").html(Math.round(total_used_hydro));
-    // $("#prc_supply_hydro").html(Math.round((total_used_hydro/total_community)*100));
-    // $("#prc_hydro_used").html(Math.round((total_used_hydro/total_hydro)*100));
 }
 
-function community_resize(panel_height) 
-{
-    community_pie_draw();
-    community_bargraph_resize(panel_height-70);
+function community_bargraph_resize() {
 
-    var width = $(window).width();
-    
-    var shorter_summary = 480;
-
-    if (community_score!=-1) {
-        if (community_score<30) {
-            if (width>shorter_summary) { 
-                $("#community_status_summary").html(t("As a community we are MISSING OUT"));
-            } else {
-                $("#community_status_summary").html(t("We are MISSING OUT"));
-            }
-        }
-        if (community_score>=30 && community_score<70) {
-            if (width>shorter_summary) { 
-                $("#community_status_summary").html(t("As a community we are <b>DOING OK</b>"));
-            } else {
-                $("#community_status_summary").html(t("We are <b>DOING OK</b>"));
-            }
-        }
-        if (community_score>=70) {
-            if (width>shorter_summary) { 
-                $("#community_status_summary").html(t("As a community we are <b>DOING WELL</b>"));
-            } else {
-                $("#community_status_summary").html(t("We are <b>DOING WELL</b>"));
-            }
-        }
-    }
-}
-
-function community_bargraph_resize(h) {
+    var h = 400;
 
     var window_width = $(window).width();
     flot_font_size = 12;
@@ -384,6 +442,7 @@ $('#community_bargraph_placeholder').bind("plotselected", function (event, range
 });
 
 $('#community_bargraph_placeholder').bind("plothover", function (event, pos, item) {
+
     if (item) {
         var z = item.dataIndex;
         var selected_series = communityseries[item.seriesIndex].label;

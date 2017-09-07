@@ -5,7 +5,7 @@ html, body {
 body {
   margin:0;
   padding:0;
-  font-family:sans-serif;
+  font-family: Montserrat, Veranda, sans-serif;
 }
 
 .app {
@@ -63,14 +63,25 @@ body {
 .navigation li:last-child div { margin-right:0px; }
 
 .block {
-  padding:10px;
-  margin-bottom:8px;
-  color:#fff;
-  font-weight:bold;
 
-  height: 20px;
+  margin-bottom:8px;
+  height: 40px;
   overflow:hidden;
   transition: height linear 0.2s;
+}
+
+.block-title {
+    padding:10px;
+    height: 20px;
+    font-weight:bold;
+    color:#fff;
+}
+
+.block-content {
+    padding:10px;
+    background-color:rgba(255,255,255,0.9);
+    height:100%;
+    color:#000;
 }
 
 .expand { height:500px; }
@@ -91,6 +102,23 @@ body {
   color:#fff;
   background-color:#014656;
 }
+
+.box2 {
+  width:50%;
+  float:left;
+  text-align:center;
+}
+
+.legend-label {
+  padding-right:10px;
+}
+
+.legend-label-box {
+  width:15px; height:15px;
+  border: 1px solid #aaa; 
+  display:inline-block;
+}
+
 
 @media (max-width: 750px) {
   .nav-text {
