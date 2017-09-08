@@ -1,6 +1,8 @@
 <?php
-
 define('EMONCMS_EXEC', 1);
+
+include "scheduler.php";
+
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "Lib/EmonLogger.php";
@@ -18,34 +20,26 @@ $schedules = array(
         "interruptible"=>1,
         "runonce"=>$submit_time,
         "repeat"=>array(1,1,1,1,1,1,1),
-        "periods"=>array()
+        "periods"=>array(),
+        "basic"=>1
     ),
     array(
         "device"=>"smartplug",
-        "end"=>8+(30/60),
-        "period"=>30/60,
+        "end"=>18,
+        "period"=>6,
         "interruptible"=>1,
         "runonce"=>$submit_time,
         "repeat"=>array(1,1,1,1,1,0,0),
-        "periods"=>array()
+        "periods"=>array(),
+        "basic"=>0
     )
 );
+$schedules = json_decode(json_encode($schedules));
 
-$schedules = process($schedules);
+for ($i=0; $i<count($schedules); $i++) {
+    $schedules[$i]->periods = schedule($schedules[$i]);
+}
+
+print json_encode($schedules,JSON_PRETTY_PRINT);
 
 $redis->set("schedules",json_encode($schedules));
-
-function process($schedules) {
-    $schedules = json_decode(json_encode($schedules));
-    
-    for ($i=0; $i<count($schedules); $i++) 
-    {
-        $start = $schedules[$i]->end - $schedules[$i]->period;
-        $end = $schedules[$i]->end;
-        $schedules[$i]->periods = array();
-        $schedules[$i]->periods[] = array("start"=>$start, "end"=>$end);
-        
-    }
-
-    return $schedules;
-}

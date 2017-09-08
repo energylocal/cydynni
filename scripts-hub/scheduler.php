@@ -1,7 +1,7 @@
 <?php
 
 function schedule($schedule)
-{
+{   
     $debug = 0;
     
     $end_time = $schedule->end;
