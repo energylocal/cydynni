@@ -25,6 +25,33 @@ function cydynni_controller()
     
     switch ($route->action)
     {  
+        case "schedule":
+            $route->format = "json";
+            
+            if (isset($_GET['schedule'])) {
+                include "/home/pi/cydynni/scripts-hub/scheduler.php";
+                
+                $schedule = json_decode($_GET['schedule']);
+                
+                if (!isset($schedule->device)) return array("content"=>"Missing device parameter in schedule object");
+                if (!isset($schedule->end)) return array("content"=>"Missing end parameter in schedule object");
+                if (!isset($schedule->period)) return array("content"=>"Missing period parameter in schedule object");
+                if (!isset($schedule->interruptible)) return array("content"=>"Missing interruptible parameter in schedule object");
+                
+                $schedule->periods = schedule($schedule);
+                
+                $schedules = array();
+                $schedules[] = $schedule;
+
+                $redis->set("schedules",json_encode($schedules));
+                
+                $result = $schedule;
+            } else {
+                $result = "Schedule object not present";
+            }
+        
+            break;
+    
         case "live":
             $route->format = "json";
             

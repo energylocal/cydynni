@@ -14,16 +14,6 @@ $submit_time = false; //time();
 
 $schedules = array(
     array(
-        "device"=>"smartplug2",
-        "end"=>9,
-        "period"=>6,
-        "interruptible"=>1,
-        "runonce"=>$submit_time,
-        "repeat"=>array(1,1,1,1,1,1,1),
-        "periods"=>array(),
-        "basic"=>1
-    ),
-    array(
         "device"=>"smartplug",
         "end"=>18,
         "period"=>6,
