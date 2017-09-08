@@ -28,11 +28,13 @@ foreach ($schedules as $schedule)
 
     $now = time();
     $status = 0;
+    
+    $second_in_day = $now - $daystart;
 
     foreach ($schedule->periods as $period) {
-        $start = $daystart + ($period->start * 3600);
-        $end = $daystart + ($period->end * 3600);
-        if ($now>=$start && $now<$end) $status = 1;
+        $start = ($period->start * 3600);
+        $end = ($period->end * 3600);
+        if ($second_in_day>=$start && $second_in_day<$end) $status = 1;
     }
 
     // If runonce is true, check if within 24h period
