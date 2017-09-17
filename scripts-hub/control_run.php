@@ -81,6 +81,7 @@ while(true)
                     
                     $r = schedule($schedule);
                     $schedule->periods = $r["periods"];
+                    $schedule->probability = $r["probability"];
                 
                     $schedules[] = $schedule;
                     $redis->set("schedules",json_encode($schedules));
