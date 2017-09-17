@@ -17,7 +17,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 
 function cydynni_controller()
 {
-    global $mysqli, $redis, $session, $route;
+    global $mysqli, $redis, $session, $route, $homedir;
     $result = false;
     
     $route->format = "json";
@@ -29,7 +29,7 @@ function cydynni_controller()
             $route->format = "json";
             
             if (isset($_GET['schedule'])) {
-                include "/home/pi/cydynni/scripts-hub/scheduler.php";
+                include "$homedir/cydynni/scripts-hub/scheduler.php";
                 
                 $schedule = json_decode($_GET['schedule']);
                 
