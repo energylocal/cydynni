@@ -75,7 +75,7 @@ function schedule($schedule)
               
     for ($i=0; $i<48; $i++)
     {
-        if ($hour==$end_time) $available = 0;
+        if ($hour==$end_time && $start_hour!=$end_time) $available = 0;
         
         $state = 0;
     
