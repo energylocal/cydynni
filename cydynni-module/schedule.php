@@ -262,10 +262,10 @@ function draw_schedule_output(result)
             if (1*probability[z][2]==schedule.end) hh = z;
         }
 
-        var markings = [
-          //{ color: "#000", lineWidth: 2, xaxis: { from: probability[hh][0], to: probability[hh][0] } },
-          { color: "rgba(0,0,0,0.1)", xaxis: { from: probability[hh][0] } }
-        ];
+        var markings = [];
+        // { color: "#000", lineWidth: 2, xaxis: { from: probability[hh][0], to: probability[hh][0] } },
+        if (hh>0) markings.push({ color: "rgba(0,0,0,0.1)", xaxis: { from: probability[hh][0] } });
+
 
         var options = {
             bars: { show: true, barWidth:1800*1000*0.75 },// align: 'center'
