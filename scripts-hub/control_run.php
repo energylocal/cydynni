@@ -1,7 +1,7 @@
 <?php
 
 $host = "http://localhost";
-$apikey = "a28fa47b30c74ba9bfd5e7ee63279d47";
+$apikey = "5b07bbd7dad8f483e8112938390a8388";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");

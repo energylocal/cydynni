@@ -37,20 +37,21 @@ function cydynni_controller()
                 if (!isset($schedule->end)) return array("content"=>"Missing end parameter in schedule object");
                 if (!isset($schedule->period)) return array("content"=>"Missing period parameter in schedule object");
                 if (!isset($schedule->interruptible)) return array("content"=>"Missing interruptible parameter in schedule object");
-                if (!isset($schedule->runonce)) return array("content"=>"Missing interruptible parameter in runonce object");
+                if (!isset($schedule->runonce)) return array("content"=>"Missing runonce parameter in schedule object");
                 
                 if ($schedule->runonce) $schedule->runonce = time();
                 
                 $result = schedule($schedule);
                 
                 $schedule->periods = $result["periods"];
+                $schedule->probability = $result["probability"];
                 
                 $schedules = array();
                 $schedules[] = $schedule;
 
                 $redis->set("schedules",json_encode($schedules));
                 
-                $result = array("schedule"=>$schedule);//, "probability"=>$result["probability"]);
+                $result = array("schedule"=>$schedule);
             } else {
                 $result = "Schedule object not present";
             }
@@ -60,7 +61,7 @@ function cydynni_controller()
         case "schedule-get":
             $route->format = "json";
             $schedules = json_decode($redis->get("schedules"));
-            $result = $schedules[0];
+            $result = array("schedule"=>$schedules[0]);
             break;
     
         case "live":
