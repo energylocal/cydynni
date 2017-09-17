@@ -26,7 +26,7 @@ $device = $_GET['node'];
     margin-right:5px;
     width:50px; 
     height:50px; 
-    background-image:url("<?php echo $path; ?>Modules/input/Views/day.png");
+    background-image:url("<?php echo $path; ?>Modules/cydynni/day.png");
     background-size:50px;
     color:#fff;
     font-weight:bold;
@@ -35,7 +35,7 @@ $device = $_GET['node'];
 }
 
 .weekly-scheduler-day[val="1"] {
-    background-image:url("<?php echo $path; ?>Modules/input/Views/day-enabled.png");
+    background-image:url("<?php echo $path; ?>Modules/cydynni/day-enabled.png");
 }
 
 .saved { color:#888 };
