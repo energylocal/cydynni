@@ -19,6 +19,8 @@ $device = $_GET['node'];
     padding:20px;
     background-color:#f6f6f6;
     border: 1px solid #ddd;
+    margin: 0 auto;
+    max-width:700px;
 }
 
 .weekly-scheduler-day {
@@ -68,6 +70,9 @@ $("#devicename").html(jsUcfirst(device));
 
 var controls = {};
 var previousPoint = false;
+var available = [];
+var unavailable = [];
+var options = {};
 
 $.ajax({ url: path+"device/template/get.json?device="+device, dataType: 'json', async: true, success: function(template) { 
     controls = template.control;
@@ -267,7 +272,7 @@ function draw_schedule_output(result)
         if (hh>0) markings.push({ color: "rgba(0,0,0,0.1)", xaxis: { from: probability[hh][0] } });
 
 
-        var options = {
+        options = {
             bars: { show: true, barWidth:1800*1000*0.75 },// align: 'center'
             xaxis: { mode: "time", timezone: "browser" },
             yaxis: { min: 0 },
@@ -276,8 +281,8 @@ function draw_schedule_output(result)
             touch: { pan: "x", scale: "x" }
         }
 
-        var available = [];
-        var unavailable = [];
+        available = [];
+        unavailable = [];
         for (var z in probability) {
             if (probability[z][4]) available.push([probability[z][0],probability[z][1]]);
             if (!probability[z][4]) unavailable.push([probability[z][0],probability[z][1]]);
@@ -286,6 +291,15 @@ function draw_schedule_output(result)
         $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
     }
 
+}
+
+function resize()
+{
+    var width = $("#placeholder_bound").width();
+    $("#placeholder").width(width);
+    //$('#household_bargraph_placeholder_bound').height(h);
+    //$('#household_bargraph_placeholder').height(h);
+    $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
 }
 
 $("#controls").on("change",".timepicker-minute",function(){
@@ -341,6 +355,10 @@ $('#placeholder').bind("plothover", function (event, pos, item)
         $("#tooltip").remove();
         previousPoint = null;
     }
+});
+
+$(window).resize(function(){
+    resize();
 });
 
 function jsUcfirst(string) {return string.charAt(0).toUpperCase() + string.slice(1);}
