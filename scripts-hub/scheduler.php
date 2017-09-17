@@ -132,13 +132,17 @@ function schedule($schedule)
         // Send start_time and period to run for to the device to be controlled
         // print "Schedule start: $start_hour\n";
         
-        
-        $end_hour = $start_hour+$period;
-        if ($end_hour>=24) $end_hour -= 24;
+        $end_hour = $start_hour;
+        for ($i=0; $i<$period*2; $i++) {
+            $end_hour+=0.5;
+            if ($end_hour>=24) $end_hour -= 24;
+            if ($end_hour==$end_time) break;
+        }
         
         $periods = array();
         $periods[] = array("start"=>$start_hour, "end"=>$end_hour);
-        return $periods;
+        
+        return array("periods"=>$periods,"probability"=>$probability);
 
     } else {
         // ---------------------------------------------------------------------------------
@@ -212,6 +216,6 @@ function schedule($schedule)
             $periods[] = array("start"=>$start, "end"=>$end);
         }
         
-        return $periods;
+        return array("periods"=>$periods,"probability"=>$probability);
     }
 }
