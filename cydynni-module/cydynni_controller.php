@@ -26,6 +26,11 @@ function cydynni_controller()
     switch ($route->action)
     {  
         case "schedule":
+            $route->format = "html";
+            $result =  view("Modules/cydynni/schedule.php", array());
+            break;
+        
+        case "schedule-submit":
             $route->format = "json";
             
             if (isset($_GET['schedule'])) {

@@ -215,7 +215,7 @@ function save(data) {
     
     console.log(schedule);
 
-    $.ajax({ url: path+"cydynni/schedule?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
+    $.ajax({ url: path+"cydynni/schedule-submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
         draw_schedule_output(result);
     }});
 }
