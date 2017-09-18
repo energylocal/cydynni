@@ -73,11 +73,20 @@ var previousPoint = false;
 var available = [];
 var unavailable = [];
 var options = {};
+var device_type = false;
 
-$.ajax({ url: path+"device/template/get.json?device="+device, dataType: 'json', async: true, success: function(template) { 
+
+$.ajax({ url: path+"device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
+   for (var z in devicelist) {
+       if (devicelist[z].name==device) device_type = devicelist[z].type;
+   }
+}});
+
+
+$.ajax({ url: path+"device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
     controls = template.control;
     
-    $.ajax({ url: path+"cydynni/schedule-get", dataType: 'json', async: false, success: function(result) {
+    $.ajax({ url: path+"cydynni/schedule-get?device="+device, dataType: 'json', async: false, success: function(result) {
 
         for (var property in controls) {
             if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {

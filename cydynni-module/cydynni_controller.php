@@ -51,9 +51,11 @@ function cydynni_controller()
                 $schedule->periods = $result["periods"];
                 $schedule->probability = $result["probability"];
                 
-                $schedules = array();
-                $schedules[] = $schedule;
-
+                $device = $schedule->device;
+                
+                $schedules = json_decode($redis->get("schedules"));
+                if (!$schedules) $schedules = array();
+                $schedules->$device = $schedule;
                 $redis->set("schedules",json_encode($schedules));
                 
                 $result = array("schedule"=>$schedule);
@@ -65,8 +67,13 @@ function cydynni_controller()
             
         case "schedule-get":
             $route->format = "json";
-            $schedules = json_decode($redis->get("schedules"));
-            $result = array("schedule"=>$schedules[0]);
+            if (isset($_GET['device'])) {
+                $schedules = json_decode($redis->get("schedules"));
+                $device = $_GET['device'];
+                if (isset($schedules->$device)) $schedule = $schedules->$device;
+                else $schedule = array();
+                $result = array("schedule"=>$schedule);
+            }
             break;
     
         case "live":
