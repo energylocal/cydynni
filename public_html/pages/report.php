@@ -36,6 +36,7 @@ $v=1;
       <div style="background-color:#d2279c; height:15px"></div>
       <div class="inner">
         <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
+        <div id="estimated_days" style="color:#666"></div>
         <br><br>
         
         <div style="text-align:center">
@@ -197,6 +198,12 @@ function load()
     var eid = 1;
 
     $(".m"+eid+"-name").html(t(months[month.month-1]));
+    
+    if (month.estimate>0) {
+        $("#estimated_days").html(t("Your report for this month includes")+" "+month.estimate+" "+t("estimated days."));
+    } else {
+        $("#estimated_days").html("");
+    }
 
     data = [
       {name:t("MORNING"), value: month.import.morning, color:"#ffdc00"},

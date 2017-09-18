@@ -233,7 +233,7 @@ function time_to_date($time) {
 // -------------------------------------------------------------
 // Monthly household consumption for report
 // -------------------------------------------------------------
-function get_household_consumption_monthly($baseurl,$token) {
+function get_household_consumption_monthly_old($baseurl,$token) {
     
     // API: 18 (User’s Monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
@@ -310,6 +310,45 @@ function get_household_consumption_monthly($baseurl,$token) {
         
         $data[] = $month;
     }
+    
+    return $data;
+}
+
+// -------------------------------------------------------------
+// Monthly household consumption for report
+// -------------------------------------------------------------
+function get_household_consumption_monthly($baseurl,$token) {
+    
+
+    $str = @file_get_contents($baseurl."1-$token-32");
+    $result = json_decode(substr($str,2));
+    if ($result==null) return "Invalid data";
+    
+    
+    if (!isset($result->DATA)) return "Invalid data";
+    if (!isset($result->DATA[0])) return "Invalid data";
+    
+    $data = array();
+    
+    foreach ($result->DATA as $m) {
+    
+        $month = array();
+        $month["month"] = $m[16];
+        $month["monthdesc"] = $m[17];
+        $month["year"] = $m[18];
+        $month["days"] = $m[19];
+        $month["estimate"] = $m[20];
+        
+        $month["demand"] = array("morning"=>$m[0],"midday"=>$m[1],"evening"=>$m[2],"overnight"=>$m[3],"total"=>$m[4]);
+        $month["hydro"] = array("morning"=>$m[0]-$m[6],"midday"=>$m[1]-$m[7],"evening"=>$m[2]-$m[8],"overnight"=>$m[3]-$m[9],"total"=>$m[5]);
+        $month["import"] = array("morning"=>$m[6],"midday"=>$m[7],"evening"=>$m[8],"overnight"=>$m[9],"total"=>$m[10]);
+        $month["cost"] = array("morning"=>$m[11],"midday"=>$m[12],"evening"=>$m[13],"overnight"=>$m[14],"total"=>$m[15]);
+    
+        $data[] = $month;
+    }
+    
+    // $test = get_household_consumption_monthly_old($baseurl,$token);
+    // if (json_encode($test)==json_encode($data)) print "equalls";
     
     return $data;
 }
