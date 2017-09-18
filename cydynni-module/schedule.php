@@ -80,7 +80,7 @@ $.ajax({ url: path+"device/template/get.json?device="+device, dataType: 'json', 
     $.ajax({ url: path+"cydynni/schedule-get", dataType: 'json', async: false, success: function(result) {
 
         for (var property in controls) {
-            if (result!=null && result.schedule[property]!=undefined) {
+            if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {
                 controls[property].value = result.schedule[property];
             } else {
                 controls[property].value = controls[property].default;
@@ -228,6 +228,8 @@ function save(data) {
 function draw_schedule_output(result)
 {
     var schedule = result.schedule;
+    if (result==null || result.schedule==null) return false;
+
     var out = jsUcfirst(device)+" scheduled to run: ";
 
     var periods = [];
