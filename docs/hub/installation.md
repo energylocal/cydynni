@@ -19,6 +19,8 @@ Connect to the Hub via SSH:
     
 Default emonSD password: emonpi2016
 
+## Hub Emoncms requirements
+
 **1. Switch to emoncms device-support branch**
 
 The device-support branch provides support for device configuration in the emoncms input list extending and providing support for the device module installed in step 2 below.
@@ -36,6 +38,14 @@ The device module is used for device auto-configuration on the hub. It handles t
     git clone https://github.com/emoncms/device.git
     cd /var/www/emoncms/Modules/device
     git checkout device-integration
+    
+Modify emoncms settings.php to use the integrated device UI:
+
+    nano /var/www/emoncms/settings.php
+
+Add line to bottom of settings.php:
+
+    $ui_version_2 = true;
      
 **3. Install emoncms Demand Shaper module**
 
@@ -59,3 +69,52 @@ Add demand shaper background process to crontab:
     crontab -e
     * * * * * php /home/pi/demandshaper/run.php 2>&1
 
+**4. Add UDP Broadcast to cron for hub detection:**
+
+    crontab -e
+    * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
+    
+**5. Update emoncms database**
+
+    php /home/pi/emonpi/emoncmsdbupdate.php
+
+### CydYnni App front-end
+
+The following steps detail how to install the CydYnni App frontend on the hub. The CydYnni front-end sits as a user interface layer on top of the emonSD + emoncms stack as installed above.
+
+Install the cydynni repository:
+
+    cd
+    git clone https://github.com/trystanlea/cydynni.git
+    
+Create a symbolic link of the public_html_hub directory to /var/www
+
+    ln -s /home/pi/cydynni/public_html_hub /var/www/cydynni
+    ln -s /var/www/cydynni /var/www/html/cydynni
+
+Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
+
+    ln -s /home/pi/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
+    
+Update emoncms database:
+
+    php /home/pi/emonpi/emoncmsdbupdate.php
+
+Add CydYnni syncronisation script (period download of hydro, community and smart meter data) to crontab:
+
+    sudo crontab -e
+    */5 * * * * php /home/pi/cydynni/scripts-hub/sync.php 2>&1
+
+### Testing
+
+Thats it for now! Login to the hub with your cydynni account at:
+
+    http://emonpi.local/cydynni
+    
+The hub will now link to the remote cydynni.org.uk account and download a local copy of the cydynni hydro and community data as well as any historic smart meter data.
+
+To test the demand shaper and schedule appliances, login to emoncms on the hub:
+
+    http://emonpi.local/emoncms
+    
+Navigate to Setup > Inputs 
