@@ -53,7 +53,7 @@ The CydYnni front-end app is combined with the emoncms data backend to deliver t
 
 The CydYnni app shares many of the requirements provided for by the OpenEnergyMonitor Emoncms application including user authentication, data storage, data visualisation & MQTT integration. 
 
-The CydYnni hub app requires a more user-friendly interface without many of the advanced features available in Emoncms but it still shares these core features making it possible to build on top of Emoncms for faster, more efficient development and accessiblity to wider Emoncms features when needed.
+The CydYnni hub app requires a more user-friendly interface without many of the advanced features available in Emoncms but it still shares these core features making it possible to build on top of Emoncms for faster, more efficient development and accessibility to wider Emoncms features when needed.
 
 ### Client and server code
 
@@ -119,7 +119,7 @@ The CydYnni Hub has a MQTT broker installed to which devices in the home can con
 
 ### Over the air updates
 
-The CydYnni hub will extend the existing emonSD OTA update implemntation but with the option to trigger an update remotely. The current OTA emonSD process consists of a user triggered background script that runs through a controlled update and upgrade process.
+The CydYnni hub will extend the existing emonSD OTA update implementation but with the option to trigger an update remotely. The current OTA emonSD process consists of a user triggered background script that runs through a controlled update and upgrade process.
 
 ### WIFI Device pairing implementation
 

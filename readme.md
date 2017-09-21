@@ -5,9 +5,17 @@ Cyd Ynni : Ynni Lleol is a community project linking up households with local co
 
 ## Documentation
 
-- [About](docs/about.md)
+- [Blog: Introduction](https://blog.openenergymonitor.org/2017/08/cydynni-energylocal/)
 - [System Architecture](docs/architecture.md)
+
+**CydYnni Hub**
+
 - [Hub: Software Installation Guide](docs/hub/installation.md)
+
+**CydYnni App**
+
+- [Web App: Software Installation Guide](docs/web/installation.md)
+- [Web App: API Documentation](docs/web/api.md)
 
 ## CydYnni App [http://cydynni.org.uk](http://cydynni.org.uk)
 
@@ -33,46 +41,6 @@ The CydYnni app is a mobile friendly web app also packaged as an android and iOS
 ### Licence
 
 This software is available under the GNU Affero General Public Licence see Licence and Copyright files.
-
-### Basic API's
-
-Live status:
-
-    https://cydynni.org.uk/live
-    
-Hydro output history (feedid 1):
-
-    https://cydynni.org.uk/feed/average.json?id=1&start=UNIXTIME_MILLISECONDS&end=UNIXTIME_MILLISECONDS&interval=1800
-    
-Community consumption history (feedid 2):
-
-    https://cydynni.org.uk/feed/average.json?id=2&start=UNIXTIME_MILLISECONDS&end=UNIXTIME_MILLISECONDS&interval=1800
-
-Community daily summary:
-
-    https://cydynni.org.uk/community/summary/day
-
-Community monthly summaries:
-
-    https://cydynni.org.uk/community/summary/monthly
-
-Demand shaper:
-
-    https://cydynni.org.uk/demandshaper
-
-**User session required**
-
-Household daily summary:
-
-    https://cydynni.org.uk/household/summary/day
-
-Household monthly summaries:
-
-    https://cydynni.org.uk/household/summary/monthly
-
-Household consumption history:
-
-    https://cydynni.org.uk/data?start=UNIXTIME_MILLISECONDS&end=UNIXTIME_MILLISECONDS
 
 ### Installation notes
 
