@@ -8,7 +8,13 @@ require "Lib/EmonLogger.php";
 
 // 1. Load redis
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+if (!$redis->connect($redis_server['host'], $redis_server['port'])) { echo "Can't connect to redis"; die; }
+
+if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
+if (!empty($redis_server['auth']) && !$redis->auth($redis_server['auth'])) {
+    echo "Can't connect to redis, autentication failed"; die;
+}
+
 // 2. Load mysql
 $mysqli = @new mysqli($server,$username,$password,$database,$port);
 // 3. Load feed model
@@ -61,9 +67,7 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
 // 6. Fetch remote account feeds
 // -----------------------------------------------------
 $remote_feeds = array();
-$remote_host = "https://emoncms.cydynni.org.uk";
-$tmp = json_decode(file_get_contents("$remote_host/feed/list.json?apikey=".$user->apikey_read));
-foreach ($tmp as $f) $remote_feeds[$f->name] = $f->id;
+$remote_host = "http://emoncms.cydynni.org.uk";
 
 $feedname = "hydro";
 print "$feedname\n";
@@ -77,12 +81,20 @@ $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,2,fals
 $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
 print "--lastvalue: ".json_encode($lastvalue)."\n";
 
-$feedname = "halfhour_consumption";
-print "$feedname\n";
-$lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
-$redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
-print "--lastvalue: ".json_encode($lastvalue)."\n";
+// -----------------------------------------------------
+$result = @file_get_contents("$remote_host/feed/list.json?apikey=".$user->apikey_read);
+if ($result) {
+    $tmp = json_decode($result);
+    if ($tmp!=null) {
+        foreach ($tmp as $f) $remote_feeds[$f->name] = $f->id;
 
+        $feedname = "halfhour_consumption";
+        print "$feedname\n";
+        $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
+        $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+        print "--lastvalue: ".json_encode($lastvalue)."\n";
+    }
+}
 
 $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
 $redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
