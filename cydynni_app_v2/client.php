@@ -47,8 +47,8 @@ $v = 2;
         <!--------------------------------------------------------->
         
         <div class="page" name="forecast">
-            <div class="block expand" style="background-color:#39aa1a">
-                <div class="block-title">Forecast</div>
+            <div class="block expand">
+                <div class="block-title" style="background-color:#39aa1a">Forecast</div>
                 <div class="block-content">
 
                   <div style="padding-top:5px; padding-bottom:5px">
@@ -70,14 +70,14 @@ $v = 2;
 
                 </div>
             </div>
-            <div class="block" style="background-color:#088400">
-                <div class="block-title">Forecast</div>
+            <div class="block">
+                <div class="block-title" style="background-color:#088400">Forecast</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
-            <div class="block" style="background-color:#005b0b">
-                <div class="block-title">Forecast</div>
+            <div class="block">
+                <div class="block-title" style="background-color:#005b0b">Forecast</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
@@ -87,31 +87,41 @@ $v = 2;
         <!--------------------------------------------------------->
         
         <div class="page" name="household">
-            <div class="block" style="background-color:#c20000">
-                <div class="block-title">Household</div>
-                
-                <div class="block-spacer"></div>
+            <div class="block">
+              <div class="block-title" style="background-color:#c20000">Your Score and Savings</div>
+              
+              <div class="block-content" style="color:#c20000">
+              
+                <div style="background-color:#c20000; color:#fff">
+                  <b>Over the last seven days you<br>scored:</b>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px">80/100</div>
+                </div>
                 
                 <div class="no-padding">
                   <div class="triangle-wrapper"> 
                     <div class="triangle-down">
-                      <div class="triangle-down-content"></div>
+                      <div class="triangle-down-content triangle-household-bg"></div>
                     </div>
                   </div>
                 </div>
-                
-              <div class="block-content">
-                <p>Test</p>
+                <br>
+                <img id="household_star1" src="images/starred.png" style="width:45px">
+                <img id="household_star2" src="images/starred.png" style="width:45px">
+                <img id="household_star3" src="images/star20red.png" style="width:45px">
+                <img id="household_star4" src="images/star20red.png" style="width:45px">
+                <img id="household_star5" src="images/star20red.png" style="width:45px">
+              
+                <p>Your doing really well at using hydro & cheaper power</p>
               </div>
             </div>
-            <div class="block" style="background-color:#e62f31">
-                <div class="block-title">Household2</div>
+            <div class="block">
+                <div class="block-title" style="background-color:#e62f31">Household2</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
-            <div class="block" style="background-color:#f47677">
-                <div class="block-title">Household3</div>
+            <div class="block">
+                <div class="block-title" style="background-color:#f47677">Household3</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
@@ -121,22 +131,35 @@ $v = 2;
         <!--------------------------------------------------------->
 
         <div class="page" name="community">
-            <div class="block" style="background-color:#ffb401">
-                <div class="block-title">Community score and savings</div>
-                <div class="block-content" style="text-align:center">
-
-                    <p><span id="community_score_text"><?php echo t("Over the last seven days we<br>scored"); ?></span>:<br><span id="community_score">50</span>/100</p>
-                    <img id="community_star1" src="images/staryellow.png" style="width:45px">
-                    <img id="community_star2" src="images/staryellow.png" style="width:45px">
-                    <img id="community_star3" src="images/star20yellow.png" style="width:45px">
-                    <img id="community_star4" src="images/star20yellow.png" style="width:45px">
-                    <img id="community_star5" src="images/star20yellow.png" style="width:45px">
-                    <p id="community_statusmsg"></p>
-                    
+            <div class="block">
+                <div class="block-title" style="background-color:#ffb401">Community score and savings</div>
+                
+                <div class="block-content" style="color:#ffb401">
+                
+                  <div style="background-color:#ffb401; color:#fff">
+                    <b>Over the last seven days you<br>scored:</b>
+                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="community_score">50</span>/100</div>
+                  </div>
+                  
+                  <div class="no-padding">
+                    <div class="triangle-wrapper"> 
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-community-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <img id="community_star1" src="images/staryellow.png" style="width:45px">
+                  <img id="community_star2" src="images/staryellow.png" style="width:45px">
+                  <img id="community_star3" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star4" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star5" src="images/star20yellow.png" style="width:45px">
+                
+                  <p id="community_statusmsg"></p>
                 </div>
             </div>
-            <div class="block" style="background-color:#ff7900">
-                <div class="block-title">Community breakdown</div>
+            <div class="block">
+                <div class="block-title" style="background-color:#ff7900">Community breakdown</div>
                 <div class="block-content">
 
                     <div class="box2">
@@ -192,11 +215,15 @@ $(".navigation li").click(function() {
 });
 
 $(".block").click(function() {
-    $(this).toggleClass("expand");
+    //$(this).toggleClass("expand");
+    //var h = $(this).find(".block-content").height();
+    //$(this).css("height",h);
+    
+    $(this).find(".block-content").slideToggle( "slow" );
 });
 
 function show_page(page) {
-    console.log(page);
+
     // Highlighted selected menu
     $(".navigation li > div").removeClass("active");
     $(".navigation li[name="+page+"] > div").addClass("active");
