@@ -1,7 +1,7 @@
 <?php
 
 global $path;
-$v = 1;
+$v = 2;
 
 ?>
 
@@ -89,13 +89,17 @@ $v = 1;
         <div class="page" name="household">
             <div class="block" style="background-color:#c20000">
                 <div class="block-title">Household</div>
+                
                 <div class="block-spacer"></div>
+                
                 <div class="no-padding">
-                  <div class="triangle-wrapper"> <!--- trianglular wedge --->
+                  <div class="triangle-wrapper"> 
                     <div class="triangle-down">
                       <div class="triangle-down-content"></div>
                     </div>
+                  </div>
                 </div>
+                
               <div class="block-content">
                 <p>Test</p>
               </div>
@@ -113,13 +117,14 @@ $v = 1;
                 </div>
             </div>
         </div>
-        
+       
         <!--------------------------------------------------------->
-        
+
         <div class="page" name="community">
             <div class="block" style="background-color:#ffb401">
                 <div class="block-title">Community score and savings</div>
                 <div class="block-content" style="text-align:center">
+
                     <p><span id="community_score_text"><?php echo t("Over the last seven days we<br>scored"); ?></span>:<br><span id="community_score">50</span>/100</p>
                     <img id="community_star1" src="images/staryellow.png" style="width:45px">
                     <img id="community_star2" src="images/staryellow.png" style="width:45px">
@@ -127,12 +132,13 @@ $v = 1;
                     <img id="community_star4" src="images/star20yellow.png" style="width:45px">
                     <img id="community_star5" src="images/star20yellow.png" style="width:45px">
                     <p id="community_statusmsg"></p>
+                    
                 </div>
             </div>
             <div class="block" style="background-color:#ff7900">
                 <div class="block-title">Community breakdown</div>
                 <div class="block-content">
-                
+
                     <div class="box2">
                       <div id="hydro_droplet_bound" style="margin: 0 auto">
                         <canvas id="hydro_droplet_placeholder"></canvas>
@@ -148,7 +154,6 @@ $v = 1;
                 </div>
             </div>
         </div>
-
         <!--------------------------------------------------------->
         
         <div class="page" name="tips">
@@ -172,7 +177,7 @@ $v = 1;
 
 <script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
-    
+
 <script>
 
 $(".block").addClass("expand");
@@ -191,6 +196,7 @@ $(".block").click(function() {
 });
 
 function show_page(page) {
+    console.log(page);
     // Highlighted selected menu
     $(".navigation li > div").removeClass("active");
     $(".navigation li[name="+page+"] > div").addClass("active");

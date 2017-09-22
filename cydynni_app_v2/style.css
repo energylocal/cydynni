@@ -160,9 +160,8 @@ body {
 
 .no-padding { /*remove padding on container by adding class*/
   padding: 0;
-  height: 50px;
-    background-color:rgba(255,255,255,0.9);
-    color:#000;
+  background-color:rgba(255,255,255,0.9);
+  color:#000;
 }
 
 .triangle-wrapper {

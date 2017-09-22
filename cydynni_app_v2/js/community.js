@@ -61,7 +61,7 @@ function community_summary_load()
                   if (score>=70) {
                       $("#community_statusmsg").html(t("We’re doing really well using the hydro and cheaper power"));
                   }
-                  community_resize();
+                  //community_resize();
               }, 400);
               
               // Hydro value retained in the community
