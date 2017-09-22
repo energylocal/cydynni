@@ -1,11 +1,18 @@
 html, body {
-    height: 100%;
+  height: 100%;
 }
 
 body {
   margin:0;
   padding:0;
   font-family: Montserrat, Veranda, sans-serif;
+}
+
+:root {
+  --forecast-bg-color: #39aa1a; /*site colors used as variables*/
+  --household-bg-color: #c20000;
+  --community-bg-color: #ffb401;
+  --tips-bg-color: #014656;
 }
 
 .app {
@@ -24,11 +31,11 @@ body {
 }
 
 .app-title {
-  float:right; 
+  float:right;
   text-align:right;
-  font-size:30px; 
-  font-weight:bold; 
-  padding:10px 10px 0px 0px; 
+  font-size:30px;
+  font-weight:bold;
+  padding:10px 10px 0px 0px;
   color:#014655;
 }
 
@@ -48,10 +55,10 @@ body {
     cursor:pointer;
 }
 
-.navigation li[name=forecast] div { background-color: #39aa1a; }
-.navigation li[name=household] div { background-color: #c20000; }
-.navigation li[name=community] div { background-color: #ffb401; }
-.navigation li[name=tips] div { background-color: #014656; }
+.navigation li[name=forecast] div { background-color: var(--forecast-bg-color); }
+.navigation li[name=household] div { background-color: var(--household-bg-color); }
+.navigation li[name=community] div { background-color: var(--community-bg-color); }
+.navigation li[name=tips] div { background-color: var(--tips-bg-color); }
 
 .navigation li > div {
     height:50px;
@@ -86,7 +93,7 @@ body {
 
 .expand { height:500px; }
 
-.navigation li div img { 
+.navigation li div img {
   float:left;
   height:50px;
 }
@@ -115,7 +122,7 @@ body {
 
 .legend-label-box {
   width:15px; height:15px;
-  border: 1px solid #aaa; 
+  border: 1px solid #aaa;
   display:inline-block;
 }
 
@@ -140,4 +147,44 @@ body {
 @media (min-width: 750px) {
   .logo-mobile { display:none }
   .logo-full { display:block }
+}
+
+/*triangular wedge>>*/
+
+.block-spacer { /*padding above wedge*/
+  background-color: var(--household-bg-color);
+  height: 100px;
+  width: 100%;
+  border-top: 8px solid #ffffff;
+}
+
+.no-padding { /*remove padding on container by adding class*/
+  padding: 0;
+  height: 50px;
+    background-color:rgba(255,255,255,0.9);
+    color:#000;
+}
+
+.triangle-wrapper {
+  margin: 0;
+}
+
+.triangle-down { /*triangle wedge*/
+  margin: 0;
+  box-sizing: content-box;
+  width: 50%;
+  height: 0;
+  padding-left:50%;
+  padding-top: 5%;
+  overflow: hidden;
+}
+
+.triangle-down-content { /*triangle wedge*/
+  width: 0;
+  height: 0;
+  margin-left:-1000px;
+  margin-top:-100px;
+  border-left: 1000px solid transparent;
+  border-right: 1000px solid transparent;
+  border-top: 100px solid  var(--household-bg-color);
 }

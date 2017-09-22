@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 global $path;
-$v = 1; 
+$v = 1;
 
 ?>
 
@@ -14,15 +14,15 @@ $v = 1;
     
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
     
-    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script> 
-    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script> 
-    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script>
     <script type="text/javascript" src="lib/flot/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="lib/flot/date.format.js"></script> 
-    <script type="text/javascript" src="lib/vis.helper.js"></script> 
-    <script type="text/javascript" src="lib/feed.js"></script> 
+    <script type="text/javascript" src="lib/flot/date.format.js"></script>
+    <script type="text/javascript" src="lib/vis.helper.js"></script>
+    <script type="text/javascript" src="lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
 
   </head>
   <body>
@@ -89,18 +89,25 @@ $v = 1;
         <div class="page" name="household">
             <div class="block" style="background-color:#c20000">
                 <div class="block-title">Household</div>
-                <div class="block-content">
-                    <p>Test</p>
+                <div class="block-spacer"></div>
+                <div class="no-padding">
+                  <div class="triangle-wrapper"> <!--- trianglular wedge --->
+                    <div class="triangle-down">
+                      <div class="triangle-down-content"></div>
+                    </div>
                 </div>
+              <div class="block-content">
+                <p>Test</p>
+              </div>
             </div>
             <div class="block" style="background-color:#e62f31">
-                <div class="block-title">Household</div>
+                <div class="block-title">Household2</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
             <div class="block" style="background-color:#f47677">
-                <div class="block-title">Household</div>
+                <div class="block-title">Household3</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
@@ -111,7 +118,7 @@ $v = 1;
         
         <div class="page" name="community">
             <div class="block" style="background-color:#ffb401">
-                <div class="block-title">Your score and savings</div>
+                <div class="block-title">Community score and savings</div>
                 <div class="block-content" style="text-align:center">
                     <p><span id="community_score_text"><?php echo t("Over the last seven days we<br>scored"); ?></span>:<br><span id="community_score">50</span>/100</p>
                     <img id="community_star1" src="images/staryellow.png" style="width:45px">
@@ -199,7 +206,7 @@ $(window).resize(function(){
 function resize() {
     window_height = $(window).height();
     window_width = $(window).width();
-    community_bargraph_resize();   
+    community_bargraph_resize();
     community_pie_draw();
 }
 
