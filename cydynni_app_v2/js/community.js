@@ -21,7 +21,7 @@ var community_height = 0;
 
 // Initial view range 24 hours
 view.end = +new Date;
-view.start = view.end - (3600000*24.0*7);
+view.start = view.end - (3600000*24.0*4);
 
 function community_summary_load()
 {

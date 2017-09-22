@@ -115,6 +115,12 @@ body {
   text-align:center;
 }
 
+.box3 {
+  width:33%;
+  float:left;
+  text-align:center;
+}
+
 .legend-label {
   padding-right:10px;
 }
@@ -125,6 +131,9 @@ body {
   display:inline-block;
 }
 
+@media (max-width: 500px) {
+  .box3 { width:100% }
+}
 
 @media (max-width: 750px) {
   .nav-text {
@@ -141,6 +150,8 @@ body {
   
   .logo-mobile { display:block }
   .logo-full { display:none }
+  
+
 }
     
 @media (min-width: 750px) {
@@ -215,6 +226,10 @@ body {
 	font-size:36px;
 	font-weight:bold;
 }
+
+.bg-hydro { background-color: #29aae3; color:#fff; }
+.bg-forecast { background-color: #39aa1a; color:#fff; }
+.bg-topup { background-color: #005b0b; color:#fff; }
 
 .bg-household { background-color: var(--household-bg-color); color:#fff; }
 .bg-community { background-color: var(--community-bg-color); color:#fff; }

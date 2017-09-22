@@ -101,7 +101,7 @@ $v = 2;
                 <div class="block-title" style="background-color:#005b0b">Top up electricity</div>
                 <div class="block-content">
                   <div style="background-color:#005b0b; color:#fff">
-                    Sometimes we need electricity from the grid to<br>top up the power produced by the hydro.
+                    Sometimes we need electricity from the grid to<br>top up the power produced by the hydro.<br><br>
                     <b>You're currently on the</b>
                   </div>
                   
@@ -118,11 +118,59 @@ $v = 2;
                   <br>
                   
                   <div style="background-color:#005b0b; color:#fff">
-                    <div style="padding:5px">
-                      <p>in the local area by using your local resource<br>hydro power!</p>
+                    <div style="padding:20px">
+                      and the price at other times...
+                    </div>
+                  </div>
+                  <br>
+                  
+                  <div class="box3" style="color:#c20000">
+                      <div style="font-size:26px; font-weight:bold">EVENING<br>PRICE</div>
+                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div class="circle bg-household"><div class="circle-inner">14p</div></div>
+                      <div style="font-size:24px; font-weight:bold">4pm - 8pm</div>
+                  </div>
+                  
+                  <div class="box3" style="color:#ffb401">
+                      <div style="font-size:26px; font-weight:bold">OVERNIGHT<br>PRICE</div>
+                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div class="circle bg-community"><div class="circle-inner">7.25p</div></div>
+                      <div style="font-size:24px; font-weight:bold">8pm - 6am</div>
+                  </div>
+                  
+                  <div class="box3" style="color:#39aa1a">
+                      <div style="font-size:26px; font-weight:bold">MORNING<br>PRICE</div>
+                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div class="circle bg-forecast"><div class="circle-inner">12p</div></div>
+                      <div style="font-size:24px; font-weight:bold">6am - 11am</div>
+                  </div>
+                  
+                  <div style="clear:both"></div>
+                  <br>
+                  
+                  <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
+                    <div style="padding:20px">
+                      If you wait til 8pm, you'll be on the<br>off peak tariff - that's 30% cheaper
                     </div>
                   </div>
                 
+                  <div style="background-color:#29aae3; color:#fff">
+                    <div style="padding:20px">
+                      Your local, clean energy<br>
+                      HYDRO PRICE
+                    </div>
+                  </div>
+                
+                  <br>
+                  <div class="circle bg-hydro"><div class="circle-inner">7p</div></div>
+                  <br>
+                  
+                  <div style="background-color:#29aae3; color:#fff">
+                    <div style="padding:20px">
+                      Check the Hydro tab to see when it's running!
+                    </div>
+                  </div>
+                  
                 </div>
             </div>
         </div>
