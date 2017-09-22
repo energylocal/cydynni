@@ -47,11 +47,36 @@ $v = 2;
         <!--------------------------------------------------------->
         
         <div class="page" name="forecast">
-            <div class="block expand">
-                <div class="block-title" style="background-color:#39aa1a">Forecast</div>
-                <div class="block-content">
 
-                  <div style="padding-top:5px; padding-bottom:5px">
+            <div class="block">
+                <div class="block-title" style="background-color:#39aa1a">Good time to use?</div>
+                <div class="block-content">
+                  <div style="background-color:#39aa1a; color:#fff">
+
+                    <img src="images/new-tick.png"/>
+                    
+                    <br>
+                    <div style="font-size:32px; font-weight:bold">GO!</div>
+                    Why? Plenty of hydro currently available<br><br>
+                    
+                  </div>
+                </div>
+            </div>
+        
+            <div class="block">
+                <div class="block-title" style="background-color:#39aa1a">Current Forecast</div>
+                <div class="block-content">
+                
+                  <div class="no-padding">
+                    <div class="triangle-wrapper"> 
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-forecast-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="padding:10px">
+                    <div style="padding-top:5px; padding-bottom:5px">
                       <div class="legend-label-box" style="background-color:#ffb401"></div>
                       <span class="legend-label"><?php echo t("Morning");?></span>
                       <div class="legend-label-box" style="background-color:#4dac34"></div>
@@ -62,24 +87,42 @@ $v = 2;
                       <span class="legend-label"><?php echo t("Overnight");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
                       <span class="legend-label" >Hydro</span>
-                  </div>
-                  
-                  <div id="community_bargraph_bound" style="width:100%; height:405px;">
-                    <div id="community_bargraph_placeholder" style="height:405px"></div>
+                    </div>
+                    
+                    <div id="community_bargraph_bound" style="width:100%; height:405px;">
+                      <div id="community_bargraph_placeholder" style="height:405px"></div>
+                    </div>
                   </div>
 
                 </div>
             </div>
+                        
             <div class="block">
-                <div class="block-title" style="background-color:#088400">Forecast</div>
+                <div class="block-title" style="background-color:#005b0b">Top up electricity</div>
                 <div class="block-content">
-                    <p>Test</p>
-                </div>
-            </div>
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b">Forecast</div>
-                <div class="block-content">
-                    <p>Test</p>
+                  <div style="background-color:#005b0b; color:#fff">
+                    Sometimes we need electricity from the grid to<br>top up the power produced by the hydro.
+                    <b>You're currently on the</b>
+                  </div>
+                  
+                  <div class="no-padding">
+                    <div class="triangle-wrapper"> 
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-topup-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+                    
+                  <br>
+                  <div class="circle bg-community"><div class="circle-inner">£12.68</div></div>
+                  <br>
+                  
+                  <div style="background-color:#005b0b; color:#fff">
+                    <div style="padding:5px">
+                      <p>in the local area by using your local resource<br>hydro power!</p>
+                    </div>
+                  </div>
+                
                 </div>
             </div>
         </div>
@@ -88,11 +131,11 @@ $v = 2;
         
         <div class="page" name="household">
             <div class="block">
-              <div class="block-title" style="background-color:#c20000">Your Score and Savings</div>
+              <div class="block-title bg-household">Your Score and Savings</div>
               
               <div class="block-content" style="color:#c20000">
               
-                <div style="background-color:#c20000; color:#fff">
+                <div class="bg-household">
                   <b>Over the last seven days you<br>scored:</b>
                   <div style="font-size:22px; font-weight:bold; padding-top:5px">80/100</div>
                 </div>
@@ -112,16 +155,36 @@ $v = 2;
                 <img id="household_star5" src="images/star20red.png" style="width:45px">
               
                 <p>Your doing really well at using hydro & cheaper power</p>
+                
+                <div class="bg-household" style="height:100px">
+                  <div style="padding:5px">
+                    <p>Your used 7.3 kWh on June 24.<br>It cost £0.68</p>
+                    <p>Compared with 12p/kWh reference price, you<br>saved:</p>
+                  </div>
+                </div>
+                
+                <div class="no-padding">
+                  <div class="triangle-wrapper"> 
+                    <div class="triangle-down">
+                      <div class="triangle-down-content triangle-household-bg"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <br>
+                <div class="circle bg-household"><div class="circle-inner">£0.25</div></div>
+                
               </div>
             </div>
+            
             <div class="block">
-                <div class="block-title" style="background-color:#e62f31">Household2</div>
+                <div class="block-title" style="background-color:#e62f31">Your usage over the last 24 hrs</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
             <div class="block">
-                <div class="block-title" style="background-color:#f47677">Household3</div>
+                <div class="block-title" style="background-color:#f47677">Your usage by price</div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
@@ -156,6 +219,30 @@ $v = 2;
                   <img id="community_star5" src="images/star20yellow.png" style="width:45px">
                 
                   <p id="community_statusmsg"></p>
+                  
+                <div style="background-color:#ffb401; color:#fff; height:50px">
+                  <div style="padding:5px">
+                    <p>Together you've kept</p>
+                  </div>
+                </div>
+                
+                <div class="no-padding">
+                  <div class="triangle-wrapper"> 
+                    <div class="triangle-down">
+                      <div class="triangle-down-content triangle-community-bg"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <br>
+                <div class="circle bg-community"><div class="circle-inner">£12.68</div></div>
+                <br>
+                <div style="background-color:#ffb401; color:#fff">
+                  <div style="padding:5px">
+                    <p>in the local area by using your local resource<br>hydro power!</p>
+                  </div>
+                </div>
+                  
                 </div>
             </div>
             <div class="block">

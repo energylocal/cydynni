@@ -6,6 +6,7 @@ body {
   margin:0;
   padding:0;
   font-family: Montserrat, Veranda, sans-serif;
+  background-color:WhiteSmoke;
 }
 
 :root {
@@ -86,6 +87,7 @@ body {
 
 .block-content {
     height:100%;
+    background-color:#fff;
 }
 
 /*.expand { height:500px; }*/
@@ -184,6 +186,14 @@ body {
   border-right: 1000px solid transparent;
 }
 
+.triangle-forecast-bg {
+  border-top: 100px solid #39aa1a;
+}
+
+.triangle-topup-bg {
+  border-top: 100px solid #005b0b;
+}
+
 .triangle-household-bg {
   border-top: 100px solid  var(--household-bg-color);
 }
@@ -191,3 +201,22 @@ body {
 .triangle-community-bg {
   border-top: 100px solid  var(--community-bg-color);
 }
+
+.circle {
+  margin: 0 auto;
+	border-radius: 50%;
+	width: 150px;
+	height: 150px;
+}
+
+.circle-inner {
+	color:#fff;
+	padding-top: 50px;
+	font-size:36px;
+	font-weight:bold;
+}
+
+.bg-household { background-color: var(--household-bg-color); color:#fff; }
+.bg-community { background-color: var(--community-bg-color); color:#fff; }
+
+
