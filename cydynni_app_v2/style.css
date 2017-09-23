@@ -122,6 +122,12 @@ body {
   text-align:center;
 }
 
+.box4 {
+  width:25%;
+  float:left;
+  text-align:center;
+}
+
 .legend-label {
   padding-right:10px;
 }
@@ -132,8 +138,8 @@ body {
   display:inline-block;
 }
 
-@media (max-width: 500px) {
-  .box3 { width:100% }
+@media (max-width: 650px) {
+  .box2, .box3, .box4 { float:none; width:100%; margin-bottom:10px; }
 }
 
 @media (max-width: 750px) {
@@ -242,6 +248,11 @@ body {
 }
 
 .bg-hydro { background-color: #29aae3; color:#fff; }
+.bg-morning { background-color: #ffb401; color:#fff; }
+.bg-midday { background-color: #4dac34; color:#fff; }
+.bg-evening { background-color: #e6602b; color:#fff; }
+.bg-overnight { background-color: #014c2d; color:#fff; }
+
 .bg-forecast { background-color: #39aa1a; color:#fff; }
 .bg-topup { background-color: #005b0b; color:#fff; }
 .bg-tips { background-color: #014656; color:#fff; }

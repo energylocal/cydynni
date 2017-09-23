@@ -104,7 +104,7 @@ $v = 2;
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t("Hydro output is currently exceeding community consumption by 2.1x!"); ?><br>
+                  <?php echo t("Hydro output is currently exceeding community consumption"); ?><br>
                   <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated hydro output and community consumption up to the present time"); ?></span>
                   </div>
 
@@ -128,10 +128,10 @@ $v = 2;
                   </div>
                     
                   <br>
-                  <div style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
-                  <div class="circle bg-hydro">
+                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
+                  <div id="tariff-now-circle" class="circle bg-hydro">
                       <div class="circle-inner">
-                          <div style="font-size:36px">7p</div>
+                          <div id="tariff-now-price" style="font-size:36px">7p</div>
                           <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                       </div>
                   </div>
@@ -144,10 +144,38 @@ $v = 2;
                   </div>
                   <br>
                   
-                  <div class="box3" style="color:#c20000">
+                  <div class="box4" style="color:#ffb401">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+
+                      <div class="circle bg-morning">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">12p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+
+                      <div style="font-size:24px; font-weight:bold">6am - 11am</div>
+                  </div>
+                  
+                  <div class="box4" style="color:#4dac34">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+
+                      <div class="circle bg-midday">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">10p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+
+                      <div style="font-size:24px; font-weight:bold">11am - 4pm</div>
+                  </div>
+                  
+                  <div class="box4" style="color:#e6602b">
                       <div style="font-size:26px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
                       <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>
-                      <div class="circle bg-household">
+                      <div class="circle bg-evening">
                           <div class="circle-inner">
                               <div style="font-size:36px">14p</div>
                               <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -156,11 +184,11 @@ $v = 2;
                       <div style="font-size:24px; font-weight:bold">4pm - 8pm</div>
                   </div>
                   
-                  <div class="box3" style="color:#ffb401">
+                  <div class="box4" style="color:#014c2d">
                       <div style="font-size:26px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
                       <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
                       
-                      <div class="circle bg-community">
+                      <div class="circle bg-overnight">
                           <div class="circle-inner">
                               <div style="font-size:36px">7.25p</div>
                               <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -170,19 +198,7 @@ $v = 2;
                       <div style="font-size:24px; font-weight:bold">8pm - 6am</div>
                   </div>
                   
-                  <div class="box3" style="color:#39aa1a">
-                      <div style="font-size:26px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
 
-                      <div class="circle bg-forecast">
-                          <div class="circle-inner">
-                              <div style="font-size:36px">12p</div>
-                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:24px; font-weight:bold">6am - 11am</div>
-                  </div>
                   
                   <div style="clear:both"></div>
                   <br>
