@@ -44,7 +44,10 @@ $v = 2;
             <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px">Tips</div></div></li>
         </ul>
         
-        <!--------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+
         
         <div class="page" name="forecast">
 
@@ -64,13 +67,18 @@ $v = 2;
             </div>
         
             <div class="block">
-                <div class="block-title" style="background-color:#39aa1a">Current Forecast</div>
+                <div class="block-title" style="background-color:#088400">Current Forecast</div>
                 <div class="block-content">
-                
+
+                  <div style="background-color:#088400; color:#fff">
+                    <div style="font-size:32px; font-weight:bold">HIGH</div>
+                    Forecasting 98 kW now 
+                  </div>
+                  
                   <div class="no-padding">
                     <div class="triangle-wrapper"> 
                       <div class="triangle-down">
-                        <div class="triangle-down-content triangle-forecast-bg"></div>
+                        <div class="triangle-down-content triangle-forecast2-bg"></div>
                       </div>
                     </div>
                   </div>
@@ -93,6 +101,11 @@ $v = 2;
                       <div id="community_bargraph_placeholder" style="height:405px"></div>
                     </div>
                   </div>
+                  
+                  <div style="background-color:#088400; color:#fff; padding:20px">
+                  Hydro output is currently exceeding community consumption by 2.1x!<br>
+                  <span style="font-size:14px; color:rgba(255,255,255,0.8)">Light and dark grey portion indicates estimated hydro output and community consumption up to the present time</span>
+                  </div>
 
                 </div>
             </div>
@@ -114,12 +127,18 @@ $v = 2;
                   </div>
                     
                   <br>
-                  <div class="circle bg-community"><div class="circle-inner">£12.68</div></div>
+                  <div style="font-size:26px; font-weight:bold; color:#29aae3">HYDRO<br>PRICE</div>
+                  <div class="circle bg-hydro">
+                      <div class="circle-inner">
+                          <div style="font-size:36px">7p</div>
+                          <div style="font-size:22px">per unit</div>
+                      </div>
+                  </div>
                   <br>
                   
                   <div style="background-color:#005b0b; color:#fff">
                     <div style="padding:20px">
-                      and the price at other times...
+                      <b>and the price at other times...</b>
                     </div>
                   </div>
                   <br>
@@ -127,21 +146,40 @@ $v = 2;
                   <div class="box3" style="color:#c20000">
                       <div style="font-size:26px; font-weight:bold">EVENING<br>PRICE</div>
                       <div style="font-size:14px; padding:5px">Starts in X hours</div>
-                      <div class="circle bg-household"><div class="circle-inner">14p</div></div>
+                      <div class="circle bg-household">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">14p</div>
+                              <div style="font-size:22px">per unit</div>
+                          </div>
+                      </div>
                       <div style="font-size:24px; font-weight:bold">4pm - 8pm</div>
                   </div>
                   
                   <div class="box3" style="color:#ffb401">
                       <div style="font-size:26px; font-weight:bold">OVERNIGHT<br>PRICE</div>
                       <div style="font-size:14px; padding:5px">Starts in X hours</div>
-                      <div class="circle bg-community"><div class="circle-inner">7.25p</div></div>
+                      
+                      <div class="circle bg-community">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">7.25p</div>
+                              <div style="font-size:22px">per unit</div>
+                          </div>
+                      </div>
+                      
                       <div style="font-size:24px; font-weight:bold">8pm - 6am</div>
                   </div>
                   
                   <div class="box3" style="color:#39aa1a">
                       <div style="font-size:26px; font-weight:bold">MORNING<br>PRICE</div>
                       <div style="font-size:14px; padding:5px">Starts in X hours</div>
-                      <div class="circle bg-forecast"><div class="circle-inner">12p</div></div>
+
+                      <div class="circle bg-forecast">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">12p</div>
+                              <div style="font-size:22px">per unit</div>
+                          </div>
+                      </div>
+
                       <div style="font-size:24px; font-weight:bold">6am - 11am</div>
                   </div>
                   
@@ -157,12 +195,17 @@ $v = 2;
                   <div style="background-color:#29aae3; color:#fff">
                     <div style="padding:20px">
                       Your local, clean energy<br>
-                      HYDRO PRICE
+                      <div style="font-size:26px; font-weight:bold">HYDRO PRICE</div>
                     </div>
                   </div>
                 
                   <br>
-                  <div class="circle bg-hydro"><div class="circle-inner">7p</div></div>
+                  <div class="circle bg-hydro">
+                      <div class="circle-inner">
+                          <div style="font-size:36px">7p</div>
+                          <div style="font-size:22px">per unit</div>
+                      </div>
+                  </div>
                   <br>
                   
                   <div style="background-color:#29aae3; color:#fff">
@@ -175,7 +218,10 @@ $v = 2;
             </div>
         </div>
 
-        <!--------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+
         
         <div class="page" name="household">
             <div class="block">
@@ -239,8 +285,10 @@ $v = 2;
             </div>
         </div>
        
-        <!--------------------------------------------------------->
-
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+        
         <div class="page" name="community">
             <div class="block">
                 <div class="block-title" style="background-color:#ffb401">Community score and savings</div>
@@ -312,7 +360,11 @@ $v = 2;
                 </div>
             </div>
         </div>
-        <!--------------------------------------------------------->
+        
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+
         
         <div class="page" name="tips">
             <div class="block" style="background-color:#014656">Tips</div>

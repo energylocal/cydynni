@@ -201,6 +201,10 @@ body {
   border-top: 100px solid #39aa1a;
 }
 
+.triangle-forecast2-bg {
+  border-top: 100px solid #088400;
+}
+
 .triangle-topup-bg {
   border-top: 100px solid #005b0b;
 }
@@ -222,8 +226,7 @@ body {
 
 .circle-inner {
 	color:#fff;
-	padding-top: 50px;
-	font-size:36px;
+	padding-top: 40px;
 	font-weight:bold;
 }
 
