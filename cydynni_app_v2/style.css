@@ -244,6 +244,7 @@ body {
 .bg-hydro { background-color: #29aae3; color:#fff; }
 .bg-forecast { background-color: #39aa1a; color:#fff; }
 .bg-topup { background-color: #005b0b; color:#fff; }
+.bg-tips { background-color: #014656; color:#fff; }
 
 .bg-household { background-color: var(--household-bg-color); color:#fff; }
 .bg-community { background-color: var(--community-bg-color); color:#fff; }

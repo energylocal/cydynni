@@ -1,6 +1,6 @@
 <?php
 
-global $path;
+global $path, $translation, $lang; 
 $v = 2;
 
 ?>
@@ -31,17 +31,19 @@ $v = 2;
     <div class="app"><div class="app-inner">
             
         <div style="overflow:hidden">
-            <div class="app-title">Energy<br>Dashboard</div>
+            <div class="app-title"><?php echo t("Energy<br>Dashboard"); ?></div>
+            
             <img class="logo-full" src='images/EnergyLocalEnglish.png' style="height:80px; padding:10px">
             <img class="logo-mobile" src='images/logo.png' style="height:80px; padding:10px">
+            <div class="togglelang" style="float:right"></div>
             <br>
         </div>
         
         <ul class="navigation">
-            <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text">CydYnni<br>Forecast</div></div></li>
-            <li name="household"><div><img src="images/household.png"><div class="nav-text">Your<br>Score</div></div></li>
-            <li name="community"><div><img src="images/community.png"><div class="nav-text">Community<br>Score</div></div></li>
-            <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px">Tips</div></div></li>
+            <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
+            <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+            <li name="community"><div><img src="images/community.png"><div class="nav-text"><?php echo t("Community<br>Score"); ?></div></div></li>
+            <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
         </ul>
         
 <!------------------------------------------------------------------------------------------------------------------->
@@ -52,27 +54,27 @@ $v = 2;
         <div class="page" name="forecast">
 
             <div class="block">
-                <div class="block-title" style="background-color:#39aa1a">Good time to use?<div class="triangle-dropdown hide"></div></div>
+                <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
 
                     <img src="images/new-tick.png"/>
                     
                     <br>
-                    <div style="font-size:32px; font-weight:bold">GO!</div>
-                    Why? Plenty of hydro currently available<br><br>
+                    <div style="font-size:32px; font-weight:bold"><?php echo t("GO!"); ?></div>
+                    <?php echo t("Why? Plenty of hydro currently available"); ?><br><br>
                     
                   </div>
                 </div>
             </div>
         
             <div class="block">
-                <div class="block-title" style="background-color:#088400">Current Forecast<div class="triangle-dropdown hide"></div></div>
+                <div class="block-title" style="background-color:#088400"><?php echo t("Current Forecast"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
-                    <div style="font-size:32px; font-weight:bold">HIGH</div>
-                    Forecasting 98 kW now 
+                    <div style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <?php echo t("Forecasting"); ?> 98 kW <?php echo t("now"); ?> 
                   </div>
                   
                   <div class="no-padding">
@@ -94,7 +96,7 @@ $v = 2;
                       <div class="legend-label-box" style="background-color:#014c2d"></div>
                       <span class="legend-label"><?php echo t("Overnight");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
-                      <span class="legend-label" >Hydro</span>
+                      <span class="legend-label" ><?php echo t("Hydro"); ?></span>
                     </div>
                     
                     <div id="community_bargraph_bound" style="width:100%; height:405px;">
@@ -103,19 +105,19 @@ $v = 2;
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  Hydro output is currently exceeding community consumption by 2.1x!<br>
-                  <span style="font-size:14px; color:rgba(255,255,255,0.8)">Light and dark grey portion indicates estimated hydro output and community consumption up to the present time</span>
+                  <?php echo t("Hydro output is currently exceeding community consumption by 2.1x!"); ?><br>
+                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated hydro output and community consumption up to the present time"); ?></span>
                   </div>
 
                 </div>
             </div>
                         
             <div class="block">
-                <div class="block-title" style="background-color:#005b0b">Top up electricity<div class="triangle-dropdown"></div></div>
+                <div class="block-title" style="background-color:#005b0b"><?php echo t("Top up electricity"); ?><div class="triangle-dropdown"></div></div>
                 <div class="block-content hide">
                   <div style="background-color:#005b0b; color:#fff">
-                    Sometimes we need electricity from the grid to<br>top up the power produced by the hydro.<br><br>
-                    <b>You're currently on the</b>
+                    <?php echo t("Sometimes we need electricity from the grid to<br>top up the power produced by the hydro."); ?><br><br>
+                    <b><?php echo t("You're currently on the"); ?></b>
                   </div>
                   
                   <div class="no-padding">
@@ -127,42 +129,42 @@ $v = 2;
                   </div>
                     
                   <br>
-                  <div style="font-size:26px; font-weight:bold; color:#29aae3">HYDRO<br>PRICE</div>
+                  <div style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
                   <div class="circle bg-hydro">
                       <div class="circle-inner">
                           <div style="font-size:36px">7p</div>
-                          <div style="font-size:22px">per unit</div>
+                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                       </div>
                   </div>
                   <br>
                   
                   <div style="background-color:#005b0b; color:#fff">
                     <div style="padding:20px">
-                      <b>and the price at other times...</b>
+                      <b><?php echo t("and the price at other times..."); ?></b>
                     </div>
                   </div>
                   <br>
                   
                   <div class="box3" style="color:#c20000">
-                      <div style="font-size:26px; font-weight:bold">EVENING<br>PRICE</div>
-                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>
                       <div class="circle bg-household">
                           <div class="circle-inner">
                               <div style="font-size:36px">14p</div>
-                              <div style="font-size:22px">per unit</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
                       <div style="font-size:24px; font-weight:bold">4pm - 8pm</div>
                   </div>
                   
                   <div class="box3" style="color:#ffb401">
-                      <div style="font-size:26px; font-weight:bold">OVERNIGHT<br>PRICE</div>
-                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
                       
                       <div class="circle bg-community">
                           <div class="circle-inner">
                               <div style="font-size:36px">7.25p</div>
-                              <div style="font-size:22px">per unit</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
                       
@@ -170,13 +172,13 @@ $v = 2;
                   </div>
                   
                   <div class="box3" style="color:#39aa1a">
-                      <div style="font-size:26px; font-weight:bold">MORNING<br>PRICE</div>
-                      <div style="font-size:14px; padding:5px">Starts in X hours</div>
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
 
                       <div class="circle bg-forecast">
                           <div class="circle-inner">
                               <div style="font-size:36px">12p</div>
-                              <div style="font-size:22px">per unit</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
 
@@ -188,14 +190,14 @@ $v = 2;
                   
                   <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
                     <div style="padding:20px">
-                      If you wait til 8pm, you'll be on the<br>off peak tariff - that's 30% cheaper
+                      <?php echo t("If you wait til 8pm, you'll be on the<br>off peak tariff - that's 30% cheaper"); ?>
                     </div>
                   </div>
                 
                   <div style="background-color:#29aae3; color:#fff">
                     <div style="padding:20px">
-                      Your local, clean energy<br>
-                      <div style="font-size:26px; font-weight:bold">HYDRO PRICE</div>
+                      <?php echo t("Your local, clean energy"); ?><br>
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("HYDRO PRICE"); ?></div>
                     </div>
                   </div>
                 
@@ -203,14 +205,14 @@ $v = 2;
                   <div class="circle bg-hydro">
                       <div class="circle-inner">
                           <div style="font-size:36px">7p</div>
-                          <div style="font-size:22px">per unit</div>
+                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                       </div>
                   </div>
                   <br>
                   
                   <div style="background-color:#29aae3; color:#fff">
                     <div style="padding:20px">
-                      Check the Hydro tab to see when it's running!
+                      <?php echo t("Check the Hydro tab to see when it's running!"); ?>
                     </div>
                   </div>
                   
@@ -291,12 +293,12 @@ $v = 2;
         
         <div class="page" name="community">
             <div class="block">
-                <div class="block-title" style="background-color:#ffb401">Community score and savings</div>
+                <div class="block-title" style="background-color:#ffb401"><?php echo t("Community score and savings"); ?></div>
                 
                 <div class="block-content" style="color:#ffb401">
                 
                   <div style="background-color:#ffb401; color:#fff">
-                    <b>Over the last seven days you<br>scored:</b>
+                    <b><?php echo t("Over the last seven days you<br>scored:"); ?></b>
                     <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="community_score">50</span>/100</div>
                   </div>
                   
@@ -318,7 +320,7 @@ $v = 2;
                   
                 <div style="background-color:#ffb401; color:#fff; height:50px">
                   <div style="padding:5px">
-                    <p>Together you've kept</p>
+                    <p><?php echo t("Together you've kept"); ?></p>
                   </div>
                 </div>
                 
@@ -335,14 +337,14 @@ $v = 2;
                 <br>
                 <div style="background-color:#ffb401; color:#fff">
                   <div style="padding:5px">
-                    <p>in the local area by using your local resource<br>hydro power!</p>
+                    <p><?php echo t("in the local area by using your local resource<br>hydro power!"); ?></p>
                   </div>
                 </div>
                   
                 </div>
             </div>
             <div class="block">
-                <div class="block-title" style="background-color:#ff7900">Community breakdown</div>
+                <div class="block-title" style="background-color:#ff7900"><?php echo t("Community breakdown"); ?></div>
                 <div class="block-content">
 
                     <div class="box2">
@@ -365,9 +367,13 @@ $v = 2;
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 
-        
         <div class="page" name="tips">
-            <div class="block" style="background-color:#014656">Tips</div>
+            <div class="block">
+                <div class="block-title bg-tips"><?php echo t("Tips"); ?></div>
+                <div class="block-content bg-tips" style="padding:20px">
+                Tips content to be added...
+                </div>
+            </div>
         </div>
         
         <div style="clear:both; height:85px"></div>
@@ -390,9 +396,16 @@ $v = 2;
 
 <script>
 
-$(".block").addClass("expand");
-
 var path = "<?php echo $path; ?>";
+var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
+var lang = "<?php echo $lang; ?>";
+
+// Language selection top-right
+if (lang=="cy") {
+    $(".togglelang").html("EN");
+} else {
+    $(".togglelang").html("CY");
+}
 
 show_page("forecast");
 
@@ -438,6 +451,30 @@ var previousPoint = false;
 community_summary_load();
 community_bargraph_load();
 
-function t(c) {return c;}
+// ----------------------------------------------------------------------
+// Translation
+// ----------------------------------------------------------------------
+
+// Language selection
+$(".togglelang").click(function(){
+    var ilang = $(this).html();
+    if (ilang=="CY") {
+        $(this).html("EN");
+        window.location = "?lang=cy";
+    } else {
+        $(this).html("CY");
+        lang="cy";
+        window.location = "?lang=en";
+    }
+});
+
+// Javascript text translation function
+function t(s) {
+    if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
+        return translation[lang][s];
+    } else {
+        return s;
+    }
+}
 
 </script>

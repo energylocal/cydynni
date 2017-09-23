@@ -524,6 +524,11 @@ function t($s) {
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         echo $translation->$lang->$s;
     } else { 
+    
+        // $fh = fopen("lang.log","a");
+        // fwrite($fh,'"'.$s.'":""'.",\n");
+        // fclose($fh);
+        
         echo $s;
     }
 }
