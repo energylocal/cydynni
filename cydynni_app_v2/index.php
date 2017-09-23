@@ -247,6 +247,7 @@ switch ($q)
     case "live":
         $format = "json";
         
+        // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
         $live = json_decode($redis->get("live"));
         
         $date = new DateTime();

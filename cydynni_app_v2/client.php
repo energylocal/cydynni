@@ -57,12 +57,11 @@ $v = 2;
                 <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
-
-                    <img src="images/new-tick.png"/>
-                    
-                    <br>
-                    <div style="font-size:32px; font-weight:bold"><?php echo t("GO!"); ?></div>
-                    <?php echo t("Why? Plenty of hydro currently available"); ?><br><br>
+                  
+                    <div id="status-pre" style="height:16px; padding:10px;"></div>
+                    <img id="status-img" src="images/new-tick.png"/>
+                    <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
+                    <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
                     
                   </div>
                 </div>
@@ -73,8 +72,8 @@ $v = 2;
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
-                    <div style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> 98 kW <?php echo t("now"); ?> 
+                    <div id="hydro-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?> 
                   </div>
                   
                   <div class="no-padding">
@@ -391,6 +390,7 @@ $v = 2;
 </body>
 </html>
 
+<script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
 
@@ -414,12 +414,8 @@ $(".navigation li").click(function() {
     show_page(page);
 });
 
-$(".block").click(function() {
-    //$(this).toggleClass("expand");
-    //var h = $(this).find(".block-content").height();
-    //$(this).css("height",h);
-    
-    $(this).find(".block-content").slideToggle( "slow" );
+$(".block-title").click(function() {
+    $(this).parent().find(".block-content").slideToggle( "slow" );
     $(this).find(".triangle-dropdown").toggle();
 });
 
@@ -448,6 +444,7 @@ function resize() {
 var flot_font_size = 12;
 var previousPoint = false;
 
+cydynnistatus_update();
 community_summary_load();
 community_bargraph_load();
 
