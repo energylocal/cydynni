@@ -52,7 +52,7 @@ $v = 2;
         <div class="page" name="forecast">
 
             <div class="block">
-                <div class="block-title" style="background-color:#39aa1a">Good time to use?</div>
+                <div class="block-title" style="background-color:#39aa1a">Good time to use?<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
 
@@ -67,7 +67,7 @@ $v = 2;
             </div>
         
             <div class="block">
-                <div class="block-title" style="background-color:#088400">Current Forecast</div>
+                <div class="block-title" style="background-color:#088400">Current Forecast<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
@@ -111,8 +111,8 @@ $v = 2;
             </div>
                         
             <div class="block">
-                <div class="block-title" style="background-color:#005b0b">Top up electricity</div>
-                <div class="block-content">
+                <div class="block-title" style="background-color:#005b0b">Top up electricity<div class="triangle-dropdown"></div></div>
+                <div class="block-content hide">
                   <div style="background-color:#005b0b; color:#fff">
                     Sometimes we need electricity from the grid to<br>top up the power produced by the hydro.<br><br>
                     <b>You're currently on the</b>
@@ -407,6 +407,7 @@ $(".block").click(function() {
     //$(this).css("height",h);
     
     $(this).find(".block-content").slideToggle( "slow" );
+    $(this).find(".triangle-dropdown").toggle();
 });
 
 function show_page(page) {

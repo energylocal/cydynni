@@ -83,6 +83,7 @@ body {
     font-weight:bold;
     text-align:left;
     color:#fff;
+    cursor:pointer;
 }
 
 .block-content {
@@ -217,6 +218,16 @@ body {
   border-top: 100px solid  var(--community-bg-color);
 }
 
+.triangle-dropdown {
+  margin-top:5px;
+  float:right;
+  width: 0; 
+  height: 0; 
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #fff;
+}
+
 .circle {
   margin: 0 auto;
 	border-radius: 50%;
@@ -237,4 +248,7 @@ body {
 .bg-household { background-color: var(--household-bg-color); color:#fff; }
 .bg-community { background-color: var(--community-bg-color); color:#fff; }
 
+.hide {
+    display:none;
+}
 
