@@ -242,7 +242,7 @@ $v = 2;
         
         <div class="page" name="household">
             <div class="block">
-              <div class="block-title bg-household">Your Score and Savings</div>
+              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide"></div></div>
               
               <div class="block-content" style="color:#c20000">
               
@@ -283,19 +283,24 @@ $v = 2;
                 </div>
                 
                 <br>
-                <div class="circle bg-household"><div class="circle-inner">£0.25</div></div>
+                <div class="circle bg-household">
+                    <div class="circle-inner" style="padding-top:52px">
+                        <div style="font-size:36px">£0.25</div>
+                    </div>
+                </div>
+                <br>
                 
               </div>
             </div>
             
             <div class="block">
-                <div class="block-title" style="background-color:#e62f31">Your usage over the last 24 hrs</div>
+                <div class="block-title" style="background-color:#e62f31">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
             <div class="block">
-                <div class="block-title" style="background-color:#f47677">Your usage by price</div>
+                <div class="block-title" style="background-color:#f47677">Your usage by price<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
@@ -308,7 +313,7 @@ $v = 2;
         
         <div class="page" name="community">
             <div class="block">
-                <div class="block-title" style="background-color:#ffb401"><?php echo t("Community score and savings"); ?></div>
+                <div class="block-title" style="background-color:#ffb401"><?php echo t("Community score and savings"); ?><div class="triangle-dropdown hide"></div></div>
                 
                 <div class="block-content" style="color:#ffb401">
                 
@@ -348,8 +353,13 @@ $v = 2;
                 </div>
                 
                 <br>
-                <div class="circle bg-community"><div class="circle-inner">£12.68</div></div>
+                <div class="circle bg-community">
+                    <div class="circle-inner" style="padding-top:52px">
+                        <div style="font-size:36px">£12.68</div>
+                    </div>
+                </div>
                 <br>
+                
                 <div style="background-color:#ffb401; color:#fff">
                   <div style="padding:5px">
                     <p><?php echo t("in the local area by using your local resource<br>hydro power!"); ?></p>
@@ -359,7 +369,7 @@ $v = 2;
                 </div>
             </div>
             <div class="block">
-                <div class="block-title" style="background-color:#ff7900"><?php echo t("Community breakdown"); ?></div>
+                <div class="block-title" style="background-color:#ff7900"><?php echo t("Community breakdown"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
 
                     <div class="box2">
@@ -384,7 +394,7 @@ $v = 2;
 
         <div class="page" name="tips">
             <div class="block">
-                <div class="block-title bg-tips"><?php echo t("Tips"); ?></div>
+                <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content bg-tips" style="padding:20px">
                 Tips content to be added...
                 </div>
