@@ -396,7 +396,7 @@ $v = 3;
             <div class="block">
                 <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content bg-tips" style="padding:20px">
-                Tips content to be added...
+                    <img class="logo-full" src="images/dishwasher.png" style="height:200px;">
                 </div>
             </div>
         </div>
