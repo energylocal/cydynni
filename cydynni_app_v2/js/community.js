@@ -13,6 +13,8 @@ var community_data = [];
 var exported_hydro_data = [];
 var used_hydro_data = [];
 var communityseries = [];
+var community_pie1_data = [];
+var community_pie2_data = [];
 
 var community_score = -1;
 var community_hydro_use = 0;
@@ -72,13 +74,22 @@ function community_summary_load()
               $("#community_value_summary").html("£"+(hydro_value).toFixed(2)+" "+t("kept in the community"));
               
               // Community pie chart
-              community_pie_data = [
+              community_pie1_data = [
+                {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
+                {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
+                {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
+                {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
+                {name:t("HYDRO"), value: result.kwh.hydro, color:"#29aae3"} 
+              ];
+
+              // Community pie chart
+              community_pie2_data = [
                 {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
                 {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
                 {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
               ];
-              
+                            
               community_hydro_use = result.kwh.hydro
               
               community_pie_draw();
@@ -100,10 +111,12 @@ function community_pie_draw() {
     
     width = 300;
     height = 300;
-    
-    $("#community_piegraph_placeholder").attr('width',width);
+
+    $("#community_piegraph1_placeholder").attr('width',width);
+    $("#community_piegraph2_placeholder").attr('width',width);
     $('#piegraph_bound').attr("height",height);
-    $('#community_piegraph_placeholder').attr("height",height);
+    $('#community_piegraph1_placeholder').attr("height",height);
+    $('#community_piegraph2_placeholder').attr("height",height);
     
     $("#hydro_droplet_placeholder").attr('width',width);
     $('#hydro_droplet_bound').attr("height",height);
@@ -116,8 +129,10 @@ function community_pie_draw() {
       height: height
     };
     
+    piegraph1("community_piegraph1_placeholder",community_pie1_data,options); 
+   
     // Pie chart
-    piegraph("community_piegraph_placeholder",community_pie_data,options);
+    piegraph2("community_piegraph2_placeholder",community_pie2_data,community_hydro_use,options);
 
     // Hydro droplet
     hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});

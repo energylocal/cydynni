@@ -372,15 +372,21 @@ $v = 2;
                 <div class="block-title" style="background-color:#ff7900"><?php echo t("Community breakdown"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
 
-                    <div class="box2">
+                    <div class="box3">
                       <div id="hydro_droplet_bound" style="margin: 0 auto">
                         <canvas id="hydro_droplet_placeholder"></canvas>
                       </div>
                     </div>
+                    
+                    <div class="box3">
+                      <div id="community_piegraph1_bound" style="width:100%; height:405px; margin: 0 auto">
+                          <canvas id="community_piegraph1_placeholder"></canvas>
+                      </div>
+                    </div>
                 
-                    <div class="box2">
-                      <div id="community_piegraph_bound" style="width:100%; height:405px; margin: 0 auto">
-                          <canvas id="community_piegraph_placeholder"></canvas>
+                    <div class="box3">
+                      <div id="community_piegraph2_bound" style="width:100%; height:405px; margin: 0 auto">
+                          <canvas id="community_piegraph2_placeholder"></canvas>
                       </div>
                     </div>
                     
