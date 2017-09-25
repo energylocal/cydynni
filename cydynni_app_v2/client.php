@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 3;
+$v = 4;
 
 ?>
 
@@ -115,7 +115,7 @@ $v = 3;
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Top up electricity"); ?><div class="triangle-dropdown"></div></div>
                 <div class="block-content hide">
                   <div style="background-color:#005b0b; color:#fff">
-                    <?php echo t("Sometimes we need electricity from the grid to top up the power produced by the hydro."); ?><br><br>
+                    <?php echo t("Sometimes we need electricity from the grid to<br>top up the power produced by the hydro."); ?><br><br>
                     <b><?php echo t("You're currently on the"); ?></b>
                   </div>
                   
@@ -205,7 +205,7 @@ $v = 3;
                   
                   <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
                     <div style="padding:20px">
-                      <?php echo t("If you wait til 8pm, you'll be on the off peak tariff - that's 30% cheaper"); ?>
+                      <?php echo t("If you wait til 8pm, you'll be on the<br>off peak tariff - that's 30% cheaper"); ?>
                     </div>
                   </div>
                 
@@ -247,7 +247,7 @@ $v = 3;
               <div class="block-content" style="color:#c20000">
               
                 <div class="bg-household">
-                  <b>Over the last seven days you scored:</b>
+                  <b>Over the last seven days you<br>scored:</b>
                   <div style="font-size:22px; font-weight:bold; padding-top:5px">80/100</div>
                 </div>
                 
@@ -269,8 +269,8 @@ $v = 3;
                 
                 <div class="bg-household" style="height:100px">
                   <div style="padding:5px">
-                    <p>Your used 7.3 kWh on June 24. It cost £0.68</p>
-                    <p>Compared with 12p/kWh reference price, you saved:</p>
+                    <p>Your used 7.3 kWh on June 24.<br>It cost £0.68</p>
+                    <p>Compared with 12p/kWh reference price, you<br>saved:</p>
                   </div>
                 </div>
                 
@@ -318,7 +318,7 @@ $v = 3;
                 <div class="block-content" style="color:#ffb401">
                 
                   <div style="background-color:#ffb401; color:#fff">
-                    <b><?php echo t("Over the last seven days you scored:"); ?></b>
+                    <b><?php echo t("Over the last seven days you<br>scored:"); ?></b>
                     <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="community_score">50</span>/100</div>
                   </div>
                   
@@ -330,14 +330,13 @@ $v = 3;
                     </div>
                   </div>
                   <br>
-                  <img id="community_star1" src="images/star20yellow.png" style="width:45px">
-                  <img id="community_star2" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star1" src="images/staryellow.png" style="width:45px">
+                  <img id="community_star2" src="images/staryellow.png" style="width:45px">
                   <img id="community_star3" src="images/star20yellow.png" style="width:45px">
                   <img id="community_star4" src="images/star20yellow.png" style="width:45px">
                   <img id="community_star5" src="images/star20yellow.png" style="width:45px">
                 
-                  <br><br>
-                  <div class="bound" id="community_statusmsg"></div><br>
+                  <p id="community_statusmsg"></p>
                   
                 <div style="background-color:#ffb401; color:#fff; height:50px">
                   <div style="padding:5px">
@@ -361,81 +360,34 @@ $v = 3;
                 </div>
                 <br>
                 
-                <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource hydro power!"); ?></div>
+                <div style="background-color:#ffb401; color:#fff">
+                  <div style="padding:5px">
+                    <p><?php echo t("in the local area by using your local resource<br>hydro power!"); ?></p>
+                  </div>
                 </div>
                   
                 </div>
             </div>
             <div class="block">
-                <div class="block-title bg-community2"><?php echo t("Community breakdown"); ?><div class="triangle-dropdown hide"></div></div>
+                <div class="block-title" style="background-color:#ff7900"><?php echo t("Community breakdown"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
-                
-                    <div class="bg-community2">
-                      <div class="bound"><?php echo t("How much of the electricity the community used, came from the hydro."); ?></div>
-                    </div>
-                    
-                    <div class="no-padding">
-                      <div class="triangle-wrapper">
-                        <div class="triangle-down">
-                          <div class="triangle-down-content triangle-community2-bg"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <br>
 
-                    <!--
                     <div class="box3">
                       <div id="hydro_droplet_bound" style="margin: 0 auto">
                         <canvas id="hydro_droplet_placeholder"></canvas>
                       </div>
-                    </div>-->
+                    </div>
                     
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 1"); ?></div>
-                      <div id="community_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+                      <div id="community_piegraph1_bound" style="width:100%; height:405px; margin: 0 auto">
                           <canvas id="community_piegraph1_placeholder"></canvas>
                       </div>
                     </div>
                 
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 2"); ?></div>
-                      <div id="community_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+                      <div id="community_piegraph2_bound" style="width:100%; height:405px; margin: 0 auto">
                           <canvas id="community_piegraph2_placeholder"></canvas>
                       </div>
-                    </div>
-                    
-                    <div class="box3">
-                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table class="keytable">
-                          <tr>
-                            <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t("Hydro Power");?></b><br><span id="community_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="community_hydro_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#ffdc00"></div></td>
-                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="community_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="community_morning_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#4abd3e"></div></td>
-                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="community_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="community_midday_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#c92760"></div></td>
-                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="community_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="community_evening_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#274e3f"></div></td>
-                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="community_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="community_overnight_cost"></span></td>
-                          </tr>
-                        </table>
-                      </div>
-                    </div>
-                    
-                    <div style="clear:both"></div>
-
-                    <div class="bg-community2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in."); ?></div>
                     </div>
                     
                 </div>
@@ -445,29 +397,12 @@ $v = 3;
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<style> /* temporary - needs to be moved */
-
-.tips-appliance img {
-    height: 250px;
-}
-
-.tips-appliance {
-    padding: 30px;
-}
-
-.tips-appliance figcaption {
-    display: block;
-    margin: auto;
-    width: 400px;
-}
-
-</style>
-
+        
         <div class="page" name="tips">
             <div class="block">
                 <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content bg-tips" style="padding:20px">
-                    <figure class="tips-appliance">
+                    <figure class="tips-appliance show-fig">
                         <img src="images/dishwasher.png">
                         <figcaption>
                             <div class="tips-appliance-name">
@@ -537,6 +472,19 @@ $v = 3;
                             ?>
                         <figcaption>
                     </figure>
+                    
+                    <div>
+                        <div class="tips-arrow-outer-wrapper">
+                            <div class="tips-arrow-inner-wrapper">
+                                <div class="tips-leftarrow"></div>
+                                <div class="tips-directions"><?php echo t("PREVIOUS"); ?></div>
+                            </div>
+                            <div class="tips-arrow-inner-wrapper">
+                                <div class="tips-directions"><?php echo t("NEXT TIP"); ?></div>
+                                <div class="tips-rightarrow"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
