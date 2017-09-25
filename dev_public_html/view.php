@@ -208,7 +208,21 @@ function load() {
     // Load data from server
     var hydro_data = feed.getaverage(1,view.start,view.end,interval,0,1);
     var community_data = feed.getaverage(2,view.start,view.end,interval,0,1);
+
+    /*
+    var solar_data1 = [];
+    $.ajax({                                      
+        url: path+"emoncmsorg", data: "id=3009&start="+view.start+"&end="+view.end+"&interval="+interval, dataType: 'json', async: false,                      
+        success: function(result) { solar_data1 = result; }
+    });
     
+    var solar_data2 = [];
+    $.ajax({                                      
+        url: path+"emoncmsorg", data: "id=49552&start="+view.start+"&end="+view.end+"&interval="+interval, dataType: 'json', async: false,                      
+        success: function(result) { solar_data2 = result; }
+    });*/
+    
+
     console.log(hydro_data.length+" "+community_data.length);
     
     // -------------------------------------------------------------------------
@@ -240,9 +254,16 @@ function load() {
         var d = new Date(time);
         var hour = d.getHours();
         
+        var hydro = 0;
         if (hydro_data[z]!=undefined) 
             hydro = hydro_data[z][1] * scale;
-            
+        /*
+        if (solar_data1[z]!=undefined) 
+            hydro += solar_data1[z][1] * 0.001 * 25;
+
+        if (solar_data2[z]!=undefined) 
+            hydro += solar_data2[z][1] * 0.001 * 25;
+        */
         if (community_data[z]!=undefined) 
             community = community_data[z][1] * scale;
         
@@ -441,7 +462,7 @@ function draw() {
         }
     }
     
-    if (units=="kW") options.yaxis.max = 100;
+    //if (units=="kW") options.yaxis.max = 100;
     
     $.plot("#placeholder",communityseries, options);
 }

@@ -73,7 +73,17 @@ switch ($q)
         // Request
         $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval"));
         break;
-        
+
+    case "emoncmsorg":
+        $format = "json";
+        // Params
+        $id = (int) get("id");
+        $start = (int) get("start");
+        $end = (int) get("end");
+        $interval = (int) get("interval");
+        // Request
+        $content = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$id&start=$start&end=$end&interval=$interval"));
+        break;        
         
     case "live":
         $format = "json";
