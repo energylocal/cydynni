@@ -1,7 +1,7 @@
 <?php
 
-global $path, $translation, $lang; 
-$v = 2;
+global $path, $translation, $lang;
+$v = 3;
 
 ?>
 
@@ -73,11 +73,11 @@ $v = 2;
 
                   <div style="background-color:#088400; color:#fff">
                     <div id="hydro-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?> 
+                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?>
                   </div>
                   
                   <div class="no-padding">
-                    <div class="triangle-wrapper"> 
+                    <div class="triangle-wrapper">
                       <div class="triangle-down">
                         <div class="triangle-down-content triangle-forecast2-bg"></div>
                       </div>
@@ -120,7 +120,7 @@ $v = 2;
                   </div>
                   
                   <div class="no-padding">
-                    <div class="triangle-wrapper"> 
+                    <div class="triangle-wrapper">
                       <div class="triangle-down">
                         <div class="triangle-down-content triangle-topup-bg"></div>
                       </div>
@@ -252,7 +252,7 @@ $v = 2;
                 </div>
                 
                 <div class="no-padding">
-                  <div class="triangle-wrapper"> 
+                  <div class="triangle-wrapper">
                     <div class="triangle-down">
                       <div class="triangle-down-content triangle-household-bg"></div>
                     </div>
@@ -275,7 +275,7 @@ $v = 2;
                 </div>
                 
                 <div class="no-padding">
-                  <div class="triangle-wrapper"> 
+                  <div class="triangle-wrapper">
                     <div class="triangle-down">
                       <div class="triangle-down-content triangle-household-bg"></div>
                     </div>
@@ -323,7 +323,7 @@ $v = 2;
                   </div>
                   
                   <div class="no-padding">
-                    <div class="triangle-wrapper"> 
+                    <div class="triangle-wrapper">
                       <div class="triangle-down">
                         <div class="triangle-down-content triangle-community-bg"></div>
                       </div>
@@ -345,7 +345,7 @@ $v = 2;
                 </div>
                 
                 <div class="no-padding">
-                  <div class="triangle-wrapper"> 
+                  <div class="triangle-wrapper">
                     <div class="triangle-down">
                       <div class="triangle-down-content triangle-community-bg"></div>
                     </div>

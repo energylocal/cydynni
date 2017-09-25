@@ -227,8 +227,8 @@ body {
 .triangle-dropdown {
   margin-top:5px;
   float:right;
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 10px solid #fff;
@@ -262,5 +262,9 @@ body {
 
 .hide {
     display:none;
+}
+
+.togglelang {
+  cursor: pointer;
 }
 
