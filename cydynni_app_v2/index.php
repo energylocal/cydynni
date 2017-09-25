@@ -184,14 +184,18 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "community/summary/day":
         $format = "json";
+        
         $content = json_decode($redis->get("community:summary:day"));
+        
+        $content = array("kwh"=>array("morning"=>4,"midday"=>2.5,"evening"=>5,"overnight"=>1.0,"hydro"=>3));
+        $content = json_decode(json_encode($content));
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
         $date->setTimestamp(time());
         $date->modify("midnight");
         $time = $date->getTimestamp();
-        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        $content->dayoffset = 0; //($time - decode_date($content->date))/(3600*24);
         
         break;
 
