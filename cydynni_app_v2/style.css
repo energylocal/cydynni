@@ -224,6 +224,10 @@ body {
   border-top: 100px solid  var(--community-bg-color);
 }
 
+.triangle-community2-bg {
+  border-top: 100px solid #ff7900;
+}
+
 .triangle-dropdown {
   margin-top:5px;
   float:right;
@@ -259,6 +263,7 @@ body {
 
 .bg-household { background-color: var(--household-bg-color); color:#fff; }
 .bg-community { background-color: var(--community-bg-color); color:#fff; }
+.bg-community2 { background-color: #ff7900; color:#fff; }
 
 .hide {
     display:none;
@@ -266,5 +271,23 @@ body {
 
 .togglelang {
   cursor: pointer;
+}
+
+.bound {
+    max-width:500px;
+    margin: 0 auto;
+}
+
+.key {
+    width:25px; 
+    height:25px; 
+    border: 3px solid #eee;
+}
+
+.keytable td {
+    padding-bottom:10px;
+    padding-right:10px;
+    vertical-align:top;
+    font-size:14px;
 }
 
