@@ -89,7 +89,19 @@ function community_summary_load()
                 {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
               ];
-                            
+              
+              $("#community_hydro_kwh").html(result.kwh.hydro);
+              $("#community_morning_kwh").html(result.kwh.morning);
+              $("#community_midday_kwh").html(result.kwh.midday);
+              $("#community_evening_kwh").html(result.kwh.evening);
+              $("#community_overnight_kwh").html(result.kwh.overnight);
+
+              $("#community_hydro_cost").html((result.kwh.hydro*0.07).toFixed(2));
+              $("#community_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
+              $("#community_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
+              $("#community_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
+              $("#community_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
+                                         
               community_hydro_use = result.kwh.hydro
               
               community_pie_draw();

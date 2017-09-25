@@ -187,7 +187,7 @@ switch ($q)
         
         $content = json_decode($redis->get("community:summary:day"));
         
-        $content = array("kwh"=>array("morning"=>4,"midday"=>2.5,"evening"=>5,"overnight"=>1.0,"hydro"=>3));
+        $content = array("kwh"=>array("morning"=>4,"midday"=>2.5,"evening"=>5,"overnight"=>1.0,"hydro"=>3,"total"=>15.5));
         $content = json_decode(json_encode($content));
         
         $date = new DateTime();
