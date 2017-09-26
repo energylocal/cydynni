@@ -116,23 +116,22 @@ function community_summary_load()
 
 function community_pie_draw() {
 
-    var width = $("#piegraph_bound").width();
-    var height = $("#piegraph_bound").height();
-    if (width>400) width = 400;
-    var height = width*0.9;
+    //var width = $("#piegraph_bound").width();
+    //var height = $("#piegraph_bound").height();
+    //if (width>400) width = 400;
+    //var height = width*0.9;
     
     width = 300;
     height = 300;
 
     $("#community_piegraph1_placeholder").attr('width',width);
     $("#community_piegraph2_placeholder").attr('width',width);
-    $('#piegraph_bound').attr("height",height);
     $('#community_piegraph1_placeholder').attr("height",height);
     $('#community_piegraph2_placeholder').attr("height",height);
     
-    $("#hydro_droplet_placeholder").attr('width',width);
-    $('#hydro_droplet_bound').attr("height",height);
-    $('#hydro_droplet_placeholder').attr("height",height);
+    //$("#hydro_droplet_placeholder").attr('width',width);
+    //$('#hydro_droplet_bound').attr("height",height);
+    //$('#hydro_droplet_placeholder').attr("height",height);
     
     var options = {
       color: "#3b6358",
@@ -147,7 +146,7 @@ function community_pie_draw() {
     piegraph2("community_piegraph2_placeholder",community_pie2_data,community_hydro_use,options);
 
     // Hydro droplet
-    hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
+    // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
     
 }
 
@@ -352,12 +351,11 @@ function community_bargraph_load() {
 
 function community_bargraph_resize() {
 
-    var h = 400;
-
     var window_width = $(window).width();
     flot_font_size = 12;
     if (window_width<450) flot_font_size = 10;
 
+    var h = 400;
     width = $("#community_bargraph_bound").width();
     $("#community_bargraph_placeholder").width(width);
     $('#community_bargraph_bound').height(h);

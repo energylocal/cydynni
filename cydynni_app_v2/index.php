@@ -119,7 +119,7 @@ switch ($q)
         if ($session["read"]) {
             $userid = $session["userid"];
             $content = json_decode($redis->get("user:summary:lastday:$userid"));
-            
+        
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone("Europe/London"));
             $date->setTimestamp(time());
@@ -130,6 +130,9 @@ switch ($q)
         } else {
             $content = "session not valid";
         }
+        
+        $content = array("kwh"=>array("morning"=>0.5,"midday"=>0.2,"evening"=>1.0,"overnight"=>0.5,"hydro"=>2.0,"total"=>4.2));
+        $content = json_decode(json_encode($content));
         break;
         
     case "household/summary/monthly":

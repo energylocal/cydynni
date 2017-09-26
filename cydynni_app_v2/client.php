@@ -299,10 +299,64 @@ $v = 4;
                     <p>Test</p>
                 </div>
             </div>
+            
             <div class="block">
-                <div class="block-title" style="background-color:#f47677">Your usage by price<div class="triangle-dropdown hide"></div></div>
+                <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
-                    <p>Test</p>
+                
+                    <div class="bg-household3">
+                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you've used over the last 24 hours."); ?></div>
+                    </div>
+                    
+                    <br>
+                    
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 1"); ?></div>
+                      <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph1_placeholder"></canvas>
+                      </div>
+                    </div>
+                
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 2"); ?></div>
+                      <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph2_placeholder"></canvas>
+                      </div>
+                    </div>
+                    
+                    <div class="box3">
+                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
+                        <table class="keytable">
+                          <tr>
+                            <td><div class="key" style="background-color:#29abe2"></div></td>
+                            <td><b><?php echo t("Hydro Power");?></b><br><span id="household_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_hydro_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#ffdc00"></div></td>
+                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#4abd3e"></div></td>
+                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#c92760"></div></td>
+                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#274e3f"></div></td>
+                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                    
+                    <div style="clear:both"></div>
+
+                    <div class="bg-household3" style="padding:20px">
+                      <div class="bound"><?php echo t("Head to the tips section or get in touch with your Energy Local club to see how you can shift more of your use to cheaper times."); ?></div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -554,6 +608,7 @@ $v = 4;
 
 <script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
 
 <script>
@@ -577,7 +632,7 @@ $(".navigation li").click(function() {
 });
 
 $(".block-title").click(function() {
-    $(this).parent().find(".block-content").slideToggle( "slow" );
+    $(this).parent().find(".block-content").slideToggle("slow");
     $(this).find(".triangle-dropdown").toggle();
 });
 
@@ -600,6 +655,7 @@ function resize() {
     window_width = $(window).width();
     community_bargraph_resize();
     community_pie_draw();
+    household_pie_draw();
 }
 
 // Flot
@@ -609,6 +665,7 @@ var previousPoint = false;
 cydynnistatus_update();
 community_summary_load();
 community_bargraph_load();
+household_summary_load();
 
 // ----------------------------------------------------------------------
 // Translation

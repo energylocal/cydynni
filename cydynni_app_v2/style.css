@@ -214,9 +214,9 @@ body {
     border-top: 100px solid #005b0b;
 }
 
-.triangle-household-bg {
-    border-top: 100px solid  var(--household-bg-color);
-}
+.triangle-household-bg { border-top: 100px solid  var(--household-bg-color); }
+.triangle-household2-bg { border-top: 100px solid #e62f31 }
+.triangle-household3-bg { border-top: 100px solid #f47677 }
 
 .triangle-community-bg {
     border-top: 100px solid  var(--community-bg-color);
@@ -249,6 +249,8 @@ body {
 	  font-weight:bold;
 }
 
+
+
 .bg-hydro { background-color: #29aae3; color:#fff; }
 .bg-morning { background-color: #ffb401; color:#fff; }
 .bg-midday { background-color: #4dac34; color:#fff; }
@@ -260,6 +262,9 @@ body {
 .bg-tips { background-color: #014656; color:#fff; }
 
 .bg-household { background-color: var(--household-bg-color); color:#fff; }
+.bg-household2 { background-color: #e62f31; color:#fff; }
+.bg-household3 { background-color: #f47677; color:#fff; }
+
 .bg-community { background-color: var(--community-bg-color); color:#fff; }
 .bg-community2 { background-color: #ff7900; color:#fff; }
 
