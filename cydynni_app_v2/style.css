@@ -345,8 +345,13 @@ body {
 }
 
 .tips-arrow-inner-wrapper {
-      display: inline-block;
-      width: 150px;
-      padding: 10px;
-      background-color: #336a77;
+    display: inline-block;
+    width: 150px;
+    padding: 10px;
+    background-color: #336a77;
+    cursor: pointer;
+}
+
+.tips-noshow {
+    display: none;
 }

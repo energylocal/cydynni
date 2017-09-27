@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 4;
+$v = 5.1;
 
 ?>
 
@@ -23,7 +23,7 @@ $v = 4;
     <script type="text/javascript" src="lib/feed.js"></script>
     
     <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
-
+    
   </head>
   <body>
 
@@ -577,11 +577,11 @@ $v = 4;
                     
                     <div>
                         <div class="tips-arrow-outer-wrapper">
-                            <div class="tips-arrow-inner-wrapper">
+                            <div class="tips-arrow-inner-wrapper leftclick">
                                 <div class="tips-leftarrow"></div>
                                 <div class="tips-directions"><?php echo t("PREVIOUS"); ?></div>
                             </div>
-                            <div class="tips-arrow-inner-wrapper">
+                            <div class="tips-arrow-inner-wrapper rightclick">
                                 <div class="tips-directions"><?php echo t("NEXT TIP"); ?></div>
                                 <div class="tips-rightarrow"></div>
                             </div>
@@ -692,5 +692,33 @@ function t(s) {
         return s;
     }
 }
+
+// ----------------------------------------------------------------------
+// Tips
+// ----------------------------------------------------------------------
+
+function tipscheck() {
+    if ($(".tips-appliance:last").hasClass("show-fig")) {
+        $(".rightclick").addClass("tips-noshow");
+    }
+    else if ($(".tips-appliance:first").hasClass("show-fig")) {
+        $(".leftclick").addClass("tips-noshow");
+    }
+    else {
+        $(".leftclick, .rightclick").removeClass("tips-noshow");
+    }
+}
+
+$(".leftclick").click(function(){
+    $(".show-fig").removeClass("show-fig").prev().addClass("show-fig");
+    tipscheck();
+});
+
+$(".rightclick").click(function(){
+    $(".show-fig").removeClass("show-fig").next().addClass("show-fig");
+    tipscheck();
+});
+
+tipscheck();
 
 </script>
