@@ -21,6 +21,8 @@ date_default_timezone_set('Europe/London');
 
 require "core.php";
 
+$path = get_application_path();
+
 $redis = new Redis();
 $connected = $redis->connect("localhost");
 

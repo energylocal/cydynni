@@ -132,7 +132,7 @@ $v = 1;
         
 <script>
 
-var path = "https://dev.cydynni.org.uk/";
+var path = "<?php echo $path; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 var apikey = "";
