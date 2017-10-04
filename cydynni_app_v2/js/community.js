@@ -70,7 +70,7 @@ function community_summary_load()
               var hydro_value = result.kwh.hydro * 0.07;
               
               // 2nd ssection showing total consumption and cost
-              $(".community_hydro_value").html((hydro_value).toFixed(2));
+              $(".community_hydro_value").html("£"+(hydro_value).toFixed(2));
               $("#community_value_summary").html("£"+(hydro_value).toFixed(2)+" "+t("kept in the community"));
               
               // Community pie chart

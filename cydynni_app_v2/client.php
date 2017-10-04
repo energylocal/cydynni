@@ -410,7 +410,7 @@ $v = 5.1;
                 <br>
                 <div class="circle bg-community">
                     <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px">£12.68</div>
+                        <div style="font-size:36px" class="community_hydro_value" >£00.00</div>
                     </div>
                 </div>
                 <br>
