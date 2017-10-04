@@ -190,7 +190,7 @@ switch ($q)
         
         $content = json_decode($redis->get("community:summary:day"));
         
-        $content = array("kwh"=>array("morning"=>4,"midday"=>3,"evening"=>5,"overnight"=>1.0,"hydro"=>30,"total"=>43));
+        // $content = array("kwh"=>array("morning"=>4,"midday"=>3,"evening"=>5,"overnight"=>1.0,"hydro"=>30,"total"=>43));
         $content = json_decode(json_encode($content));
         
         $date = new DateTime();
@@ -492,13 +492,13 @@ switch ($q)
         $format = "text";
         // Hydro
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
-        $redis->set("hydro:data",json_encode($content));
+        if (count($content)>0) $redis->set("hydro:data",json_encode($content));
         // Community half-hour
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
-        $redis->set("community:data",json_encode($content));
+        if (count($content)>0) $redis->set("community:data",json_encode($content));
         // Community totals
         $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        $redis->set("community:summary:day",json_encode($content));
+        if ($content!="invalid data") $redis->set("community:summary:day",json_encode($content));
         // Store Updated
         $content = "store updated";
         break;
