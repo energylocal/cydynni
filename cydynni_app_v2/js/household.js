@@ -117,7 +117,6 @@ function household_pie_draw() {
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
 }
 
-
 function household_bargraph_load() {
     var history = "";
     if (end>0 && start>0) history = "?start="+start+"&end="+end;
@@ -141,20 +140,14 @@ function household_bargraph_load() {
                 householdseries = [];
                 
                 householdseries.push({
-                    data: household_data, color: "#4f80a3",
+                    data: household_data, color: "#e62f31",
                     bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
                 });
                 
-                // householdseries.push({data:household_data, color:"rgba(0,71,121,0.7)"});
-                household_bargraph_draw();
+                // household_bargraph_draw();
             }
         }
     });
-}
-
-function household_resize(panel_height) {
-    household_pie_draw();
-    household_bargraph_resize(panel_height-40);
 }
 
 function household_bargraph_draw() {
@@ -182,30 +175,23 @@ function household_bargraph_draw() {
             clickable: true
         }
     }
-
-    var plot = $.plot($('#household_bargraph_placeholder'),householdseries,options);
-    $('#household_bargraph_placeholder').append("<div id='bargraph-label' style='position:absolute;left:50px;top:30px;color:#666;font-size:12px'></div>");
-
-    //bargraph("household_bargraph_placeholder",householdseries, " kWh","rgba(0,71,121,0.7)");
+    
+    if ($("#household_bargraph_placeholder").width()>0) {
+        $.plot($('#household_bargraph_placeholder'),householdseries,options);
+        $('#household_bargraph_placeholder').append("<div id='bargraph-label' style='position:absolute;left:50px;top:30px;color:#666;font-size:12px'></div>");
+    }
 }
 
-function household_bargraph_resize(h) {
+function household_bargraph_resize() {
 
     var window_width = $(window).width();
     flot_font_size = 12;
     if (window_width<450) flot_font_size = 10;
     
-    // width = $("#household_bargraph_bound").width();
-    // $("#household_bargraph_placeholder").attr('width',width);
-    // $('#household_bargraph_bound').attr("height",h);
-    // $('#household_bargraph_placeholder').attr("height",h);
-    // height = h;
-    // household_bargraph_draw();
-
-    var h = panel_height-40;
-    width = $("#household_bargraph_placeholder_bound").width();
+    var h = 400;
+    width = $("#household_bargraph_bound").width();
     $("#household_bargraph_placeholder").width(width);
-    $('#household_bargraph_placeholder_bound').height(h);
+    $('#household_bargraph_bound').height(h);
     $('#household_bargraph_placeholder').height(h);
     height = h;
     household_bargraph_draw();

@@ -346,7 +346,7 @@ function community_bargraph_load() {
         bars: { show: true, align: "center", barWidth: barwidth, fill: 0.4, lineWidth:0}
     });
     
-    community_bargraph_draw();
+    // community_bargraph_draw();
 }
 
 function community_bargraph_resize() {
@@ -396,9 +396,7 @@ function community_bargraph_draw() {
     if (units=="kW") options.yaxis.max = 100;
     
     if ($("#community_bargraph_placeholder").width()>0) {
-    
-    $.plot("#community_bargraph_placeholder",communityseries, options);
-    
+        $.plot("#community_bargraph_placeholder",communityseries, options);
     }
 }
 

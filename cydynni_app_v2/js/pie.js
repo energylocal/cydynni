@@ -99,15 +99,15 @@ function piegraph1(element,data,options) {
         l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
         var tl = (l + lastl)*-0.5 + (Math.PI *0.5);
         
-        var prclabelx = midx+Math.sin(tl)*size*0.18;
-        var prclabely = midy+Math.cos(tl)*size*0.18;
+        var prclabelx = midx+Math.sin(tl)*size*0.34;
+        var prclabely = midy+Math.cos(tl)*size*0.34;
         var valuelabelx = midx+Math.sin(tl)*size*0.4;
         var valuelabely = midy+Math.cos(tl)*size*0.4;
         
         if (data[z].value>0) {
             // Percentage label
             var prc = 100*(data[z].value/total);
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#333";
             ctx.font=textsize_prc+"px Arial";
             ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }
@@ -197,15 +197,15 @@ function piegraph2(element,data,hydro,options) {
         l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
         var tl = (l + lastl)*-0.5 + (Math.PI *0.5);
         
-        var prclabelx = midx+Math.sin(tl)*size*0.22;
-        var prclabely = midy+Math.cos(tl)*size*0.22;
+        var prclabelx = midx+Math.sin(tl)*size*0.34;
+        var prclabely = midy+Math.cos(tl)*size*0.34;
         var valuelabelx = midx+Math.sin(tl)*size*0.4;
         var valuelabely = midy+Math.cos(tl)*size*0.4;
         
         if (data[z].value>0) {
             // Percentage label
             var prc = 100*(data[z].value/(total+hydro));
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#333";
             ctx.font=textsize_prc+"px Arial";
             ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }

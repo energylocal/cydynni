@@ -294,9 +294,26 @@ $v = 5.1;
             </div>
             
             <div class="block">
-                <div class="block-title" style="background-color:#e62f31">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
+                <div class="block-title bg-household2">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
-                    <p>Test</p>
+                
+                    <div class="bg-household2">
+                      <div class="bound"><?php echo t("Here's what your electricity use looked like on"); ?><br><b><span class="household_date"></span> 2017</b></div>
+                    </div>
+                    
+                    <div class="no-padding">
+                      <div class="triangle-wrapper">
+                        <div class="triangle-down">
+                          <div class="triangle-down-content triangle-household2-bg"></div>
+                        </div>
+                      </div>
+                    </div>
+                
+                    <div style="padding:10px">
+                        <div id="household_bargraph_bound" style="width:100%; height:405px;">
+                            <div id="household_bargraph_placeholder" style="height:405px"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -644,6 +661,16 @@ function show_page(page) {
     // Show relevant page
     $(".page").hide();
     $(".page[name="+page+"]").show();
+
+    if (page=="forecast") {
+        community_pie_draw();
+        community_bargraph_resize();
+    }
+    
+    if (page=="household") {
+        household_pie_draw();
+        household_bargraph_resize();
+    }
 }
 
 $(window).resize(function(){
@@ -653,9 +680,12 @@ $(window).resize(function(){
 function resize() {
     window_height = $(window).height();
     window_width = $(window).width();
-    community_bargraph_resize();
+    
     community_pie_draw();
+    community_bargraph_resize();
+    
     household_pie_draw();
+    household_bargraph_resize();
 }
 
 // Flot
@@ -663,10 +693,14 @@ var flot_font_size = 12;
 var previousPoint = false;
 
 cydynnistatus_update();
+
 community_summary_load();
 community_bargraph_load();
-household_summary_load();
 
+household_summary_load();
+household_bargraph_load();
+
+resize();
 // ----------------------------------------------------------------------
 // Translation
 // ----------------------------------------------------------------------
