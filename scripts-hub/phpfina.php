@@ -84,7 +84,7 @@ function import_phpfina($local_datadir,$local_id,$remote_server,$remote_id,$remo
         }
     }
 
-    $url = $remote_server."/feed/export.json?id=$remote_id&start=$downloadfrom.$apikey_string";
+    $url = $remote_server."/feed/export.json?id=$remote_id&start=$downloadfrom"."$apikey_string";
     
     if (!$primary = @fopen( $url, 'r' )) {
         echo "Cannot access remote server\n";

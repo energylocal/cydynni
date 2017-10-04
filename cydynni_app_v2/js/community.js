@@ -13,6 +13,8 @@ var community_data = [];
 var exported_hydro_data = [];
 var used_hydro_data = [];
 var communityseries = [];
+var community_pie1_data = [];
+var community_pie2_data = [];
 
 var community_score = -1;
 var community_hydro_use = 0;
@@ -21,7 +23,7 @@ var community_height = 0;
 
 // Initial view range 24 hours
 view.end = +new Date;
-view.start = view.end - (3600000*24.0*7);
+view.start = view.end - (3600000*24.0*6);
 
 function community_summary_load()
 {
@@ -61,7 +63,7 @@ function community_summary_load()
                   if (score>=70) {
                       $("#community_statusmsg").html(t("We’re doing really well using the hydro and cheaper power"));
                   }
-                  community_resize();
+                  //community_resize();
               }, 400);
               
               // Hydro value retained in the community
@@ -72,13 +74,34 @@ function community_summary_load()
               $("#community_value_summary").html("£"+(hydro_value).toFixed(2)+" "+t("kept in the community"));
               
               // Community pie chart
-              community_pie_data = [
+              community_pie1_data = [
+                {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
+                {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
+                {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
+                {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
+                {name:t("HYDRO"), value: result.kwh.hydro, color:"#29aae3"} 
+              ];
+
+              // Community pie chart
+              community_pie2_data = [
                 {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
                 {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
                 {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
               ];
               
+              $("#community_hydro_kwh").html(result.kwh.hydro);
+              $("#community_morning_kwh").html(result.kwh.morning);
+              $("#community_midday_kwh").html(result.kwh.midday);
+              $("#community_evening_kwh").html(result.kwh.evening);
+              $("#community_overnight_kwh").html(result.kwh.overnight);
+
+              $("#community_hydro_cost").html((result.kwh.hydro*0.07).toFixed(2));
+              $("#community_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
+              $("#community_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
+              $("#community_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
+              $("#community_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
+                                         
               community_hydro_use = result.kwh.hydro
               
               community_pie_draw();
@@ -93,21 +116,22 @@ function community_summary_load()
 
 function community_pie_draw() {
 
-    var width = $("#piegraph_bound").width();
-    var height = $("#piegraph_bound").height();
-    if (width>400) width = 400;
-    var height = width*0.9;
+    //var width = $("#piegraph_bound").width();
+    //var height = $("#piegraph_bound").height();
+    //if (width>400) width = 400;
+    //var height = width*0.9;
     
     width = 300;
     height = 300;
+
+    $("#community_piegraph1_placeholder").attr('width',width);
+    $("#community_piegraph2_placeholder").attr('width',width);
+    $('#community_piegraph1_placeholder').attr("height",height);
+    $('#community_piegraph2_placeholder').attr("height",height);
     
-    $("#community_piegraph_placeholder").attr('width',width);
-    $('#piegraph_bound').attr("height",height);
-    $('#community_piegraph_placeholder').attr("height",height);
-    
-    $("#hydro_droplet_placeholder").attr('width',width);
-    $('#hydro_droplet_bound').attr("height",height);
-    $('#hydro_droplet_placeholder').attr("height",height);
+    //$("#hydro_droplet_placeholder").attr('width',width);
+    //$('#hydro_droplet_bound').attr("height",height);
+    //$('#hydro_droplet_placeholder').attr("height",height);
     
     var options = {
       color: "#3b6358",
@@ -116,11 +140,13 @@ function community_pie_draw() {
       height: height
     };
     
+    piegraph1("community_piegraph1_placeholder",community_pie1_data,options); 
+   
     // Pie chart
-    piegraph("community_piegraph_placeholder",community_pie_data,options);
+    piegraph2("community_piegraph2_placeholder",community_pie2_data,community_hydro_use,options);
 
     // Hydro droplet
-    hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
+    // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
     
 }
 
@@ -325,12 +351,11 @@ function community_bargraph_load() {
 
 function community_bargraph_resize() {
 
-    var h = 400;
-
     var window_width = $(window).width();
     flot_font_size = 12;
     if (window_width<450) flot_font_size = 10;
 
+    var h = 400;
     width = $("#community_bargraph_bound").width();
     $("#community_bargraph_placeholder").width(width);
     $('#community_bargraph_bound').height(h);

@@ -119,7 +119,7 @@ switch ($q)
         if ($session["read"]) {
             $userid = $session["userid"];
             $content = json_decode($redis->get("user:summary:lastday:$userid"));
-            
+        
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone("Europe/London"));
             $date->setTimestamp(time());
@@ -130,6 +130,9 @@ switch ($q)
         } else {
             $content = "session not valid";
         }
+        
+        $content = array("kwh"=>array("morning"=>0.5,"midday"=>0.2,"evening"=>1.0,"overnight"=>0.5,"hydro"=>2.0,"total"=>4.2));
+        $content = json_decode(json_encode($content));
         break;
         
     case "household/summary/monthly":
@@ -184,14 +187,18 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "community/summary/day":
         $format = "json";
+        
         $content = json_decode($redis->get("community:summary:day"));
+        
+        $content = array("kwh"=>array("morning"=>4,"midday"=>3,"evening"=>5,"overnight"=>1.0,"hydro"=>30,"total"=>43));
+        $content = json_decode(json_encode($content));
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
         $date->setTimestamp(time());
         $date->modify("midnight");
         $time = $date->getTimestamp();
-        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        $content->dayoffset = 0; //($time - decode_date($content->date))/(3600*24);
         
         break;
 
@@ -247,6 +254,7 @@ switch ($q)
     case "live":
         $format = "json";
         
+        // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
         $live = json_decode($redis->get("live"));
         
         $date = new DateTime();
@@ -524,6 +532,11 @@ function t($s) {
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         echo $translation->$lang->$s;
     } else { 
+    
+        // $fh = fopen("lang.log","a");
+        // fwrite($fh,'"'.$s.'":""'.",\n");
+        // fclose($fh);
+        
         echo $s;
     }
 }

@@ -1,7 +1,7 @@
-<?php 
+<?php
 
-global $path;
-$v = 1; 
+global $path, $translation, $lang;
+$v = 5.1;
 
 ?>
 
@@ -14,16 +14,16 @@ $v = 1;
     
     <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
     
-    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script> 
-    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script> 
-    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script> 
+    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script>
     <script type="text/javascript" src="lib/flot/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="lib/flot/date.format.js"></script> 
-    <script type="text/javascript" src="lib/vis.helper.js"></script> 
-    <script type="text/javascript" src="lib/feed.js"></script> 
+    <script type="text/javascript" src="lib/flot/date.format.js"></script>
+    <script type="text/javascript" src="lib/vis.helper.js"></script>
+    <script type="text/javascript" src="lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="style.css" />
-
+    <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
+    
   </head>
   <body>
 
@@ -31,27 +31,61 @@ $v = 1;
     <div class="app"><div class="app-inner">
             
         <div style="overflow:hidden">
-            <div class="app-title">Energy<br>Dashboard</div>
+            <div class="app-title"><?php echo t("Energy<br>Dashboard"); ?></div>
+            
             <img class="logo-full" src='images/EnergyLocalEnglish.png' style="height:80px; padding:10px">
             <img class="logo-mobile" src='images/logo.png' style="height:80px; padding:10px">
+            <div class="togglelang" style="float:right"></div>
             <br>
         </div>
         
         <ul class="navigation">
-            <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text">CydYnni<br>Forecast</div></div></li>
-            <li name="household"><div><img src="images/household.png"><div class="nav-text">Your<br>Score</div></div></li>
-            <li name="community"><div><img src="images/community.png"><div class="nav-text">Community<br>Score</div></div></li>
-            <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px">Tips</div></div></li>
+            <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
+            <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+            <li name="community"><div><img src="images/community.png"><div class="nav-text"><?php echo t("Community<br>Score"); ?></div></div></li>
+            <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
         </ul>
         
-        <!--------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+
         
         <div class="page" name="forecast">
-            <div class="block expand" style="background-color:#39aa1a">
-                <div class="block-title">Forecast</div>
+
+            <div class="block">
+                <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div></div>
+                <div class="block-content">
+                  <div style="background-color:#39aa1a; color:#fff">
+                  
+                    <div id="status-pre" style="height:16px; padding:10px;"></div>
+                    <img id="status-img" src="images/new-tick.png"/>
+                    <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
+                    <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
+                    
+                  </div>
+                </div>
+            </div>
+        
+            <div class="block">
+                <div class="block-title" style="background-color:#088400"><?php echo t("Current Forecast"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
 
-                  <div style="padding-top:5px; padding-bottom:5px">
+                  <div style="background-color:#088400; color:#fff">
+                    <div id="hydro-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?>
+                  </div>
+                  
+                  <div class="no-padding">
+                    <div class="triangle-wrapper">
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-forecast2-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style="padding:10px">
+                    <div style="padding-top:5px; padding-bottom:5px">
                       <div class="legend-label-box" style="background-color:#ffb401"></div>
                       <span class="legend-label"><?php echo t("Morning");?></span>
                       <div class="legend-label-box" style="background-color:#4dac34"></div>
@@ -61,91 +95,500 @@ $v = 1;
                       <div class="legend-label-box" style="background-color:#014c2d"></div>
                       <span class="legend-label"><?php echo t("Overnight");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
-                      <span class="legend-label" >Hydro</span>
+                      <span class="legend-label" ><?php echo t("Hydro"); ?></span>
+                    </div>
+                    
+                    <div id="community_bargraph_bound" style="width:100%; height:405px;">
+                      <div id="community_bargraph_placeholder" style="height:405px"></div>
+                    </div>
                   </div>
                   
-                  <div id="community_bargraph_bound" style="width:100%; height:405px;">
-                    <div id="community_bargraph_placeholder" style="height:405px"></div>
+                  <div style="background-color:#088400; color:#fff; padding:20px">
+                  <?php echo t("Hydro output is currently exceeding community consumption"); ?><br>
+                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated hydro output and community consumption up to the present time"); ?></span>
                   </div>
 
                 </div>
             </div>
-            <div class="block" style="background-color:#088400">
-                <div class="block-title">Forecast</div>
-                <div class="block-content">
-                    <p>Test</p>
-                </div>
-            </div>
-            <div class="block" style="background-color:#005b0b">
-                <div class="block-title">Forecast</div>
-                <div class="block-content">
-                    <p>Test</p>
+                        
+            <div class="block">
+                <div class="block-title" style="background-color:#005b0b"><?php echo t("Top up electricity"); ?><div class="triangle-dropdown"></div></div>
+                <div class="block-content hide">
+                  <div style="background-color:#005b0b; color:#fff">
+                    <?php echo t("Sometimes we need electricity from the grid to top up the power produced by the hydro."); ?><br><br>
+                    <b><?php echo t("You're currently on the"); ?></b>
+                  </div>
+                  
+                  <div class="no-padding">
+                    <div class="triangle-wrapper">
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-topup-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+                    
+                  <br>
+                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
+                  <div id="tariff-now-circle" class="circle bg-hydro">
+                      <div class="circle-inner">
+                          <div id="tariff-now-price" style="font-size:36px">7p</div>
+                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                      </div>
+                  </div>
+                  <br>
+                  
+                  <div style="background-color:#005b0b; color:#fff">
+                    <div style="padding:20px">
+                      <b><?php echo t("and the price at other times..."); ?></b>
+                    </div>
+                  </div>
+                  <br>
+                  
+                  <div class="box4" style="color:#ffb401">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+
+                      <div class="circle bg-morning">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">12p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+
+                      <div style="font-size:24px; font-weight:bold">6am - 11am</div>
+                  </div>
+                  
+                  <div class="box4" style="color:#4dac34">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+
+                      <div class="circle bg-midday">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">10p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+
+                      <div style="font-size:24px; font-weight:bold">11am - 4pm</div>
+                  </div>
+                  
+                  <div class="box4" style="color:#e6602b">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>
+                      <div class="circle bg-evening">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">14p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+                      <div style="font-size:24px; font-weight:bold">4pm - 8pm</div>
+                  </div>
+                  
+                  <div class="box4" style="color:#014c2d">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
+                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+                      
+                      <div class="circle bg-overnight">
+                          <div class="circle-inner">
+                              <div style="font-size:36px">7.25p</div>
+                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                          </div>
+                      </div>
+                      
+                      <div style="font-size:24px; font-weight:bold">8pm - 6am</div>
+                  </div>
+                  
+
+                  
+                  <div style="clear:both"></div>
+                  <br>
+                  
+                  <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
+                    <div style="padding:20px">
+                      <?php echo t("If you wait til 8pm, you'll be on the off peak tariff - that's 30% cheaper"); ?>
+                    </div>
+                  </div>
+                
+                  <div style="background-color:#29aae3; color:#fff">
+                    <div style="padding:20px">
+                      <?php echo t("Your local, clean energy"); ?><br>
+                      <div style="font-size:26px; font-weight:bold"><?php echo t("HYDRO PRICE"); ?></div>
+                    </div>
+                  </div>
+                
+                  <br>
+                  <div class="circle bg-hydro">
+                      <div class="circle-inner">
+                          <div style="font-size:36px">7p</div>
+                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
+                      </div>
+                  </div>
+                  <br>
+                  
+                  <div style="background-color:#29aae3; color:#fff">
+                    <div style="padding:20px">
+                      <?php echo t("Check the Hydro tab to see when it's running!"); ?>
+                    </div>
+                  </div>
+                  
                 </div>
             </div>
         </div>
 
-        <!--------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+
         
         <div class="page" name="household">
-            <div class="block" style="background-color:#c20000">
-                <div class="block-title">Household</div>
+            <div class="block">
+              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide"></div></div>
+              
+              <div class="block-content" style="color:#c20000">
+              
+                <div class="bg-household">
+                  <b>Over the last seven days you scored:</b>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px">80/100</div>
+                </div>
+                
+                <div class="no-padding">
+                  <div class="triangle-wrapper">
+                    <div class="triangle-down">
+                      <div class="triangle-down-content triangle-household-bg"></div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <img id="household_star1" src="images/starred.png" style="width:45px">
+                <img id="household_star2" src="images/starred.png" style="width:45px">
+                <img id="household_star3" src="images/star20red.png" style="width:45px">
+                <img id="household_star4" src="images/star20red.png" style="width:45px">
+                <img id="household_star5" src="images/star20red.png" style="width:45px">
+              
+                <p>Your doing really well at using hydro & cheaper power</p>
+                
+                <div class="bg-household" style="height:100px">
+                  <div style="padding:5px">
+                    <p>Your used 7.3 kWh on June 24. It cost £0.68</p>
+                    <p>Compared with 12p/kWh reference price, you saved:</p>
+                  </div>
+                </div>
+                
+                <div class="no-padding">
+                  <div class="triangle-wrapper">
+                    <div class="triangle-down">
+                      <div class="triangle-down-content triangle-household-bg"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <br>
+                <div class="circle bg-household">
+                    <div class="circle-inner" style="padding-top:52px">
+                        <div style="font-size:36px">£0.25</div>
+                    </div>
+                </div>
+                <br>
+                
+              </div>
+            </div>
+            
+            <div class="block">
+                <div class="block-title" style="background-color:#e62f31">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                     <p>Test</p>
                 </div>
             </div>
-            <div class="block" style="background-color:#e62f31">
-                <div class="block-title">Household</div>
-                <div class="block-content">
-                    <p>Test</p>
-                </div>
-            </div>
-            <div class="block" style="background-color:#f47677">
-                <div class="block-title">Household</div>
-                <div class="block-content">
-                    <p>Test</p>
-                </div>
-            </div>
-        </div>
-        
-        <!--------------------------------------------------------->
-        
-        <div class="page" name="community">
-            <div class="block" style="background-color:#ffb401">
-                <div class="block-title">Your score and savings</div>
-                <div class="block-content" style="text-align:center">
-                    <p><span id="community_score_text"><?php echo t("Over the last seven days we<br>scored"); ?></span>:<br><span id="community_score">50</span>/100</p>
-                    <img id="community_star1" src="images/staryellow.png" style="width:45px">
-                    <img id="community_star2" src="images/staryellow.png" style="width:45px">
-                    <img id="community_star3" src="images/star20yellow.png" style="width:45px">
-                    <img id="community_star4" src="images/star20yellow.png" style="width:45px">
-                    <img id="community_star5" src="images/star20yellow.png" style="width:45px">
-                    <p id="community_statusmsg"></p>
-                </div>
-            </div>
-            <div class="block" style="background-color:#ff7900">
-                <div class="block-title">Community breakdown</div>
+            
+            <div class="block">
+                <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                 
-                    <div class="box2">
-                      <div id="hydro_droplet_bound" style="margin: 0 auto">
-                        <canvas id="hydro_droplet_placeholder"></canvas>
+                    <div class="bg-household3">
+                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you've used over the last 24 hours."); ?></div>
+                    </div>
+                    
+                    <br>
+                    
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 1"); ?></div>
+                      <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph1_placeholder"></canvas>
                       </div>
                     </div>
                 
-                    <div class="box2">
-                      <div id="community_piegraph_bound" style="width:100%; height:405px; margin: 0 auto">
-                          <canvas id="community_piegraph_placeholder"></canvas>
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 2"); ?></div>
+                      <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph2_placeholder"></canvas>
                       </div>
+                    </div>
+                    
+                    <div class="box3">
+                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
+                        <table class="keytable">
+                          <tr>
+                            <td><div class="key" style="background-color:#29abe2"></div></td>
+                            <td><b><?php echo t("Hydro Power");?></b><br><span id="household_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_hydro_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#ffdc00"></div></td>
+                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#4abd3e"></div></td>
+                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#c92760"></div></td>
+                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#274e3f"></div></td>
+                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                    
+                    <div style="clear:both"></div>
+
+                    <div class="bg-household3" style="padding:20px">
+                      <div class="bound"><?php echo t("Head to the tips section or get in touch with your Energy Local club to see how you can shift more of your use to cheaper times."); ?></div>
                     </div>
                     
                 </div>
             </div>
         </div>
+       
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+        
+        <div class="page" name="community">
+            <div class="block">
+                <div class="block-title" style="background-color:#ffb401"><?php echo t("Community score and savings"); ?><div class="triangle-dropdown hide"></div></div>
+                
+                <div class="block-content" style="color:#ffb401">
+                
+                  <div style="background-color:#ffb401; color:#fff">
+                    <b><?php echo t("Over the last seven days you scored:"); ?></b>
+                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="community_score">50</span>/100</div>
+                  </div>
+                  
+                  <div class="no-padding">
+                    <div class="triangle-wrapper">
+                      <div class="triangle-down">
+                        <div class="triangle-down-content triangle-community-bg"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <img id="community_star1" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star2" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star3" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star4" src="images/star20yellow.png" style="width:45px">
+                  <img id="community_star5" src="images/star20yellow.png" style="width:45px">
+                
+                  <br><br>
+                  <div class="bound" id="community_statusmsg"></div><br>
+                  
+                <div style="background-color:#ffb401; color:#fff; height:50px">
+                  <div style="padding:5px">
+                    <p><?php echo t("Together you've kept"); ?></p>
+                  </div>
+                </div>
+                
+                <div class="no-padding">
+                  <div class="triangle-wrapper">
+                    <div class="triangle-down">
+                      <div class="triangle-down-content triangle-community-bg"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <br>
+                <div class="circle bg-community">
+                    <div class="circle-inner" style="padding-top:52px">
+                        <div style="font-size:36px">£12.68</div>
+                    </div>
+                </div>
+                <br>
+                
+                <div style="background-color:#ffb401; color:#fff; padding:20px">
+                    <div class="bound"><?php echo t("in the local area by using your local resource hydro power!"); ?></div>
+                </div>
+                  
+                </div>
+            </div>
+            <div class="block">
+                <div class="block-title bg-community2"><?php echo t("Community breakdown"); ?><div class="triangle-dropdown hide"></div></div>
+                <div class="block-content">
+                
+                    <div class="bg-community2">
+                      <div class="bound"><?php echo t("How much of the electricity the community used, came from the hydro."); ?></div>
+                    </div>
+                    
+                    <div class="no-padding">
+                      <div class="triangle-wrapper">
+                        <div class="triangle-down">
+                          <div class="triangle-down-content triangle-community2-bg"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <br>
 
-        <!--------------------------------------------------------->
+                    <!--
+                    <div class="box3">
+                      <div id="hydro_droplet_bound" style="margin: 0 auto">
+                        <canvas id="hydro_droplet_placeholder"></canvas>
+                      </div>
+                    </div>-->
+                    
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 1"); ?></div>
+                      <div id="community_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="community_piegraph1_placeholder"></canvas>
+                      </div>
+                    </div>
+                
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 2"); ?></div>
+                      <div id="community_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="community_piegraph2_placeholder"></canvas>
+                      </div>
+                    </div>
+                    
+                    <div class="box3">
+                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
+                        <table class="keytable">
+                          <tr>
+                            <td><div class="key" style="background-color:#29abe2"></div></td>
+                            <td><b><?php echo t("Hydro Power");?></b><br><span id="community_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="community_hydro_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#ffdc00"></div></td>
+                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="community_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="community_morning_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#4abd3e"></div></td>
+                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="community_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="community_midday_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#c92760"></div></td>
+                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="community_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="community_evening_cost"></span></td>
+                          </tr>
+                          <tr>
+                            <td><div class="key" style="background-color:#274e3f"></div></td>
+                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="community_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="community_overnight_cost"></span></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                    
+                    <div style="clear:both"></div>
+
+                    <div class="bg-community2" style="padding:20px">
+                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in."); ?></div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------------------------------------------------------------------------->
         
         <div class="page" name="tips">
-            <div class="block" style="background-color:#014656">Tips</div>
+            <div class="block">
+                <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div></div>
+                <div class="block-content bg-tips" style="padding:20px">
+                    <figure class="tips-appliance show-fig">
+                        <img src="images/dishwasher.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("DISHWASHER") ?></h2>
+                            </div>
+                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/lamp.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("LED LIGHTS") ?></h2>
+                            </div>
+                            <?php echo t("Switching off lights and appliance when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/stove.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("COOKING") ?></h2>
+                            </div>
+                            <?php echo t("Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/slowcooker.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("SLOW COOKING") ?></h2>
+                            </div>
+                            <?php echo t("Slow cookers are very energy efficient, make tasty dinners and help you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise be using an electric oven.")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/washingmachine.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("WASHING MACHINE") ?></h2>
+                            </div>
+                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/fridge.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("FRIDGES & FREEZERS") ?></h2>
+                            </div>
+                            <?php echo t("Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.")
+                            ?>
+                        </figcaption>
+                    </figure>
+                    <figure class="tips-appliance">
+                        <img src="images/lightbulb.png">
+                        <figcaption>
+                            <div class="tips-appliance-name">
+                                <h2><?php echo t("LIGHTS") ?></h2>
+                            </div>
+                            <?php echo t("LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house.")
+                            ?>
+                        <figcaption>
+                    </figure>
+                    
+                    <div>
+                        <div class="tips-arrow-outer-wrapper">
+                            <div class="tips-arrow-inner-wrapper leftclick">
+                                <div class="tips-leftarrow"></div>
+                                <div class="tips-directions"><?php echo t("PREVIOUS"); ?></div>
+                            </div>
+                            <div class="tips-arrow-inner-wrapper rightclick">
+                                <div class="tips-directions"><?php echo t("NEXT TIP"); ?></div>
+                                <div class="tips-rightarrow"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div style="clear:both; height:85px"></div>
@@ -163,14 +606,23 @@ $v = 1;
 </body>
 </html>
 
+<script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
-    
+
 <script>
 
-$(".block").addClass("expand");
-
 var path = "<?php echo $path; ?>";
+var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
+var lang = "<?php echo $lang; ?>";
+
+// Language selection top-right
+if (lang=="cy") {
+    $(".togglelang").html("EN");
+} else {
+    $(".togglelang").html("CY");
+}
 
 show_page("forecast");
 
@@ -179,11 +631,13 @@ $(".navigation li").click(function() {
     show_page(page);
 });
 
-$(".block").click(function() {
-    $(this).toggleClass("expand");
+$(".block-title").click(function() {
+    $(this).parent().find(".block-content").slideToggle("slow");
+    $(this).find(".triangle-dropdown").toggle();
 });
 
 function show_page(page) {
+
     // Highlighted selected menu
     $(".navigation li > div").removeClass("active");
     $(".navigation li[name="+page+"] > div").addClass("active");
@@ -199,17 +653,72 @@ $(window).resize(function(){
 function resize() {
     window_height = $(window).height();
     window_width = $(window).width();
-    community_bargraph_resize();   
+    community_bargraph_resize();
     community_pie_draw();
+    household_pie_draw();
 }
 
 // Flot
 var flot_font_size = 12;
 var previousPoint = false;
 
+cydynnistatus_update();
 community_summary_load();
 community_bargraph_load();
+household_summary_load();
 
-function t(c) {return c;}
+// ----------------------------------------------------------------------
+// Translation
+// ----------------------------------------------------------------------
+
+// Language selection
+$(".togglelang").click(function(){
+    var ilang = $(this).html();
+    if (ilang=="CY") {
+        $(this).html("EN");
+        window.location = "?lang=cy";
+    } else {
+        $(this).html("CY");
+        lang="cy";
+        window.location = "?lang=en";
+    }
+});
+
+// Javascript text translation function
+function t(s) {
+    if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
+        return translation[lang][s];
+    } else {
+        return s;
+    }
+}
+
+// ----------------------------------------------------------------------
+// Tips
+// ----------------------------------------------------------------------
+
+function tipscheck() {
+    if ($(".tips-appliance:last").hasClass("show-fig")) {
+        $(".rightclick").addClass("tips-noshow");
+    }
+    else if ($(".tips-appliance:first").hasClass("show-fig")) {
+        $(".leftclick").addClass("tips-noshow");
+    }
+    else {
+        $(".leftclick, .rightclick").removeClass("tips-noshow");
+    }
+}
+
+$(".leftclick").click(function(){
+    $(".show-fig").removeClass("show-fig").prev().addClass("show-fig");
+    tipscheck();
+});
+
+$(".rightclick").click(function(){
+    $(".show-fig").removeClass("show-fig").next().addClass("show-fig");
+    tipscheck();
+});
+
+tipscheck();
 
 </script>
