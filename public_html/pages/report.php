@@ -171,22 +171,24 @@ $.ajax({
     dataType: 'json',      
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact cydynni@energylocal.co.uk or try again later.");
-        household = result;
-        
-        var out = "";
-        for (var i=0; i<result.length; i++) {
-            out += "<li><a href='#"+i+"'>"+t(months[result[i].month-1])+" "+result[i].year+"</a></li>";
-        }
-        $(".appmenu").html(out);
-    
-        $.ajax({                                      
-            url: path+"community/summary/monthly?apikey="+session.apikey_read,
-            dataType: 'json',      
-            success: function(result) {  
-                community = result;
-                load();
+        else {
+            household = result;
+            
+            var out = "";
+            for (var i=0; i<result.length; i++) {
+                out += "<li><a href='#"+i+"'>"+t(months[result[i].month-1])+" "+result[i].year+"</a></li>";
             }
-        });
+            $(".appmenu").html(out);
+        
+            $.ajax({                                      
+                url: path+"community/summary/monthly?apikey="+session.apikey_read,
+                dataType: 'json',      
+                success: function(result) {  
+                    community = result;
+                    load();
+                }
+            });
+        }
     }
 });
 

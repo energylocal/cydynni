@@ -146,8 +146,8 @@ function get_community_consumption($baseurl,$token) {
     $date2 = $imported["date"]; unset($imported["date"]);
     $date3 = $cost["date"]; unset($cost["date"]);
     // Check that dates of latest day match
-    if ($date1!=$date2) return "Date mismatch";
-    if ($date1!=$date3) return "Date mismatch";
+    if ($date1!=$date2) return "Invalid data";
+    if ($date1!=$date3) return "Invalid data";
     
     // Build import + hydro consumption object
     // 1. start with imported data
