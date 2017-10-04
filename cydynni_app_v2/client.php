@@ -248,7 +248,7 @@ $v = 5.1;
               
                 <div class="bg-household">
                   <b>Over the last seven days you scored:</b>
-                  <div style="font-size:22px; font-weight:bold; padding-top:5px">80/100</div>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score"></span>/100</div>
                 </div>
                 
                 <div class="no-padding">
@@ -265,11 +265,11 @@ $v = 5.1;
                 <img id="household_star4" src="images/star20red.png" style="width:45px">
                 <img id="household_star5" src="images/star20red.png" style="width:45px">
               
-                <p>Your doing really well at using hydro & cheaper power</p>
+                <p class="household_status"></p>
                 
                 <div class="bg-household" style="height:100px">
                   <div style="padding:5px">
-                    <p>Your used 7.3 kWh on June 24. It cost £0.68</p>
+                    <p>Your used <span class="household_totalkwh"></span> kWh on <span class="household_date"></span>. It cost £<span class="household_totalcost"></span></p>
                     <p>Compared with 12p/kWh reference price, you saved:</p>
                   </div>
                 </div>
@@ -285,7 +285,7 @@ $v = 5.1;
                 <br>
                 <div class="circle bg-household">
                     <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px">£0.25</div>
+                        <div style="font-size:36px" class="household_costsaving">£0.00</div>
                     </div>
                 </div>
                 <br>

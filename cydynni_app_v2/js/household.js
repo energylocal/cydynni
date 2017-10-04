@@ -26,61 +26,36 @@ function household_summary_load()
           // 1. Determine score
           // Calculated as amount of power consumed at times off peak times and from hydro
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
-
-          // Display score as number of stars
-          // setTimeout fn used to animate 
           
-          if (result.dayoffset==1) {
-              $("#household_score_text").html(t("Yesterday you scored"));
-          } else {
-              $("#household_score_text").html(t("You scored")+" "+t("on")+" "+t(result.month)+" "+result.day);
-          }
-          
-          $("#household_score").html(score);
-          if (score>20) $("#star1").attr("src","images/starblue.png");
-          if (score>40) setTimeout(function() { $("#star2").attr("src","images/starblue.png"); }, 100);
-          if (score>60) setTimeout(function() { $("#star3").attr("src","images/starblue.png"); }, 200);
-          if (score>80) setTimeout(function() { $("#star4").attr("src","images/starblue.png"); }, 300);
-          if (score>90) setTimeout(function() { $("#star5").attr("src","images/starblue.png"); }, 400);
+          if (score>20) $("#household_star1").attr("src","images/starred.png");
+          if (score>40) setTimeout(function() { $("#household_star2").attr("src","images/starred.png"); }, 100);
+          if (score>60) setTimeout(function() { $("#household_star3").attr("src","images/starred.png"); }, 200);
+          if (score>80) setTimeout(function() { $("#household_star4").attr("src","images/starred.png"); }, 300);
+          if (score>90) setTimeout(function() { $("#household_star5").attr("src","images/starred.png"); }, 400);
           
           // Show status summary ( below score stars )
           setTimeout(function() {
               if (score<30) {
-                  $("#statusmsg").html(t("You are using power in a very expensive way"));
-                  $("#household_status_summary").html(t("MISSING OUT"));
+                  $(".household_status").html(t("You are using power in a very expensive way"));
               }
               if (score>=30 && score<70) {
-                  $("#statusmsg").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
-                  $("#household_status_summary").html(t("DOING OK"));
+                  $(".household_status").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
               }
               if (score>=70) {
-                  $("#statusmsg").html(t("You’re doing really well at using hydro & cheaper power"));
-                  $("#household_status_summary").html(t("DOING WELL"));
+                  $(".household_status").html(t("You’re doing really well at using hydro & cheaper power"));
               }
           }, 400);
+
+          $(".household_date").html(result.day+" "+result.month);
+          $(".household_score").html(score);
+          $(".household_totalkwh").html(result.kwh.total.toFixed(1));
+          $(".household_totalcost").html(result.cost.total.toFixed(2));
           
-          // 2nd ssection showing total consumption and cost
-          // $(".totalcost").html(result.cost.total.toFixed(2));
-          $(".totalkwh").html(result.kwh.total.toFixed(1));
-          
-          if (result.dayoffset==1) {
-              $("#household-used-date").html(t("yesterday. Costing"));
-          } else {
-              $("#household-used-date").html(t("on")+" "+t(result.month)+" "+result.day+". "+t("Costing"));
-          }
-          /*
           // Saving calculation
           var totalcostflatrate = result.kwh.total * 0.12;
           var costsaving = totalcostflatrate - result.cost.total;
-          $(".costsaving").html(costsaving.toFixed(2));
-          
-          // Summary for saving section
-          if (result.dayoffset==1) {
-              $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t("YESTERDAY"));
-          } else {
-              $("#household_saving_summary").html("£"+costsaving.toFixed(2)+" "+t(result.month)+" "+result.day);    
-          }*/
-          
+          $(".household_costsaving").html("£"+costsaving.toFixed(2));
+
           // household pie chart
           household_pie1_data = [
             {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},

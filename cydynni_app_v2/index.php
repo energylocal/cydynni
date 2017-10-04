@@ -130,8 +130,9 @@ switch ($q)
         } else {
             $content = "session not valid";
         }
+
+        $content = json_decode('{"kwh":{"morning":0,"midday":0.08,"evening":0.78,"overnight":0.89,"total":10.48,"hydro":8.73},"cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
         
-        $content = array("kwh"=>array("morning"=>0.5,"midday"=>0.2,"evening"=>1.0,"overnight"=>0.5,"hydro"=>2.0,"total"=>4.2));
         $content = json_decode(json_encode($content));
         break;
         
