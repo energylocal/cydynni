@@ -752,7 +752,8 @@ function t(s) {
 // Tips
 // ----------------------------------------------------------------------
 
-function tipscheck() {
+/*
+function tipscheck() { // From beginning to end, does not loop
     if ($(".tips-appliance:last").hasClass("show-fig")) {
         $(".rightclick").addClass("tips-noshow");
     }
@@ -775,5 +776,26 @@ $(".rightclick").click(function(){
 });
 
 tipscheck();
+*/
+
+$(".leftclick").click(function(){
+    $(".show-fig").removeClass("show-fig").addClass("xxx");
+        if ( $(".xxx").prev() != null ) {
+            $(".xxx").prev().addClass("show-fig");
+        }
+        else {
+            $(".tips-appliance:last").addClass("show-fig");
+        }
+});
+
+$(".rightclick").click(function(){
+    $(".show-fig").removeClass("show-fig").addClass("xxx");
+        if ( $(".xxx").next() != null ) {
+            $(".xxx").next().addClass("show-fig");
+        }
+        else {
+            $(".tips-appliance:first").addClass("show-fig");
+        }
+});
 
 </script>
