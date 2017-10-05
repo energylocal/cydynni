@@ -813,10 +813,12 @@ $(".rightclick").click(function(){
 tipscheck();
 */
 
+
 $(".leftclick").click(function(){
-    $(".show-fig").removeClass("show-fig").addClass("xxx");
-        if ( $(".xxx").prev() != null ) {
-            $(".xxx").prev().addClass("show-fig");
+    $(".figholder").removeClass("figholder");
+    $(".show-fig").removeClass("show-fig").addClass("figholder");
+        if ( $(".figholder").prev().hasClass("tips-appliance") ) {
+            $(".figholder").prev().addClass("show-fig");
         }
         else {
             $(".tips-appliance:last").addClass("show-fig");
@@ -824,9 +826,10 @@ $(".leftclick").click(function(){
 });
 
 $(".rightclick").click(function(){
-    $(".show-fig").removeClass("show-fig").addClass("xxx");
-        if ( $(".xxx").next() != null ) {
-            $(".xxx").next().addClass("show-fig");
+    $(".figholder").removeClass("figholder");
+    $(".show-fig").removeClass("show-fig").addClass("figholder");
+        if ( $(".figholder").next().hasClass("tips-appliance") ) {
+            $(".figholder").next().addClass("show-fig");
         }
         else {
             $(".tips-appliance:first").addClass("show-fig");
