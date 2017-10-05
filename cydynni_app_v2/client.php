@@ -682,7 +682,7 @@ $v = time();
 <script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
-
+<script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
