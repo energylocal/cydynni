@@ -262,6 +262,40 @@ $v = time();
 
         
         <div class="page" name="household">
+            <!--
+            <div id="passwordreset-block" style="text-align:center; display:none">
+              <div class="login-box">
+              <p id="passwordreset-title"></p>
+              <p>
+                <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
+              </p>
+              <div id="passwordreset-alert"></div>
+              </div>
+            </div>
+            -->
+            
+            <div class="block">
+                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
+                <div class="block-content">
+                    
+                    <div class="bg-household" style="padding:20px">
+                    
+                        <div style="font-weight:bold; font-size:32px">Log in</div>
+                        Please login to view account<br><br>
+                    
+                        <input id="email" type="text" placeholder="Email..."><br><br>
+                        <input id="password" type="password" placeholder="Password..."><br>
+                        
+                        <br>
+                        <button id="login" class="btn"><?php echo t("Login");?></button><br><br>
+                        <div id="passwordreset-start" style="display:inline-block; cursor:pointer;"><?php echo t("Forgotten your password?");?></div>
+                        <br><br>
+                        <div id="alert"></div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="block">
               <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide"></div></div>
               
@@ -652,6 +686,7 @@ $v = time();
 <script>
 
 var path = "<?php echo $path; ?>";
+var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 

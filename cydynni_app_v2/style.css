@@ -342,6 +342,58 @@ body {
     display: none;
 }
 
+
+/* --------------------------------------------------------------- */
+
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 0;
+  font-size:18px;
+  
+  box-shadow: none;
+  box-sizing: border-box; }
+  
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+
+/* --------------------------------------------------------------- */
+
+.btn {
+    text-align:center;
+    height: 38px;
+    padding:6px 10px;
+    color:#fff;
+    background: rgb(41,171,226);
+    border: 0;
+    font-weight:bold;
+    font-size: 18px;
+}
+
+.btn:hover {
+    background: rgb(61,191,246);
+    cursor:pointer;
+}
+
 /* --------------------------------------------------------------- */
 
 @media (max-width: 650px) {
