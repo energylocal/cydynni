@@ -355,8 +355,10 @@ function community_bargraph_resize() {
     flot_font_size = 12;
     if (window_width<450) flot_font_size = 10;
 
-    var h = 400;
     width = $("#community_bargraph_bound").width();
+    
+    var h = 400; if (width<400) h = width;
+    
     $("#community_bargraph_placeholder").width(width);
     $('#community_bargraph_bound').height(h);
     $('#community_bargraph_placeholder').height(h);

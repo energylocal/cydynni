@@ -33,6 +33,18 @@ body {
     overflow: hidden;
 }
 
+.logo-full {
+    height:80px; 
+    padding:10px;
+    float:left;
+}
+
+.logo-mobile {
+    height:80px; 
+    padding:10px;
+    float:left;
+}
+
 .app-title {
     float:right;
     text-align:right;
@@ -138,32 +150,6 @@ body {
     display:inline-block;
 }
 
-@media (max-width: 650px) {
-  .box2, .box3, .box4 { float:none; width:100%; margin-bottom:10px; }
-}
-
-@media (max-width: 750px) {
-  .nav-text {
-      display:none;
-  }
-  
-  .navigation li > div {
-      text-align:center;
-  }
-  
-  .navigation li > div > img {
-      float:none;
-  }
-  
-  .logo-mobile { display:block }
-  .logo-full { display:none }
-}
-    
-@media (min-width: 750px) {
-  .logo-mobile { display:none }
-  .logo-full { display:block }
-}
-
 /*triangular wedge>>*/
 
 .block-spacer { /*padding above wedge*/
@@ -249,8 +235,6 @@ body {
 	  font-weight:bold;
 }
 
-
-
 .bg-hydro { background-color: #29aae3; color:#fff; }
 .bg-morning { background-color: #ffb401; color:#fff; }
 .bg-midday { background-color: #4dac34; color:#fff; }
@@ -293,6 +277,8 @@ body {
     vertical-align:top;
     font-size:14px;
 }
+
+/* --------------------------------------------------------------- */
 
 .tips-appliance img {
     height: 250px;
@@ -354,4 +340,44 @@ body {
 
 .tips-noshow {
     display: none;
+}
+
+/* --------------------------------------------------------------- */
+
+@media (max-width: 650px) {
+  .box2, .box3, .box4 { float:none; width:100%; margin-bottom:10px; }
+  
+  .app-title {font-size:24px}
+  
+  .logo-full {
+      height:70px; 
+      padding:10px;
+  }
+
+  .logo-mobile {
+      height:70px; 
+      padding:10px;
+  }
+}
+
+@media (max-width: 750px) {
+  .nav-text {
+      display:none;
+  }
+  
+  .navigation li > div {
+      text-align:center;
+  }
+  
+  .navigation li > div > img {
+      float:none;
+  }
+  
+  .logo-mobile { display:block }
+  .logo-full { display:none }
+}
+    
+@media (min-width: 750px) {
+  .logo-mobile { display:none }
+  .logo-full { display:block }
 }

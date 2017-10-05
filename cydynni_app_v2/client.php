@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 5.1;
+$v = time();
 
 ?>
 
@@ -51,12 +51,13 @@ $v = 5.1;
     <div class="app"><div class="app-inner">
             
         <div style="overflow:hidden">
-            <div class="app-title"><?php echo t("Energy<br>Dashboard"); ?></div>
             
-            <img class="logo-full" src='images/EnergyLocalEnglish.png' style="height:80px; padding:10px">
-            <img class="logo-mobile" src='images/logo.png' style="height:80px; padding:10px">
             <div class="togglelang" style="float:right"></div>
-            <br>
+            <img class="logo-full" src='images/EnergyLocalEnglish.png'>
+            <img class="logo-mobile" src='images/logo.png'>
+            
+            <div class="app-title"><?php echo t("Energy<br>Dashboard"); ?></div>
+
         </div>
         
         <ul class="navigation">
