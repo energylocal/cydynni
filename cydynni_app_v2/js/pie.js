@@ -109,7 +109,7 @@ function piegraph1(element,data,options) {
             var prc = 100*(data[z].value/total);
             ctx.fillStyle = "#333";
             ctx.font=textsize_prc+"px Arial";
-            ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
+            if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }
     }
 }
@@ -207,7 +207,7 @@ function piegraph2(element,data,hydro,options) {
             var prc = 100*(data[z].value/(total+hydro));
             ctx.fillStyle = "#333";
             ctx.font=textsize_prc+"px Arial";
-            ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
+            if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }
     }
     

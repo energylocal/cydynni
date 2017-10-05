@@ -11,11 +11,13 @@ $("#login").click(function() {
             if (result.userid!=undefined) {
                 session = result;
                 $("#user-email").html(session.email);
+                
                 $("#login-block").hide();
-                $("#household-status-block").show();
                 $(".logout").show();
-                $(".myaccount").show();
-                household_load();
+                $(".household-block").show();
+
+                household_summary_load();
+                household_bargraph_load();
             } else {
                 $("#alert").html(result);
             }

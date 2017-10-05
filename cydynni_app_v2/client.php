@@ -275,7 +275,7 @@ $v = time();
             </div>
             -->
             
-            <div class="block">
+            <div id="login-block" class="block">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                     
@@ -296,7 +296,7 @@ $v = time();
                 </div>
             </div>
             
-            <div class="block">
+            <div class="block household-block">
               <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide"></div></div>
               
               <div class="block-content" style="color:#c20000">
@@ -348,7 +348,7 @@ $v = time();
               </div>
             </div>
             
-            <div class="block">
+            <div class="block household-block">
                 <div class="block-title bg-household2">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                 
@@ -372,7 +372,7 @@ $v = time();
                 </div>
             </div>
             
-            <div class="block">
+            <div class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                 
@@ -697,6 +697,15 @@ if (lang=="cy") {
     $(".togglelang").html("CY");
 }
 
+if (!session.write) {
+  $("#login-block").show();
+  $(".household-block").hide();
+} else {
+  $("#login-block").hide();
+  $(".logout").show();
+  $(".household-block").show();
+}
+
 show_page("forecast");
 
 $(".navigation li").click(function() {
@@ -753,8 +762,10 @@ cydynnistatus_update();
 community_summary_load();
 community_bargraph_load();
 
-household_summary_load();
-household_bargraph_load();
+if (session.write) {
+    household_summary_load();
+    household_bargraph_load();
+}
 
 resize();
 // ----------------------------------------------------------------------
