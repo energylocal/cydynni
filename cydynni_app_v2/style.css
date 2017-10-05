@@ -342,6 +342,11 @@ body {
     display: none;
 }
 
+.logout {
+    float:right;
+    font-weight:normal;
+}
+
 
 /* --------------------------------------------------------------- */
 

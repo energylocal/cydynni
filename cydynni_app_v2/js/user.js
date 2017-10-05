@@ -18,6 +18,9 @@ $("#login").click(function() {
 
                 household_summary_load();
                 household_bargraph_load();
+                household_pie_draw();
+                household_bargraph_resize();
+                
             } else {
                 $("#alert").html(result);
             }
@@ -25,17 +28,17 @@ $("#login").click(function() {
     });
 });
 
-$(".logout").click(function() {
+$(".logout").click(function(event) {
+    event.stopPropagation();
     $.ajax({                   
         url: path+"/logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();
-            $("#household-status-block").hide();
             $(".logout").hide();
-            $(".myaccount").hide();
+            $(".household-block").hide();
             session = false;
-            window.location = "";
+            // window.location = "";
         }
     });
 });

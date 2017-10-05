@@ -297,7 +297,7 @@ $v = time();
             </div>
             
             <div class="block household-block">
-              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide"></div></div>
+              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="logout">Logout</div></div>
               
               <div class="block-content" style="color:#c20000">
               
