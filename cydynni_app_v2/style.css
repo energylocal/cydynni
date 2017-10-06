@@ -61,7 +61,7 @@ body {
 
 .app-title {
     display: inline-block;
-    height: 90px;
+    height: 100px;
     padding-right: 10px;
     float:right;
     text-align:right;
@@ -282,7 +282,14 @@ body {
 .togglelang {
     cursor: pointer;
     float: right;
-    line-height: 42px;
+    line-height: 30px;
+    background-color: #ffffff;
+    color: #44b3e2;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin: 6px 8px 6px 0;
 }
 
 .bound {
@@ -459,7 +466,7 @@ textarea {
 @media (max-width: 650px) {
   .box2, .box3, .box4 { float:none; width:100%; margin-bottom:10px; }
   
-  .app-title {font-size:24px}
+  /*.app-title {font-size:24px}*/
   
   .logo-full {
       height:70px;
