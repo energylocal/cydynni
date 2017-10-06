@@ -44,34 +44,35 @@ $v = time();
     
     <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
     
-  </head>
-  <body>
-
-<div class="wrap">
-    <div class="app"><div class="app-inner">
-            
-        <div style="overflow:hidden">
-            
-            <div class="togglelang" style="float:right"></div>
-            <img class="logo-full" src='images/EnergyLocalEnglish.png'>
-            <img class="logo-mobile" src='images/logo.png'>
-            
-            <div class="app-title"><?php echo t("Energy<br>Dashboard"); ?></div>
-
+    </head>
+    <body>
+        <div class="oembluebar">
+            <div class="oembluebar-inner">
+                <div class="togglelang">
+                </div>
+            </div>
         </div>
-        
-        <ul class="navigation">
-            <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
-            <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
-            <li name="community"><div><img src="images/community.png"><div class="nav-text"><?php echo t("Community<br>Score"); ?></div></div></li>
-            <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
-        </ul>
-        
+        <div class="wrap">
+            <div class="app">
+                <div class="app-inner">
+                    <div class="title-wrapper">
+                        <img class="logo-full" src='images/EnergyLocalEnglish.png'>
+                        <img class="logo-mobile" src='images/logo.png'>
+                        <div class="app-title">
+                        <div class="app-title-content"><?php echo t("Energy<br>Dashboard"); ?>
+                        </div>
+                    </div>
+                </div>
+                <ul class="navigation">
+                    <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
+                    <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+                    <li name="community"><div><img src="images/community.png"><div class="nav-text"><?php echo t("Community<br>Score"); ?></div></div></li>
+                    <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 
-        
         <div class="page" name="forecast">
 
             <div class="block">

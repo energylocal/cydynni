@@ -16,9 +16,23 @@ body {
     --tips-bg-color: #014656;
 }
 
+.oembluebar {
+    position: fixed;
+    top: 0;
+    height: 42px;
+    width: 100vw;
+    background-color: #44b3e2;
+    z-index: 99;
+}
+
+.title-wrapper {
+    overflow: hidden;
+    padding-top: 34px;
+}
+
 .app {
     margin: 0 auto;
-    max-width:1100px;
+    max-width: 1100px;
 }
 
 .app-inner {
@@ -34,24 +48,34 @@ body {
 }
 
 .logo-full {
-    height:80px; 
+    height:80px;
     padding:10px;
     float:left;
 }
 
 .logo-mobile {
-    height:80px; 
-    padding:10px;
-    float:left;
+    display: inline-block;
+    height: 80px;
+    padding: 10px;
 }
 
 .app-title {
+    display: inline-block;
+    height: 90px;
+    padding-right: 10px;
     float:right;
     text-align:right;
     font-size:30px;
     font-weight:bold;
-    padding:10px 10px 0px 0px;
     color:#014655;
+}
+
+.app-title-content {
+    display: flex;
+    justify-content:center;
+    align-content:center;
+    flex-direction:column;
+    height: 100%;
 }
 
 .navigation {
@@ -115,11 +139,10 @@ body {
 }
 
 .footer {
-    padding:20px;
-    height: 44px;
-    overflow:hidden;
-    color:#fff;
-    background-color:#014656;
+    padding: 10px;
+    overflow: hidden;
+    color: #fff;
+    background-color: #014656;
 }
 
 .box2 {
@@ -258,6 +281,8 @@ body {
 
 .togglelang {
     cursor: pointer;
+    float: right;
+    line-height: 42px;
 }
 
 .bound {
@@ -347,6 +372,30 @@ body {
     font-weight:normal;
 }
 
+@media (max-width: 600px) {
+    .tips-appliance img {
+        height: 180px;
+    }
+    .tips-appliance {
+        padding: 30px 0 30px 0;
+    }
+    .tips-appliance figcaption {
+        width: 180px !important;
+    }
+    .tips-arrow-outer-wrapper {
+        width: 200px !important;
+    }
+    .tips-arrow-inner-wrapper {
+        width: 75px !important;
+    }
+    .tips-directions {
+        display: none !important;
+    }
+    .tips-rightarrow,.tips-leftarrow {
+        float: none;
+        margin: 0 auto;
+    }
+}
 
 /* --------------------------------------------------------------- */
 
@@ -407,12 +456,12 @@ textarea {
   .app-title {font-size:24px}
   
   .logo-full {
-      height:70px; 
+      height:70px;
       padding:10px;
   }
 
   .logo-mobile {
-      height:70px; 
+      height:70px;
       padding:10px;
   }
 }
@@ -430,7 +479,7 @@ textarea {
       float:none;
   }
   
-  .logo-mobile { display:block }
+  .logo-mobile { display: inline-block }
   .logo-full { display:none }
 }
     
