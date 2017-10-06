@@ -380,7 +380,7 @@ body {
         padding: 30px 0 30px 0;
     }
     .tips-appliance figcaption {
-        width: 180px !important;
+        width: 265px !important;
     }
     .tips-arrow-outer-wrapper {
         width: 200px !important;
@@ -394,6 +394,12 @@ body {
     .tips-rightarrow,.tips-leftarrow {
         float: none;
         margin: 0 auto;
+    }
+}
+
+@media (max-width: 400px) {
+    .tips-appliance figcaption {
+        width: 180px !important;
     }
 }
 
