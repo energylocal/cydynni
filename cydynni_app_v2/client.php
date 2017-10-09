@@ -83,7 +83,7 @@ $v = time();
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
                   
-                    <div id="status-pre" style="height:16px; padding:10px;"></div>
+                    <div id="status-pre" style="padding:10px;"></div>
                     <img id="status-img" src="images/new-tick.png"/>
                     <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
                     <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
@@ -140,8 +140,10 @@ $v = time();
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Top up electricity"); ?><div class="triangle-dropdown"></div></div>
                 <div class="block-content hide">
                   <div style="background-color:#005b0b; color:#fff">
+                    <div class="bound">
                     <?php echo t("Sometimes we need electricity from the grid to top up the power produced by the hydro."); ?><br><br>
                     <b><?php echo t("You're currently on the"); ?></b>
+                    </div>
                   </div>
                   
                   <div class="no-padding">

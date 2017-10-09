@@ -115,7 +115,7 @@ switch ($q)
         $format = "html";
         if ($session["read"]) {
             unset($session["token"]);
-            $content = view("pages/report.php",array('session'=>$session));
+            $content = view("report.php",array('session'=>$session));
         } else {
             $content = "session not valid";
         }
