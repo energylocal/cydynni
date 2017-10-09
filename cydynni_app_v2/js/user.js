@@ -13,7 +13,8 @@ $("#login").click(function() {
                 $("#user-email").html(session.email);
                 
                 $("#login-block").hide();
-                $(".logout").show();
+                $("#logout").show();
+                $("#reports").show();
                 $(".household-block").show();
 
                 household_summary_load();
@@ -28,14 +29,15 @@ $("#login").click(function() {
     });
 });
 
-$(".logout").click(function(event) {
+$("#logout").click(function(event) {
     event.stopPropagation();
     $.ajax({                   
         url: path+"/logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();
-            $(".logout").hide();
+            $("#logout").hide();
+            $("#reports").hide();
             $(".household-block").hide();
             session = false;
             // window.location = "";

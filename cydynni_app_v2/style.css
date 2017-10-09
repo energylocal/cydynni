@@ -19,10 +19,32 @@ body {
 .oembluebar {
     position: fixed;
     top: 0;
-    height: 42px;
-    width: 100vw;
+    height: 32px;
     background-color: #44b3e2;
     z-index: 99;
+    width:100%;
+    color:#fff;
+}
+
+.oembluebar-inner {
+    margin: 0 auto;
+    max-width: 1080px;
+}
+
+.oembluebar-item {
+    display:inline-block;
+    padding:7px 10px 6px 10px;
+    cursor: pointer;
+    text-align: center;
+    float:left;
+}
+
+.oembluebar-item:hover {
+    background-color:rgba(255,255,255,0.2);
+}
+
+.oembluebar-item:active {
+    background-color:#209ed3;
 }
 
 .title-wrapper {
@@ -280,16 +302,7 @@ body {
 }
 
 .togglelang {
-    cursor: pointer;
     float: right;
-    line-height: 30px;
-    background-color: #ffffff;
-    color: #44b3e2;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    margin: 6px 8px 6px 0;
 }
 
 .bound {

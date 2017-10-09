@@ -110,7 +110,17 @@ switch ($q)
         unset($session["token"]);
         $content = view("client.php",array('session'=>$session));
         break;
-        
+
+    case "report":
+        $format = "html";
+        if ($session["read"]) {
+            unset($session["token"]);
+            $content = view("pages/report.php",array('session'=>$session));
+        } else {
+            $content = "session not valid";
+        }
+        break;
+                
     // ------------------------------------------------------------------------
     // Household 
     // ------------------------------------------------------------------------         

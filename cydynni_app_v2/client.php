@@ -48,8 +48,11 @@ $v = time();
     <body>
         <div class="oembluebar">
             <div class="oembluebar-inner">
-                <div class="togglelang">
-                </div>
+                <div id="dashboard" class="oembluebar-item" active>CydYnni Dashboard</div>
+                <div id="reports" class="oembluebar-item">Reports</div>
+
+                <div id="logout" class="oembluebar-item" style="float:right">Logout</div>
+                <div id="togglelang" class="oembluebar-item" style="float:right"></div>
             </div>
         </div>
         <div class="wrap">
@@ -298,7 +301,7 @@ $v = time();
             </div>
             
             <div class="block household-block">
-              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="logout">Logout</div></div>
+              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide" style="margin-left:10px"></div></div>
               
               <div class="block-content" style="color:#c20000">
               
@@ -693,18 +696,23 @@ var lang = "<?php echo $lang; ?>";
 
 // Language selection top-right
 if (lang=="cy") {
-    $(".togglelang").html("EN");
+    $("#togglelang").html("English");
 } else {
-    $(".togglelang").html("CY");
+    $("#togglelang").html("Cymraeg");
 }
 
 if (!session.write) {
   $("#login-block").show();
   $(".household-block").hide();
+  
+  $("#logout").hide();
+  $("#reports").hide();
 } else {
   $("#login-block").hide();
-  $(".logout").show();
   $(".household-block").show();
+  
+  $("#logout").show();
+  $("#reports").show();
 }
 
 show_page("forecast");
@@ -774,13 +782,13 @@ resize();
 // ----------------------------------------------------------------------
 
 // Language selection
-$(".togglelang").click(function(){
+$("#togglelang").click(function(){
     var ilang = $(this).html();
-    if (ilang=="CY") {
-        $(this).html("EN");
+    if (ilang=="Cymraeg") {
+        $(this).html("English");
         window.location = "?lang=cy";
     } else {
-        $(this).html("CY");
+        $(this).html("Cymraeg");
         lang="cy";
         window.location = "?lang=en";
     }
@@ -846,6 +854,10 @@ $(".rightclick").click(function(){
         else {
             $(".tips-appliance:first").addClass("show-fig");
         }
+});
+
+$("#reports").click(function(){
+    window.location = "report";
 });
 
 </script>
