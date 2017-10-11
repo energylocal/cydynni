@@ -48,8 +48,8 @@ $("#logout").click(function(event) {
 $("#passwordreset-start").click(function() {
     $("#login-block").hide();
     $("#passwordreset-block").show();
-    $("#passwordreset-title").html("Please enter email address to reset password");
-    $("#passwordreset-cancel").html("Cancel");
+    $("#passwordreset-title").html(t("Please enter email address to reset password"));
+    $("#passwordreset-cancel").html(t("Cancel"));
 });
 
 $("#passwordreset-cancel").click(function() {
@@ -62,7 +62,7 @@ $("#passwordreset").click(function() {
     $("#passwordreset").hide();
     $("#passwordreset-email").hide();
     $("#passwordreset-alert").html("");
-    $("#passwordreset-title").html("Password reset in progress..");
+    $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
         url: path+"/passwordreset",                         
         data: "email="+email,
@@ -72,10 +72,10 @@ $("#passwordreset").click(function() {
                 $("#passwordreset").show();
                 $("#passwordreset-email").show();
                 $("#passwordreset-alert").html(result);
-                $("#passwordreset-title").html("Please enter email address to reset password");
+                $("#passwordreset-title").html(t("Please enter email address to reset password"));
             } else {
-                $("#passwordreset-title").html("Password recovery email sent! please check your email inbox");
-                $("#passwordreset-cancel").html("Return to Login");
+                $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
+                $("#passwordreset-cancel").html(t("Return to Login"));
             }
             
         }

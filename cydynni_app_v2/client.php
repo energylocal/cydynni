@@ -268,18 +268,6 @@ $v = time();
 
         
         <div class="page" name="household">
-            <!--
-            <div id="passwordreset-block" style="text-align:center; display:none">
-              <div class="login-box">
-              <p id="passwordreset-title"></p>
-              <p>
-                <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
-                <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
-              </p>
-              <div id="passwordreset-alert"></div>
-              </div>
-            </div>
-            -->
             
             <div id="login-block" class="block">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
@@ -301,7 +289,21 @@ $v = time();
                     </div>
                 </div>
             </div>
-            
+
+            <div id="passwordreset-block" class="block" style="display:none">
+                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
+                <div class="block-content">                    
+                    <div class="bg-household" style="padding:20px">
+                        <p id="passwordreset-title"></p>
+                        <p>
+                          <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
+                        </p>
+                        <div id="passwordreset-alert"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="block household-block">
               <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide" style="margin-left:10px"></div></div>
               
