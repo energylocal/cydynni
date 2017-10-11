@@ -9,6 +9,7 @@ $v=1;
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>CydYnni Report</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <link rel="stylesheet" type="text/css" href="report.css" />
   </head>
 
@@ -16,10 +17,16 @@ $v=1;
   <script language="javascript" type="text/javascript" src="js/report.js?v=<?php echo $v; ?>"></script>
 
   <body>
-  
-    <div class="top-nav">
-        <div class="top-nav-list"><img src="images/icon-list.png" ></div>
-        <div class="top-nav-title"><?php echo t("CydYnni Reports"); ?></div>
+
+    <div class="oembluebar">
+        <div class="oembluebar-inner">
+            <div id="sidenav-icon" class="oembluebar-item active"><img src="images/icon-list.png" ></div>
+            <div id="reports" class="oembluebar-item active"><?php echo t("Reports"); ?></div>
+            <div id="dashboard" class="oembluebar-item"><?php echo t("Dashboard"); ?></div>
+
+            <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
+            <div id="togglelang" class="oembluebar-item" style="float:right"></div>
+        </div>
     </div>
   
     <div class="sidenav">
@@ -163,6 +170,19 @@ var hydro = 0;
 
 var selected_month = 0;
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+// Language selection top-right
+if (lang=="cy") {
+    $("#togglelang").html("English");
+} else {
+    $("#togglelang").html("Cymraeg");
+}
+
+if (!session.write) {
+  $("#logout").hide();
+} else {
+  $("#logout").show();
+}
 
 sidebar_resize();
 
@@ -366,7 +386,7 @@ function hide_sidebar() {
     $("#sidenav-open").show();
 }
 
-$(".top-nav-list").click(function(){
+$("#sidenav-icon").click(function(){
     if (sidebar_visible) {
         sidebar_visible = false;
         hide_sidebar();
@@ -387,6 +407,19 @@ $(window).on('hashchange',function(){
    sidebar_resize();
 });
 
+// Language selection
+$("#togglelang").click(function(){
+    var ilang = $(this).html();
+    if (ilang=="Cymraeg") {
+        $(this).html("English");
+        window.location = "?lang=cy";
+    } else {
+        $(this).html("Cymraeg");
+        lang="cy";
+        window.location = "?lang=en";
+    }
+});
+
 function t(s) {
     if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
         return translation[lang][s];
@@ -394,4 +427,18 @@ function t(s) {
         return s;
     }
 }
+
+$("#logout").click(function(event) {
+    event.stopPropagation();
+    $.ajax({                   
+        url: path+"/logout",
+        dataType: 'text',
+        success: function(result) {
+            window.location = "/";
+        }
+    });
+});
+$("#dashboard").click(function(){
+    window.location = "/";
+});
 </script>

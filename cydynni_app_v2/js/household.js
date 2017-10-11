@@ -9,6 +9,7 @@ var start = 0;
 
 var household_pie1_data = [];
 var household_pie2_data = [];
+var household_pie3_data = [];
 
 var household_hydro_use = 0;
 var householdseries = [];
@@ -73,6 +74,14 @@ function household_summary_load()
             {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
           ];
           
+          // household pie chart
+          household_pie3_data = [
+            {name:t("MORNING"), hydro: result.hydro.morning, import: result.kwh.morning, color:"#ffdc00"},
+            {name:t("MIDDAY"), hydro: result.hydro.midday, import: result.kwh.midday, color:"#4abd3e"},
+            {name:t("EVENING"), hydro: result.hydro.evening, import: result.kwh.evening, color:"#c92760"},
+            {name:t("OVERNIGHT"), hydro: result.hydro.overnight, import: result.kwh.overnight, color:"#274e3f"} 
+          ];
+          
           $("#household_hydro_kwh").html(result.kwh.hydro);
           $("#household_morning_kwh").html(result.kwh.morning);
           $("#household_midday_kwh").html(result.kwh.midday);
@@ -111,8 +120,10 @@ function household_pie_draw() {
     piegraph1("household_piegraph1_placeholder",household_pie1_data,options); 
    
     // Pie chart
-    piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
+    // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
 
+    piegraph3("household_piegraph2_placeholder",household_pie3_data,options);
+    
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
 }

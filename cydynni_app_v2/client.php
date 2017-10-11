@@ -48,10 +48,10 @@ $v = time();
     <body>
         <div class="oembluebar">
             <div class="oembluebar-inner">
-                <div id="dashboard" class="oembluebar-item" active>CydYnni Dashboard</div>
-                <div id="reports" class="oembluebar-item">Reports</div>
+                <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
+                <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
 
-                <div id="logout" class="oembluebar-item" style="float:right">Logout</div>
+                <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
                 <div id="togglelang" class="oembluebar-item" style="float:right"></div>
             </div>
         </div>
@@ -59,7 +59,7 @@ $v = time();
             <div class="app">
                 <div class="app-inner">
                     <div class="title-wrapper">
-                        <img class="logo-full" src='images/EnergyLocalEnglish.png'>
+                        <img class="logo-full" src='images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
                         <img class="logo-mobile" src='images/logo.png'>
                         <div class="app-title">
                         <div class="app-title-content"><?php echo t("Energy<br>Dashboard"); ?>

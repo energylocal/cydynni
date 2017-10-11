@@ -139,10 +139,13 @@ switch ($q)
             
         } else {
             $content = "session not valid";
-            // $content = json_decode('{"kwh":{"morning":0,"midday":0.08,"evening":0.78,"overnight":0.89,"total":10.48,"hydro":8.73},"cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
         }
-
         
+        //$content = json_decode('{"kwh":{"morning":0.4,"midday":0.4,"evening":0.9,"overnight":0.6,"total":6.3,"hydro":4.0}, "hydro":{"morning":1.4,"midday":1.1,"evening":0.8,"overnight":0.7}, "cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
+
+        //$content = json_decode('{"kwh":{"morning":0.0,"midday":0.0,"evening":0.8,"overnight":0.5,"total":3.8,"hydro":2.5}, "hydro":{"morning":0.7,"midday":1.0,"evening":0.5,"overnight":0.3}, "cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
+
+                
         
         $content = json_decode(json_encode($content));
         break;

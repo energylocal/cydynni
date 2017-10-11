@@ -124,10 +124,16 @@ function get_household_consumption($baseurl,$token) {
     $kwh["hydro"] = $gross["total"] - $imported["total"];
     $kwh["total"] = $gross["total"];
     
+    $hydro = array();
+    $hydro["morning"] = $gross["morning"] - $imported["morning"];
+    $hydro["midday"] = $gross["midday"] - $imported["midday"];
+    $hydro["evening"] = $gross["evening"] - $imported["evening"];
+    $hydro["overnight"] = $gross["overnight"] - $imported["overnight"];
+    
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
+    return array("kwh"=>$kwh,"hydro"=>$hydro,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------

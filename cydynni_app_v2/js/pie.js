@@ -217,4 +217,108 @@ function piegraph2(element,data,hydro,options) {
     ctx.fillText(Math.round(prc)+"%",midx,midy+5);
 }
 
+function piegraph3(element,data,options) {
+    // Pie chart size based on width
+    var size = options.width;
+    var midx = options.width * 0.5;
+    var midy = options.height * 0.5;
+    
+    var hydro = 1;
+    
+    // Calculate total of pie chart segments 
+    var total = 0; for (z in data) total += data[z].hydro + data[z].import;
+    
+    // Context and clear
+    var c = document.getElementById(element);  
+    var ctx = c.getContext("2d");
+    ctx.clearRect(0,0,options.width,options.height);
+    
+    var alphainc = 0.6/data.length;
+    var alpha = 1.0;
+    var textsize = Math.round(0.04*size);
+    var textsize_prc = Math.round(0.05*size);
+
+    ctx.textAlign = "center";
+    ctx.font=textsize+"px Arial";
+    
+    // Background grey
+    ctx.fillStyle = "#eee";
+    ctx.beginPath();
+    ctx.arc(midx,midy,size*0.40,0,2*Math.PI,false);
+    ctx.fill();
+    
+    // -----------------------------------------------------------------
+    // Pie chart segments
+    // -----------------------------------------------------------------
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+
+    var x = 0;
+    var l = -Math.PI *0.5;
+    for (z in data) {
+        x += data[z].hydro + data[z].import;
+        
+        var lastl = l
+        l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
+        
+        alpha -= alphainc;
+        ctx.fillStyle = data[z].color;
+        
+        ctx.beginPath();
+        ctx.arc(midx,midy,size*0.2875,lastl,l,false);
+        ctx.arc(midx,midy,size*0.0001,l,lastl,true);
+        ctx.fill();
+        ctx.closePath();
+        ctx.stroke();
+        
+        // Hydro part
+        var prc = data[z].hydro / (data[z].hydro+data[z].import);
+
+        var r = size*0.2875;
+        var fullarea = Math.PI * r*r;
+        var prcarea = prc * fullarea;
+        var cr = Math.sqrt(prcarea / Math.PI);
+        
+        ctx.fillStyle = "#29aae3";
+        ctx.beginPath();
+        ctx.arc(midx,midy,cr,lastl,l,false);
+        ctx.arc(midx,midy,size*0.0001,l,lastl,true);
+        ctx.fill();
+        ctx.closePath();
+        ctx.stroke();
+        
+    }
+
+    // -----------------------------------------------------------------
+    // Labels
+    // -----------------------------------------------------------------
+    
+    ctx.fillStyle = "#fff";
+
+    var x = 0;
+    var l = -Math.PI *0.5;
+    for (z in data) {
+        var val = data[z].hydro + data[z].import;
+        x += val;
+        
+        var lastl = l
+        l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
+        var tl = (l + lastl)*-0.5 + (Math.PI *0.5);
+        
+        var prclabelx = midx+Math.sin(tl)*size*0.34;
+        var prclabely = midy+Math.cos(tl)*size*0.34;
+        var valuelabelx = midx+Math.sin(tl)*size*0.4;
+        var valuelabely = midy+Math.cos(tl)*size*0.4;
+        
+        if (val>0) {
+            // Percentage label
+            var prc = 100*(val/total);
+            ctx.fillStyle = "#333";
+            ctx.font=textsize_prc+"px Arial";
+            if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
+        }
+    }
+}
+
+
 
