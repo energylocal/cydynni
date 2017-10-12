@@ -42,7 +42,7 @@ $("#logout").click(function(event) {
             $("#reports").hide();
             $(".household-block").hide();
             session = false;
-            // window.location = "";
+            window.location = "";
         }
     });
 });

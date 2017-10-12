@@ -147,11 +147,11 @@ function household_pie_draw() {
 
 function household_bargraph_load() {
     var history = "";
-    if (end>0 && start>0) history = "?start="+start+"&end="+end;
+    if (end>0 && start>0) history = "&start="+start+"&end="+end+"&interval=1800";
   
     var data = [];
     $.ajax({                                      
-        url: path+"data"+history,
+        url: path+"feed/average.json?id=3&start="+start+"&end="+end+"&interval=1800&apikey="+session['apikey_read'],
         dataType: 'json',
         async: true,                      
         success: function(result) {
