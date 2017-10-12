@@ -371,7 +371,7 @@ switch ($q)
                 
     case "login":
         $format = "json";
-        $content = $user->login(post('email'),post('password'));
+        $content = $user->login(post('username'),post('password'));
         break;
 
     case "register":

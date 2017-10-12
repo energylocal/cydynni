@@ -18,7 +18,26 @@ class User
         if (!isset($session['admin'])) $session['admin'] = 0;
         return $session;
     }
-    
+
+    private function getbyusername($username) {
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows!=1) return false;
+        
+        $stmt->bind_result($id,$username,$email,$dbhash,$salt,$admin);
+        $u = $stmt->fetch();
+        return array(
+            "id"=>$id,
+            "username"=>$username,
+            "email"=>$email,
+            "dbhash"=>$dbhash,
+            "salt"=>$salt,
+            "admin"=>$admin
+        );
+    }
+       
     private function getbyemail($email) {
         $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
@@ -46,6 +65,15 @@ class User
         return array(
             "email"=>$row["email"]
         );
+    }
+    
+    public function get_id($username)
+    {
+        if (!ctype_alnum($username)) return false;
+
+        $result = $this->mysqli->query("SELECT id FROM users WHERE username = '$username';");
+        $row = $result->fetch_array();
+        return $row['id'];
     }
     
     public function apikey_session($apikey_in)
@@ -94,16 +122,15 @@ class User
     //---------------------------------------------------------------------------------------
     // User login
     //---------------------------------------------------------------------------------------    
-    public function login($email,$password)
+    public function login($username,$password)
     {        
-        if ($email==null) return "Email address missing";
-        if ($password==null) return "Password missing";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
+        if ($username==null) return array("success"=>false, "message"=>"Username missing");
+        if ($password==null) return array("success"=>false, "message"=>"Password missing");
         
-        if (!$u = $this->getbyemail($email)) return "User not found";
+        if (!$u = $this->getbyusername($username)) return array("success"=>false, "message"=>"User not found");
         
         $hash = hash('sha256', $u['salt'] . hash('sha256', $password));
-        if ($hash!=$u['dbhash']) return "Invalid password";
+        if ($hash!=$u['dbhash']) return array("success"=>false, "message"=>"Invalid password");
         
         session_regenerate_id();
         $_SESSION['userid'] = $u['id'];
@@ -112,7 +139,48 @@ class User
         $_SESSION['read'] = 1;
         $_SESSION['write'] = 1;
         $_SESSION['admin'] = $u['admin'];
-        return $_SESSION;
+        
+        $result = $_SESSION;
+        $result["success"] = true;
+        return $result;
+    }
+    
+    public function register($username, $password, $email)
+    {
+        // Input validation, sanitisation and error reporting
+        if (!$username || !$password || !$email) return array('success'=>false, 'message'=>_("Missing username, password or email parameter"));
+
+        if (!ctype_alnum($username)) return array('success'=>false, 'message'=>_("Username must only contain a-z and 0-9 characters"));
+        $username = $this->mysqli->real_escape_string($username);
+        // $password = $this->mysqli->real_escape_string($password);
+
+        if ($this->get_id($username) != 0) return array('success'=>false, 'message'=>_("Username already exists"));
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return array('success'=>false, 'message'=>_("Email address format error"));
+
+        if (strlen($username) < 3 || strlen($username) > 30) return array('success'=>false, 'message'=>_("Username length error"));
+        if (strlen($password) < 4 || strlen($password) > 250) return array('success'=>false, 'message'=>_("Password length error"));
+
+        // If we got here the username, password and email should all be valid
+
+        $hash = hash('sha256', $password);
+        $salt = md5(uniqid(mt_rand(), true));
+        $password = hash('sha256', $salt . $hash);
+
+        $apikey_write = md5(uniqid(mt_rand(), true));
+        $apikey_read = md5(uniqid(mt_rand(), true));
+
+        $stmt = $this->mysqli->prepare("INSERT INTO users ( username, password, email, salt ,apikey_read, apikey_write, admin ) VALUES (?,?,?,?,?,?,0)");
+        $stmt->bind_param("ssssss", $username, $password, $email, $salt, $apikey_read, $apikey_write);
+        if (!$stmt->execute()) {
+            return array('success'=>false, 'message'=>_("Error creating user"));
+        }
+
+        // Make the first user an admin
+        $userid = $this->mysqli->insert_id;
+        if ($userid == 1) $this->mysqli->query("UPDATE users SET admin = 1 WHERE id = '1'");
+
+        return array('success'=>true, 'userid'=>$userid, 'apikey_read'=>$apikey_read, 'apikey_write'=>$apikey_write);
     }
 
     //---------------------------------------------------------------------------------------
@@ -170,197 +238,12 @@ class User
         }
     }
 
-    //---------------------------------------------------------------------------------------
-    // Forgotten password
-    //--------------------------------------------------------------------------------------- 
-    public function registeremail($userid)
+    public function get_number_of_users()
     {
-        $userid = (int) $userid;
-        $result = $this->mysqli->query("SELECT * FROM users WHERE id = '$userid'");
-        if (!$row = $result->fetch_array()) return "user not found";
-        
-        $email = $row['email'];
-        
-        // Generate new random password
-        $newpass = hash('sha256',md5(uniqid(rand(), true)));
-        $newpass = substr($newpass, 0, 10);
-
-        // Hash and salt
-        $hash = hash('sha256', $newpass);
-        $salt = md5(uniqid(rand(), true));
-        $dbhash = hash('sha256', $salt . $hash);
-
-        // Save password and salt
-        $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
-
-        $subject = "Welcome to CydYnni, account details";   
-                         
-        $message = view("emailbound.php",array(
-            "title"=>"Croeso i CydYnni, Welcome to CydYnni",
-            "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda chyfeiriad e-bost: $email a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with email address: $email and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
-        ));
-
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
-
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
-        
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        
-        $welcomedate = date("d-m-Y");
-        $this->mysqli->query("UPDATE cydynni SET welcomedate = '$welcomedate' WHERE `userid`='$userid'");
-        return "Email sent";
+        $result = $this->mysqli->query("SELECT COUNT(*) FROM users");
+        $row = $result->fetch_row();
+        return $row[0];
     }
-    
-    
-    //---------------------------------------------------------------------------------------
-    // Report Email
-    //--------------------------------------------------------------------------------------- 
-    public function send_report_email($userid)
-    {
-        $userid = (int) $userid;
-        $result = $this->mysqli->query("SELECT * FROM users WHERE id = '$userid'");
-        if (!$row = $result->fetch_array()) return "user not found";
-        
-        $email = $row['email'];
-        
-        $month_en = "July";
-        $month_cy = "Gorffennaf";
-        
-        $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
-        
-        $c = "";
-        $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan the dilyn y ddolen isod:<br>";
-        $c .= "<i>Your CydYnni report for $month_en is now ready. Please login to view your report by following the link below:</i><br><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=en'>CydYnni Report (English)</a><br><br>";
-
-        $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
-        
-        $c .= "<i style='font-size:12px'>Nodwch: Ar hyn o bryd mae cyfran y hydro sydd yn gysylltiedig â'ch cyfrif yn amcangyfrif.</i><br>";
-        $c .= "<i style='font-size:12px'>Please note that at the moment the share of hydro assigned to you is still an estimate.</i><br>";
-        
-        $c .= "<i style='font-size:12px'>Questions? cwestiynau?, cysylltwch â: cydynni@energylocal.co.uk</i><br>";
-        
-        $message = view("emailbound.php",array(
-            "title"=>"Mae eich adroddiad CydYnni yn barod<br>Your CydYnni report is ready",
-            "message"=>$c
-        ));
-
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
-
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
-        
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        
-        $reportdate = date("d-m-Y");
-        $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
-        return "Email sent";
-    }
-    
-    //---------------------------------------------------------------------------------------
-    // Forgotten password
-    //--------------------------------------------------------------------------------------- 
-    public function passwordreset($email)
-    {
-        // return false;
-        
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Email address format error";
-
-        if (!$u = $this->getbyemail($email)) return "User not found";
-        $userid = $u['id'];
-
-        // Generate new random password
-        $newpass = hash('sha256',md5(uniqid(rand(), true)));
-        $newpass = substr($newpass, 0, 10);
-
-        // Hash and salt
-        $hash = hash('sha256', $newpass);
-        $salt = md5(uniqid(rand(), true));
-        $dbhash = hash('sha256', $salt . $hash);
-
-        // Save password and salt
-        $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
-
-        $subject = "CydYnni password reset";                    
-        $message = "<p>A password reset was requested for your CydYnni account.</p><p>Your can now login with password: $newpass </p>";
-
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
-
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
-        
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        return "Email sent";
-    }
-
 
     //---------------------------------------------------------------------------------------
     // Logout
