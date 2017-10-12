@@ -27,15 +27,15 @@ $v=1;
   
   <div class="page">
     <div class="block"><br><br><br>
-      <div style="font-weight:bold; font-size:32px">My Account</div>
-      <p><b>Email:</b><br><span id="user-email"></span></p>
+      <div style="font-weight:bold; font-size:32px"><?php echo t("My Account");?></div>
+      <p><b><?php echo t("Email"); ?>:</b><br><span id="user-email"></span></p>
       <br>
-      <p><b>Change password</b><br>
-      <p>Current password<br>
+      <p><b><?php echo t("Change password"); ?></b><br>
+      <p><?php echo t("Current password"); ?><br>
       <input id="change-password-current" type="password"></p>
-      <p>New password<br>
+      <p><?php echo t("New password"); ?><br>
       <input id="change-password-new" type="password"></p>  
-      <button id="change-password" class="btn">Change</button>   
+      <button id="change-password" class="btn"><?php echo t("Change"); ?></button>   
       <span id="change-password-alert" style="padding-left:10px"></span>   
     </div>
   </div>
