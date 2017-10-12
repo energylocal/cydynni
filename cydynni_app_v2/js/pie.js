@@ -313,8 +313,8 @@ function piegraph3(element,data,options) {
         if (val>0) {
             // Percentage label
             var prc = 100*(val/total);
-            ctx.fillStyle = "#333";
-            ctx.font=textsize_prc+"px Arial";
+            ctx.fillStyle = data[z].color; //"#333";
+            ctx.font="bold "+textsize_prc+"px Arial";
             if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }
     }

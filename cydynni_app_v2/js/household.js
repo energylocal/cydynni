@@ -127,12 +127,12 @@ function household_pie_draw() {
       height: height
     };
     
-    piegraph3("household_piegraph1_placeholder",household_pie3_data_cost,options); 
+    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options); 
    
     // Pie chart
     // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
 
-    piegraph3("household_piegraph2_placeholder",household_pie3_data_energy,options);
+    piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
     
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
@@ -165,7 +165,7 @@ function household_bargraph_load() {
                     bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
                 });
                 
-                // household_bargraph_draw();
+                household_bargraph_resize();
             }
         }
     });
@@ -206,6 +206,7 @@ function household_bargraph_draw() {
 function household_bargraph_resize() {
 
     var window_width = $(window).width();
+    
     flot_font_size = 12;
     if (window_width<450) flot_font_size = 10;
     

@@ -802,45 +802,9 @@ $("#togglelang").click(function(){
     }
 });
 
-// Javascript text translation function
-function t(s) {
-    if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
-        return translation[lang][s];
-    } else {
-        return s;
-    }
-}
-
 // ----------------------------------------------------------------------
 // Tips
 // ----------------------------------------------------------------------
-
-/*
-function tipscheck() { // From beginning to end, does not loop
-    if ($(".tips-appliance:last").hasClass("show-fig")) {
-        $(".rightclick").addClass("tips-noshow");
-    }
-    else if ($(".tips-appliance:first").hasClass("show-fig")) {
-        $(".leftclick").addClass("tips-noshow");
-    }
-    else {
-        $(".leftclick, .rightclick").removeClass("tips-noshow");
-    }
-}
-
-$(".leftclick").click(function(){
-    $(".show-fig").removeClass("show-fig").prev().addClass("show-fig");
-    tipscheck();
-});
-
-$(".rightclick").click(function(){
-    $(".show-fig").removeClass("show-fig").next().addClass("show-fig");
-    tipscheck();
-});
-
-tipscheck();
-*/
-
 
 $(".leftclick").click(function(){
     $(".figholder").removeClass("figholder");
@@ -868,4 +832,12 @@ $("#dashboard").click(function(){ window.location = "/"; });
 $("#reports").click(function(){ window.location = "report"; });
 $("#account").click(function(){ window.location = "account"; });
 
+// Javascript text translation function
+function t(s) {
+    if (translation[lang]!=undefined && translation[lang][s]!=undefined) {
+        return translation[lang][s];
+    } else {
+        return s;
+    }
+}
 </script>

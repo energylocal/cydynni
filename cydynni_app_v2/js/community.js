@@ -13,8 +13,11 @@ var community_data = [];
 var exported_hydro_data = [];
 var used_hydro_data = [];
 var communityseries = [];
+
 var community_pie1_data = [];
 var community_pie2_data = [];
+var community_pie3_data_cost = [];
+var community_pie3_data_energy = [];
 
 var community_score = -1;
 var community_hydro_use = 0;
@@ -90,6 +93,22 @@ function community_summary_load()
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
               ];
               
+              // community pie chart
+              community_pie3_data_cost = [
+                {name:t("MORNING"), hydro: result.hydro.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
+                {name:t("MIDDAY"), hydro: result.hydro.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
+                {name:t("EVENING"), hydro: result.hydro.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
+                {name:t("OVERNIGHT"), hydro: result.hydro.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
+              ];
+              
+              // household pie chart
+              community_pie3_data_energy = [
+                {name:t("MORNING"), hydro: result.hydro.morning, import: result.kwh.morning, color:"#ffdc00"},
+                {name:t("MIDDAY"), hydro: result.hydro.midday, import: result.kwh.midday, color:"#4abd3e"},
+                {name:t("EVENING"), hydro: result.hydro.evening, import: result.kwh.evening, color:"#c92760"},
+                {name:t("OVERNIGHT"), hydro: result.hydro.overnight, import: result.kwh.overnight, color:"#274e3f"} 
+              ];
+              
               $("#community_hydro_kwh").html(result.kwh.hydro);
               $("#community_morning_kwh").html(result.kwh.morning);
               $("#community_midday_kwh").html(result.kwh.midday);
@@ -140,11 +159,12 @@ function community_pie_draw() {
       height: height
     };
     
-    piegraph1("community_piegraph1_placeholder",community_pie1_data,options); 
-   
-    // Pie chart
-    piegraph2("community_piegraph2_placeholder",community_pie2_data,community_hydro_use,options);
-
+    // piegraph1("community_piegraph1_placeholder",community_pie1_data,options); 
+    piegraph3("community_piegraph1_placeholder",community_pie3_data_energy,options); 
+    
+    // piegraph2("community_piegraph2_placeholder",community_pie2_data,community_hydro_use,options);
+    piegraph3("community_piegraph2_placeholder",community_pie3_data_cost,options);
+     
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
     
