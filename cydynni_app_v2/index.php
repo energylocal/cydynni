@@ -120,6 +120,16 @@ switch ($q)
             $content = "session not valid";
         }
         break;
+        
+    case "account":
+        $format = "html";
+        if ($session["read"]) {
+            unset($session["token"]);
+            $content = view("account.php",array('session'=>$session));
+        } else {
+            $content = "session not valid";
+        }
+        break;
                 
     // ------------------------------------------------------------------------
     // Household 
@@ -143,9 +153,32 @@ switch ($q)
         
         //$content = json_decode('{"kwh":{"morning":0.4,"midday":0.4,"evening":0.9,"overnight":0.6,"total":6.3,"hydro":4.0}, "hydro":{"morning":1.4,"midday":1.1,"evening":0.8,"overnight":0.7}, "cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
 
-        //$content = json_decode('{"kwh":{"morning":0.0,"midday":0.0,"evening":0.8,"overnight":0.5,"total":3.8,"hydro":2.5}, "hydro":{"morning":0.7,"midday":1.0,"evening":0.5,"overnight":0.3}, "cost":{"morning":0.11,"midday":0.18,"evening":0.24,"overnight":0.29,"total":0.82},"month":"October","day":"01","date":"October 01 2017 00:00:00","timestamp":1506812400,"dayoffset":3}');
-
-                
+        $content = array(
+          "kwh"=>array("morning"=>0.4,"midday"=>0.2,"evening"=>0.6,"overnight"=>0.1), 
+          "hydro"=>array("morning"=>0.5,"midday"=>0.5,"evening"=>0.5,"overnight"=>0.5),
+          "month"=>"October",
+          "day"=>1,
+          "date"=>"October 01 2017 00:00:00",
+          "timestamp"=>1506812400,
+          "dayoffset"=>3
+        );
+        
+        // -----------------------------------------------------------------------------------------------------------
+        $total = 0; $hydro = 0;
+        foreach ($content["kwh"] as $key=>$val) {
+            $total += $content["kwh"][$key] + $content["hydro"][$key];
+            $hydro += $content["hydro"][$key];
+        }
+        $content["kwh"]["hydro"] = $hydro;
+        $content["kwh"]["total"] = $total;
+        
+        $content["cost"] = array();
+        $content["cost"]["morning"] = ($content["kwh"]["morning"]*0.12) + ($content["hydro"]["morning"]*0.07);
+        $content["cost"]["midday"] = ($content["kwh"]["midday"]*0.10) + ($content["hydro"]["midday"]*0.07);
+        $content["cost"]["evening"] = ($content["kwh"]["evening"]*0.14) + ($content["hydro"]["evening"]*0.07);
+        $content["cost"]["overnight"] = ($content["kwh"]["overnight"]*0.0725) + ($content["hydro"]["overnight"]*0.07);
+        $content["cost"]["total"] = $content["cost"]["morning"] + $content["cost"]["midday"] + $content["cost"]["evening"] + $content["cost"]["overnight"];
+        // -----------------------------------------------------------------------------------------------------------
         
         $content = json_decode(json_encode($content));
         break;

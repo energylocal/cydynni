@@ -14,6 +14,7 @@ $("#login").click(function() {
                 
                 $("#login-block").hide();
                 $("#logout").show();
+                $("#account").show();
                 $("#reports").show();
                 $(".household-block").show();
 
@@ -37,6 +38,7 @@ $("#logout").click(function(event) {
         success: function(result) {
             $("#login-block").show();
             $("#logout").hide();
+            $("#account").hide();
             $("#reports").hide();
             $(".household-block").hide();
             session = false;

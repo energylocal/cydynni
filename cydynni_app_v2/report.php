@@ -1,5 +1,4 @@
 <?php global $path, $translation, $lang; 
-
 $v=1;
 ?>
 
@@ -25,6 +24,7 @@ $v=1;
             <div id="dashboard" class="oembluebar-item"><?php echo t("Dashboard"); ?></div>
 
             <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
+            <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
             <div id="togglelang" class="oembluebar-item" style="float:right"></div>
         </div>
     </div>
@@ -180,8 +180,10 @@ if (lang=="cy") {
 
 if (!session.write) {
   $("#logout").hide();
+  $("#account").hide();
 } else {
   $("#logout").show();
+  $("#account").show();
 }
 
 sidebar_resize();
@@ -438,7 +440,9 @@ $("#logout").click(function(event) {
         }
     });
 });
-$("#dashboard").click(function(){
-    window.location = "/";
-});
+
+$("#dashboard").click(function(){ window.location = "/"; });
+$("#reports").click(function(){ window.location = "report"; });
+$("#account").click(function(){ window.location = "account"; });
+
 </script>

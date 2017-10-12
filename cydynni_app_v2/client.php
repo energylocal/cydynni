@@ -52,7 +52,9 @@ $v = time();
                 <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
 
                 <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
+                <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
                 <div id="togglelang" class="oembluebar-item" style="float:right"></div>
+
             </div>
         </div>
         <div class="wrap">
@@ -391,14 +393,14 @@ $v = time();
                     <br>
                     
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 1"); ?></div>
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("ENERGY"); ?></div>
                       <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph1_placeholder"></canvas>
                       </div>
                     </div>
                 
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("OPTION 2"); ?></div>
+                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("COST"); ?></div>
                       <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph2_placeholder"></canvas>
                       </div>
@@ -526,14 +528,14 @@ $v = time();
                     </div>-->
                     
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 1"); ?></div>
+                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("ENERGY"); ?></div>
                       <div id="community_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="community_piegraph1_placeholder"></canvas>
                       </div>
                     </div>
                 
                     <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("OPTION 2"); ?></div>
+                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("COST"); ?></div>
                       <div id="community_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="community_piegraph2_placeholder"></canvas>
                       </div>
@@ -709,6 +711,7 @@ if (!session.write) {
   $("#login-block").show();
   $(".household-block").hide();
   
+  $("#account").hide();
   $("#logout").hide();
   $("#reports").hide();
 } else {
@@ -716,6 +719,7 @@ if (!session.write) {
   $(".household-block").show();
   
   $("#logout").show();
+  $("#account").show();
   $("#reports").show();
 }
 
@@ -860,8 +864,8 @@ $(".rightclick").click(function(){
         }
 });
 
-$("#reports").click(function(){
-    window.location = "report";
-});
+$("#dashboard").click(function(){ window.location = "/"; });
+$("#reports").click(function(){ window.location = "report"; });
+$("#account").click(function(){ window.location = "account"; });
 
 </script>
