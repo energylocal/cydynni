@@ -307,12 +307,12 @@ $v = time();
             </div>
 
             <div class="block household-block">
-              <div class="block-title bg-household">Your Score and Savings<div class="triangle-dropdown hide" style="margin-left:10px"></div></div>
+              <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div></div>
               
               <div class="block-content" style="color:#c20000">
               
                 <div class="bg-household">
-                  <b>Over the last seven days you scored:</b>
+                  <b><?php echo t("On the"); ?> <span class="household_date"></span> <?php echo t("you scored"); ?>:</b>
                   <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score"></span>/100</div>
                 </div>
                 
@@ -334,8 +334,8 @@ $v = time();
                 
                 <div class="bg-household" style="height:100px">
                   <div style="padding:5px">
-                    <p>Your used <span class="household_totalkwh"></span> kWh on <span class="household_date"></span>. It cost £<span class="household_totalcost"></span></p>
-                    <p>Compared with 12p/kWh reference price, you saved:</p>
+                    <p><?php echo t("Your used"); ?> <span class="household_totalkwh"></span> kWh. <?php echo t("It cost"); ?> £<span class="household_totalcost"></span></p>
+                    <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?>:</p>
                   </div>
                 </div>
                 
@@ -359,7 +359,7 @@ $v = time();
             </div>
             
             <div class="block household-block">
-                <div class="block-title bg-household2">Your usage over the last 24 hrs<div class="triangle-dropdown hide"></div></div>
+                <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                 
                     <div class="bg-household2">
@@ -387,7 +387,7 @@ $v = time();
                 <div class="block-content">
                 
                     <div class="bg-household3">
-                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you've used over the last 24 hours."); ?></div>
+                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you used on"); ?> <span class="household_date"></span> 2017</div>
                     </div>
                     
                     <br>
@@ -454,7 +454,7 @@ $v = time();
                 <div class="block-content" style="color:#ffb401">
                 
                   <div style="background-color:#ffb401; color:#fff">
-                    <b><?php echo t("Over the last seven days you scored:"); ?></b>
+                    <b><?php echo t("On the"); ?> <span class="community_date"></span> <?php echo t("we scored"); ?>:</b>
                     <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="community_score">50</span>/100</div>
                   </div>
                   
@@ -680,7 +680,7 @@ $v = time();
 
 <div class="app"><div class="app-inner">
     <div class="footer">
-        <div style="float:right; font-weight:bold">Contact Us</div>
+        <div style="float:right; font-weight:bold"><?php echo t("Contact Us");?></div>
         <div>Energy Local</div>
     </div>
 </div></div>
@@ -828,9 +828,9 @@ $(".rightclick").click(function(){
         }
 });
 
-$("#dashboard").click(function(){ window.location = "/"; });
-$("#reports").click(function(){ window.location = "report"; });
-$("#account").click(function(){ window.location = "account"; });
+$("#dashboard").click(function(){ window.location = "/?lang="+lang; });
+$("#reports").click(function(){ window.location = "report?lang="+lang; });
+$("#account").click(function(){ window.location = "account?lang="+lang; });
 
 // Javascript text translation function
 function t(s) {

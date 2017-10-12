@@ -49,7 +49,14 @@ function household_summary_load()
               }
           }, 400);
 
-          $(".household_date").html(result.day+" "+result.month);
+          var ext = "";
+          if (result.day==1) ext = "st";
+          if (result.day==2) ext = "nd";
+          if (result.day==3) ext = "rd";
+          if (result.day>3) ext = "th";
+          if (lang=="cy") ext = "";
+          
+          $(".household_date").html(result.day+t(ext)+" "+t(result.month));
           $(".household_score").html(score);
           $(".household_totalkwh").html(result.kwh.total.toFixed(1));
           $(".household_totalcost").html(result.cost.total.toFixed(2));

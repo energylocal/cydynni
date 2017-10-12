@@ -91,9 +91,9 @@ $("#logout").click(function(event) {
     });
 });
 
-$("#dashboard").click(function(){ window.location = "/"; });
-$("#reports").click(function(){ window.location = "report"; });
-$("#account").click(function(){ window.location = "account"; });
+$("#dashboard").click(function(){ window.location = "/?lang="+lang; });
+$("#reports").click(function(){ window.location = "report?lang="+lang; });
+$("#account").click(function(){ window.location = "account?lang="+lang; });
 
 function t(s) {
     if (translation[lang]!=undefined && translation[lang][s]!=undefined) {

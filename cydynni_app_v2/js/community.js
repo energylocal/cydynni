@@ -71,6 +71,15 @@ function community_summary_load()
               
               // Hydro value retained in the community
               var hydro_value = result.kwh.hydro * 0.07;
+
+              var ext = "";
+              if (result.day==1) ext = "st";
+              if (result.day==2) ext = "nd";
+              if (result.day==3) ext = "rd";
+              if (result.day>3) ext = "th";
+              if (lang=="cy") ext = "";
+
+              $(".community_date").html(result.day+t(ext)+" "+t(result.month));
               
               // 2nd ssection showing total consumption and cost
               $(".community_hydro_value").html("£"+(hydro_value).toFixed(2));

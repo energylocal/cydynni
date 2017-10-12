@@ -11,10 +11,25 @@
 "Use not matched to the hydro":"Defnydd trydan sydd<br>ddim yn cyfateb i hydro",
 "costing":"yn costio",
 "In":"Yn",
+"On the":"Ar y",
+"Your Score and Savings":"Eich sgôr a Arbedion",
+"you scored":"sgôrwyd chi",
+"Your used":"Defnyddwyd",
 "you used a total of":"defnyddwyd",
+"It cost":"Yn costio",
 "of electricity costing you":"o drydan yn costio",
+"Compared with 12p/kWh reference price, you saved":"Ai gymharu â phris 12c/kWh, fe wnaethoch chi arbed",
 "till":"tan",
+"Your usage over time":"Eich defnydd trydan dros amser",
 "Your energy use":"Eich defnydd trydan",
+"Here's what your electricity use looked like on":"Dyma sut oedd eich defnydd trydan yn edrych ar",
+"Your usage by price":"Eich defnydd mesyl band pris",
+"Your electricity is provided on five different price bands. Here's how much of each you used on":"Mae eich trydan ar bum band pris gwahanol. Dyma faint o bob un a ddefnyddiwyd ar",
+"ENERGY":"EGNI",
+"COST":"COST",
+"Head to the tips section or get in touch with your Energy Local club to see how you can shift more of your use to cheaper times.":"Ewch i'r tudalen awgrymiadau neu cysylltwch â'ch clwb CydYnni i weld sut y gallwch chi symud mwy o'ch defnydd i amserau rhatach.",
+
+
 "Over the month you scored":"Eich sgôr dros y mis",
 "Our community power":"Pwer cymuned ni",
 "Over the month we scored":"Sgôr y gymuned dros y mis",
@@ -23,6 +38,8 @@
 "Your overall score is":"Eich sgôr ar y cyfan",
 "Last month we scored":"Ein sgôr ni dros y mis ddiwethaf",
 "Our overall score is":"Ein sgôr ni ar y cyfan",
+
+"in the local area by using your local resource hydro power!":"yn yr ardal lleol trwy defnyddio pwer hydro lleol!",
 
 "no imported power":"dim pwer wedi mewnforio",
 "Cost breakdown: ":"Dadansoddiad cost: ",
@@ -45,6 +62,11 @@
 "October":"Hydref",
 "November":"Tachwedd",
 "December":"Rhagfyr",
+
+"st":"af",
+"nd":"il",
+"rd":"ydd",
+"th":"ydd",
 
 "Jan":"Ion",
 "Feb":"Chw",
@@ -255,8 +277,11 @@
 "Community score and savings":"Sgôr a arbedion cymunedol",
 "Over the last seven days you scored:":"Dros y saith diwrnod diwethaf eich sgôr:",
 "Together you've kept":"Gyda'ch gilydd, rydych chi wedi cadw",
-"in the local area by using your local resource hydro power!":"in the local area by using your local resource hydro power!",
-"Community breakdown":"Dadansoddiad Cymunedol",
 
+"we scored":"sgôrwyd ni",
+"Community breakdown":"Dadansoddiad Cymunedol",
+"How much of the electricity the community used, came from the hydro.":"Maint trydan a ddefnyddiwyd gan y gymuned, a ddaeth o'r hydro.",
+"The bigger the percentage of hydro, the more money stays in.":"Y mwyaf y canran hydro, y mwy o arian sydd yn aros yn lleol.",
+"Contact Us":"Cysylltwch â ni",
 "--------------------------------------------------------------------":""
 }
