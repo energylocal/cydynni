@@ -7,6 +7,9 @@ Household page
 var end = 0;
 var start = 0;
 
+end = +new Date;
+start = end - (3600000*24.0*6);
+
 var household_pie1_data = [];
 var household_pie2_data = [];
 
@@ -146,6 +149,10 @@ function household_pie_draw() {
 }
 
 function household_bargraph_load() {
+
+    end = +new Date;
+    start = end - (3600000*24.0*6);
+
     var history = "";
     if (end>0 && start>0) history = "&start="+start+"&end="+end+"&interval=1800";
   
