@@ -14,6 +14,7 @@ body {
     --household-bg-color: #c20000;
     --community-bg-color: #ffb401;
     --tips-bg-color: #014656;
+    --devices-bg-color: #ea510e;
 }
 
 .oembluebar {
@@ -125,6 +126,7 @@ body {
 .navigation li[name=household] div { background-color: var(--household-bg-color); }
 .navigation li[name=community] div { background-color: var(--community-bg-color); }
 .navigation li[name=tips] div { background-color: var(--tips-bg-color); }
+.navigation li[name=devices] div { background-color: var(--devices-bg-color); }
 
 .navigation li > div {
     height:50px;
@@ -519,3 +521,195 @@ textarea {
   .logo-mobile { display:none }
   .logo-full { display:block }
 }
+
+/* --------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+
+.container-fluid { padding: 0px 10px 0px 10px; }
+
+#footer {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.navbar-fixed-top {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.node {
+    margin-bottom:10px;
+    border: 1px solid #ea510e;
+    color:#fff;
+    text-align:left;
+}
+
+.node-info {
+    height:40px;
+    background-color:#ea510e;
+    cursor:pointer;
+    color:#fff;
+}
+
+.device-name { 
+  font-weight:bold;
+	float:left;
+	padding:10px;
+	padding-right:5px;
+}
+
+.device-description { 
+  color:#666;
+	float:left;
+	padding-top:10px;
+}
+
+.device-key {
+	float:right;
+	padding:10px;
+	min-width:30px;
+	text-align:center;
+	color:#fff;
+	border-left: 1px solid #eee;
+}
+
+.device-schedule {
+	float:right;
+	padding:10px;
+	min-width:30px;
+	text-align:center;
+	color:#fff;
+	border-left: 1px solid #eee;
+	display:none;
+}
+
+.device-configure {
+	float:right;
+	padding:10px;
+	width:30px;
+	text-align:center;
+	color:#666;
+	border-left: 1px solid #eee;
+}
+
+.device-key:hover {background-color:#eaeaea;}
+.device-configure:hover {background-color:#eaeaea;}
+
+.node-inputs {
+    padding: 0px 5px 5px 5px;
+    background-color:#ea510e;
+    color:#666;
+}
+
+.node-input {
+    background-color:#f0f0f0;
+    border-bottom:1px solid #fff;
+    border-left:2px solid #f0f0f0;
+    height:41px;
+}
+
+.node-input:hover{ border-left:2px solid #44b3e2; }
+
+.node-input .select {
+    display:inline-block;
+    padding-top: 10px;
+    text-align:center;
+}
+
+.node-input .name {
+    display:inline-block;
+}
+
+.node-input .processlist {
+    display:inline-block;
+    padding-top:10px;
+    /*padding-left:10px;*/
+}
+
+.node-input-right {
+    float:right;
+}
+
+.node-input .time {
+    display:inline-block;
+    width:60px;
+    padding-top:10px;
+    text-align:center;
+}
+
+.node-input .value {
+    display:inline-block;
+    padding-top:10px;
+    text-align:center;
+}
+
+.node-input .configure {
+    display:inline-block;
+    width:40px;
+    padding-top:10px;
+    text-align:center;
+	  cursor:pointer;
+}
+
+.ipad {
+    padding-left:10px;
+}
+
+input[type="checkbox"] { margin:0px; }
+#input-selection { width:80px; }
+.controls { margin-bottom:10px; }
+#inputs-to-delete { font-style:italic; }
+
+#auth-check {
+    padding:10px;
+    background-color:#dc9696;
+    margin-bottom:10px;
+    font-weight:bold;
+    border: 1px solid #de6464;
+    color:#fff;
+}
+
+.auth-check-btn {
+    float:right;
+    margin-top:-2px;
+}
+
+@media (min-width: 768px) {
+    .container-fluid { padding: 0px 20px 0px 20px; }
+}
+
+@media (max-width: 768px) {
+    body {padding:0};
+}
+
+.node-scheduler {
+    padding: 0px 5px 5px 5px;
+    background-color: #ea510e;
+    text-align:left;
+}
+
+.scheduler-inner {
+    background-color:#f0f0f0;
+    padding:20px;
+    color:#ea510e;
+}
+
+.weekly-scheduler-day {
+    display:inline-block;
+    margin-right:5px;
+    width:50px; 
+    height:50px; 
+    background-image:url("images/day.png");
+    background-size:50px;
+    color:#fff;
+    font-weight:bold;
+    text-align:center;
+    cursor:pointer;
+}
+
+.weekly-scheduler-day[val="1"] {
+    background-image:url("images/day-enabled.png");
+}
+
+.saved { color:#888 };

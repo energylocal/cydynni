@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = time();
+$v = 1;
 
 ?>
 
@@ -72,7 +72,8 @@ $v = time();
                     <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="community"><div><img src="images/community.png"><div class="nav-text"><?php echo t("Community<br>Score"); ?></div></div></li>
-                    <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                    <!--<li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>-->
+                    <li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
@@ -673,6 +674,36 @@ $v = time();
             </div>
         </div>
         
+        
+        <div class="page" name="devices">
+            <div class="block">
+                
+                <div class="block-content" style="color:#ea510e">
+                  
+                  <!-- COPIED FROM emoncms/../device_view.php -->
+                  
+	                <div id="auth-check" class="hide">
+	                    <i class="icon-exclamation-sign icon-white"></i> Device on ip address: <span id="auth-check-ip"></span> would like to connect 
+	                    <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>
+	                </div>
+	
+	                <div id="table"></div>
+	
+	                <div id="output"></div>
+
+	                <div id="noinputs" class="alert alert-block hide">
+			                <h4 class="alert-heading"><?php echo _('No inputs created'); ?></h4>
+			                <p><?php echo _('Inputs are the main entry point for your monitoring device. Configure your device to post values here, you may want to follow the <a href="api">Input API helper</a> as a guide for generating your request.'); ?></p>
+	                </div>
+	
+	                <div id="input-loader" class="ajax-loader"></div>
+        
+                  <!---------------------------------------------->
+                  
+                </div>
+            </div>
+        </div>    
+        
         <div style="clear:both; height:85px"></div>
 
     </div></div>
@@ -693,6 +724,8 @@ $v = time();
 <script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/community.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/devices.js?v=<?php echo time(); ?>"></script>
+<script language="javascript" type="text/javascript" src="js/scheduler.js?v=<?php echo time(); ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -782,6 +815,7 @@ community_bargraph_load();
 if (session.write) {
     household_summary_load();
     household_bargraph_load();
+    device_load();
 }
 
 resize();
