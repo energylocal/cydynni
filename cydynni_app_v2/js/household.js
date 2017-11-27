@@ -140,13 +140,24 @@ function household_pie_draw() {
       height: height
     };
     
-    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options); 
+    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
+
    
     // Pie chart
     // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
 
     piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
+
+
+    var options = {
+      color: "#3b6358",
+      centertext: "THIS WEEK",
+      width: width,
+      height: 50
+    };
     
+    hrbar("household_hrbar1_placeholder",household_pie3_data_energy,options); 
+    hrbar("household_hrbar2_placeholder",household_pie3_data_cost,options); 
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
 }
@@ -202,19 +213,19 @@ function household_bargraph_load() {
                 householdseries = [];
 
                 householdseries.push({
-                    stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight Tariff"),
+                    stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
                 householdseries.push({
-                    stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning Tariff"),
+                    stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
                 householdseries.push({
-                    stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday Tariff"),
+                    stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
                 householdseries.push({
-                    stack: true, data: household_evening_data, color: "#c92760", label: t("Evening Tariff"),
+                    stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
                 

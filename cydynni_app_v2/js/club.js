@@ -176,7 +176,16 @@ function club_pie_draw() {
      
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(club_hydro_use*1).toFixed(1),{width: width,height: height});
+
+    var options = {
+      color: "#3b6358",
+      centertext: "THIS WEEK",
+      width: width,
+      height: 50
+    };
     
+    hrbar("club_hrbar1_placeholder",club_pie3_data_energy,options); 
+    hrbar("club_hrbar2_placeholder",club_pie3_data_cost,options);
 }
 
 

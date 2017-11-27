@@ -403,6 +403,10 @@ $v = time();
                       <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph1_placeholder"></canvas>
                       </div>
+                      <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="household_hrbar1_placeholder"></canvas>
+                      </div>
+                      <br>
                     </div>
                 
                     <div class="box3">
@@ -410,6 +414,10 @@ $v = time();
                       <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph2_placeholder"></canvas>
                       </div>
+                      <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="household_hrbar2_placeholder"></canvas>
+                      </div>
+                      <br>
                     </div>
                     
                     <div class="box3">
@@ -538,6 +546,10 @@ $v = time();
                       <div id="club_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="club_piegraph1_placeholder"></canvas>
                       </div>
+                      <div id="club_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="club_hrbar1_placeholder"></canvas>
+                      </div>
+                      <br>
                     </div>
                 
                     <div class="box3">
@@ -545,6 +557,10 @@ $v = time();
                       <div id="club_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="club_piegraph2_placeholder"></canvas>
                       </div>
+                      <div id="club_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="club_hrbar2_placeholder"></canvas>
+                      </div>
+                      <br>
                     </div>
                     
                     <div class="box3">

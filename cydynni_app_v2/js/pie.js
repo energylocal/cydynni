@@ -323,105 +323,48 @@ function piegraph3(element,data,options) {
 }
 
 function hrbar(element,data,options) {
-    // Pie chart size based on width
-    var size = options.width;
-    var hsize = size * 0.2;
-    var midx = options.width * 0.5;
-    var midy = options.height * 0.5;
+
+    var width = options.width;
+    var height = options.height;
+    var padding = 10;
     
-    var hydro = 1;
+    var segments = {};
     
-    // Calculate total of pie chart segments 
-    var total = 0; for (z in data) total += data[z].hydro + data[z].import;
+    // Calculate total of segments 
+    var total = 0; for (var z in data) total += data[z].hydro + data[z].import;
+    
+    segments.hydro = {val:0, color:"#29aae3"};
+    
+    for (var z in data) {
+        segments[z] = {val:data[z].import, color:data[z].color};
+        segments.hydro.val += data[z].hydro;
+    }
     
     // Context and clear
     var c = document.getElementById(element);  
     var ctx = c.getContext("2d");
     ctx.clearRect(0,0,options.width,options.height);
     
-    var alphainc = 0.6/data.length;
-    var alpha = 1.0;
-    var textsize = Math.round(0.04*size);
-    var textsize_prc = Math.round(0.05*size);
-
-    ctx.textAlign = "center";
-    ctx.font=textsize+"px Arial";
-    
     // Background grey
     ctx.fillStyle = "#eee";
-    ctx.fillRect(0,0,size,hsize);
+    ctx.fillRect(0,0,width,height);
     
-    // -----------------------------------------------------------------
-    // Pie chart segments
-    // -----------------------------------------------------------------
     ctx.strokeStyle = "#fff";
     ctx.lineWidth = 2;
 
     var x = 0;
-    var l = -Math.PI *0.5;
-    for (z in data) {
-        x += data[z].hydro + data[z].import;
+    var l = 0;
+    for (z in segments) {
+        var segw = segments[z].val;
+        x += segw;
         
         var lastl = l
-        l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
+        l = (width-(padding*2)) * (x / total);
         
-        alpha -= alphainc;
-        ctx.fillStyle = data[z].color;
-        
-        ctx.beginPath();
-        ctx.arc(midx,midy,size*0.2875,lastl,l,false);
-        ctx.arc(midx,midy,size*0.0001,l,lastl,true);
-        ctx.fill();
-        ctx.closePath();
-        ctx.stroke();
-        
-        // Hydro part
-        var prc = data[z].hydro / (data[z].hydro+data[z].import);
-
-        var r = size*0.2875;
-        var fullarea = Math.PI * r*r;
-        var prcarea = prc * fullarea;
-        var cr = Math.sqrt(prcarea / Math.PI);
-        
-        ctx.fillStyle = "#29aae3";
-        ctx.beginPath();
-        ctx.arc(midx,midy,cr,lastl,l,false);
-        ctx.arc(midx,midy,size*0.0001,l,lastl,true);
-        ctx.fill();
-        ctx.closePath();
-        ctx.stroke();
-        
-    }
-
-    // -----------------------------------------------------------------
-    // Labels
-    // -----------------------------------------------------------------
-    
-    ctx.fillStyle = "#fff";
-
-    var x = 0;
-    var l = -Math.PI *0.5;
-    for (z in data) {
-        var val = data[z].hydro + data[z].import;
-        x += val;
-        
-        var lastl = l
-        l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
-        var tl = (l + lastl)*-0.5 + (Math.PI *0.5);
-        
-        var prclabelx = midx+Math.sin(tl)*size*0.34;
-        var prclabely = midy+Math.cos(tl)*size*0.34;
-        var valuelabelx = midx+Math.sin(tl)*size*0.4;
-        var valuelabely = midy+Math.cos(tl)*size*0.4;
-        
-        if (val>0) {
-            // Percentage label
-            var prc = 100*(val/total);
-            if (data[z].color=="#ffdc00") data[z].color = "#ddba00";
-            ctx.fillStyle = data[z].color; //"#333";
-            
-            ctx.font="bold "+textsize_prc+"px Arial";
-            if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
+        if (segw>0.0) {
+            ctx.fillStyle = segments[z].color;
+            ctx.fillRect(padding+lastl,padding,l-lastl,height-(padding*2));
+            ctx.strokeRect(padding+lastl,padding,l-lastl,height-(padding*2));
         }
     }
 }
