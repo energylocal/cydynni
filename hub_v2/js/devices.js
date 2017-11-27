@@ -75,6 +75,10 @@ function draw_devices()
     // Draw node/input list
     var out = "";
     for (var node in devices) {
+        // Control node
+        var control_node = false;
+        if (device_templates[node]!=undefined && device_templates[node].control) control_node = true;
+    
         var visible = "hide"; if (nodes_display[node]) visible = "";
         
         out += "<div class='node'>";
@@ -83,33 +87,37 @@ function draw_devices()
         out += "    <div class='device-description'>"+devices[node].description+"</div>";
         // out += "    <div class='device-configure'>CONFIG</div>";
         // out += "    <div class='device-key'><i class='icon-lock icon-white'></i></div>"; 
-        out += "    <div class='device-schedule'>SCHEDULE</div>";
+        // out += "    <div class='device-schedule'>SCHEDULE</div>";
         out += "  </div>";
-        out += "<div class='node-inputs "+visible+"' node='"+node+"'>";
         
-        for (var i in devices[node].inputs) {
-            var input = devices[node].inputs[i];
+        if (!control_node) {
+            out += "<div class='node-inputs "+visible+"' node='"+node+"'>";
             
-            var selected = "";
-            if (selected_inputs[input.id]!=undefined && selected_inputs[input.id]==true) 
-                selected = "checked";
+            for (var i in devices[node].inputs) {
+                var input = devices[node].inputs[i];
+                
+                var selected = "";
+                if (selected_inputs[input.id]!=undefined && selected_inputs[input.id]==true) 
+                    selected = "checked";
+                
+                out += "<div class='node-input' id="+input.id+">";
+                out += "<div class='select'><div class='ipad'><input class='input-select' type='checkbox' id='"+input.id+"' "+selected+" /></div></div>";
+                out += "<div class='name'><div class='ipad'>"+input.name+"</div></div>";
+                
+                // if (processlist_ui != undefined)  out += "<div class='processlist'><div class='ipad'>"+processlist_ui.drawpreview(input.processList)+"</div></div>";
+                
+                out += "<div class='node-input-right'>";
+                out += "<div class='time'>"+list_format_updated(input.time)+"</div>";
+                out += "<div class='value'>"+list_format_value(input.value)+"</div>";
+                out += "<div class='configure' id='"+input.id+"'><i class='icon-wrench'></i></div>";
+                out += "</div>";
+                out += "</div>";
+            }
             
-            out += "<div class='node-input' id="+input.id+">";
-            out += "<div class='select'><div class='ipad'><input class='input-select' type='checkbox' id='"+input.id+"' "+selected+" /></div></div>";
-            out += "<div class='name'><div class='ipad'>"+input.name+"</div></div>";
-            
-            // if (processlist_ui != undefined)  out += "<div class='processlist'><div class='ipad'>"+processlist_ui.drawpreview(input.processList)+"</div></div>";
-            
-            out += "<div class='node-input-right'>";
-            out += "<div class='time'>"+list_format_updated(input.time)+"</div>";
-            out += "<div class='value'>"+list_format_value(input.value)+"</div>";
-            out += "<div class='configure' id='"+input.id+"'><i class='icon-wrench'></i></div>";
             out += "</div>";
-            out += "</div>";
+        } else {
+            out += "<div class='node-scheduler hide' node='"+node+"'></div>";
         }
-        
-        out += "</div>";
-        out += "<div class='node-scheduler hide' node='"+node+"'></div>";
         out += "</div>";
        
 
@@ -158,6 +166,10 @@ $("#table").on("click",".node-info",function() {
     }
 
     draw_devices();
+    
+    if (device_templates[node]!=undefined && device_templates[node].control) {
+        if (nodes_display[node]) draw_scheduler(node);
+    }
 });
 
 $("#table").on("click",".input-select",function(e) {
@@ -201,16 +213,8 @@ function input_selection()
     }
 }
 
-$("#table").on("click",".device-key",function(e) {
-    e.stopPropagation();
-    var node = $(this).parent().attr("node");
-    $(".node-info[node='"+node+"'] .device-key").html(devices[node].devicekey);    
-});
-
-$("#table").on("click",".device-schedule",function(e) {
-    e.stopPropagation();
-    var node = $(this).parent().attr("node");
-    
+function draw_scheduler(node) 
+{   
     var out = "";
     
     out += '<div class="scheduler-inner">';
@@ -231,7 +235,18 @@ $("#table").on("click",".device-schedule",function(e) {
     $(".node-scheduler[node='"+node+"']").html(out);
     $(".node-scheduler[node='"+node+"']").show();
     scheduler_load();
-    
+}
+
+$("#table").on("click",".device-key",function(e) {
+    e.stopPropagation();
+    var node = $(this).parent().attr("node");
+    $(".node-info[node='"+node+"'] .device-key").html(devices[node].devicekey);    
+});
+
+$("#table").on("click",".device-schedule",function(e) {
+    e.stopPropagation();
+    var node = $(this).parent().attr("node");
+    draw_scheduler(node);
 });
 
 $("#table").on("click",".device-configure",function(e) {
