@@ -5,7 +5,7 @@ Source code is released under the GNU Affero General Public License.
 See COPYRIGHT.txt and LICENSE.txt.
 
 ---------------------------------------------------------------------
-CydYnni App - community energy smart grid web app
+CydYnni App - club energy smart grid web app
 part of the EnergyLocal CydYnni project in Bethesda North Wales
 
 Developed by OpenEnergyMonitor:
@@ -180,7 +180,8 @@ switch ($q)
         } else {
             $content = "session not valid";
         }
-            
+        
+              
         break;  
         
     // ------------------------------------------------------------------------
@@ -198,9 +199,9 @@ switch ($q)
         break;
         
     // ------------------------------------------------------------------------
-    // Community data
+    // Club data
     // ------------------------------------------------------------------------
-    case "community/summary/day":
+    case "club/summary/day":
         $format = "json";
         
         $content = json_decode($redis->get("community:summary:day"));
@@ -214,12 +215,13 @@ switch ($q)
         
         break;
 
-    case "community/summary/monthly":
+    case "club/summary/monthly":
         $format = "json";
-        $content = file_get_contents("https://cydynni.org.uk/community/summary/monthly");
+	$month = get("month");
+        $content = file_get_contents("https://cydynni.org.uk/community/summary/monthly?month=$month");
         break;
                 
-    case "community/data":
+    case "club/data":
         $format = "json";
         
         if (isset($_GET['start']) && isset($_GET['end'])) {
@@ -279,6 +281,8 @@ switch ($q)
         if ($hour>=20) $tariff = "overnight";
         if ($live->hydro>=$live->community) $tariff = "hydro";
         
+        $live->club = $live->community;
+        
         $live->tariff = $tariff;
         $content = $live;
         break;
@@ -322,7 +326,7 @@ switch ($q)
         
         break;
         
-    case "community/estimate":
+    case "club/estimate":
         $format = "json";
         
         $end = (int) $_GET['lasttime'];

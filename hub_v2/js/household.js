@@ -18,6 +18,12 @@ var household_pie3_data_energy = [];
 
 var household_hydro_use = 0;
 var householdseries = [];
+
+var household_overnight_data = [];
+var household_morning_data = [];
+var household_evening_data = [];
+var household_midday_data = [];
+
 var household_data = [];
 
 var household_view = "piechart";
@@ -48,7 +54,7 @@ function household_summary_load()
                   $(".household_status").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
               }
               if (score>=70) {
-                  $(".household_status").html(t("You’re doing really well at using hydro & cheaper power"));
+                  $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
               }
           }, 400);
 
@@ -137,13 +143,24 @@ function household_pie_draw() {
       height: height
     };
     
-    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options); 
+    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
+
    
     // Pie chart
     // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
 
     piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
+
+
+    var options = {
+      color: "#3b6358",
+      centertext: "THIS WEEK",
+      width: width,
+      height: 50
+    };
     
+    hrbar("household_hrbar1_placeholder",household_pie3_data_energy,options); 
+    hrbar("household_hrbar2_placeholder",household_pie3_data_cost,options); 
     // Hydro droplet
     // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
 }

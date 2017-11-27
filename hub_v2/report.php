@@ -131,15 +131,15 @@ $v=1;
         
         </div>
         <div class="column box2" style="text-align:center;">
-        <h2><?php echo t("Our community power"); ?></h2>
-        <p><b><?php echo t("Over the month we scored"); ?> <span class="community_score"></span>/100</b><br><span class="community_message"></span></p>
+        <h2><?php echo t("Our club power"); ?></h2>
+        <p><b><?php echo t("Over the month we scored"); ?> <span class="club_score"></span>/100</b><br><span class="club_message"></span></p>
 
         <img src="images/yellowbadge.png" style="width:45px;">
-        <img id="community_star1" src="images/star20yellow.png" style="width:45px">
-        <img id="community_star2" src="images/star20yellow.png" style="width:45px">
-        <img id="community_star3" src="images/star20yellow.png" style="width:45px">
-        <img id="community_star4" src="images/star20yellow.png" style="width:45px">
-        <img id="community_star5" src="images/star20yellow.png" style="width:45px">
+        <img id="club_star1" src="images/star20yellow.png" style="width:45px">
+        <img id="club_star2" src="images/star20yellow.png" style="width:45px">
+        <img id="club_star3" src="images/star20yellow.png" style="width:45px">
+        <img id="club_star4" src="images/star20yellow.png" style="width:45px">
+        <img id="club_star5" src="images/star20yellow.png" style="width:45px">
         
         </div>
         
@@ -163,7 +163,7 @@ var sidebar_enabled = true;
 var sidebar_visible = true;
 
 var household = {};
-var community = {};
+var club = {};
 
 var data = {};
 var hydro = 0;
@@ -203,10 +203,10 @@ $.ajax({
             $(".appmenu").html(out);
         
             $.ajax({                                      
-                url: path+"community/summary/monthly?apikey="+session.apikey_read,
+                url: path+"club/summary/monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
-                    community = result;
+                    club = result;
                     load();
                 }
             });
@@ -286,28 +286,28 @@ function load()
 
     // ---------------------------------------------
     
-    var month = community[selected_month];   
+    var month = club[selected_month];   
     var eid = 1;   
     
-    var score_community = Math.round(100*((month.import.overnight + month.import.midday + month.hydro.total) / month.demand.total));
-    $(".community_score").html(score_community);
-    var prc_community = score_community;
+    var score_club = Math.round(100*((month.import.overnight + month.import.midday + month.hydro.total) / month.demand.total));
+    $(".club_score").html(score_club);
+    var prc_club = score_club;
     
-    for (var i=1; i<6; i++) $("#community_star"+i).attr("src","images/star20yellow.png"); // reset stars
-    if (prc_community>=20) $("#community_star1").attr("src","images/staryellow.png");
-    if (prc_community>=40) setTimeout(function() { $("#community_star2").attr("src","images/staryellow.png"); }, 100);
-    if (prc_community>=60) setTimeout(function() { $("#community_star3").attr("src","images/staryellow.png"); }, 200);
-    if (prc_community>=80) setTimeout(function() { $("#community_star4").attr("src","images/staryellow.png"); }, 300);
-    if (prc_community>=90) setTimeout(function() { $("#community_star5").attr("src","images/staryellow.png"); }, 400);
+    for (var i=1; i<6; i++) $("#club_star"+i).attr("src","images/star20yellow.png"); // reset stars
+    if (prc_club>=20) $("#club_star1").attr("src","images/staryellow.png");
+    if (prc_club>=40) setTimeout(function() { $("#club_star2").attr("src","images/staryellow.png"); }, 100);
+    if (prc_club>=60) setTimeout(function() { $("#club_star3").attr("src","images/staryellow.png"); }, 200);
+    if (prc_club>=80) setTimeout(function() { $("#club_star4").attr("src","images/staryellow.png"); }, 300);
+    if (prc_club>=90) setTimeout(function() { $("#club_star5").attr("src","images/staryellow.png"); }, 400);
     
-    if (score_community<30) {
-        $(".community_message").html(t("We are using power in a very expensive way"));
+    if (score_club<30) {
+        $(".club_message").html(t("We are using power in a very expensive way"));
     }
-    if (score_community>=30 && score_community<70) {
-        $(".community_message").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+    if (score_club>=30 && score_club<70) {
+        $(".club_message").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
     }
-    if (score_community>=70) {
-        $(".community_message").html(t("We’re doing really well using the hydro and cheaper power"));
+    if (score_club>=70) {
+        $(".club_message").html(t("We’re doing really well using the hydro and cheaper power"));
     }
 
     // ---------------------------------------------
