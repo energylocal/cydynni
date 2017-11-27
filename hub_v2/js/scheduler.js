@@ -250,7 +250,7 @@ function resize()
     $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
 }
 
-$("#controls").on("change",".timepicker-minute",function(){
+$("#table").on("change",".timepicker-minute",function(){
     var val = $(this).val();
     val = Math.floor(val/30)*30;
     if (val<0) val = 0;
@@ -259,7 +259,7 @@ $("#controls").on("change",".timepicker-minute",function(){
     $(this).val(val);
 });
 
-$("#controls").on("change",".timepicker-hour",function(){
+$("#table").on("change",".timepicker-hour",function(){
     var val = $(this).val();
     val = Math.round(val);
     if (val<0) val = 0;
@@ -268,7 +268,7 @@ $("#controls").on("change",".timepicker-hour",function(){
     $(this).val(val);
 });
 
-$("#controls").on("click",".weekly-scheduler-day",function(){
+$("#table").on("click",".weekly-scheduler-day",function(){
     var val = $(this).attr('val');
     if (val==0) {
         $(this).attr('val',1);
@@ -277,7 +277,7 @@ $("#controls").on("click",".weekly-scheduler-day",function(){
     }
 });
 
-$("#controls").on("click",".weekly-scheduler-repeat",function(){
+$("#table").on("click",".weekly-scheduler-repeat",function(){
     if ($(this)[0].checked) {
 
     } else {
