@@ -15,13 +15,13 @@ The outlined CydYnni system below provides:
 
 **Household billing meter and meter gateway**
 
-On the left we start with the household billing meter and Energy Assets meter gateway which provides near real-time meter reading both of half hourly energy consumption and 5-10s real power measurement.
+On the left we start with the household billing meter and meter gateway provided for by the meter operator which provides near real-time meter reading both of half hourly energy consumption and 5-10s real power measurement.
 
 The meter gateway is based on the ESP8266 WIFI platform and provides a user interface for initial configuration including: connecting to the household WIFI network and detection of the in home hub.
 
-Meter readings are passed to the hub over WIFI using the MQTT protocol, this route is protected with TLS.
+Meter readings are passed to the hub over WIFI using the MQTT protocol.
 
-The meter gateway is also connected to a LoraWAN network ran by EnergyAssets which provides a secure upload route for half hourly meter readings and a potential route for data upload of other sensor data in the home.
+The meter gateway is also connected to a LoraWAN network ran by the meter operator which provides a secure upload route for half hourly meter readings and a potential route for data upload of other sensor data in the home.
 
 The LoraWAN network also provides the default route for the download of aggregated community consumption data, hydro generation data and the demand shaping signal. Which are then pushed on to the home hub over MQTT for use in the in-home-display and for deciding the best time to run the control devices.
 

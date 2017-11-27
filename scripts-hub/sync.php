@@ -100,3 +100,7 @@ $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
 $redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
 $redis->set("community:data",file_get_contents("https://cydynni.org.uk/community/data"));
 $redis->set("community:summary:day",file_get_contents("https://cydynni.org.uk/community/summary/day"));
+$redis->set("user:summary:lastday:$userid",file_get_contents("https://cydynni.org.uk/household/summary/day?apikey=".$user->apikey_read));
+
+
+
