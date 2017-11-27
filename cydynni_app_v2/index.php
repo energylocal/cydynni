@@ -5,7 +5,7 @@ Source code is released under the GNU Affero General Public License.
 See COPYRIGHT.txt and LICENSE.txt.
 
 ---------------------------------------------------------------------
-CydYnni App - community energy smart grid web app
+CydYnni App - club energy smart grid web app
 part of the EnergyLocal CydYnni project in Bethesda North Wales
 
 Developed by OpenEnergyMonitor:
@@ -233,9 +233,9 @@ switch ($q)
         break;
         
     // ------------------------------------------------------------------------
-    // Community data
+    // Club data
     // ------------------------------------------------------------------------
-    case "community/summary/day":
+    case "club/summary/day":
         $format = "json";
         
         $content = json_decode($redis->get("community:summary:day"));
@@ -252,13 +252,13 @@ switch ($q)
         
         break;
 
-    case "community/summary/monthly":
+    case "club/summary/monthly":
         $format = "json";
         $month = get("month");
-        $content = get_community_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        $content = get_club_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         break;
                 
-    case "community/data":
+    case "club/data":
         $format = "json";
         
         if (isset($_GET['start']) && isset($_GET['end'])) {
@@ -320,6 +320,8 @@ switch ($q)
         if ($hour>=20) $tariff = "overnight";
         if ($live->hydro>=$live->community) $tariff = "hydro";
         
+        $live->club = $live->community;
+        
         $live->tariff = $tariff;
         $content = $live;
         break;
@@ -363,7 +365,7 @@ switch ($q)
         
         break;
         
-    case "community/estimate":
+    case "club/estimate":
         $format = "json";
         
         $end = (int) $_GET['lasttime'];
@@ -543,11 +545,11 @@ switch ($q)
         // Hydro
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
         if (count($content)>0) $redis->set("hydro:data",json_encode($content));
-        // Community half-hour
+        // Club half-hour
         $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
         if (count($content)>0) $redis->set("community:data",json_encode($content));
-        // Community totals
-        $content = get_community_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        // Club totals
+        $content = get_club_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
         if ($content!="invalid data") $redis->set("community:summary:day",json_encode($content));
         // Store Updated
         $content = "store updated";

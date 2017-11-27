@@ -15,6 +15,12 @@ var household_pie3_data_energy = [];
 
 var household_hydro_use = 0;
 var householdseries = [];
+
+var household_overnight_data = [];
+var household_morning_data = [];
+var household_evening_data = [];
+var household_midday_data = [];
+
 var household_data = [];
 
 var household_view = "piechart";
@@ -45,7 +51,7 @@ function household_summary_load()
                   $(".household_status").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
               }
               if (score>=70) {
-                  $(".household_status").html(t("You’re doing really well at using hydro & cheaper power"));
+                  $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
               }
           }, 400);
 
@@ -160,17 +166,62 @@ function household_bargraph_load() {
             } else {
 
                 household_data = result;
-                var total = 0;
-                for (var z in household_data) {
-                   total += household_data[z][1];
-                }
-                console.log("Total kWh in window: "+total.toFixed(2));
-                householdseries = [];
+                var total = 0
+
+                for (var z in household_data) {    
+                    var time = household_data[z][0];    
+                    var d = new Date(time);
+                    var hour = d.getHours();
+                    
+                    var use = household_data[z][1];
+                    
+                    var overnight = 0;
+                    var morning = 0;
+                    var midday = 0;
+                    var evening = 0;
+
+                    // Import times
+                    if (hour<6) overnight = use;
+                    if (hour>=6 && hour<11) morning = use;
+                    if (hour>=11 && hour<16) midday = use;
+                    if (hour>=16 && hour<20) evening = use;
+                    if (hour>=20) overnight = use;
+
+                    household_overnight_data[z] = [time,overnight];
+                    household_morning_data[z] = [time,morning];
+                    household_midday_data[z] = [time,midday];
+                    household_evening_data[z] = [time,evening];
+                    
+                    total += use;
+                }  
                 
+                console.log("Total kWh in window: "+total.toFixed(2));  
+                
+                var barwidth = 0.75*3600*0.5*1000;
+                
+                householdseries = [];
+
                 householdseries.push({
-                    data: household_data, color: "#e62f31",
-                    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                    stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight Tariff"),
+                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
+                householdseries.push({
+                    stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning Tariff"),
+                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                });
+                householdseries.push({
+                    stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday Tariff"),
+                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                });
+                householdseries.push({
+                    stack: true, data: household_evening_data, color: "#c92760", label: t("Evening Tariff"),
+                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                });
+                
+                //householdseries.push({
+                //    data: household_data, color: "#e62f31",
+                //    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
+                //});
                 
                 household_bargraph_resize();
             }

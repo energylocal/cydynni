@@ -105,6 +105,8 @@ function cydynnistatus_update() {
       $("#tariff-now-circle").css("background-color","#29aae3");
       $("#tariff-now-price").html("7p");
   }
+  
+  //$("#"+tariff+"-tariff-box").hide();
 
   //$(".tariff-img").hide();
  // $(".tariff-img[tariff="+tariff+"]").show();
