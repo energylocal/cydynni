@@ -1,4 +1,3 @@
-
 var device = "";
 var controls = {};
 var previousPoint = false;
@@ -7,23 +6,24 @@ var unavailable = [];
 var options = {};
 var device_type = false;
 
+var basepath = "http://cydynni.local/emoncms";
 
 function scheduler_load()
 {
     device = "smartplug";
     $("#devicename").html(jsUcfirst(device));
     
-    $.ajax({ url: "http://emonpi/emoncms/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
+    $.ajax({ url: basepath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
        for (var z in devicelist) {
            if (devicelist[z].nodeid==device) device_type = devicelist[z].type;
        }
     }});
 
 
-    $.ajax({ url: "http://emonpi/emoncms/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
+    $.ajax({ url: basepath+"/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
         controls = template.control;
         
-        $.ajax({ url: "http://emonpi/emoncms/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
+        $.ajax({ url: basepath+"/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
 
             for (var property in controls) {
                 if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {
@@ -127,7 +127,7 @@ function scheduler_draw_controls() {
 }
 
 function scheduler_update() {
-    $.ajax({ url: "http://emonpi/emoncms/input/get/"+device, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: basepath+"/input/get/"+device, dataType: 'json', async: true, success: function(data) {
         inputs = data;
         for (var property in controls) {
             if (controls[property].type=="text" && inputs[property]!=undefined) 
@@ -152,7 +152,7 @@ function scheduler_save(data) {
         }
     }
     if (count) {
-        $.ajax({ url: "http://emonpi/emoncms/input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
+        $.ajax({ url: basepath+"/input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
              if (result=="ok") $(".saved").show();
         }});
     }
@@ -166,7 +166,7 @@ function scheduler_save(data) {
     
     console.log(schedule);
 
-    $.ajax({ url: "http://emonpi/emoncms/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
+    $.ajax({ url: basepath+"/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
         draw_schedule_output(result);
     }});
 }
@@ -310,3 +310,4 @@ $(window).resize(function(){
 });
 
 function jsUcfirst(string) {return string.charAt(0).toUpperCase() + string.slice(1);}
+
