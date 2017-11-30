@@ -220,8 +220,8 @@ function draw_scheduler(node)
     var out = "";
     
     out += '<div class="scheduler-inner">';
-    out +=     '<div id="devicename"></div>';
-    out +=     '<div id="controls"></div>';
+    out +=     '<div class="scheduler-devicename"></div>';
+    out +=     '<div class="scheduler-controls"></div>';
 
     out +=     '<button class="scheduler-save btn">Save</button>';
     out +=     '<br><br>';
@@ -236,7 +236,7 @@ function draw_scheduler(node)
     
     $(".node-scheduler[node='"+node+"']").html(out);
     $(".node-scheduler[node='"+node+"']").show();
-    scheduler_load();
+    scheduler_load(node);
 }
 
 $("#table").on("click",".device-key",function(e) {

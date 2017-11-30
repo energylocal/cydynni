@@ -8,10 +8,10 @@ var device_type = false;
 
 var basepath = "http://cydynni.local/emoncms";
 
-function scheduler_load()
+function scheduler_load(node)
 {
-    device = "smartplug";
-    $("#devicename").html(jsUcfirst(device));
+    device = node;
+    $(".scheduler-devicename").html(jsUcfirst(device));
     
     $.ajax({ url: basepath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
        for (var z in devicelist) {
@@ -122,7 +122,7 @@ function scheduler_draw_controls() {
         }
             
     }
-    $("#controls").html(out);
+    $(".scheduler-controls").html(out);
    
 }
 
