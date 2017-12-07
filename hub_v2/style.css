@@ -12,7 +12,7 @@ body {
 :root {
     --forecast-bg-color: #39aa1a; /*site colors used as variables*/
     --household-bg-color: #c20000;
-    --community-bg-color: #ffb401;
+    --club-bg-color: #ffb401;
     --tips-bg-color: #014656;
     --devices-bg-color: #ea510e;
 }
@@ -124,7 +124,7 @@ body {
 
 .navigation li[name=forecast] div { background-color: var(--forecast-bg-color); }
 .navigation li[name=household] div { background-color: var(--household-bg-color); }
-.navigation li[name=community] div { background-color: var(--community-bg-color); }
+.navigation li[name=club] div { background-color: var(--club-bg-color); }
 .navigation li[name=tips] div { background-color: var(--tips-bg-color); }
 .navigation li[name=devices] div { background-color: var(--devices-bg-color); }
 
@@ -193,6 +193,12 @@ body {
     text-align:center;
 }
 
+.box5 {
+    width:20%;
+    float:left;
+    text-align:center;
+}
+
 .legend-label {
     padding-right:10px;
 }
@@ -257,11 +263,11 @@ body {
 .triangle-household2-bg { border-top: 100px solid #e62f31 }
 .triangle-household3-bg { border-top: 100px solid #f47677 }
 
-.triangle-community-bg {
-    border-top: 100px solid  var(--community-bg-color);
+.triangle-club-bg {
+    border-top: 100px solid  var(--club-bg-color);
 }
 
-.triangle-community2-bg {
+.triangle-club2-bg {
     border-top: 100px solid #ff7900;
 }
 
@@ -275,6 +281,18 @@ body {
     border-top: 10px solid #fff;
 }
 
+.triangle-pushup {
+    margin-top:5px;
+    float:right;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid #fff;
+}
+
+
+
 .circle {
     margin: 0 auto;
 	  border-radius: 50%;
@@ -285,6 +303,19 @@ body {
 .circle-inner {
 	  color:#fff;
 	  padding-top: 40px;
+	  font-weight:bold;
+}
+
+.circle-small {
+    margin: 0 auto;
+	  border-radius: 50%;
+	  width: 120px;
+	  height: 120px;
+}
+
+.circle-small-inner {
+	  color:#fff;
+	  padding-top: 30px;
 	  font-weight:bold;
 }
 
@@ -302,8 +333,8 @@ body {
 .bg-household2 { background-color: #e62f31; color:#fff; }
 .bg-household3 { background-color: #f47677; color:#fff; }
 
-.bg-community { background-color: var(--community-bg-color); color:#fff; }
-.bg-community2 { background-color: #ff7900; color:#fff; }
+.bg-club { background-color: var(--club-bg-color); color:#fff; }
+.bg-club2 { background-color: #ff7900; color:#fff; }
 
 .hide {
     display:none;
@@ -400,6 +431,27 @@ body {
     font-weight:normal;
 }
 
+
+.visnav-block {
+  float:right;
+  margin-top:-10px;
+  margin-right:10px;
+}
+
+.visnav-club {
+  display:inline-block;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding:10px;
+  cursor:pointer;
+  font-size:14px;
+  float:left;
+}
+
+.visnav-club:hover {
+  background-color:rgba(255,255,255,0.2);
+}
+
+
 @media (max-width: 600px) {
     .tips-appliance img {
         height: 180px;
@@ -485,7 +537,7 @@ textarea {
 /* --------------------------------------------------------------- */
 
 @media (max-width: 650px) {
-  .box2, .box3, .box4 { float:none; width:100%; margin-bottom:10px; }
+  .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
   
   /*.app-title {font-size:24px}*/
   
@@ -560,7 +612,7 @@ textarea {
 }
 
 .device-description { 
-  color:#666;
+  color:#eac9ba;
 	float:left;
 	padding-top:10px;
 }

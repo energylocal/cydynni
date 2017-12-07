@@ -7,11 +7,13 @@ var selected_device = false;
 var device_templates = {};
 var updater;
 
+var basepath = "http://cydynni.local/emoncms";
+
 function device_load()
 {
     
 
-    $.ajax({ url: "http://emonpi/emoncms/device/template/listshort.json", dataType: 'json', async: true, success: function(data) { 
+    $.ajax({ url: basepath+"/device/template/listshort.json", dataType: 'json', async: true, success: function(data) { 
         device_templates = data; 
         update();
     }});
@@ -32,14 +34,14 @@ function updaterStart(func, interval){
 function update(){
 
     // Join and include device data
-    $.ajax({ url: "http://emonpi/emoncms/device/list.json", dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: basepath+"/device/list.json", dataType: 'json', async: true, success: function(data) {
         
         // Associative array of devices by nodeid
         devices = {};
         for (var z in data) devices[data[z].nodeid] = data[z];
         
         var requestTime = (new Date()).getTime();
-        $.ajax({ url: "http://emonpi/emoncms/input/list.json", dataType: 'json', async: true, success: function(data, textStatus, xhr) {
+        $.ajax({ url: basepath+"/input/list.json", dataType: 'json', async: true, success: function(data, textStatus, xhr) {
             table.timeServerLocalOffset = requestTime-(new Date(xhr.getResponseHeader('Date'))).getTime(); // Offset in ms from local to server time
 	          
 	          // Associative array of inputs by id
@@ -53,7 +55,7 @@ function update(){
 	              if (devices[inputs[z].nodeid]==undefined) {
 	                  devices[inputs[z].nodeid] = {description:""};
 	                  // Device creation
-	                  $.ajax({ url: "http://emonpi/emoncms/device/create.json?nodeid="+inputs[z].nodeid, dataType: 'json', async: true, success: function(data) {
+	                  $.ajax({ url: basepath+"/device/create.json?nodeid="+inputs[z].nodeid, dataType: 'json', async: true, success: function(data) {
 	                      if (!data) alert("There was an error creating device: "+inputs[z].nodeid); 
 	                  }});
 	              }
@@ -75,6 +77,10 @@ function draw_devices()
     // Draw node/input list
     var out = "";
     for (var node in devices) {
+        // Control node
+        var control_node = false;
+        if (device_templates[node]!=undefined && device_templates[node].control) control_node = true;
+    
         var visible = "hide"; if (nodes_display[node]) visible = "";
         
         out += "<div class='node'>";
@@ -83,33 +89,37 @@ function draw_devices()
         out += "    <div class='device-description'>"+devices[node].description+"</div>";
         // out += "    <div class='device-configure'>CONFIG</div>";
         // out += "    <div class='device-key'><i class='icon-lock icon-white'></i></div>"; 
-        out += "    <div class='device-schedule'>SCHEDULE</div>";
+        // out += "    <div class='device-schedule'>SCHEDULE</div>";
         out += "  </div>";
-        out += "<div class='node-inputs "+visible+"' node='"+node+"'>";
         
-        for (var i in devices[node].inputs) {
-            var input = devices[node].inputs[i];
+        if (!control_node) {
+            out += "<div class='node-inputs "+visible+"' node='"+node+"'>";
             
-            var selected = "";
-            if (selected_inputs[input.id]!=undefined && selected_inputs[input.id]==true) 
-                selected = "checked";
+            for (var i in devices[node].inputs) {
+                var input = devices[node].inputs[i];
+                
+                var selected = "";
+                if (selected_inputs[input.id]!=undefined && selected_inputs[input.id]==true) 
+                    selected = "checked";
+                
+                out += "<div class='node-input' id="+input.id+">";
+                out += "<div class='select'><div class='ipad'><input class='input-select' type='checkbox' id='"+input.id+"' "+selected+" /></div></div>";
+                out += "<div class='name'><div class='ipad'>"+input.name+"</div></div>";
+                
+                // if (processlist_ui != undefined)  out += "<div class='processlist'><div class='ipad'>"+processlist_ui.drawpreview(input.processList)+"</div></div>";
+                
+                out += "<div class='node-input-right'>";
+                out += "<div class='time'>"+list_format_updated(input.time)+"</div>";
+                out += "<div class='value'>"+list_format_value(input.value)+"</div>";
+                out += "<div class='configure' id='"+input.id+"'><i class='icon-wrench'></i></div>";
+                out += "</div>";
+                out += "</div>";
+            }
             
-            out += "<div class='node-input' id="+input.id+">";
-            out += "<div class='select'><div class='ipad'><input class='input-select' type='checkbox' id='"+input.id+"' "+selected+" /></div></div>";
-            out += "<div class='name'><div class='ipad'>"+input.name+"</div></div>";
-            
-            // if (processlist_ui != undefined)  out += "<div class='processlist'><div class='ipad'>"+processlist_ui.drawpreview(input.processList)+"</div></div>";
-            
-            out += "<div class='node-input-right'>";
-            out += "<div class='time'>"+list_format_updated(input.time)+"</div>";
-            out += "<div class='value'>"+list_format_value(input.value)+"</div>";
-            out += "<div class='configure' id='"+input.id+"'><i class='icon-wrench'></i></div>";
             out += "</div>";
-            out += "</div>";
+        } else {
+            out += "<div class='node-scheduler hide' node='"+node+"'></div>";
         }
-        
-        out += "</div>";
-        out += "<div class='node-scheduler hide' node='"+node+"'></div>";
         out += "</div>";
        
 
@@ -158,6 +168,10 @@ $("#table").on("click",".node-info",function() {
     }
 
     draw_devices();
+    
+    if (device_templates[node]!=undefined && device_templates[node].control) {
+        if (nodes_display[node]) draw_scheduler(node);
+    }
 });
 
 $("#table").on("click",".input-select",function(e) {
@@ -201,21 +215,13 @@ function input_selection()
     }
 }
 
-$("#table").on("click",".device-key",function(e) {
-    e.stopPropagation();
-    var node = $(this).parent().attr("node");
-    $(".node-info[node='"+node+"'] .device-key").html(devices[node].devicekey);    
-});
-
-$("#table").on("click",".device-schedule",function(e) {
-    e.stopPropagation();
-    var node = $(this).parent().attr("node");
-    
+function draw_scheduler(node) 
+{   
     var out = "";
     
     out += '<div class="scheduler-inner">';
-    out +=     '<div id="devicename"></div>';
-    out +=     '<div id="controls"></div>';
+    out +=     '<div class="scheduler-devicename"></div>';
+    out +=     '<div class="scheduler-controls"></div>';
 
     out +=     '<button class="scheduler-save btn">Save</button>';
     out +=     '<br><br>';
@@ -230,8 +236,19 @@ $("#table").on("click",".device-schedule",function(e) {
     
     $(".node-scheduler[node='"+node+"']").html(out);
     $(".node-scheduler[node='"+node+"']").show();
-    scheduler_load();
-    
+    scheduler_load(node);
+}
+
+$("#table").on("click",".device-key",function(e) {
+    e.stopPropagation();
+    var node = $(this).parent().attr("node");
+    $(".node-info[node='"+node+"'] .device-key").html(devices[node].devicekey);    
+});
+
+$("#table").on("click",".device-schedule",function(e) {
+    e.stopPropagation();
+    var node = $(this).parent().attr("node");
+    draw_scheduler(node);
 });
 
 $("#table").on("click",".device-configure",function(e) {
@@ -311,7 +328,7 @@ $("#save-processlist").click(function (){
 auth_check();
 setInterval(auth_check,5000);
 function auth_check(){
-    $.ajax({ url: "http://emonpi/emoncms/device/auth/check.json", dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: basepath+"/device/auth/check.json", dataType: 'json', async: true, success: function(data) {
         if (data!="no devices") {
             $("#auth-check").show();
             $("#auth-check-ip").html(data.ip);
@@ -323,7 +340,7 @@ function auth_check(){
 
 $(".auth-check-allow").click(function(){
     var ip = $("#auth-check-ip").html();
-    $.ajax({ url: "http://emonpi/emoncms/device/auth/allow.json?ip="+ip, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: basepath+"/device/auth/allow.json?ip="+ip, dataType: 'json', async: true, success: function(data) {
         $("#auth-check").hide();
     }});
 });
@@ -420,3 +437,4 @@ function list_format_value(value) {
   else if (value<10) value = parseFloat((value).toFixed(2));
   return value;
 }
+

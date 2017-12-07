@@ -313,9 +313,58 @@ function piegraph3(element,data,options) {
         if (val>0) {
             // Percentage label
             var prc = 100*(val/total);
+            if (data[z].color=="#ffdc00") data[z].color = "#ddba00";
             ctx.fillStyle = data[z].color; //"#333";
+            
             ctx.font="bold "+textsize_prc+"px Arial";
             if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
+        }
+    }
+}
+
+function hrbar(element,data,options) {
+
+    var width = options.width;
+    var height = options.height;
+    var padding = 10;
+    
+    var segments = {};
+    
+    // Calculate total of segments 
+    var total = 0; for (var z in data) total += data[z].hydro + data[z].import;
+    
+    segments.hydro = {val:0, color:"#29aae3"};
+    
+    for (var z in data) {
+        segments[z] = {val:data[z].import, color:data[z].color};
+        segments.hydro.val += data[z].hydro;
+    }
+    
+    // Context and clear
+    var c = document.getElementById(element);  
+    var ctx = c.getContext("2d");
+    ctx.clearRect(0,0,options.width,options.height);
+    
+    // Background grey
+    ctx.fillStyle = "#eee";
+    ctx.fillRect(0,0,width,height);
+    
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+
+    var x = 0;
+    var l = 0;
+    for (z in segments) {
+        var segw = segments[z].val;
+        x += segw;
+        
+        var lastl = l
+        l = (width-(padding*2)) * (x / total);
+        
+        if (segw>0.0) {
+            ctx.fillStyle = segments[z].color;
+            ctx.fillRect(padding+lastl,padding,l-lastl,height-(padding*2));
+            ctx.strokeRect(padding+lastl,padding,l-lastl,height-(padding*2));
         }
     }
 }

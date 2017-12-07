@@ -103,9 +103,9 @@ function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
 // -------------------------------------------------------------
 function get_household_consumption($baseurl,$token) {
 
-    // 1. Fetch gross community demand in each tariff period and the total
+    // 1. Fetch gross club demand in each tariff period and the total
     if (!$gross = get_latest_day($baseurl,$token,6)) return "Invalid data";
-    // 2. Fetch net/imported community demand in each tariff period and the total
+    // 2. Fetch net/imported club demand in each tariff period and the total
     if (!$imported = get_latest_day($baseurl,$token,7)) return "Invalid data";
     // 3. Fetch net charge to be billed
     if (!$cost = get_latest_day($baseurl,$token,8)) return "Invalid data";
@@ -137,13 +137,13 @@ function get_household_consumption($baseurl,$token) {
 }
 
 // -------------------------------------------------------------
-// Last day community consumption summary
+// Last day club consumption summary
 // -------------------------------------------------------------
-function get_community_consumption($baseurl,$token) {
+function get_club_consumption($baseurl,$token) {
 
-    // 1. Fetch gross community demand in each tariff period and the total
+    // 1. Fetch gross club demand in each tariff period and the total
     if (!$gross = get_latest_day($baseurl,$token,13)) return "Invalid data";
-    // 2. Fetch net/imported community demand in each tariff period and the total
+    // 2. Fetch net/imported club demand in each tariff period and the total
     if (!$imported = get_latest_day($baseurl,$token,14)) return "Invalid data";
     // 3. Fetch net charge to be billed
     if (!$cost = get_latest_day($baseurl,$token,15)) return "Invalid data";
@@ -366,9 +366,9 @@ function get_household_consumption_monthly($baseurl,$token) {
 }
 
 // -------------------------------------------------------------
-// Monthly community consumption for report
+// Monthly club consumption for report
 // -------------------------------------------------------------
-function get_community_consumption_monthly($baseurl,$token) {
+function get_club_consumption_monthly($baseurl,$token) {
 
     // API: 22 (Community monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],

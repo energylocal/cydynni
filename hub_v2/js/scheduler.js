@@ -1,4 +1,3 @@
-
 var device = "";
 var controls = {};
 var previousPoint = false;
@@ -7,23 +6,24 @@ var unavailable = [];
 var options = {};
 var device_type = false;
 
+var basepath = "http://cydynni.local/emoncms";
 
-function scheduler_load()
+function scheduler_load(node)
 {
-    device = "smartplug";
-    $("#devicename").html(jsUcfirst(device));
+    device = node;
+    $(".scheduler-devicename").html(jsUcfirst(device));
     
-    $.ajax({ url: "http://emonpi/emoncms/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
+    $.ajax({ url: basepath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
        for (var z in devicelist) {
            if (devicelist[z].nodeid==device) device_type = devicelist[z].type;
        }
     }});
 
 
-    $.ajax({ url: "http://emonpi/emoncms/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
+    $.ajax({ url: basepath+"/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
         controls = template.control;
         
-        $.ajax({ url: "http://emonpi/emoncms/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
+        $.ajax({ url: basepath+"/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
 
             for (var property in controls) {
                 if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {
@@ -122,12 +122,12 @@ function scheduler_draw_controls() {
         }
             
     }
-    $("#controls").html(out);
+    $(".scheduler-controls").html(out);
    
 }
 
 function scheduler_update() {
-    $.ajax({ url: "http://emonpi/emoncms/input/get/"+device, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: basepath+"/input/get/"+device, dataType: 'json', async: true, success: function(data) {
         inputs = data;
         for (var property in controls) {
             if (controls[property].type=="text" && inputs[property]!=undefined) 
@@ -152,7 +152,7 @@ function scheduler_save(data) {
         }
     }
     if (count) {
-        $.ajax({ url: "http://emonpi/emoncms/input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
+        $.ajax({ url: basepath+"/input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
              if (result=="ok") $(".saved").show();
         }});
     }
@@ -166,7 +166,7 @@ function scheduler_save(data) {
     
     console.log(schedule);
 
-    $.ajax({ url: "http://emonpi/emoncms/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
+    $.ajax({ url: basepath+"/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
         draw_schedule_output(result);
     }});
 }
@@ -250,7 +250,7 @@ function resize()
     $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
 }
 
-$("#controls").on("change",".timepicker-minute",function(){
+$("#table").on("change",".timepicker-minute",function(){
     var val = $(this).val();
     val = Math.floor(val/30)*30;
     if (val<0) val = 0;
@@ -259,7 +259,7 @@ $("#controls").on("change",".timepicker-minute",function(){
     $(this).val(val);
 });
 
-$("#controls").on("change",".timepicker-hour",function(){
+$("#table").on("change",".timepicker-hour",function(){
     var val = $(this).val();
     val = Math.round(val);
     if (val<0) val = 0;
@@ -268,7 +268,7 @@ $("#controls").on("change",".timepicker-hour",function(){
     $(this).val(val);
 });
 
-$("#controls").on("click",".weekly-scheduler-day",function(){
+$("#table").on("click",".weekly-scheduler-day",function(){
     var val = $(this).attr('val');
     if (val==0) {
         $(this).attr('val',1);
@@ -277,7 +277,7 @@ $("#controls").on("click",".weekly-scheduler-day",function(){
     }
 });
 
-$("#controls").on("click",".weekly-scheduler-repeat",function(){
+$("#table").on("click",".weekly-scheduler-repeat",function(){
     if ($(this)[0].checked) {
 
     } else {
@@ -310,3 +310,4 @@ $(window).resize(function(){
 });
 
 function jsUcfirst(string) {return string.charAt(0).toUpperCase() + string.slice(1);}
+

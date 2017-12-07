@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = time();
+$v = 2;
 
 ?>
 
@@ -864,4 +864,4 @@ function t(s) {
         return s;
     }
 }
-</script>A
+</script>
