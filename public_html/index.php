@@ -381,6 +381,7 @@ switch ($q)
                 $result = @file_get_contents($meter_data_api_baseurl."1-$token-$api".$other);
                 $json = json_decode(substr($result,2));
                 $content = json_encode($json,JSON_PRETTY_PRINT);
+                if ($content=="null") $content = $result;
             } else {
             
             }

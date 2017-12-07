@@ -37,6 +37,7 @@ while ($end<(time()+(3600*24*$days)))
     $startms = $start * 1000;
 
     $data = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$startms,$endms);
+    print json_encode($data)."\n";
     
     // Visual output to check that we are not missing data in our queries
     // Start time of data
