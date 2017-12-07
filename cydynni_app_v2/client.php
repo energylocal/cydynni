@@ -593,7 +593,7 @@ $v = time();
                     <div style="clear:both"></div>
 
                     <div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in."); ?></div>
+                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in the local club."); ?></div>
                     </div>
                     
                 </div>
@@ -702,7 +702,8 @@ $v = time();
 
 <div class="app"><div class="app-inner">
     <div class="footer">
-        <div style="float:right; font-weight:bold"><?php echo t("Contact Us");?></div>
+        <div style="float:right; font-weight:bold"><?php echo t("Contact Us");?> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
+        
         <div>Energy Local</div>
     </div>
 </div></div>

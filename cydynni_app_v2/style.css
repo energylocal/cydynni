@@ -9,6 +9,21 @@ body {
     background-color:WhiteSmoke;
 }
 
+a {
+   text-decoration:none;
+   color:#fff;
+}
+
+a:hover {
+   text-decoration:none;
+   color:#fff;
+}
+
+a:visited {
+   text-decoration:none;
+   color:#fff;
+}
+
 :root {
     --forecast-bg-color: #39aa1a; /*site colors used as variables*/
     --household-bg-color: #c20000;
