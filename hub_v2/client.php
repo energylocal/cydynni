@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 2;
+$v = 3;
 
 ?>
 
@@ -746,11 +746,17 @@ $v = 2;
 <script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/devices.js?v=<?php echo time(); ?>"></script>
-<script language="javascript" type="text/javascript" src="js/scheduler.js?v=<?php echo time(); ?>"></script>
+<script language="javascript" type="text/javascript" src="js/devices.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="js/scheduler.js?v=<?php echo $v; ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
+var emoncmspath = path.replace("cydynni","emoncms");
+
+// Device 
+auth_check();
+setInterval(auth_check,5000);
+
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
