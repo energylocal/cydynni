@@ -159,11 +159,14 @@ function autowidth(element,padding) {
 $("#table").on("click",".node-info",function() {
     var node = $(this).attr('node');
     
+    var visible = false;
+    if (nodes_display[node]) visible = true;
+    
     for (var n in nodes_display) {
         nodes_display[n] = false;
     }
     
-    nodes_display[node] = true;
+    if (!visible) nodes_display[node] = true;
     
     //if (nodes_display[node]) {
     //    nodes_display[node] = false;

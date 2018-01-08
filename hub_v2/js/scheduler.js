@@ -7,8 +7,9 @@ var options = {};
 var device_type = false;
 var schedule = {};
 
-function draw_scheduler(device) 
+function draw_scheduler(devicein) 
 {   
+    device = devicein;
     // 1. Fetch device type in order to fetch device template
     $.ajax({ url: emoncmspath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
        for (var z in devicelist) {
@@ -186,7 +187,9 @@ function scheduler_save(data) {
     console.log(schedule);
 
     $.ajax({ url: emoncmspath+"/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
-        draw_schedule_output(result);
+        schedule = result.schedule;
+        if (result==null || result.schedule==null) schedule = {};
+        draw_schedule_output(schedule);
     }});
 }
 
