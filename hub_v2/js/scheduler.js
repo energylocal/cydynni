@@ -5,24 +5,23 @@ var available = [];
 var unavailable = [];
 var options = {};
 var device_type = false;
+var schedule = {};
 
-function scheduler_load(node)
-{
-    device = node;
-    $(".scheduler-devicename").html(jsUcfirst(device));
-    
+function draw_scheduler(device) 
+{   
+    // 1. Fetch device type in order to fetch device template
     $.ajax({ url: emoncmspath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
        for (var z in devicelist) {
            if (devicelist[z].nodeid==device) device_type = devicelist[z].type;
        }
     }});
-
-
+    
+    // 2. Load device template to get the control definition
     $.ajax({ url: emoncmspath+"/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
         controls = template.control;
         
+        // 3. Fetch device settings stored in the demandshaper module
         $.ajax({ url: emoncmspath+"/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
-
             for (var property in controls) {
                 if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {
                     controls[property].value = result.schedule[property];
@@ -30,12 +29,35 @@ function scheduler_load(node)
                     controls[property].value = controls[property].default;
                 }
             }
+            schedule = result.schedule;
+            if (result==null || result.schedule==null) schedule = {};
             
-            draw_schedule_output(result);
         }});
         
-        scheduler_draw_controls();
+        var out = "";
+        
+        out += '<div class="scheduler-inner">';
+        out +=     '<div class="scheduler-controls">'+scheduler_draw_controls()+'</div>';
+
+        out +=     '<button class="scheduler-save btn">Save</button>';
+        out +=     '<br><br>';
+        out +=     '<p><b>Schedule Output:</b><div id="schedule-output"></div></p>';
+            
+        out +=     '<div id="placeholder_bound" style="width:100%; height:300px;">';
+        out +=       '<div id="placeholder" style="height:300px"></div>';
+        out +=     '</div>';
+            
+        out +=     'Higher bar height equalls more power available';
+        out += '</div>';
+        
+        $(".node-scheduler").html("");
+        $(".node-scheduler[node='"+device+"']").html(out);
+        $(".node-scheduler[node='"+device+"']").show();
+
+        draw_schedule_output(schedule);
+
         scheduler_update();
+        
     }});
 }
 
@@ -120,8 +142,7 @@ function scheduler_draw_controls() {
         }
             
     }
-    $(".scheduler-controls").html(out);
-   
+    return out;
 }
 
 function scheduler_update() {
@@ -169,11 +190,8 @@ function scheduler_save(data) {
     }});
 }
 
-function draw_schedule_output(result)
+function draw_schedule_output(schedule)
 {
-    var schedule = result.schedule;
-    if (result==null || result.schedule==null) return false;
-
     var out = jsUcfirst(device)+" scheduled to run: ";
 
     var periods = [];

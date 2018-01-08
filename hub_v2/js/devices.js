@@ -73,9 +73,10 @@ function draw_devices()
     // Draw node/input list
     var out = "";
     for (var node in devices) {
+        
         // Control node
         var control_node = false;
-        if (device_templates[node]!=undefined && device_templates[node].control) control_node = true;
+        if (device_templates[devices[node].type]!=undefined && device_templates[devices[node].type].control) control_node = true;
     
         var visible = "hide"; if (nodes_display[node]) visible = "";
         
@@ -132,7 +133,7 @@ function draw_devices()
     }
 
     for (var node in devices) {
-        if (device_templates[node]!=undefined && device_templates[node].control) {
+        if (device_templates[devices[node].type]!=undefined && device_templates[devices[node].type].control) {
             $(".node-info[node='"+node+"'] .device-schedule").show();
         }
     }
@@ -157,15 +158,22 @@ function autowidth(element,padding) {
 // Show/hide node on click
 $("#table").on("click",".node-info",function() {
     var node = $(this).attr('node');
-    if (nodes_display[node]) {
-        nodes_display[node] = false;
-    } else {
-        nodes_display[node] = true;
+    
+    for (var n in nodes_display) {
+        nodes_display[n] = false;
     }
+    
+    nodes_display[node] = true;
+    
+    //if (nodes_display[node]) {
+    //    nodes_display[node] = false;
+    //} else {
+    //    nodes_display[node] = true;
+    //}
 
     draw_devices();
     
-    if (device_templates[node]!=undefined && device_templates[node].control) {
+    if (device_templates[devices[node].type]!=undefined && device_templates[devices[node].type].control) {
         if (nodes_display[node]) draw_scheduler(node);
     }
 });
@@ -209,30 +217,6 @@ function input_selection()
     } else {
         // $(".feed-edit").hide();
     }
-}
-
-function draw_scheduler(node) 
-{   
-    var out = "";
-    
-    out += '<div class="scheduler-inner">';
-    out +=     '<div class="scheduler-devicename"></div>';
-    out +=     '<div class="scheduler-controls"></div>';
-
-    out +=     '<button class="scheduler-save btn">Save</button>';
-    out +=     '<br><br>';
-    out +=     '<p><b>Schedule Output:</b><div id="schedule-output"></div></p>';
-        
-    out +=     '<div id="placeholder_bound" style="width:100%; height:300px;">';
-    out +=       '<div id="placeholder" style="height:300px"></div>';
-    out +=     '</div>';
-        
-    out +=     'Higher bar height equalls more power available';
-    out += '</div>';
-    
-    $(".node-scheduler[node='"+node+"']").html(out);
-    $(".node-scheduler[node='"+node+"']").show();
-    scheduler_load(node);
 }
 
 $("#table").on("click",".device-key",function(e) {

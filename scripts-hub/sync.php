@@ -96,11 +96,28 @@ if ($result) {
     }
 }
 
-$redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-$redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
-$redis->set("community:data",file_get_contents("https://cydynni.org.uk/club/data"));
-$redis->set("community:summary:day",file_get_contents("https://cydynni.org.uk/club/summary/day"));
-$redis->set("user:summary:lastday:$userid",file_get_contents("https://cydynni.org.uk/household/summary/day?apikey=".$user->apikey_read));
+$result = file_get_contents("https://cydynni.org.uk/live");
+$redis->set("live",$result);
+print "live: $result\n";
 
+$result = file_get_contents("https://cydynni.org.uk/hydro");
+$redis->set("hydro:data",$result);
+print "hydro:data\n";
+
+$result = file_get_contents("https://cydynni.org.uk/club/data");
+$redis->set("community:data",$result);
+print "community:data\n";
+
+$result = file_get_contents("https://cydynni.org.uk/club/summary/day");
+$redis->set("community:summary:day",$result);
+print "community:summary:day: $result\n";
+
+$result = file_get_contents("https://cydynni.org.uk/household/summary/day?apikey=".$user->apikey_read);
+$redis->set("user:summary:lastday:$userid",$result);
+print "user:summary:lastday\n";
+
+$result = file_get_contents("https://cydynni.org.uk/demandshaper");
+$redis->set("demandshaper",$result);
+print "demandshaper\n";
 
 

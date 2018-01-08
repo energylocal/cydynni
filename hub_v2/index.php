@@ -106,7 +106,7 @@ switch ($q)
         } else {
             // check register status
             $register = true; if ($user->get_number_of_users()>0) $register = false;
-            $content = view("login.php",array('session'=>$session,'register'=>$register));
+            $content = view("login_view.php",array('session'=>$session,'register'=>$register));
         }
         break;
 
