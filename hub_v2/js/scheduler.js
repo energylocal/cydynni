@@ -128,8 +128,8 @@ function scheduler_draw_controls() {
             if (mins<10) mins = "0"+mins;
             
             out += '<div style="display:inline-block; width:120px;">'+name+":</div> ";
-            out += '<input class="timepicker-hour" type="text" name="'+property+'-hour" style="width:45px" value='+hour+' /> :';
-            out += '<input class="timepicker-minute" type="text" name="'+property+'-minute" style="width:45px" value='+mins+' />';
+            out += '<input class="timepicker-hour" type="text" name="'+property+'-hour" style="width:45px" value='+hour+' /> hrs&nbsp;&nbsp;';
+            out += '<input class="timepicker-minute" type="text" name="'+property+'-minute" style="width:45px" value='+mins+' /> mins';
             out += "<br>";
         }
         
