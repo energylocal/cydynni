@@ -9,6 +9,7 @@ var schedule = {};
 function draw_scheduler(devicein) 
 {   
     device = devicein;
+    $("#devicename").html(jsUcfirst(device));
     
     // 1. Load device template to get the control definition
     $.ajax({ url: emoncmspath+"device/template/get.json?device="+devices[device].type, dataType: 'json', async: true, success: function(template) { 
@@ -32,6 +33,8 @@ function draw_scheduler(devicein)
             var out = "";
             
             out += '<div class="scheduler-inner">';
+            out += '<div class="scheduler-title">Schedule</div>';
+            out += '<div class="scheduler-inner2">';
             out +=     '<div class="scheduler-controls">'+scheduler_draw_controls()+'</div>';
 
             out +=     '<button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px">Clear</button>';
@@ -43,6 +46,7 @@ function draw_scheduler(devicein)
             out +=     '</div>';
                 
             out +=     'Higher bar height equalls more power available';
+            out += '</div>';
             out += '</div>';
             
             $(".node-scheduler").html("");
@@ -69,7 +73,7 @@ $("#table").on("click",".scheduler-save",function(e) {
         if (controls[property].type=="text") 
             tosave[property] = $("input[name='"+property+"']").val();
         if (controls[property].type=="checkbox") 
-            tosave[property] = 1*$("input[name='"+property+"']")[0].checked;
+            tosave[property] = $(".scheduler-checkbox[name='"+property+"']").attr("state")*1;
         if (controls[property].type=="time")
             tosave[property] = (1*$("input[name='"+property+"-hour']").val()) + ($("input[name='"+property+"-minute']").val()/60);
         if (controls[property].type=="weekly-scheduler") {
@@ -99,35 +103,34 @@ $("#table").on("click",".scheduler-clear",function(e) {
 function scheduler_draw_controls() {
     var out = "";
     for (var property in controls) {
+        // Use name property if present, otherwise use key
+        var name = jsUcfirst(property);
+        if (controls[property].name!=undefined) name = controls[property].name;
         
-        if (controls[property].type=="text")
-            out += "<p>"+jsUcfirst(property)+":<br><input type='text' name='"+property+"' value='"+controls[property].value+"' /></p>";
+        if (controls[property].type=="text") {
+            out += jsUcfirst(property)+":<br><input type='text' name='"+property+"' value='"+controls[property].value+"' /><br>";
+        }
+            
         if (controls[property].type=="checkbox") {
-            var checked = "";
-            if (controls[property].value) checked = "checked";
-            out += "<p>"+jsUcfirst(property)+": <input type='checkbox' name='"+property+"' "+checked+" /></p>";
+            console.log(property+" "+controls[property].value);
+            out += '<div name="'+property+'" state="'+controls[property].value+'" class="scheduler-checkbox"></div><div class="scheduler-checkbox-label">'+name+"</div><div style='clear:both'></div><br>";
         }
 
         // ----------------------------------------------------------------------------------------------------
         // Draw time picker
         // ----------------------------------------------------------------------------------------------------  
         if (controls[property].type=="time") {
-            // Use name property if present, otherwise use key
-            var name = jsUcfirst(property);
-            if (controls[property].name!=undefined) name = controls[property].name;
             // Draw time picker
-            
             var time = controls[property].value;
             var hour = Math.floor(time);
             var mins = 60*(time-hour);
             if (hour<10) hour = "0"+hour;
             if (mins<10) mins = "0"+mins;
             
-            out += '<p><div style="display:inline-block; width:120px;">'+name+":</div> ";
-            out += '  <input class="timepicker-hour" type="text" name="'+property+'-hour" style="width:45px" value='+hour+' />:';
-            out += '  <input class="timepicker-minute" type="text" name="'+property+'-minute" style="width:45px" value='+mins+' />';
-            out += '</p>';
-            
+            out += '<div style="display:inline-block; width:120px;">'+name+":</div> ";
+            out += '<input class="timepicker-hour" type="text" name="'+property+'-hour" style="width:45px" value='+hour+' /> :';
+            out += '<input class="timepicker-minute" type="text" name="'+property+'-minute" style="width:45px" value='+mins+' />';
+            out += "<br>";
         }
         
         // ----------------------------------------------------------------------------------------------------
@@ -144,22 +147,24 @@ function scheduler_draw_controls() {
             }
             out += '</div>';
             out += '</div><br>';
-        }
-            
+        }    
     }
+    
     return out;
 }
 
 function scheduler_update() {
+    /*
     $.ajax({ url: emoncmspath+"input/get/"+device, dataType: 'json', async: true, success: function(data) {
         inputs = data;
         for (var property in controls) {
             if (controls[property].type=="text" && inputs[property]!=undefined) 
                 $("input[name='"+property+"']").val(inputs[property].value);
-            if (controls[property].type=="checkbox" && inputs[property]!=undefined) 
-                $("input[name='"+property+"']")[0].checked = inputs[property].value;
+            if (controls[property].type=="checkbox" && inputs[property]!=undefined)
+                $(".scheduler-checkbox[name='"+property+"']").attr("state",inputs[property].value);
         }
     }});
+    */
 }
 
 function scheduler_save(data) {
@@ -175,6 +180,7 @@ function scheduler_save(data) {
             count++;
         }
     }
+    
     if (count) {
         $.ajax({ url: emoncmspath+"input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
              if (result=="ok") $(".saved").show();
@@ -187,8 +193,6 @@ function scheduler_save(data) {
     var schedule = data;
     schedule.device = device;
     schedule.basic = 0;
-    
-    console.log(schedule);
 
     $.ajax({ url: emoncmspath+"demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
         schedule = result.schedule;
@@ -259,11 +263,9 @@ function draw_schedule_output(schedule)
 
         $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
     }
-
 }
 
-function resize()
-{
+function resize() {
     var width = $("#placeholder_bound").width();
     $("#placeholder").width(width);
     $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
@@ -296,6 +298,15 @@ $("#table").on("click",".weekly-scheduler-day",function(){
     }
 });
 
+$("#table").on("click",".scheduler-checkbox",function(){
+    var val = $(this).attr('state');
+    if (val==0) {
+        $(this).attr('state',1);
+    } else {
+        $(this).attr('state',0);
+    }
+});
+
 $("#table").on("click",".weekly-scheduler-repeat",function(){
     if ($(this)[0].checked) {
 
@@ -316,9 +327,7 @@ $('#placeholder').bind("plothover", function (event, pos, item)
             var datestr = (new Date(itemTime)).format("HH:MM ddd");//, mmm dS");
             tooltip(item.pageX, item.pageY, datestr+"<br>val:"+itemVal.toFixed(1), "#DDDDDD");
         }
-    }
-    else
-    {
+    } else {
         $("#tooltip").remove();
         previousPoint = null;
     }

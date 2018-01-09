@@ -742,6 +742,13 @@ input[type="checkbox"] { margin:0px; }
 }
 
 .scheduler-inner {
+    background-color:#fff;
+    padding:10px;
+    color:#ea510e;
+    font-weight:bold;
+}
+
+.scheduler-inner2 {
     background-color:#f0f0f0;
     padding:20px;
     color:#ea510e;
@@ -764,4 +771,30 @@ input[type="checkbox"] { margin:0px; }
     background-image:url("images/day-enabled.png");
 }
 
-.saved { color:#888 };
+.scheduler-checkbox {
+    display:inline-block;
+    width:50px;
+    height:31px;
+    background-image:url("images/checkbox_inactive.png");
+    background-size:50px;
+    cursor:pointer;
+    float:left;
+}
+
+.scheduler-checkbox-label {
+  padding-top:7px;
+  padding-left:10px;
+  float:left;
+}
+
+.scheduler-checkbox[state="1"] {
+    background-image:url("images/checkbox_active.png");
+}
+
+.saved { color:#888 }
+
+.scheduler-title {
+    padding-top:5px;
+    padding-bottom:10px;
+}
+
