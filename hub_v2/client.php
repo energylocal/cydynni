@@ -751,7 +751,7 @@ $v = 3;
 <script>
 
 var path = "<?php echo $path; ?>";
-var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms";
+var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 // Device 
 auth_check();

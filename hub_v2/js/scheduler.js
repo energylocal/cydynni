@@ -4,25 +4,19 @@ var previousPoint = false;
 var available = [];
 var unavailable = [];
 var options = {};
-var device_type = false;
 var schedule = {};
 
 function draw_scheduler(devicein) 
 {   
     device = devicein;
-    // 1. Fetch device type in order to fetch device template
-    $.ajax({ url: emoncmspath+"/device/list.json", dataType: 'json', async: false, success: function(devicelist) { 
-       for (var z in devicelist) {
-           if (devicelist[z].nodeid==device) device_type = devicelist[z].type;
-       }
-    }});
     
-    // 2. Load device template to get the control definition
-    $.ajax({ url: emoncmspath+"/device/template/get.json?device="+device_type, dataType: 'json', async: true, success: function(template) { 
+    // 1. Load device template to get the control definition
+    $.ajax({ url: emoncmspath+"device/template/get.json?device="+devices[device].type, dataType: 'json', async: true, success: function(template) { 
         controls = template.control;
         
-        // 3. Fetch device settings stored in the demandshaper module
-        $.ajax({ url: emoncmspath+"/demandshaper/get?device="+device, dataType: 'json', async: false, success: function(result) {
+        // 2. Fetch device settings stored in the demandshaper module
+        $.ajax({ url: emoncmspath+"demandshaper/get?device="+device, dataType: 'json', async: true, success: function(result) {
+            // Itterate through controls definition from template and copy over the settings that exist
             for (var property in controls) {
                 if (result!=null && result.schedule!=null && result.schedule[property]!=undefined) {
                     controls[property].value = result.schedule[property];
@@ -30,35 +24,35 @@ function draw_scheduler(devicein)
                     controls[property].value = controls[property].default;
                 }
             }
+            // Make schedule object global
             schedule = result.schedule;
             if (result==null || result.schedule==null) schedule = {};
+
+            // Build scheduler UI
+            var out = "";
             
+            out += '<div class="scheduler-inner">';
+            out +=     '<div class="scheduler-controls">'+scheduler_draw_controls()+'</div>';
+
+            out +=     '<button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px">Clear</button>';
+            out +=     '<br><br>';
+            out +=     '<p><b>Schedule Output:</b><div id="schedule-output"></div></p>';
+                
+            out +=     '<div id="placeholder_bound" style="width:100%; height:300px;">';
+            out +=       '<div id="placeholder" style="height:300px"></div>';
+            out +=     '</div>';
+                
+            out +=     'Higher bar height equalls more power available';
+            out += '</div>';
+            
+            $(".node-scheduler").html("");
+            $(".node-scheduler[node='"+device+"']").html(out);
+            $(".node-scheduler[node='"+device+"']").show();
+
+            draw_schedule_output(schedule);
+            scheduler_update();
+
         }});
-        
-        var out = "";
-        
-        out += '<div class="scheduler-inner">';
-        out +=     '<div class="scheduler-controls">'+scheduler_draw_controls()+'</div>';
-
-        out +=     '<button class="scheduler-save btn">Save</button>';
-        out +=     '<br><br>';
-        out +=     '<p><b>Schedule Output:</b><div id="schedule-output"></div></p>';
-            
-        out +=     '<div id="placeholder_bound" style="width:100%; height:300px;">';
-        out +=       '<div id="placeholder" style="height:300px"></div>';
-        out +=     '</div>';
-            
-        out +=     'Higher bar height equalls more power available';
-        out += '</div>';
-        
-        $(".node-scheduler").html("");
-        $(".node-scheduler[node='"+device+"']").html(out);
-        $(".node-scheduler[node='"+device+"']").show();
-
-        draw_schedule_output(schedule);
-
-        scheduler_update();
-        
     }});
 }
 
@@ -85,6 +79,16 @@ $("#table").on("click",".scheduler-save",function(e) {
                 if (tosave[property][i]) tosave.runonce = false;
             }
         }
+    }
+    
+    scheduler_save(tosave);
+});
+
+$("#table").on("click",".scheduler-clear",function(e) {
+
+    var tosave = {};
+    for (var property in controls) {
+        tosave[property] = controls[property].default;
     }
     
     scheduler_save(tosave);
@@ -147,7 +151,7 @@ function scheduler_draw_controls() {
 }
 
 function scheduler_update() {
-    $.ajax({ url: emoncmspath+"/input/get/"+device, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"input/get/"+device, dataType: 'json', async: true, success: function(data) {
         inputs = data;
         for (var property in controls) {
             if (controls[property].type=="text" && inputs[property]!=undefined) 
@@ -172,7 +176,7 @@ function scheduler_save(data) {
         }
     }
     if (count) {
-        $.ajax({ url: emoncmspath+"/input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
+        $.ajax({ url: emoncmspath+"input/post/"+device+"?data="+JSON.stringify(mqttpub)+"&mqttpub=1", dataType: 'text', async: true, success: function(result) {
              if (result=="ok") $(".saved").show();
         }});
     }
@@ -186,7 +190,7 @@ function scheduler_save(data) {
     
     console.log(schedule);
 
-    $.ajax({ url: emoncmspath+"/demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
+    $.ajax({ url: emoncmspath+"demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
         schedule = result.schedule;
         if (result==null || result.schedule==null) schedule = {};
         draw_schedule_output(schedule);
@@ -221,8 +225,6 @@ function draw_schedule_output(schedule)
     }
 
     out += "<b>"+periods.join(", ")+"</b>";
-
-    //out += JSON.stringify(schedule);
 
     $("#schedule-output").html(out);
 
@@ -264,8 +266,6 @@ function resize()
 {
     var width = $("#placeholder_bound").width();
     $("#placeholder").width(width);
-    //$('#household_bargraph_placeholder_bound').height(h);
-    //$('#household_bargraph_placeholder').height(h);
     $.plot($('#placeholder'), [{data:available,color:"#ff0000"},{data:unavailable,color:"#888"}], options);
 }
 
@@ -329,4 +329,3 @@ $(window).resize(function(){
 });
 
 function jsUcfirst(string) {return string.charAt(0).toUpperCase() + string.slice(1);}
-

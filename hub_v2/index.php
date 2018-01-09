@@ -303,7 +303,7 @@ switch ($q)
             $start = $estimatestart;
         }
         
-        $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+        $data = json_decode(file_get_contents("http://localhost/emoncms/feed/average.json?id=1&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
         
         $scale = 1.1;
         

@@ -9,7 +9,7 @@ var updater;
 
 function device_load()
 {
-    $.ajax({ url: emoncmspath+"/device/template/listshort.json", dataType: 'json', async: true, success: function(data) { 
+    $.ajax({ url: emoncmspath+"device/template/listshort.json", dataType: 'json', async: true, success: function(data) { 
         device_templates = data; 
         update();
     }});
@@ -30,14 +30,14 @@ function updaterStart(func, interval){
 function update(){
 
     // Join and include device data
-    $.ajax({ url: emoncmspath+"/device/list.json", dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"device/list.json", dataType: 'json', async: true, success: function(data) {
         
         // Associative array of devices by nodeid
         devices = {};
         for (var z in data) devices[data[z].nodeid] = data[z];
         
         var requestTime = (new Date()).getTime();
-        $.ajax({ url: emoncmspath+"/input/list.json", dataType: 'json', async: true, success: function(data, textStatus, xhr) {
+        $.ajax({ url: emoncmspath+"input/list.json", dataType: 'json', async: true, success: function(data, textStatus, xhr) {
             table.timeServerLocalOffset = requestTime-(new Date(xhr.getResponseHeader('Date'))).getTime(); // Offset in ms from local to server time
 	          
 	          // Associative array of inputs by id
@@ -51,7 +51,7 @@ function update(){
 	              if (devices[inputs[z].nodeid]==undefined) {
 	                  devices[inputs[z].nodeid] = {description:""};
 	                  // Device creation
-	                  $.ajax({ url: emoncmspath+"/device/create.json?nodeid="+inputs[z].nodeid, dataType: 'json', async: true, success: function(data) {
+	                  $.ajax({ url: emoncmspath+"device/create.json?nodeid="+inputs[z].nodeid, dataType: 'json', async: true, success: function(data) {
 	                      if (!data) alert("There was an error creating device: "+inputs[z].nodeid); 
 	                  }});
 	              }
@@ -310,7 +310,7 @@ $("#save-processlist").click(function (){
 // -------------------------------------------------------------------------------------------------------
 
 function auth_check(){
-    $.ajax({ url: emoncmspath+"/device/auth/check.json", dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"device/auth/check.json", dataType: 'json', async: true, success: function(data) {
         if (data!="no devices") {
             $("#auth-check").show();
             $("#auth-check-ip").html(data.ip);
@@ -322,7 +322,7 @@ function auth_check(){
 
 $(".auth-check-allow").click(function(){
     var ip = $("#auth-check-ip").html();
-    $.ajax({ url: emoncmspath+"/device/auth/allow.json?ip="+ip, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"device/auth/allow.json?ip="+ip, dataType: 'json', async: true, success: function(data) {
         $("#auth-check").hide();
     }});
 });
