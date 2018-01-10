@@ -4,6 +4,7 @@ define('EMONCMS_EXEC', 1);
 require "phpfina.php";
 chdir("/var/www/emoncms");
 require "process_settings.php";
+require "core.php";
 require "Lib/EmonLogger.php";
 
 // 1. Load redis
@@ -72,17 +73,21 @@ $remote_host = "http://emoncms.cydynni.org.uk";
 $feedname = "hydro";
 print "$feedname\n";
 $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,1,false); // Import PHPFina
-$redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
-print "--lastvalue: ".json_encode($lastvalue)."\n";
+if ($lastvalue!==false) {
+    $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+    print "--lastvalue: ".json_encode($lastvalue)."\n";
+}
 
 $feedname = "community";
 print "$feedname\n";
 $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,2,false); // Import PHPFina
-$redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
-print "--lastvalue: ".json_encode($lastvalue)."\n";
+if ($lastvalue!==false) {
+    $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+    print "--lastvalue: ".json_encode($lastvalue)."\n";
+}
 
 // -----------------------------------------------------
-$result = @file_get_contents("$remote_host/feed/list.json?apikey=".$user->apikey_read);
+$result = @http_request("GET","$remote_host/feed/list.json",array("apikey"=>$user->apikey_read));
 if ($result) {
     $tmp = json_decode($result);
     if ($tmp!=null) {
@@ -96,28 +101,42 @@ if ($result) {
     }
 }
 
-$result = file_get_contents("https://cydynni.org.uk/live");
-$redis->set("live",$result);
-print "live: $result\n";
+print "Loading cache:\n";
 
-$result = file_get_contents("https://cydynni.org.uk/hydro");
-$redis->set("hydro:data",$result);
-print "hydro:data\n";
+$result = http_request("GET","https://cydynni.org.uk/live",array());
+if ($result) {
+    $redis->set("live",$result);
+    print "-- live\n";
+}
 
-$result = file_get_contents("https://cydynni.org.uk/club/data");
-$redis->set("community:data",$result);
-print "community:data\n";
+$result = http_request("GET","https://cydynni.org.uk/hydro",array());
+if ($result) {
+    $redis->set("hydro:data",$result);
+    print "-- hydro:data\n";
+}
 
-$result = file_get_contents("https://cydynni.org.uk/club/summary/day");
-$redis->set("community:summary:day",$result);
-print "community:summary:day: $result\n";
+$result = http_request("GET","https://cydynni.org.uk/club/data",array());
+if ($result) {
+    $redis->set("community:data",$result);
+    print "-- community:data\n";
+}
 
-$result = file_get_contents("https://cydynni.org.uk/household/summary/day?apikey=".$user->apikey_read);
-$redis->set("user:summary:lastday:$userid",$result);
-print "user:summary:lastday\n";
+$result = http_request("GET","https://cydynni.org.uk/club/summary/day",array());
+if ($result) {
+    $redis->set("community:summary:day",$result);
+    print "-- community:summary:day\n";
+}
 
-$result = file_get_contents("https://cydynni.org.uk/demandshaper");
-$redis->set("demandshaper",$result);
-print "demandshaper\n";
+$result = http_request("GET","https://cydynni.org.uk/household/summary/day",array("apikey"=>$user->apikey_read));
+if ($result) {
+    $redis->set("user:summary:lastday:$userid",$result);
+    print "-- user:summary:lastday\n";
+}
+
+$result = http_request("GET","https://cydynni.org.uk/demandshaper",array());
+if ($result) {
+    $redis->set("demandshaper",$result);
+    print "-- demandshaper\n";
+}
 
 
