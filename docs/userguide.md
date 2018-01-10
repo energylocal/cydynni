@@ -1,7 +1,4 @@
-## title: Setup Guide
-### published: 2017-01-04
-
-<style> img {width:70%} </style>
+## Setup Guide
 
 ### 1. Power up the CydYnni hub
 
