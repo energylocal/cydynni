@@ -298,6 +298,7 @@ function club_bargraph_load() {
         } 
     }
     
+    
     if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
         // HYDRO estimate USING YNNI PADARN PERIS DATA

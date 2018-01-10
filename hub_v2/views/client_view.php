@@ -42,7 +42,7 @@ $v = 4;
     <script type="text/javascript" src="lib/vis.helper.js"></script>
     <script type="text/javascript" src="lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="css/style.css?v=<?php echo $v; ?>" />
     
     </head>
     <body>

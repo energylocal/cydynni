@@ -46,12 +46,12 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 
 chdir("/var/www/cydynni");
 
-require("user_model.php");
+require("lib/user_model.php");
 $user = new User($mysqli);
 
 $path = get_application_path();
 
-require "PHPFina.php";
+require "lib/PHPFina.php";
 $phpfina = new PHPFina(array("datadir"=>"/home/pi/data/phpfina/"));
 $use_local_cache = true;
 
@@ -102,18 +102,18 @@ switch ($q)
         $format = "html";
         
         if ($session["write"]) {
-            $content = view("client.php",array('session'=>$session));
+            $content = view("views/client_view.php",array('session'=>$session));
         } else {
             // check register status
             $register = true; if ($user->get_number_of_users()>0) $register = false;
-            $content = view("login_view.php",array('session'=>$session,'register'=>$register));
+            $content = view("views/login_view.php",array('session'=>$session,'register'=>$register));
         }
         break;
 
     case "report":
         $format = "html";
         if ($session["read"]) {
-            $content = view("report.php",array('session'=>$session));
+            $content = view("views/report_view.php",array('session'=>$session));
         } else {
             $content = "session not valid";
         }
@@ -122,7 +122,7 @@ switch ($q)
     case "account":
         $format = "html";
         if ($session["read"]) {
-            $content = view("account.php",array('session'=>$session));
+            $content = view("views/account_view.php",array('session'=>$session));
         } else {
             $content = "session not valid";
         }
@@ -246,7 +246,11 @@ switch ($q)
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
 
-        $content = json_decode(file_get_contents("http://localhost/emoncms/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr));
+        $result = json_decode(file_get_contents("http://localhost/emoncms/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr));
+        
+        $content = json_decode($result);
+        if ($content==null) $content = $result;
+        
         break;
         
     case "feed/average.json":
@@ -259,7 +263,11 @@ switch ($q)
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
         
-        $content = json_decode(file_get_contents("http://localhost/emoncms/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr));
+        $result = file_get_contents("http://localhost/emoncms/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr);
+        
+        $content = json_decode($result);
+        if ($content==null) $content = $result;
+        
         break;
         
     case "live":
@@ -303,26 +311,28 @@ switch ($q)
             $start = $estimatestart;
         }
         
-        $data = json_decode(file_get_contents("http://localhost/emoncms/feed/average.json?id=1&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>166913,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
         
-        $scale = 1.1;
-        
-        // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
-        
-        // Scale ynni padarn peris data and impose min/max limits
-        for ($i=0; $i<count($data); $i++) {
-            if ($data[$i][1]==null) $data[$i][1] = 0;
-            $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-            if ($data[$i][1]<0) $data[$i][1] = 0;
-            if ($data[$i][1]>49) $data[$i][1] = 49;
+        if ($result) {
+            $data = json_decode($result);
+            
+            $scale = 1.1;
+            
+            // Scale ynni padarn peris data and impose min/max limits
+            for ($i=0; $i<count($data); $i++) {
+                if ($data[$i][1]==null) $data[$i][1] = 0;
+                $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                if ($data[$i][1]<0) $data[$i][1] = 0;
+                if ($data[$i][1]>49) $data[$i][1] = 49;
+            }
+            
+            // remove last half hour if null
+            if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+            
+            $content = $data;
+        } else {
+            $result = array();
         }
-        
-        // remove last half hour if null
-        if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-        // if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-        
-        
-        $content = $data;
         
         break;
         
