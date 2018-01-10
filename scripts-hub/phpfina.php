@@ -7,16 +7,20 @@ function import_phpfina($local_datadir,$local_id,$remote_server,$remote_id,$remo
     
     // Download phpfiwa feed meta data
     
-    $data = array("id"=>$remote_id);
-    if ($remote_apikey) $data["apikey"] = $apikey_string;
-    $result = http_request("GET",$remote_server."/feed/getmeta.json",$data);
+    // $data = array("id"=>$remote_id);
+    // if ($remote_apikey) $data["apikey"] = $remote_apikey;
+    // $result = http_request("GET",$remote_server."/feed/getmeta.json",$data);
+    
+    $result = file_get_contents($remote_server."/feed/getmeta.json?id=$remote_id".$apikey_string);
+    
     if (!$result) return false;
     
     $remote_meta = json_decode($result);
     
-    if ($remote_meta==false || !isset($remote_meta->start_time) || !isset($remote_meta->interval)) {
+    if ($remote_meta==null || $remote_meta==false || !isset($remote_meta->start_time) || !isset($remote_meta->interval)) {
         echo "ERROR: Invalid remote meta, returned false\n";
         echo json_encode($remote_meta)."\n";
+         echo $result."\n";
         return false;
     }
     
