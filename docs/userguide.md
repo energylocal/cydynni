@@ -1,7 +1,4 @@
-## title: Setup Guide
-### published: 2017-01-04
-
-<style> img {width:70%} </style>
+## Setup Guide
 
 ### 1. Power up the CydYnni hub
 
@@ -75,8 +72,16 @@ After a short while a WIFI Access Point should appear called 'emonESP_xxxxxx'.<b
     
 ![setup11.png](images/setup11.png)
 
+Select the WIFI network you wish to connect to, enter the passkey and click connect. After 20-30s the interface will show that the module has connected and its IP address:
+
 ![setup12.png](images/setup12.png)
 
+Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip  address to connect:
+
 ![setup13.png](images/setup13.png)
+
+Click allow and wait another minute for the wifirelay device to appear. 
+
+Clicking on the wifirelay device will bring up the scheduler interface:
 
 ![setup14.png](images/setup14.png)

@@ -11,6 +11,8 @@ Cyd Ynni : Ynni Lleol is a community project linking up households with local co
 **CydYnni Hub**
 
 - [Hub: Software Installation Guide](docs/hub/installation.md)
+- [Hub: CydYnni App User Guide](docs/userguide.md)
+
 
 **CydYnni App**
 
