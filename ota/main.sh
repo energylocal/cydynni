@@ -42,3 +42,5 @@ cd /var/www/emoncms/Modules/device
 git pull
 cd
 
+php /home/pi/emonpi/emoncmsdbupdate.php
+
