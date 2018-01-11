@@ -1,28 +1,25 @@
-cd 
+#!/bin/bash
 
-cd cydynni
-branch="$(git rev-parse --abbrev-ref HEAD)"
-commit="$(git rev-parse HEAD)"
-echo "cydynni:"$branch":"$commit
+# DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# cd $DIR
 cd
 
-cd demandshaper
-branch="$(git rev-parse --abbrev-ref HEAD)"
-commit="$(git rev-parse HEAD)"
-echo "demandshaper:"$branch":"$commit
-cd
+remote_ota_version="$(curl -s 'https://raw.githubusercontent.com/TrystanLea/cydynni/master/ota/version')"
+local_ota_version="$(cat cydynni/ota/version)"
 
-cd /var/www/emoncms
-branch="$(git rev-parse --abbrev-ref HEAD)"
-commit="$(git rev-parse HEAD)"
-echo "emoncms:"$branch":"$commit
-cd
+echo "Remote OTA version:"$remote_ota_version
+echo "Local OTA version:"$local_ota_version
 
-cd /var/www/emoncms/Modules/device
-branch="$(git rev-parse --abbrev-ref HEAD)"
-commit="$(git rev-parse HEAD)"
-echo "emoncms-mod-device:"$branch":"$commit
-cd
-
-
-curl "https://raw.githubusercontent.com/TrystanLea/cydynni/master/.gitignore"
+if [ "$remote_ota_version" -eq "$local_ota_version" ]
+then
+  echo "Local and Remote OTA versions are the same"
+else 
+  echo "Update available, starting update process.."
+  rpi-rw
+  cd cydynni
+  git pull origin master
+  cd ota
+  ./main.sh
+  cd
+  rpi-ro
+fi
