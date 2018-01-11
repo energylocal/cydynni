@@ -2,8 +2,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
+echo "-----------------------------------------"
 cd 
-
 cd cydynni
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
@@ -26,5 +26,19 @@ cd /var/www/emoncms/Modules/device
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "emoncms-mod-device:"$branch":"$commit
-
 cd
+echo "-----------------------------------------"
+
+
+cd demandshaper
+git pull
+cd 
+
+cd /var/www/emoncms
+git pull
+cd 
+
+cd /var/www/emoncms/Modules/device
+git pull
+cd
+
