@@ -751,7 +751,6 @@ input[type="checkbox"] { margin:0px; }
 .scheduler-inner2 {
     background-color:#f0f0f0;
     padding:20px;
-    color:#ea510e;
 }
 
 .weekly-scheduler-day {
@@ -796,5 +795,29 @@ input[type="checkbox"] { margin:0px; }
 .scheduler-title {
     padding-top:5px;
     padding-bottom:10px;
+}
+
+.scheduler-startsin {
+    padding:3px;
+    padding-left:10px;
+    padding-right:10px;
+    background-color:#f29200;
+    float:right;
+    color:#fff;
+    border-radius: 10px;
+    font-size:14px;
+}
+
+.schedule-output-heading {
+    background-color:#f29200;
+    color:#fff;
+    padding:10px;
+    cursor:pointer;
+}
+
+.schedule-output-box {
+    background-color:#fff;
+    padding:10px;
+    font-weight:normal;
 }
 
