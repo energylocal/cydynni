@@ -62,7 +62,7 @@ Link the 'demandshaper-module' into the emoncms Modules folder:
 
 Copy smartplug device template to device module:
 
-    cp /home/pi/demandshaper/demandshaper-module/smartplug.json /var/www/emoncms/Modules/device/data/smartplug.json
+    cp -r /home/pi/demandshaper/devices/. /var/www/emoncms/Modules/device/data/
 
 Add demand shaper background process to crontab:
 
