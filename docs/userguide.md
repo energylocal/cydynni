@@ -86,8 +86,8 @@ Connect back to you home network and navigate to the devices page, after a coupl
 
 ![setup13.png](images/setup13.png)
 
-Click allow and wait another minute for the wifirelay device to appear. 
+Click allow and wait another minute for the smartplug device to appear. 
 
-Clicking on the wifirelay device will bring up the scheduler interface:
+Clicking on the smartplug device will bring up the scheduler interface:
 
 ![setup14.png](images/setup14.png)
