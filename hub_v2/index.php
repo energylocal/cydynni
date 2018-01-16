@@ -343,13 +343,13 @@ switch ($q)
     case "club/estimate":
         $format = "json";
         
-        $end = (int) $_GET['lasttime'];
+        $end = $_GET['lasttime'] * 1;
         $interval = (int) $_GET['interval'];
         
         $start = $end - (3600*24.0*7*1000);
         
         $data = json_decode(file_get_contents("http://localhost/emoncms/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
-
+        
         $divisions = round((24*3600) / $interval);
 
         $days = count($data)/$divisions;
