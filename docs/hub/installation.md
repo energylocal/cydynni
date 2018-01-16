@@ -113,6 +113,12 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
 
     sudo crontab -e
     */5 * * * * php /home/pi/cydynni/scripts-hub/sync.php 2>&1
+    
+### OTA Update
+
+    crontab -e
+    */10 * * * * /home/pi/cydynni/ota/update.sh >> /home/pi/data/ota.log 2>&1
+
 
 ### Testing
 
