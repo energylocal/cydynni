@@ -58,19 +58,29 @@ The 4rth tab shows a list of devices.
 
 ![setup10.png](images/setup10.png)
 
-### 5. WIFI Relay Setup
+### 5. WIFI Smart Plug Setup
 
-Install and power up the WIFI Relay.
+Plug in smart plug. The light on the plug will show green for 3 seconds followed by a short off period and then two very short flashes. This indicates that the plug is working and has created a WIFI Access Point.
 
-After a short while a WIFI Access Point should appear called 'emonESP_xxxxxx'.<br>Connect to this network, open an internet browser and enter the following address:
+The WIFI Access Point should appear in your laptop or phones available WIFI networks, the SSID will contain the name smartplug followed by a number e.g: 'smartplug1'.<br>Connect to this network, open an internet browser and enter the following address:
 
     http://192.168.4.1
     
 ![setup11.png](images/setup11.png)
 
-Select the WIFI network you wish to connect to, enter the passkey and click connect. After 20-30s the interface will show that the module has connected and its IP address:
+Select the WIFI network you wish to connect to, enter the passkey and click connect. 
+
+The green light on the smartplug will now turn on again. If the connection is successful you will see 10 very fast consequative flashes. 
+
+The web interface will also show that the module has connected and its IP address:
 
 ![setup12.png](images/setup12.png)
+
+**Failed Connection**
+
+If the smartplug fails to connect to the selected WIFI network the green LED will stay on with a slight pulsing rythym for 30 seconds before the plug automatically resets and tries again. To re-enter setup mode hold the button on the front of the smartplug down while the green led is on.
+
+---
 
 Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip  address to connect:
 
