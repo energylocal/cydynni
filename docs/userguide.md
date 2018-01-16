@@ -40,10 +40,6 @@ You will now be greated with the CydYnni hub login page. Enter your CydYnni user
 
 ![setup5.png](images/setup5.png)
 
-The screen will then change to a basic login screen (to be ammended), enter your details again to login:
-
-![setup6.png](images/setup6.png)
-
 ### 4. Explore your hub dashboard
 
 The first page presents the CydYnni forecast showing when its a good time to use electricity or not and the recent history of club consumption and generator output.
