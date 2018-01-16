@@ -713,7 +713,7 @@ $v = 4;
 	
 	                <div id="output"></div>
 
-	                <div id="noinputs" class="alert alert-block hide" style="padding:20px">
+	                <div id="noinputs" class="alert alert-block hide" style="background-color:#ea510e; color:#fff; padding:20px">
 			    <h4 class="alert-heading">No Devices created</h4>
 			    <p>Devices such as smartplugs and temperature and humidity nodes will appear here once powered up and connected to the WIFI network</p>
 	                </div>
