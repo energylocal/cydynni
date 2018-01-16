@@ -48,7 +48,12 @@ $v=1;
     <div id="admin-block" style="display:none">
       
     </div>
-    
+
+    <div id="wait-block" style="display:none">
+        <h2>Account setup successful!</h2>
+        <p>Please wait 5s while the hub downloads your data...</p>
+    </div>
+        
     </div>
     </div>
   
@@ -68,7 +73,11 @@ $("#login").click(function() {
         console.log("register: "+username+" "+password);
         $.ajax({ type: 'POST', url: path+"register", data: "username="+username+"&password="+password, dataType: 'json', async: false, success: function(result){
             if (result.success) {
-                window.location = path;
+                $("#login-block").hide();
+                $("#wait-block").show();
+                
+                setTimeout(function(){ window.location = path; },5000);
+                
             } else {
                 $("#alert").html(result.message);
             }

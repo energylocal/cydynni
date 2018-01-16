@@ -432,6 +432,8 @@ switch ($q)
                     if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
                     @fclose($fh);
                     
+                    $content = $user->login($username, $password);
+                    
                     $content = array("success"=>true);
                     
                 } else {
