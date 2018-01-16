@@ -315,23 +315,27 @@ switch ($q)
         
         if ($result) {
             $data = json_decode($result);
+            if ($data!=null && is_array($data)) {
+
+                $scale = 1.1;
             
-            $scale = 1.1;
+                // Scale ynni padarn peris data and impose min/max limits
+                for ($i=0; $i<count($data); $i++) {
+                    if ($data[$i][1]==null) $data[$i][1] = 0;
+                    $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                    if ($data[$i][1]<0) $data[$i][1] = 0;
+                    if ($data[$i][1]>49) $data[$i][1] = 49;
+                }
             
-            // Scale ynni padarn peris data and impose min/max limits
-            for ($i=0; $i<count($data); $i++) {
-                if ($data[$i][1]==null) $data[$i][1] = 0;
-                $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                if ($data[$i][1]<0) $data[$i][1] = 0;
-                if ($data[$i][1]>49) $data[$i][1] = 49;
+                // remove last half hour if null
+                if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+            
+                $content = $data;
+            } else {
+                $content = $result;
             }
-            
-            // remove last half hour if null
-            if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            
-            $content = $data;
         } else {
-            $result = array();
+            $content = array();
         }
         
         break;
