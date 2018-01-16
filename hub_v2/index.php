@@ -41,6 +41,13 @@ $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
 
+$wifisetup = false;
+if (file_exists("Modules/setup")) {
+    require "Modules/setup/setup_model.php";
+    $setup = new Setup($mysqli);
+    if ($setup->status()=="unconfigured") $wifisetup = true;
+}
+
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
@@ -104,9 +111,15 @@ switch ($q)
         if ($session["write"]) {
             $content = view("views/client_view.php",array('session'=>$session));
         } else {
-            // check register status
-            $register = true; if ($user->get_number_of_users()>0) $register = false;
-            $content = view("views/login_view.php",array('session'=>$session,'register'=>$register));
+        
+            if ($wifisetup) {
+                header('Location: ../emoncms');
+            } else {
+        
+                // check register status
+                $register = true; if ($user->get_number_of_users()>0) $register = false;
+                $content = view("views/login_view.php",array('session'=>$session,'register'=>$register));
+            }
         }
         break;
 
