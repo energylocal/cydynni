@@ -713,9 +713,9 @@ $v = 4;
 	
 	                <div id="output"></div>
 
-	                <div id="noinputs" class="alert alert-block hide">
-			                <h4 class="alert-heading"><?php echo _('No inputs created'); ?></h4>
-			                <p><?php echo _('Inputs are the main entry point for your monitoring device. Configure your device to post values here, you may want to follow the <a href="api">Input API helper</a> as a guide for generating your request.'); ?></p>
+	                <div id="noinputs" class="alert alert-block hide" style="padding:20px">
+			    <h4 class="alert-heading">No Devices created</h4>
+			    <p>Devices such as smartplugs and temperature and humidity nodes will appear here once powered up and connected to the WIFI network</p>
 	                </div>
 	
 	                <div id="input-loader" class="ajax-loader"></div>
