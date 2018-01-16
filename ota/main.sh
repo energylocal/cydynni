@@ -44,3 +44,7 @@ cd
 
 php /home/pi/emonpi/emoncmsdbupdate.php
 
+if [ -f /home/pi/data/demandshaper.pid ]; then
+  pid="$(cat /home/pi/data/demandshaper.pid)"
+  kill $pid
+fi
