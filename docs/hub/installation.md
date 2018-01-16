@@ -113,6 +113,12 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
 
     sudo crontab -e
     */5 * * * * php /home/pi/cydynni/scripts-hub/sync.php 2>&1
+
+### CydYnni setup module
+
+    cd /var/www/emoncms/Modules/setup
+    git pull
+    git checkout cydynni
     
 ### OTA Update
 
