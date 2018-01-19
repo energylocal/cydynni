@@ -44,7 +44,7 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
-chdir("/var/www/develop");
+chdir("/var/www/cydynni");
 
 require("user_model.php");
 $user = new User($mysqli);
@@ -109,6 +109,12 @@ switch ($q)
         $format = "html";
         unset($session["token"]);
         $content = view("client.php",array('session'=>$session));
+        break;
+        
+    case "admin":
+        $format = "html";
+        unset($session["token"]);
+        $content = view("admin.php",array('session'=>$session));
         break;
 
     case "report":
@@ -208,9 +214,7 @@ switch ($q)
             }
         } else {
             $content = "session not valid";
-        }
-        
-              
+        }  
         break;  
         
     // ------------------------------------------------------------------------
@@ -245,6 +249,7 @@ switch ($q)
         $date->modify("midnight");
         $time = $date->getTimestamp();
         $content->dayoffset = 0; //($time - decode_date($content->date))/(3600*24);
+        //$content->dayoffset = ($time - decode_date($content->date))/(3600*24);
         
         break;
 

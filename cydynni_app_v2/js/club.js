@@ -26,7 +26,10 @@ var club_height = 0;
 
 // Initial view range 24 hours
 view.end = +new Date;
-view.start = view.end - (3600000*24.0*6);
+view.start = view.end - (3600000*24.0*12);
+
+
+var day_view = 1;
 
 function club_summary_load()
 {
@@ -302,6 +305,7 @@ function club_bargraph_load() {
         // ----------------------------------------------------------------------------
         // HYDRO estimate USING YNNI PADARN PERIS DATA
         // ----------------------------------------------------------------------------
+        if (lasttime==0) lasttime = view.start;
         $.ajax({                                      
             url: path+"hydro/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
             dataType: 'json', async: false, success: function(result) {
@@ -324,21 +328,23 @@ function club_bargraph_load() {
         
         var club_estimate_raw = [];
         
-        var time = hydro_estimate[0][0];
-        
-        $.ajax({                                      
-            url: path+"club/estimate?lasttime="+lasttime+"&interval="+interval,
-            dataType: 'json',
-            async: false,                      
-            success: function(result) {
-                var club_estimate_raw = result;
-                var l = club_estimate_raw.length;
-                
-                club_estimate = [];
-                for (var h=0; h<divisions_behind; h++) {
-                    club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
-                }
-        }});
+        if (hydro_estimate.length>0) {
+            var time = hydro_estimate[0][0];
+            
+            $.ajax({                                      
+                url: path+"club/estimate?lasttime="+lasttime+"&interval="+interval,
+                dataType: 'json',
+                async: false,                      
+                success: function(result) {
+                    var club_estimate_raw = result;
+                    var l = club_estimate_raw.length;
+                    
+                    club_estimate = [];
+                    for (var h=0; h<divisions_behind; h++) {
+                        club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
+                    }
+            }});
+       }
        
     }
     // ----------------------------------------------------------------------------
@@ -480,8 +486,8 @@ $(".club-right").click(function(event) {
 
 $(".club-day").click(function(event) {
     event.stopPropagation();
-    end = 0;
-    start = 0;
+    view.end = +new Date;
+    view.start = view.end - (3600000*24.0*1);
     club_bargraph_load();
     club_bargraph_draw();
 });

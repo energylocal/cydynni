@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 2;
+$v = 3;
 
 ?>
 
@@ -103,7 +103,7 @@ $v = 2;
                   <div class="visnav-club club-right">></div>
                   <div class="visnav-club club-month"><?php echo t("MONTH");?></div>
                   <div class="visnav-club club-week"><?php echo t("WEEK");?></div>
-                  <!--<div class="visnav-club club-day"><?php echo t("DAY");?></div>-->
+                  <div class="visnav-club club-day"><?php echo t("DAY");?></div>
                 </div>
                 
                 
@@ -702,7 +702,7 @@ $v = 2;
 
 <div class="app"><div class="app-inner">
     <div class="footer">
-        <div style="float:right; font-weight:bold"><?php echo t("Contact Us");?> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
+        <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
         
         <div>Energy Local</div>
     </div>
