@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 4;
+$v = 5;
 
 ?>
 
@@ -43,13 +43,13 @@ $v = 4;
     <script type="text/javascript" src="lib/feed.js"></script>
     
     <link rel="stylesheet" type="text/css" href="css/style.css?v=<?php echo $v; ?>" />
-    
+    <link rel="stylesheet" type="text/css" href="css/icons.css?v=<?php echo $v; ?>" />
     </head>
     <body>
         <div class="oembluebar">
             <div class="oembluebar-inner">
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
-                <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
+                <!--<div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>-->
 
                 <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
                 <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
@@ -795,9 +795,20 @@ $v = 4;
         </div>
 
         Higher bar height equalls more power available
-      </div> <!-- schedule-output-box -->
+      </div> <!-- schedule-output-box -->      
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
+</div>
+
+<!-- The Modal -->
+<div id="DeviceDeleteModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="device-delete-modal-cancel modal-close">&times;</span>
+    <h3>Delete Device</h3>
+    <p>Are you sure you want to delete device <span id="device-delete-modal-name"></span>?</p>
+    <button class="device-delete-modal-cancel btn">Cancel</button> <button class="device-delete-modal-delete btn">Delete</button>
+  </div>
 </div>
 
 </body>
