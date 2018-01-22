@@ -2,3 +2,5 @@ public_html/settings.php
 public_html_hub/settings.php
 cydynni_app_v2/settings.php
 hub_v2/settings.php
+scripts-hub/settings.php
+scripts-hub/ca.crt
