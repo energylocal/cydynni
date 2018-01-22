@@ -68,7 +68,7 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
 // 6. Fetch remote account feeds
 // -----------------------------------------------------
 $remote_feeds = array();
-$remote_host = "http://emoncms.cydynni.org.uk";
+$remote_host = "https://emoncms.cydynni.org.uk";
 
 $feedname = "hydro";
 print "$feedname\n";

@@ -312,6 +312,26 @@ $v = 5;
                     </div>
                 </div>
             </div>
+            
+            <div id="meterdatablock" class="block household-block">
+                <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                
+                    <div class="bg-household2">
+
+                        <div style="padding:20px; text-align:left;">
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Power:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-power"></div>
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Latest meter reading:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-kwh"></div>
+                        
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
             <div class="block household-block">
               <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div></div>
@@ -457,7 +477,8 @@ $v = 5;
                 </div>
             </div>
         </div>
-       
+        
+
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->

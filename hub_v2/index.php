@@ -163,6 +163,19 @@ switch ($q)
 
         $content = json_decode(json_encode($content));
         break;
+        
+    case "meter/live":
+        $format = "json";
+        if ($session["read"]) {
+            $userid = $session["userid"];
+            $content = array(
+              "power"=>$redis->get("meterdata:total_kW"),
+              "kwh"=>$redis->get("meterdata:total_im_kWh")
+            );
+        } else {
+            $content = "session not valid";
+        }
+        break;
     
     /*
     case "household/summary/monthly":
