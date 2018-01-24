@@ -40,10 +40,9 @@ cd
 
 cd /var/www/emoncms/Modules/device
 
-git add .
-git checkout .
-
-git pull
+git fetch origin device-integration
+git reset --hard FETCH_HEAD
+git clean -df
 cd
 
 php /home/pi/emonpi/emoncmsdbupdate.php
