@@ -820,7 +820,7 @@ $v = 5;
           <div id="placeholder" style="height:300px"></div>
         </div>
 
-        Higher bar height equalls more power available
+        Higher bar height equals more power available
       </div> <!-- schedule-output-box -->      
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
