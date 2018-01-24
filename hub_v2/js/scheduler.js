@@ -65,6 +65,7 @@ $("#table").on("click",".scheduler-save",function(e) {
                 tosave[property][i] = $(".weekly-scheduler[name='"+property+"'][day="+i+"]").attr("val")*1;
                 if (tosave[property][i]) tosave.runonce = false;
             }
+            if (tosave.runonce) $(".scheduler-checkbox[name='runonce']").attr("state",1);
         }
     }
     
@@ -119,7 +120,18 @@ function scheduler_update_ui() {
                 $(".weekly-scheduler[name='"+property+"'][day="+i+"]").attr("val",controls[property].value[i]);
             }
         }
-    }   
+    }
+    
+    var runonce = true;
+    for (var i=0; i<7; i++) {
+        var dayval = $(".weekly-scheduler[name='repeat'][day="+i+"]").attr("val")*1;
+        if (dayval) runonce = false;
+    }
+    if (runonce) {
+        $(".scheduler-checkbox[name='runonce']").attr("state",1);
+    } else {
+        $(".scheduler-checkbox[name='runonce']").attr("state",0);
+    } 
 }
 
 
@@ -258,6 +270,26 @@ $("#table").on("click",".weekly-scheduler-day",function(){
         $(this).attr('val',1);
     } else {
         $(this).attr('val',0);
+    }
+    
+    var runonce = true;
+    for (var i=0; i<7; i++) {
+        var dayval = $(".weekly-scheduler[name='repeat'][day="+i+"]").attr("val")*1;
+        if (dayval) runonce = false;
+    }
+    if (runonce) {
+        $(".scheduler-checkbox[name='runonce']").attr("state",1);
+    } else {
+        $(".scheduler-checkbox[name='runonce']").attr("state",0);
+    }
+});
+
+$("#table").on("click",".scheduler-checkbox[name='runonce']",function(){
+    var state = $(this).attr('state')*1;
+    if (state) {
+        $(".weekly-scheduler[name='repeat']").attr("val",1);
+    } else {
+        $(".weekly-scheduler[name='repeat']").attr("val",0);
     }
 });
 

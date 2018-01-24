@@ -791,6 +791,11 @@ $v = 5;
           <div style='clear:both'></div>
         <br>
         
+        <div name="runonce" state=0 class="input scheduler-checkbox"></div>
+          <div class="scheduler-checkbox-label">Run once</div>
+          <div style='clear:both'></div>
+        <br>
+        
         <p>Repeat:</p>
         <div class="weekly-scheduler-days">
           <div name="repeat" day=0 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Mon</div></div>
