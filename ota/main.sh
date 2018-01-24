@@ -39,6 +39,10 @@ git pull
 cd 
 
 cd /var/www/emoncms/Modules/device
+
+git add .
+git checkout .
+
 git pull
 cd
 
