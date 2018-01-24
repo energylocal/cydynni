@@ -229,8 +229,12 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "club/summary/day":
         $format = "json";
-        
-        $content = json_decode($redis->get("community:summary:day"));
+
+        if (!$result = $redis->get("community:summary:day")) {
+            $result = http_request("GET","https://cydynni.org.uk/club/summary/day",array());
+            if ($result) $redis->set("community:summary:day",$result);
+        }
+        $content = json_decode($result);
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -299,8 +303,11 @@ switch ($q)
     case "live":
         $format = "json";
         
-        // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-        $live = json_decode($redis->get("live"));
+        if (!$result = $redis->get("live")) {
+            $result = http_request("GET","https://cydynni.org.uk/live",array());
+            if ($result) $redis->set("live",$result);
+        }
+        $live = json_decode($result);
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
