@@ -125,6 +125,7 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
 
     sudo nano /etc/hosts
     sudo nano /etc/hostname
+    sudo nano /var/www/html/index.php
 
 ### Testing
 
