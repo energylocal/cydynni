@@ -44,7 +44,7 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
-chdir("/var/www/cydynni");
+chdir("/var/www/cydynniweb");
 
 require("user_model.php");
 $user = new User($mysqli);
@@ -76,7 +76,7 @@ if ($session['read']) {
     
     $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
     $row = $result->fetch_object();
-    $session["token"] = $row->token;
+    if (isset($row->token)) $session["token"] = $row->token;
     
     $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
     $row = $result->fetch_object();
@@ -86,13 +86,35 @@ if ($session['read']) {
 
 // ---------------------------------------------------------
 
-$q = "";
-if (isset($_GET['q'])) $q = $_GET['q'];
+// 1. Fetch query
+$q = ""; if (isset($_GET['q'])) $q = $_GET['q'];
+
+// 2. Explode into parts
+$query_parts = explode("/",$q);
+
+// 3. Club name is the first parameter
+$club = $query_parts[0];
+
+// 4. Check if club exists in root tokens
+if (isset($club_settings[$club])) {
+    // remove club from query string
+    unset($query_parts[0]);
+} else {
+    $club = "bethesda";
+}
+$club_root_token = $club_settings[$club]["root_token"];
+
+// rebuild query string without club name
+$q = implode("/",$query_parts);
 
 $translation = new stdClass();
 $translation->cy = json_decode(file_get_contents("locale/cy"));
 
-$lang = "cy";
+$languages = $club_settings[$club]["languages"];
+$lang = $languages[0];
+
+
+
 if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
 if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $lang = "cy";
 if (isset($_GET['lang']) && $_GET['lang']=="en") $lang = "en";
@@ -108,7 +130,7 @@ switch ($q)
     case "":
         $format = "html";
         unset($session["token"]);
-        $content = view("client.php",array('session'=>$session));
+        $content = view("client.php",array('session'=>$session,'club'=>$club, 'languages'=>$languages));
         break;
         
     case "admin":
@@ -228,10 +250,10 @@ switch ($q)
             if ($use_local_cache) {
                 $content = $phpfina->get_data(1,$start,$end,1800,1,0);
             } else {
-                $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$start,$end);
+                $content = get_meter_data_history($meter_data_api_baseurl,$club_root_token,28,$start,$end);
             }
         } else {
-            $content = json_decode($redis->get("hydro:data"));
+            $content = json_decode($redis->get("$club:hydro:data"));
         }
         break;
         
@@ -241,7 +263,7 @@ switch ($q)
     case "club/summary/day":
         $format = "json";
         
-        $content = json_decode($redis->get("community:summary:day"));
+        $content = json_decode($redis->get("$club:club:summary:day"));
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -256,7 +278,7 @@ switch ($q)
     case "club/summary/monthly":
         $format = "json";
         $month = get("month");
-        $content = get_club_consumption_monthly($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        $content = get_club_consumption_monthly($meter_data_api_baseurl,$club_root_token);
         break;
                 
     case "club/data":
@@ -269,11 +291,11 @@ switch ($q)
             if ($use_local_cache) {
                 $content = $phpfina->get_data(2,$start,$end,1800,1,0);
             } else {
-                $content = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$start,$end);
+                $content = get_meter_data_history($meter_data_api_baseurl,$club_root_token,29,$start,$end);
             }
             
         } else {
-            $content = json_decode($redis->get("community:data"));
+            $content = json_decode($redis->get("$club:club:data"));
         }
         break;
 
@@ -306,7 +328,7 @@ switch ($q)
         $format = "json";
         
         // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-        $live = json_decode($redis->get("live"));
+        $live = json_decode($redis->get("$club:live"));
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -319,9 +341,7 @@ switch ($q)
         if ($hour>=11 && $hour<16) $tariff = "midday";
         if ($hour>=16 && $hour<20) $tariff = "evening";
         if ($hour>=20) $tariff = "overnight";
-        if ($live->hydro>=$live->community) $tariff = "hydro";
-        
-        $live->club = $live->community;
+        if ($live->hydro>=$live->club) $tariff = "hydro";
         
         $live->tariff = $tariff;
         $content = $live;
@@ -406,7 +426,7 @@ switch ($q)
     
     case "demandshaper":
         $format = "json";
-        $content = get_demand_shaper($meter_data_api_baseurl,$meter_data_api_hydrotoken);
+        $content = get_demand_shaper($meter_data_api_baseurl,$club_root_token);
         break;
 
     
@@ -541,17 +561,17 @@ switch ($q)
         }
         break;
         
-    case "admin/cron":
+    case "update":
         $format = "text";
         // Hydro
-        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,4);
-        if (count($content)>0) $redis->set("hydro:data",json_encode($content));
+        $content = get_meter_data($meter_data_api_baseurl,$club_root_token,4);
+        if (count($content)>0) $redis->set("$club:hydro:data",json_encode($content));
         // Club half-hour
-        $content = get_meter_data($meter_data_api_baseurl,$meter_data_api_hydrotoken,11);
-        if (count($content)>0) $redis->set("community:data",json_encode($content));
+        $content = get_meter_data($meter_data_api_baseurl,$club_root_token,11);
+        if (count($content)>0) $redis->set("$club:club:data",json_encode($content));
         // Club totals
-        $content = get_club_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        if ($content!="invalid data") $redis->set("community:summary:day",json_encode($content));
+        $content = get_club_consumption($meter_data_api_baseurl,$club_root_token);
+        if ($content!="invalid data") $redis->set("$club:club:summary:day",json_encode($content));
         // Store Updated
         $content = "store updated";
         break;

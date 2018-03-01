@@ -719,15 +719,20 @@ $v = 3;
 <script>
 
 var path = "<?php echo $path; ?>";
+var club_name = "<?php echo $club; ?>";
+var languages = <?php echo json_encode($languages); ?>;
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
 // Language selection top-right
-if (lang=="cy") {
-    $("#togglelang").html("English");
-} else {
-    $("#togglelang").html("Cymraeg");
+
+if (languages.length>1) {
+    if (lang=="cy") {
+        $("#togglelang").html("English");
+    } else {
+        $("#togglelang").html("Cymraeg");
+    }
 }
 
 if (!session.write) {

@@ -5,7 +5,11 @@ sleep(10);
 
 
 define('EMONCMS_EXEC', 1);
-chdir("/var/www/cydynni");
+
+chdir("/var/www/emoncms");
+require "process_settings.php";
+
+chdir("/var/www/cydynniweb");
 require "EmonLogger.php";
 require "PHPFina.php";
 
@@ -123,7 +127,7 @@ if ($hydro_now>=$community_now) $tariff = "hydro";
 
 $result = array(
     "hydro"=>number_format($hydro_now,3),
-    "community"=>number_format($community_now,3),
+    "club"=>number_format($community_now,3),
     "tariff"=>$tariff
 );
 
@@ -131,4 +135,5 @@ print $date->format("H:i:s")." ".json_encode($result)."\n";
 
 $redis = new Redis();
 $connected = $redis->connect("localhost");
-$redis->set("live",json_encode($result));
+$redis->set("bethesda:live",json_encode($result));
+$redis->set("towerpower:live",json_encode($result));
