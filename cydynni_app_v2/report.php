@@ -8,23 +8,23 @@ $v=1;
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>CydYnni Report</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link rel="stylesheet" type="text/css" href="report.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>report.css" />
   </head>
 
-  <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
-  <script language="javascript" type="text/javascript" src="js/report.js?v=<?php echo $v; ?>"></script>
+  <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
+  <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/report.js?v=<?php echo $v; ?>"></script>
 
   <body>
 
     <div class="oembluebar">
         <div class="oembluebar-inner">
-            <div id="sidenav-icon" class="oembluebar-item active"><img src="images/icon-list.png" ></div>
+            <div id="sidenav-icon" class="oembluebar-item active"><img src="<?php echo $path; ?>images/icon-list.png" ></div>
             <div id="reports" class="oembluebar-item active"><?php echo t("Reports"); ?></div>
             <div id="dashboard" class="oembluebar-item"><?php echo t("Dashboard"); ?></div>
 
-            <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
-            <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
+            <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
+            <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
             <div id="togglelang" class="oembluebar-item" style="float:right"></div>
         </div>
     </div>
@@ -154,6 +154,7 @@ $v=1;
 
 <script>
 var path = "<?php echo $path; ?>";
+var club_name = "<?php echo $club; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 var session = <?php echo json_encode($session); ?>;
@@ -441,8 +442,8 @@ $("#logout").click(function(event) {
     });
 });
 
-$("#dashboard").click(function(){ window.location = "/?lang="+lang; });
-$("#reports").click(function(){ window.location = "report?lang="+lang; });
-$("#account").click(function(){ window.location = "account?lang="+lang; });
+$("#dashboard").click(function(){ window.location = path+club_name+"?lang="+lang; });
+$("#reports").click(function(){ window.location = path+club_name+"/report?lang="+lang; });
+$("#account").click(function(){ window.location = path+club_name+"/account?lang="+lang; });
 
 </script>

@@ -36,11 +36,11 @@ function household_summary_load()
           // Calculated as amount of power consumed at times off peak times and from hydro
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
           
-          if (score>20) $("#household_star1").attr("src","images/starred.png");
-          if (score>40) setTimeout(function() { $("#household_star2").attr("src","images/starred.png"); }, 100);
-          if (score>60) setTimeout(function() { $("#household_star3").attr("src","images/starred.png"); }, 200);
-          if (score>80) setTimeout(function() { $("#household_star4").attr("src","images/starred.png"); }, 300);
-          if (score>90) setTimeout(function() { $("#household_star5").attr("src","images/starred.png"); }, 400);
+          if (score>20) $("#household_star1").attr("src",path+"images/starred.png");
+          if (score>40) setTimeout(function() { $("#household_star2").attr("src",path+"images/starred.png"); }, 100);
+          if (score>60) setTimeout(function() { $("#household_star3").attr("src",path+"images/starred.png"); }, 200);
+          if (score>80) setTimeout(function() { $("#household_star4").attr("src",path+"images/starred.png"); }, 300);
+          if (score>90) setTimeout(function() { $("#household_star5").attr("src",path+"images/starred.png"); }, 400);
           
           // Show status summary ( below score stars )
           setTimeout(function() {

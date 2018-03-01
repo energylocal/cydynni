@@ -130,7 +130,7 @@ switch ($q)
     case "":
         $format = "html";
         unset($session["token"]);
-        $content = view("client.php",array('session'=>$session,'club'=>$club, 'languages'=>$languages));
+        $content = view("client.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
         break;
         
     case "admin":
@@ -143,7 +143,7 @@ switch ($q)
         $format = "html";
         if ($session["read"]) {
             unset($session["token"]);
-            $content = view("report.php",array('session'=>$session));
+            $content = view("report.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
         } else {
             $content = "session not valid";
         }
@@ -153,7 +153,7 @@ switch ($q)
         $format = "html";
         if ($session["read"]) {
             unset($session["token"]);
-            $content = view("account.php",array('session'=>$session));
+            $content = view("account.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
         } else {
             $content = "session not valid";
         }

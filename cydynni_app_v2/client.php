@@ -14,35 +14,35 @@ $v = 3;
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="images/icon/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="<?php echo $path; ?>images/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#006400">
-    <link rel="apple-touch-icon" sizes="57x57" href="images/icon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="images/icon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="images/icon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="images/icon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="images/icon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="images/icon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="images/icon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="<?php echo $path; ?>images/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="<?php echo $path; ?>images/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="<?php echo $path; ?>images/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="<?php echo $path; ?>images/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="<?php echo $path; ?>images/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="<?php echo $path; ?>images/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="<?php echo $path; ?>images/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="<?php echo $path; ?>images/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $path; ?>images/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="<?php echo $path; ?>images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $path; ?>images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="<?php echo $path; ?>images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo $path; ?>images/icon/favicon-16x16.png">
+    <link rel="manifest" href="<?php echo $path; ?>manifest.json">
 
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
     
-    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="lib/flot/date.format.js"></script>
-    <script type="text/javascript" src="lib/vis.helper.js"></script>
-    <script type="text/javascript" src="lib/feed.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.selection.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.stack.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/date.format.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/vis.helper.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css?v=<?php echo $v; ?>" />
     
     </head>
     <body>
@@ -51,8 +51,8 @@ $v = 3;
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
                 <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
 
-                <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
-                <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
+                <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
+                <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
                 <div id="togglelang" class="oembluebar-item" style="float:right"></div>
 
             </div>
@@ -61,18 +61,18 @@ $v = 3;
             <div class="app">
                 <div class="app-inner">
                     <div class="title-wrapper">
-                        <img class="logo-full" src='images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
-                        <img class="logo-mobile" src='images/logo.png'>
+                        <img class="logo-full" src='<?php echo $path; ?>images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
+                        <img class="logo-mobile" src='<?php echo $path; ?>images/logo.png'>
                         <div class="app-title">
                         <div class="app-title-content"><?php echo t("Energy<br>Dashboard"); ?>
                         </div>
                     </div>
                 </div>
                 <ul class="navigation">
-                    <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
-                    <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
-                    <li name="club"><div><img src="images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                    <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
+                    <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+                    <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
+                    <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
@@ -86,7 +86,7 @@ $v = 3;
                   <div style="background-color:#39aa1a; color:#fff">
                   
                     <div id="status-pre" style="padding:10px;"></div>
-                    <img id="status-img" src="images/new-tick.png"/>
+                    <img id="status-img" src="<?php echo $path; ?>images/new-tick.png"/>
                     <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
                     <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
                     
@@ -330,11 +330,11 @@ $v = 3;
                   </div>
                 </div>
                 <br>
-                <img id="household_star1" src="images/starred.png" style="width:45px">
-                <img id="household_star2" src="images/starred.png" style="width:45px">
-                <img id="household_star3" src="images/star20red.png" style="width:45px">
-                <img id="household_star4" src="images/star20red.png" style="width:45px">
-                <img id="household_star5" src="images/star20red.png" style="width:45px">
+                <img id="household_star1" src="<?php echo $path; ?>images/starred.png" style="width:45px">
+                <img id="household_star2" src="<?php echo $path; ?>images/starred.png" style="width:45px">
+                <img id="household_star3" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
+                <img id="household_star4" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
+                <img id="household_star5" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
               
                 <p class="household_status"></p>
                 
@@ -480,11 +480,11 @@ $v = 3;
                     </div>
                   </div>
                   <br>
-                  <img id="club_star1" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star2" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star3" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star4" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star5" src="images/star20yellow.png" style="width:45px">
+                  <img id="club_star1" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star2" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star3" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star4" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star5" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
                 
                   <br><br>
                   <div class="bound" id="club_statusmsg"></div><br>
@@ -609,7 +609,7 @@ $v = 3;
                 <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content bg-tips" style="padding:20px">
                     <figure class="tips-appliance show-fig">
-                        <img src="images/dishwasher.png">
+                        <img src="<?php echo $path; ?>images/dishwasher.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("DISHWASHER") ?></h2>
@@ -619,7 +619,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/lamp.png">
+                        <img src="<?php echo $path; ?>images/lamp.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("LED LIGHTS") ?></h2>
@@ -629,7 +629,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/stove.png">
+                        <img src="<?php echo $path; ?>images/stove.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("COOKING") ?></h2>
@@ -639,7 +639,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/slowcooker.png">
+                        <img src="<?php echo $path; ?>images/slowcooker.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("SLOW COOKING") ?></h2>
@@ -649,7 +649,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/washingmachine.png">
+                        <img src="<?php echo $path; ?>images/washingmachine.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("WASHING MACHINE") ?></h2>
@@ -659,7 +659,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/fridge.png">
+                        <img src="<?php echo $path; ?>images/fridge.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("FRIDGES & FREEZERS") ?></h2>
@@ -669,7 +669,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/lightbulb.png">
+                        <img src="<?php echo $path; ?>images/lightbulb.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("LIGHTS") ?></h2>
@@ -711,11 +711,11 @@ $v = 3;
 </body>
 </html>
 
-<script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/club.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/household.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/club.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -857,9 +857,9 @@ $(".rightclick").click(function(){
         }
 });
 
-$("#dashboard").click(function(){ window.location = "/?lang="+lang; });
-$("#reports").click(function(){ window.location = "report?lang="+lang; });
-$("#account").click(function(){ window.location = "account?lang="+lang; });
+$("#dashboard").click(function(){ window.location = path+club_name+"?lang="+lang; });
+$("#reports").click(function(){ window.location = path+club_name+"/report?lang="+lang; });
+$("#account").click(function(){ window.location = path+club_name+"/account?lang="+lang; });
 
 // Javascript text translation function
 function t(s) {

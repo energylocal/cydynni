@@ -25,11 +25,11 @@ function cydynnistatus_update() {
 
   $("#status-next").html("");
   
-  if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon.png");
-  if (tariff=="midday") $("#status-img").attr("src","images/new-tick.png");
-  if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon.png");
-  if (tariff=="overnight") $("#status-img").attr("src","images/new-tick.png");
-  if (tariff=="hydro") $("#status-img").attr("src","images/new-tick.png");
+  if (tariff=="morning") $("#status-img").attr("src",path+"images/waiting-icon.png");
+  if (tariff=="midday") $("#status-img").attr("src",path+"images/new-tick.png");
+  if (tariff=="evening") $("#status-img").attr("src",path+"images/waiting-icon.png");
+  if (tariff=="overnight") $("#status-img").attr("src",path+"images/new-tick.png");
+  if (tariff=="hydro") $("#status-img").attr("src",path+"images/new-tick.png");
   
   
   // If morning peak then wait until midday tariff

@@ -53,11 +53,11 @@ function club_summary_load()
               }
               
               $("#club_score").html(score);
-              if (score>20) $("#club_star1").attr("src","images/staryellow.png");
-              if (score>40) setTimeout(function() { $("#club_star2").attr("src","images/staryellow.png"); }, 100);
-              if (score>60) setTimeout(function() { $("#club_star3").attr("src","images/staryellow.png"); }, 200);
-              if (score>80) setTimeout(function() { $("#club_star4").attr("src","images/staryellow.png"); }, 300);
-              if (score>90) setTimeout(function() { $("#club_star5").attr("src","images/staryellow.png"); }, 400);
+              if (score>20) $("#club_star1").attr("src",path+"images/staryellow.png");
+              if (score>40) setTimeout(function() { $("#club_star2").attr("src",path+"images/staryellow.png"); }, 100);
+              if (score>60) setTimeout(function() { $("#club_star3").attr("src",path+"images/staryellow.png"); }, 200);
+              if (score>80) setTimeout(function() { $("#club_star4").attr("src",path+"images/staryellow.png"); }, 300);
+              if (score>90) setTimeout(function() { $("#club_star5").attr("src",path+"images/staryellow.png"); }, 400);
               
               setTimeout(function() {
                   if (score<30) {
