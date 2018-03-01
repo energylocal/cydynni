@@ -100,7 +100,9 @@ if (isset($club_settings[$club])) {
     // remove club from query string
     unset($query_parts[0]);
 } else {
-    $club = "bethesda";
+    $q = implode("/",$query_parts);
+    header("Location: bethesda/$q");
+    die;
 }
 $club_root_token = $club_settings[$club]["root_token"];
 
