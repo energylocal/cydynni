@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 3;
+$v = 4;
 
 ?>
 
@@ -69,7 +69,7 @@ $v = 3;
                     </div>
                 </div>
                 <ul class="navigation">
-                    <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
+                    <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_name."<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
                     <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
@@ -111,8 +111,8 @@ $v = 3;
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
-                    <div id="hydro-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?>
+                    <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <?php echo t("Forecasting"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
                   </div>
                   
                   <div class="no-padding">
@@ -134,7 +134,7 @@ $v = 3;
                       <div class="legend-label-box" style="background-color:#014c2d"></div>
                       <span class="legend-label"><?php echo t("Overnight");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
-                      <span class="legend-label" ><?php echo t("Hydro"); ?></span>
+                      <span class="legend-label" ><?php echo t(ucfirst($club_generator)); ?></span>
                     </div>
                     
                     <div id="club_bargraph_bound" style="width:100%; height:405px;">
@@ -143,8 +143,8 @@ $v = 3;
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t("Hydro output is currently exceeding club consumption"); ?><br>
-                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated hydro output and club consumption up to the present time"); ?></span>
+                  <?php echo t(ucfirst($club_generator)." output is currently exceeding club consumption"); ?><br>
+                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_generator." output and club consumption up to the present time"); ?></span>
                   </div>
 
                 </div>
@@ -168,8 +168,8 @@ $v = 3;
                   </div>
                     
                   <br>
-                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
-                  <div id="tariff-now-circle" class="circle bg-hydro">
+                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t(strtoupper($club_generator)."<br>PRICE"); ?></div>
+                  <div id="tariff-now-circle" class="circle bg-generation">
                       <div class="circle-inner">
                           <div id="tariff-now-price" style="font-size:36px">7p</div>
                           <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -185,11 +185,11 @@ $v = 3;
 
                   <br>
 
-                  <div id="hydro-tariff-box" class="box5" style="color:#29aae3">
-                      <div style="font-size:26px; font-weight:bold"><?php echo t("HYDRO<br>PRICE"); ?></div>
+                  <div id="generation-tariff-box" class="box5" style="color:#29aae3">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t(strtoupper($club_generator)."<br>PRICE"); ?></div>
                       <div style="font-size:14px; padding:5px"><?php echo t("Your local electricity"); ?></div>
 
-                      <div class="circle bg-hydro">
+                      <div class="circle bg-generation">
                           <div class="circle-inner">
                               <div style="font-size:36px">7p</div>
                               <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -425,7 +425,7 @@ $v = 3;
                         <table class="keytable">
                           <tr>
                             <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t("Hydro Power");?></b><br><span id="household_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_hydro_cost"></span></td>
+                            <td><b><?php echo t(ucfirst($club_generator)." Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
                           </tr>
                           <tr>
                             <td><div class="key" style="background-color:#ffdc00"></div></td>
@@ -506,13 +506,13 @@ $v = 3;
                 <br>
                 <div class="circle bg-club">
                     <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px" class="club_hydro_value" >£00.00</div>
+                        <div style="font-size:36px" class="club_generation_value" >£00.00</div>
                     </div>
                 </div>
                 <br>
                 
                 <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource hydro power!"); ?></div>
+                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_generator." power!"); ?></div>
                 </div>
                   
                 </div>
@@ -522,7 +522,7 @@ $v = 3;
                 <div class="block-content">
                 
                     <div class="bg-club2">
-                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the hydro."); ?></div>
+                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the ".$club_generator."."); ?></div>
                     </div>
                     
                     <div class="no-padding">
@@ -536,8 +536,8 @@ $v = 3;
 
                     <!--
                     <div class="box3">
-                      <div id="hydro_droplet_bound" style="margin: 0 auto">
-                        <canvas id="hydro_droplet_placeholder"></canvas>
+                      <div id="generation_droplet_bound" style="margin: 0 auto">
+                        <canvas id="generation_droplet_placeholder"></canvas>
                       </div>
                     </div>-->
                     
@@ -568,7 +568,7 @@ $v = 3;
                         <table class="keytable">
                           <tr>
                             <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t("Hydro Power");?></b><br><span id="club_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="club_hydro_cost"></span></td>
+                            <td><b><?php echo t(ucfirst($club_generator)." Power");?></b><br><span id="club_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="club_generation_cost"></span></td>
                           </tr>
                           <tr>
                             <td><div class="key" style="background-color:#ffdc00"></div></td>
@@ -593,7 +593,7 @@ $v = 3;
                     <div style="clear:both"></div>
 
                     <div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in the local club."); ?></div>
+                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_generator.", the more money stays in the local club."); ?></div>
                     </div>
                     
                 </div>
@@ -614,7 +614,7 @@ $v = 3;
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("DISHWASHER") ?></h2>
                             </div>
-                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of ".$club_generator." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>
@@ -654,7 +654,7 @@ $v = 3;
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("WASHING MACHINE") ?></h2>
                             </div>
-                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of ".$club_generator." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>

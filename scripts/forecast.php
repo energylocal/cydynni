@@ -9,14 +9,14 @@ define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
 
-chdir("/var/www/cydynniweb");
+chdir("/var/www/dev");
 require "EmonLogger.php";
 require "PHPFina.php";
 
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 
 // -------------------------------------------------------------------------------------------
-// HYDRO FORECAST
+// generation FORECAST
 // -------------------------------------------------------------------------------------------
 
 // Base calculation on 1800s interval
@@ -47,7 +47,7 @@ for ($i=0; $i<count($data); $i++) {
 // remove last half hour if null
 if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
 
-$hydro_now = $data[count($data)-1][1] * 2;
+$generation_now = $data[count($data)-1][1] * 2;
 
 // -------------------------------------------------------------------------------------------
 // COMMUNITY FORECAST
@@ -123,10 +123,10 @@ if ($hour>=11 && $hour<16) $tariff = "midday";
 if ($hour>=16 && $hour<20) $tariff = "evening";
 if ($hour>=20) $tariff = "overnight";
 
-if ($hydro_now>=$community_now) $tariff = "hydro";
+if ($generation_now>=$community_now) $tariff = "generation";
 
 $result = array(
-    "hydro"=>number_format($hydro_now,3),
+    "generation"=>number_format($generation_now,3),
     "club"=>number_format($community_now,3),
     "tariff"=>$tariff
 );

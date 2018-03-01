@@ -29,7 +29,7 @@ function cydynnistatus_update() {
   if (tariff=="midday") $("#status-img").attr("src",path+"images/new-tick.png");
   if (tariff=="evening") $("#status-img").attr("src",path+"images/waiting-icon.png");
   if (tariff=="overnight") $("#status-img").attr("src",path+"images/new-tick.png");
-  if (tariff=="hydro") $("#status-img").attr("src",path+"images/new-tick.png");
+  if (tariff=="generation") $("#status-img").attr("src",path+"images/new-tick.png");
   
   
   // If morning peak then wait until midday tariff
@@ -95,7 +95,7 @@ function cydynnistatus_update() {
   }
   
   // If evening peak then wait until overnight tariff
-  if (tariff=="hydro") {
+  if (tariff=="generation") {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
       $("#tariff_summary").html(t("Now")+": "+t("Hydro Price"));
@@ -111,16 +111,16 @@ function cydynnistatus_update() {
   //$(".tariff-img").hide();
  // $(".tariff-img[tariff="+tariff+"]").show();
  
-  if (live.hydro>=50) {
-      $("#hydro-status").html(t("HIGH"));
-  } else if (live.hydro>=30) {
-      $("#hydro-status").html(t("MEDIUM"));
-  } else if (live.hydro>=10) {
-      $("#hydro-status").html(t("LOW"));
+  if (live.generation>=50) {
+      $("#generation-status").html(t("HIGH"));
+  } else if (live.generation>=30) {
+      $("#generation-status").html(t("MEDIUM"));
+  } else if (live.generation>=10) {
+      $("#generation-status").html(t("LOW"));
   } else {
-      $("#hydro-status").html(t("VERY LOW"));
+      $("#generation-status").html(t("VERY LOW"));
   }
 
-  $("#hydro-power").html(Math.round(live.hydro));
+  $("#generation-power").html(Math.round(live.generation));
 }
 

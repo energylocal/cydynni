@@ -10,8 +10,8 @@ var apikey = "";
 var units = "kW";
 
 var club_data = [];
-var exported_hydro_data = [];
-var used_hydro_data = [];
+var exported_generation_data = [];
+var used_generation_data = [];
 var clubseries = [];
 
 var club_pie1_data = [];
@@ -20,7 +20,7 @@ var club_pie3_data_cost = [];
 var club_pie3_data_energy = [];
 
 var club_score = -1;
-var club_hydro_use = 0;
+var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
 
@@ -40,7 +40,7 @@ function club_summary_load()
           
           if (result!="Invalid data") {
           
-              var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
+              var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
               
               if (result.dayoffset==1) {
                   $("#club_score_text").html(t("Yesterday we scored"));
@@ -72,8 +72,8 @@ function club_summary_load()
                   //club_resize();
               }, 400);
               
-              // Hydro value retained in the club
-              var hydro_value = result.kwh.hydro * 0.07;
+              // generation value retained in the club
+              var generation_value = result.kwh.generation * 0.07;
 
               var ext = "";
               if (result.day==1) ext = "st";
@@ -85,8 +85,8 @@ function club_summary_load()
               $(".club_date").html(result.day+t(ext)+" "+t(result.month));
               
               // 2nd ssection showing total consumption and cost
-              $(".club_hydro_value").html("£"+(hydro_value).toFixed(2));
-              $("#club_value_summary").html("£"+(hydro_value).toFixed(2)+" "+t("kept in the club"));
+              $(".club_generation_value").html("£"+(generation_value).toFixed(2));
+              $("#club_value_summary").html("£"+(generation_value).toFixed(2)+" "+t("kept in the club"));
               
               // Club pie chart
               club_pie1_data = [
@@ -94,7 +94,7 @@ function club_summary_load()
                 {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
                 {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-                {name:t("HYDRO"), value: result.kwh.hydro, color:"#29aae3"} 
+                {name:t("HYDRO"), value: result.kwh.generation, color:"#29aae3"} 
               ];
 
               // Club pie chart
@@ -107,33 +107,33 @@ function club_summary_load()
               
               // club pie chart
               club_pie3_data_cost = [
-                {name:t("MORNING"), hydro: result.hydro.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
-                {name:t("MIDDAY"), hydro: result.hydro.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
-                {name:t("EVENING"), hydro: result.hydro.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
-                {name:t("OVERNIGHT"), hydro: result.hydro.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
+                {name:t("MORNING"), generation: result.generation.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
+                {name:t("MIDDAY"), generation: result.generation.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
+                {name:t("EVENING"), generation: result.generation.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
+                {name:t("OVERNIGHT"), generation: result.generation.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
               ];
               
               // household pie chart
               club_pie3_data_energy = [
-                {name:t("MORNING"), hydro: result.hydro.morning, import: result.kwh.morning, color:"#ffdc00"},
-                {name:t("MIDDAY"), hydro: result.hydro.midday, import: result.kwh.midday, color:"#4abd3e"},
-                {name:t("EVENING"), hydro: result.hydro.evening, import: result.kwh.evening, color:"#c92760"},
-                {name:t("OVERNIGHT"), hydro: result.hydro.overnight, import: result.kwh.overnight, color:"#274e3f"} 
+                {name:t("MORNING"), generation: result.generation.morning, import: result.kwh.morning, color:"#ffdc00"},
+                {name:t("MIDDAY"), generation: result.generation.midday, import: result.kwh.midday, color:"#4abd3e"},
+                {name:t("EVENING"), generation: result.generation.evening, import: result.kwh.evening, color:"#c92760"},
+                {name:t("OVERNIGHT"), generation: result.generation.overnight, import: result.kwh.overnight, color:"#274e3f"} 
               ];
               
-              $("#club_hydro_kwh").html(result.kwh.hydro);
+              $("#club_generation_kwh").html(result.kwh.generation);
               $("#club_morning_kwh").html(result.kwh.morning);
               $("#club_midday_kwh").html(result.kwh.midday);
               $("#club_evening_kwh").html(result.kwh.evening);
               $("#club_overnight_kwh").html(result.kwh.overnight);
 
-              $("#club_hydro_cost").html((result.kwh.hydro*0.07).toFixed(2));
+              $("#club_generation_cost").html((result.kwh.generation*0.07).toFixed(2));
               $("#club_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
               $("#club_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
               $("#club_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
               $("#club_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
                                          
-              club_hydro_use = result.kwh.hydro
+              club_generation_use = result.kwh.generation
               
               club_pie_draw();
           } 
@@ -160,9 +160,9 @@ function club_pie_draw() {
     $('#club_piegraph1_placeholder').attr("height",height);
     $('#club_piegraph2_placeholder').attr("height",height);
     
-    //$("#hydro_droplet_placeholder").attr('width',width);
-    //$('#hydro_droplet_bound').attr("height",height);
-    //$('#hydro_droplet_placeholder').attr("height",height);
+    //$("#generation_droplet_placeholder").attr('width',width);
+    //$('#generation_droplet_bound').attr("height",height);
+    //$('#generation_droplet_placeholder').attr("height",height);
     
     var options = {
       color: "#3b6358",
@@ -174,11 +174,11 @@ function club_pie_draw() {
     // piegraph1("club_piegraph1_placeholder",club_pie1_data,options); 
     piegraph3("club_piegraph1_placeholder",club_pie3_data_energy,options); 
     
-    // piegraph2("club_piegraph2_placeholder",club_pie2_data,club_hydro_use,options);
+    // piegraph2("club_piegraph2_placeholder",club_pie2_data,club_generation_use,options);
     piegraph3("club_piegraph2_placeholder",club_pie3_data_cost,options);
      
-    // Hydro droplet
-    // hydrodroplet("hydro_droplet_placeholder",(club_hydro_use*1).toFixed(1),{width: width,height: height});
+    // generation droplet
+    // generationdroplet("generation_droplet_placeholder",(club_generation_use*1).toFixed(1),{width: width,height: height});
 
     var options = {
       color: "#3b6358",
@@ -207,7 +207,7 @@ function club_bargraph_load() {
     view.start = Math.floor(view.start / intervalms) * intervalms;
 
     // Load data from server
-    var hydro_data = feed.getaverage(1,view.start,view.end,interval,1,1);
+    var generation_data = feed.getaverage(1,view.start,view.end,interval,1,1);
     var club_data = feed.getaverage(2,view.start,view.end,interval,1,1);
     
     // -------------------------------------------------------------------------
@@ -223,11 +223,11 @@ function club_bargraph_load() {
     var midday_data = [];
     var evening_data = [];
     var overnight_data = [];
-    exported_hydro_data = [];
-    used_hydro_data = [];
+    exported_generation_data = [];
+    used_generation_data = [];
     
-    var total_hydro = 0;
-    var total_used_hydro = 0;
+    var total_generation = 0;
+    var total_used_generation = 0;
     var total_club = 0;
     var total_time = 0;
 
@@ -236,29 +236,29 @@ function club_bargraph_load() {
         var d = new Date(time);
         var hour = d.getHours();
         
-        var hydro = hydro_data[z][1] * scale;
+        var generation = generation_data[z][1] * scale;
         var club = club_data[z][1] * scale;
         
         var overnight = 0;
         var morning = 0;
         var midday = 0;
         var evening = 0;
-        var exported_hydro = 0;
-        var used_hydro = 0;
+        var exported_generation = 0;
+        var used_generation = 0;
 
-        // When available hydro is more than club consumption
-        if (hydro>club) {
-            // Hydro export
-            exported_hydro = hydro - club;
-            // Hydro used
-            used_hydro = club;
+        // When available generation is more than club consumption
+        if (generation>club) {
+            // generation export
+            exported_generation = generation - club;
+            // generation used
+            used_generation = club;
             // No imported power at tariff periods:
 
         } else {
-            // Hydro used
-            used_hydro = hydro;
+            // generation used
+            used_generation = generation;
             // Grid import
-            var grid_import = club - hydro;
+            var grid_import = club - generation;
             // Import times
             if (hour<6) overnight = grid_import;
             if (hour>=6 && hour<11) morning = grid_import;
@@ -271,17 +271,17 @@ function club_bargraph_load() {
         morning_data[z] = [time,morning];
         midday_data[z] = [time,midday];
         evening_data[z] = [time,evening];
-        exported_hydro_data[z] = [time,exported_hydro];
-        used_hydro_data[z] = [time,used_hydro];
+        exported_generation_data[z] = [time,exported_generation];
+        used_generation_data[z] = [time,used_generation];
         
         if (units=="kW") {
-            total_hydro += hydro * (interval/3600);
+            total_generation += generation * (interval/3600);
             total_club += club * (interval/3600);
-            total_used_hydro += used_hydro * (interval/3600);
+            total_used_generation += used_generation * (interval/3600);
         } else {
-            total_hydro += hydro;
+            total_generation += generation;
             total_club += club;
-            total_used_hydro += used_hydro;
+            total_used_generation += used_generation;
         }
         total_time += interval;
     }    
@@ -289,30 +289,30 @@ function club_bargraph_load() {
     // ----------------------------------------------------------------------------
     // estimate
     // ----------------------------------------------------------------------------
-    hydro_estimate = [];
+    generation_estimate = [];
     club_estimate = [];
     
     var lasttime = 0;
     var lastvalue = 0;
-    for (var z in hydro_data) {
-        if (hydro_data[z][1]!=null) {
-            lasttime = hydro_data[z][0];
-            lastvalue = hydro_data[z][1];
+    for (var z in generation_data) {
+        if (generation_data[z][1]!=null) {
+            lasttime = generation_data[z][0];
+            lastvalue = generation_data[z][1];
         } 
     }
     
     if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
-        // HYDRO estimate USING YNNI PADARN PERIS DATA
+        // generation estimate USING YNNI PADARN PERIS DATA
         // ----------------------------------------------------------------------------
         if (lasttime==0) lasttime = view.start;
         $.ajax({                                      
-            url: path+club_name+"/hydro/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
+            url: path+club_name+"/generation/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
             dataType: 'json', async: false, success: function(result) {
-            hydro_estimate = result;
+            generation_estimate = result;
             
-            for (var z in hydro_estimate) {
-                hydro_estimate[z][1] = hydro_estimate[z][1] * scale;
+            for (var z in generation_estimate) {
+                generation_estimate[z][1] = generation_estimate[z][1] * scale;
             }
         }});
         
@@ -328,8 +328,8 @@ function club_bargraph_load() {
         
         var club_estimate_raw = [];
         
-        if (hydro_estimate.length>0) {
-            var time = hydro_estimate[0][0];
+        if (generation_estimate.length>0) {
+            var time = generation_estimate[0][0];
             
             $.ajax({                                      
                 url: path+club_name+"/club/estimate?lasttime="+lasttime+"&interval="+interval,
@@ -356,7 +356,7 @@ function club_bargraph_load() {
     
     // Actual
     clubseries.push({
-        stack: true, data: used_hydro_data, color: "#29aae3", label: t("Used Hydro"),
+        stack: true, data: used_generation_data, color: "#29aae3", label: t("Used Hydro"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
@@ -376,13 +376,13 @@ function club_bargraph_load() {
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
-        stack: true, data: exported_hydro_data, color: "#a5e7ff", label: t("Exported Hydro"),
+        stack: true, data: exported_generation_data, color: "#a5e7ff", label: t("Exported Hydro"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
 
     // estimate
     clubseries.push({
-        data: hydro_estimate, color: "#dadada", label: t("Hydro estimate"),
+        data: generation_estimate, color: "#dadada", label: t("Hydro estimate"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({

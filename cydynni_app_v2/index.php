@@ -44,7 +44,7 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
-chdir("/var/www/cydynniweb");
+chdir("/var/www/dev");
 
 require("user_model.php");
 $user = new User($mysqli);
@@ -100,6 +100,7 @@ if (isset($club_settings[$club])) {
     // remove club from query string
     unset($query_parts[0]);
 } else {
+    $club = "bethesda";
     $q = implode("/",$query_parts);
     header("Location: bethesda/$q");
     die;
@@ -112,10 +113,10 @@ $q = implode("/",$query_parts);
 $translation = new stdClass();
 $translation->cy = json_decode(file_get_contents("locale/cy"));
 
+$club_generator = $club_settings[$club]["generator"];
+$club_name = $club_settings[$club]["name"];
 $languages = $club_settings[$club]["languages"];
 $lang = $languages[0];
-
-
 
 if (isset($_GET['lang']) && $_GET['lang']=="cy") $lang = "cy";
 if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $lang = "cy";
@@ -132,7 +133,7 @@ switch ($q)
     case "":
         $format = "html";
         unset($session["token"]);
-        $content = view("client.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
+        $content = view("client.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name, 'club_generator'=>$club_generator, 'languages'=>$languages));
         break;
         
     case "admin":
@@ -184,7 +185,7 @@ switch ($q)
 
         $content = array(
           "kwh"=>array("morning"=>0.4,"midday"=>0.2,"evening"=>0.6,"overnight"=>0.1), 
-          "hydro"=>array("morning"=>0.5,"midday"=>0.5,"evening"=>0.5,"overnight"=>0.5),
+          "generation"=>array("morning"=>0.5,"midday"=>0.5,"evening"=>0.5,"overnight"=>0.5),
           "month"=>"October",
           "day"=>1,
           "date"=>"October 01 2017 00:00:00",
@@ -193,19 +194,19 @@ switch ($q)
         );
         
         // -----------------------------------------------------------------------------------------------------------
-        $total = 0; $hydro = 0;
+        $total = 0; $generation = 0;
         foreach ($content["kwh"] as $key=>$val) {
-            $total += $content["kwh"][$key] + $content["hydro"][$key];
-            $hydro += $content["hydro"][$key];
+            $total += $content["kwh"][$key] + $content["generation"][$key];
+            $generation += $content["generation"][$key];
         }
-        $content["kwh"]["hydro"] = $hydro;
+        $content["kwh"]["generation"] = $generation;
         $content["kwh"]["total"] = $total;
         
         $content["cost"] = array();
-        $content["cost"]["morning"] = ($content["kwh"]["morning"]*0.12) + ($content["hydro"]["morning"]*0.07);
-        $content["cost"]["midday"] = ($content["kwh"]["midday"]*0.10) + ($content["hydro"]["midday"]*0.07);
-        $content["cost"]["evening"] = ($content["kwh"]["evening"]*0.14) + ($content["hydro"]["evening"]*0.07);
-        $content["cost"]["overnight"] = ($content["kwh"]["overnight"]*0.0725) + ($content["hydro"]["overnight"]*0.07);
+        $content["cost"]["morning"] = ($content["kwh"]["morning"]*0.12) + ($content["generation"]["morning"]*0.07);
+        $content["cost"]["midday"] = ($content["kwh"]["midday"]*0.10) + ($content["generation"]["midday"]*0.07);
+        $content["cost"]["evening"] = ($content["kwh"]["evening"]*0.14) + ($content["generation"]["evening"]*0.07);
+        $content["cost"]["overnight"] = ($content["kwh"]["overnight"]*0.0725) + ($content["generation"]["overnight"]*0.07);
         $content["cost"]["total"] = $content["cost"]["morning"] + $content["cost"]["midday"] + $content["cost"]["evening"] + $content["cost"]["overnight"];
         // -----------------------------------------------------------------------------------------------------------
         */
@@ -242,9 +243,9 @@ switch ($q)
         break;  
         
     // ------------------------------------------------------------------------
-    // Historic hydro API
+    // Historic generation API
     // ------------------------------------------------------------------------
-    case "hydro":
+    case "generation":
         $format = "json";
         if (isset($_GET['start']) && isset($_GET['end'])) {
             $start = (int) $_GET['start'];
@@ -255,7 +256,7 @@ switch ($q)
                 $content = get_meter_data_history($meter_data_api_baseurl,$club_root_token,28,$start,$end);
             }
         } else {
-            $content = json_decode($redis->get("$club:hydro:data"));
+            $content = json_decode($redis->get("$club:generation:data"));
         }
         break;
         
@@ -343,13 +344,13 @@ switch ($q)
         if ($hour>=11 && $hour<16) $tariff = "midday";
         if ($hour>=16 && $hour<20) $tariff = "evening";
         if ($hour>=20) $tariff = "overnight";
-        if ($live->hydro>=$live->club) $tariff = "hydro";
+        if ($live->generation>=$live->club) $tariff = "generation";
         
         $live->tariff = $tariff;
         $content = $live;
         break;
         
-    case "hydro/estimate":
+    case "generation/estimate":
         $format = "json";
 
         $interval = (int) $_GET['interval'];
@@ -565,9 +566,9 @@ switch ($q)
         
     case "update":
         $format = "text";
-        // Hydro
+        // generation
         $content = get_meter_data($meter_data_api_baseurl,$club_root_token,4);
-        if (count($content)>0) $redis->set("$club:hydro:data",json_encode($content));
+        if (count($content)>0) $redis->set("$club:generation:data",json_encode($content));
         // Club half-hour
         $content = get_meter_data($meter_data_api_baseurl,$club_root_token,11);
         if (count($content)>0) $redis->set("$club:club:data",json_encode($content));
