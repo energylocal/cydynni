@@ -312,6 +312,26 @@ $v = 5;
                     </div>
                 </div>
             </div>
+            
+            <div id="meterdatablock" class="block household-block">
+                <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                
+                    <div class="bg-household2">
+
+                        <div style="padding:20px; text-align:left;">
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Power:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-power"></div>
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Latest meter reading:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-kwh"></div>
+                        
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
             <div class="block household-block">
               <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div></div>
@@ -457,7 +477,8 @@ $v = 5;
                 </div>
             </div>
         </div>
-       
+        
+
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
@@ -770,6 +791,11 @@ $v = 5;
           <div style='clear:both'></div>
         <br>
         
+        <div name="runonce" state=0 class="input scheduler-checkbox"></div>
+          <div class="scheduler-checkbox-label">Run once</div>
+          <div style='clear:both'></div>
+        <br>
+        
         <p>Repeat:</p>
         <div class="weekly-scheduler-days">
           <div name="repeat" day=0 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Mon</div></div>
@@ -794,7 +820,7 @@ $v = 5;
           <div id="placeholder" style="height:300px"></div>
         </div>
 
-        Higher bar height equalls more power available
+        Higher bar height equals more power available
       </div> <!-- schedule-output-box -->      
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
