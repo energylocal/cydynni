@@ -19,6 +19,9 @@ chdir("/var/www/cydynni");
 require "core.php";
 require "meter_data_api.php";
 
+$translation = new stdClass();
+$translation->cy = json_decode(file_get_contents("locale/cy"));
+
 $mysqli = @new mysqli($server,$username,$password,$database,$port);
 $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
@@ -50,7 +53,7 @@ while ($row = $result_users->fetch_object())
                 
                 if (($report[0]["estimate"]*1)<15) {
                     //print "sending";
-                    if ($cydynni->reportdate!="17-01-2017") {
+                    if ($cydynni->reportdate!="13-03-2018") {
                         print $user->send_report_email($userid);
                     }
                 }

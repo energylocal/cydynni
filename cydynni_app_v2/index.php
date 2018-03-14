@@ -126,7 +126,17 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-        
+
+    case "report2":
+        $format = "html";
+        if ($session["read"]) {
+            unset($session["token"]);
+            $content = view("report2.php",array('session'=>$session));
+        } else {
+            $content = "session not valid";
+        }
+        break;
+                
     case "account":
         $format = "html";
         if ($session["read"]) {
@@ -513,7 +523,14 @@ switch ($q)
             $content = $user->change_email(get("userid"),get("email"));
         }
         break;
-        
+
+    case "admin/change-user-username":
+        $format = "json";
+        if ($session['admin']) {
+            $content = $user->change_username(get("userid"),get("username"));
+        }
+        break;
+                
     case "admin/switchuser":
         $format = "text";
         if ($session['admin']) {
@@ -551,7 +568,7 @@ switch ($q)
         if (count($content)>0) $redis->set("community:data",json_encode($content));
         // Club totals
         $content = get_club_consumption($meter_data_api_baseurl,$meter_data_api_hydrotoken);
-        if ($content!="invalid data") $redis->set("community:summary:day",json_encode($content));
+        if ($content!="Invalid data") $redis->set("community:summary:day",json_encode($content));
         // Store Updated
         $content = "store updated";
         break;
@@ -584,12 +601,18 @@ function t($s) {
     
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         echo $translation->$lang->$s;
-    } else { 
-    
-        // $fh = fopen("lang.log","a");
-        // fwrite($fh,'"'.$s.'":""'.",\n");
-        // fclose($fh);
-        
+    } else {
         echo $s;
+    }
+}
+
+
+function translate($s,$lang) {
+    global $translation;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        return $translation->$lang->$s;
+    } else { 
+        return $s;
     }
 }

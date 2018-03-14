@@ -20,8 +20,28 @@ class User
     }
     
     private function getbyemail($email) {
-        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ?");
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows!=1) return false;
+        
+        $stmt->bind_result($id,$username,$email,$dbhash,$salt,$admin);
+        $u = $stmt->fetch();
+        return array(
+            "id"=>$id,
+            "username"=>$username,
+            "email"=>$email,
+            "dbhash"=>$dbhash,
+            "salt"=>$salt,
+            "admin"=>$admin
+        );
+    }
+    
+    private function getbyusername($username) {
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows!=1) return false;
@@ -94,13 +114,16 @@ class User
     //---------------------------------------------------------------------------------------
     // User login
     //---------------------------------------------------------------------------------------    
-    public function login($email,$password)
+    public function login($email_or_username,$password)
     {        
-        if ($email==null) return "Email address missing";
+        if ($email_or_username==null) return "Username or email missing";
         if ($password==null) return "Password missing";
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
         
-        if (!$u = $this->getbyemail($email)) return "User not found";
+        if (!$u = $this->getbyusername($email_or_username)) {
+            if (!$u = $this->getbyemail($email_or_username)) {
+                  return "User not found";
+            }
+        }
         
         $hash = hash('sha256', $u['salt'] . hash('sha256', $password));
         if ($hash!=$u['dbhash']) return "Invalid password";
@@ -138,6 +161,13 @@ class User
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
         $this->mysqli->query("UPDATE users SET email = '$email' WHERE id = '$userid'");
         return "Email updated";
+    }
+    
+    public function change_username($userid, $username) 
+    {
+        $userid = (int) $userid;
+        $this->mysqli->query("UPDATE users SET username = '$username' WHERE id = '$userid'");
+        return "Username updated";
     }
 
     //---------------------------------------------------------------------------------------
@@ -179,6 +209,7 @@ class User
         $result = $this->mysqli->query("SELECT * FROM users WHERE id = '$userid'");
         if (!$row = $result->fetch_array()) return "user not found";
         
+        $username = $row['username'];
         $email = $row['email'];
         
         // Generate new random password
@@ -197,7 +228,7 @@ class User
                          
         $message = view("emailbound.php",array(
             "title"=>"Croeso i CydYnni, Welcome to CydYnni",
-            "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda chyfeiriad e-bost: $email a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with email address: $email and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
+            "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda enw: $username a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with username: $username and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
         ));
 
         // ------------------------------------------------------------------
@@ -246,8 +277,13 @@ class User
         
         $email = $row['email'];
         
-        $month_en = "December";
-        $month_cy = "Rhagfyr";
+        $date = new DateTime();
+        $date->setTimezone(new DateTimeZone("Europe/London"));
+        $date->setTimestamp(time());
+        $date->modify("last month");
+        
+        $month_en = $date->format("F");
+        $month_cy = translate($month_en,"cy");
         
         $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
         
@@ -300,7 +336,7 @@ class User
         
         $reportdate = date("d-m-Y");
         $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
-        return "Email sent";
+        return "Email sent $month_en:$month_cy";
     }
     
     //---------------------------------------------------------------------------------------

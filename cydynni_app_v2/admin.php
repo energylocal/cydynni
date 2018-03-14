@@ -19,7 +19,7 @@
         width: 95%;
       }
       
-      .edit-email-save {
+      .edit-save {
           float:right; 
           font-size:12px;
           cursor:pointer;
@@ -28,11 +28,14 @@
           margin-top:4px;
       }
       
-      .edit-email-input {
-          width:280px;
+      .edit-input {
+          width:230px;
+          border:0; 
+          color:#3b6358; 
+          padding:0px
       }
 
-      .edit-email-input:selected {
+      .edit-input:selected {
           border-bottom:1px #000 solid;
       }
     </style> 
@@ -132,10 +135,15 @@ function load() {
                 out += "<tr>";
                 var admin = ""; if (result[z].admin==1) admin = " (admin)";
                 out += "<td><a href='admin/switchuser?userid="+result[z].id+"'>"+result[z].id+"</a>"+admin+"</td>";
-                out += "<td>"+result[z].username+"</td>";
+
+                out += "<td class='td-username'>";
+                  out += "<input type='text' value='"+result[z].username+"' class='edit-input' key='username' userid='"+result[z].id+"'>";
+                  out += "<button class='edit-save' key='username' userid='"+result[z].id+"'>Save</button>";
+                out += "</td>";
+                
                 out += "<td class='td-email'>";
-                  out += "<input type='text' value='"+result[z].email+"' class='edit-email-input' style='border:0; color:#3b6358; padding:0px' userid='"+result[z].id+"'>";
-                  out += "<button class='edit-email-save' userid='"+result[z].id+"'>Save</button>";
+                  out += "<input type='text' value='"+result[z].email+"' class='edit-input' key='email' userid='"+result[z].id+"'>";
+                  out += "<button class='edit-save' key='email' userid='"+result[z].id+"'>Save</button>";
                 out += "</td>";
                 // text-wrap:normal;word-wrap:break-word
                 out += "<td><div style=''>"+result[z].mpan+"</div></td>";
@@ -249,28 +257,26 @@ $("#check-all-households").click(function() {
   }
 });
 
-$("body").on("keyup",".edit-email-input",function(){
-    var userid = $(this).attr("userid");
-    $(".edit-email-save[userid="+userid+"]").show();
+$("body").on("keyup",".edit-input",function(){
+    $(this).parent().find(".edit-save").show();
 });
 
-$("body").on("click",".edit-email-save",function(){
+$("body").on("click",".edit-save",function(){
+    var key = $(this).attr("key");
     var userid = $(this).attr("userid");
-    var email = $(".edit-email-input[userid="+userid+"]").val();
+    var value = $(".edit-input[key="+key+"][userid="+userid+"]").val();
     
     $.ajax({
-        url: path+"admin/change-user-email",
-        data: "userid="+userid+"&email="+email,
+        url: path+"admin/change-user-"+key,
+        data: "userid="+userid+"&"+key+"="+value,
         async:true,
         dataType: 'text',
         success: function(result) {
            alert(result);
         }
     });
-    $(".edit-email-save[userid="+userid+"]").hide();
+    $(".edit-save[key="+key+"][userid="+userid+"]").hide();
 });
-
-
 
 function logout() {
     $.ajax({
