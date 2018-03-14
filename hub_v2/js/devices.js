@@ -86,7 +86,7 @@ function draw_devices()
         out += "    <div class='device-description'>"+devices[node].description+"</div>";
         // out += "    <div class='device-configure'>CONFIG</div>";
         // out += "    <div class='device-key'><i class='icon-lock icon-white'></i></div>"; 
-        // out += "    <div class='device-schedule'>SCHEDULE</div>";
+        out += "    <div class='device-delete "+visible+"'><i class='icon-trash icon-white'></i></div>";
         out += "  </div>";
         
         if (!control_node) {
@@ -233,6 +233,55 @@ $("#table").on("click",".device-schedule",function(e) {
     var node = $(this).parent().attr("node");
     draw_scheduler(node);
 });
+
+$("#table").on("click",".device-delete",function(e) {
+    e.stopPropagation();
+    var node = $(this).parent().attr("node");
+    var deviceid = devices[node].id;
+
+    $("#device-delete-modal-name").html(node);
+    $("#DeviceDeleteModal").show();
+    $("#DeviceDeleteModal").attr("node",node);
+    $("#DeviceDeleteModal").attr("deviceid",deviceid);
+});
+
+$(".device-delete-modal-delete").click(function(){
+
+    var node = $("#DeviceDeleteModal").attr("node");
+    var deviceid = $("#DeviceDeleteModal").attr("deviceid");
+    console.log("DELETE: "+node+" deviceid:"+deviceid);
+    
+    // Delete schedule
+    $.ajax({ url: emoncmspath+"demandshaper/delete.json", data: "device="+node, dataType: 'json', async: true, success: function(result) {
+        console.log("demandshaper/delete:");
+        console.log(result);
+
+        if (devices[node].inputs != undefined) {
+            var inputIds = [];
+            for (var i in devices[node].inputs) {
+                inputIds.push(parseInt(devices[node].inputs[i].id));
+            }
+            
+            $.ajax({ url: emoncmspath+"input/delete.json", data: "inputids="+JSON.stringify(inputIds), async: false, success: function(result){
+                 console.log("input/delete:");
+                 console.log(result);
+            }});
+        }
+        
+        if (deviceid) {
+            // Delete device
+            $.ajax({ url: emoncmspath+"device/delete.json", data: "id="+deviceid, dataType: 'json', async: false, success: function(result) {
+                console.log("device/delete:");
+                console.log(result);
+            }});
+        }
+        
+        update();
+        $("#DeviceDeleteModal").hide();
+        
+    }});
+});
+$(".device-delete-modal-cancel").click(function(){$("#DeviceDeleteModal").hide()});
 
 $("#table").on("click",".device-configure",function(e) {
     e.stopPropagation();

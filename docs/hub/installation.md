@@ -60,10 +60,6 @@ Link the 'demandshaper-module' into the emoncms Modules folder:
 
     ln -s /home/pi/demandshaper/demandshaper-module /var/www/emoncms/Modules/demandshaper
 
-Copy smartplug device template to device module:
-
-    cp -r /home/pi/demandshaper/devices/. /var/www/emoncms/Modules/device/data/
-
 Add demand shaper background process to crontab:
 
     crontab -e
@@ -125,6 +121,11 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
     crontab -e
     */10 * * * * /home/pi/cydynni/ota/update.sh >> /home/pi/data/ota.log 2>&1
 
+### Hostname
+
+    sudo nano /etc/hosts
+    sudo nano /etc/hostname
+    sudo nano /var/www/html/index.php
 
 ### Testing
 

@@ -68,13 +68,13 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
 // 6. Fetch remote account feeds
 // -----------------------------------------------------
 $remote_feeds = array();
-$remote_host = "http://emoncms.cydynni.org.uk";
+$remote_host = "https://emoncms.cydynni.org.uk";
 
 $feedname = "hydro";
 print "$feedname\n";
 $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,1,false); // Import PHPFina
 if ($lastvalue!==false) {
-    $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+    if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
     print "--lastvalue: ".json_encode($lastvalue)."\n";
 }
 
@@ -82,7 +82,7 @@ $feedname = "community";
 print "$feedname\n";
 $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,2,false); // Import PHPFina
 if ($lastvalue!==false) {
-    $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+    if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
     print "--lastvalue: ".json_encode($lastvalue)."\n";
 }
 
@@ -96,7 +96,7 @@ if ($result) {
         $feedname = "halfhour_consumption";
         print "$feedname\n";
         $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
-        $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+        if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
         print "--lastvalue: ".json_encode($lastvalue)."\n";
     }
 }
