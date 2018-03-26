@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 4;
+$v = 5;
 
 ?>
 
