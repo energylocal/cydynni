@@ -286,7 +286,7 @@ $v = 4;
                         <div style="font-weight:bold; font-size:32px"><?php echo t("Log in"); ?></div>
                         <?php echo t("Please login to view account"); ?><br><br>
                     
-                        <input id="email" type="text" placeholder="Email..."><br><br>
+                        <input id="email" type="text" placeholder="Username or email..."><br><br>
                         <input id="password" type="password" placeholder="Password..."><br>
                         
                         <br>

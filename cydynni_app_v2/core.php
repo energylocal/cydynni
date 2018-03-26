@@ -116,3 +116,13 @@ function t($s) {
         echo $s;
     }
 }
+
+function translate($s,$lang) {
+    global $translation;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        return $translation->$lang->$s;
+    } else { 
+        return $s;
+    }
+}

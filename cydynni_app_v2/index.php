@@ -536,7 +536,14 @@ switch ($q)
             $content = $user->change_email(get("userid"),get("email"));
         }
         break;
-        
+
+    case "admin/change-user-username":
+        $format = "json";
+        if ($session['admin']) {
+            $content = $user->change_username(get("userid"),get("username"));
+        }
+        break;
+                
     case "admin/switchuser":
         $format = "text";
         if ($session['admin']) {
@@ -607,12 +614,18 @@ function t($s) {
     
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         echo $translation->$lang->$s;
-    } else { 
-    
-        // $fh = fopen("lang.log","a");
-        // fwrite($fh,'"'.$s.'":""'.",\n");
-        // fclose($fh);
-        
+    } else {
         echo $s;
+    }
+}
+
+
+function translate($s,$lang) {
+    global $translation;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        return $translation->$lang->$s;
+    } else { 
+        return $s;
     }
 }
