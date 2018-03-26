@@ -18,16 +18,16 @@
   16. Community data: generation offset, off-peak demand, other demand for latest 24-hour period (N.B. this data does not look right).
   17. Domestic User’s demand offset by generation for latest 24-hour period.
   18. User’s Monthly kWh import total.
-  19. User’s Monthly kWh import allocated to hydro.
+  19. User’s Monthly kWh import allocated to generation.
   20. User’s Monthly kWh import provided by supplier.
   21. User’s Monthly total cost of import.
   22. Community Monthly kWh import total.
-  23. Community Monthly kWh import allocated to hydro.
+  23. Community Monthly kWh import allocated to generation.
   24. Community Monthly kWh import provided by supplier.
   25. Community Monthly total cost of import.
   26  Household historic daily summaries
   27. Household historic meter data
-  28. Hydro history
+  28. generation history
   29. Community history
   30. Demand shaper signal
   31. User list
@@ -117,23 +117,23 @@ function get_household_consumption($baseurl,$token) {
     if ($date1!=$date2) return "Date mismatch";
     if ($date1!=$date3) return "Date mismatch";
     
-    // Build import + hydro consumption object
+    // Build import + generation consumption object
     // 1. start with imported data
     $kwh = $imported;
-    // 2. hydro consumption = total - imported
-    $kwh["hydro"] = $gross["total"] - $imported["total"];
+    // 2. generation consumption = total - imported
+    $kwh["generation"] = $gross["total"] - $imported["total"];
     $kwh["total"] = $gross["total"];
     
-    $hydro = array();
-    $hydro["morning"] = $gross["morning"] - $imported["morning"];
-    $hydro["midday"] = $gross["midday"] - $imported["midday"];
-    $hydro["evening"] = $gross["evening"] - $imported["evening"];
-    $hydro["overnight"] = $gross["overnight"] - $imported["overnight"];
+    $generation = array();
+    $generation["morning"] = $gross["morning"] - $imported["morning"];
+    $generation["midday"] = $gross["midday"] - $imported["midday"];
+    $generation["evening"] = $gross["evening"] - $imported["evening"];
+    $generation["overnight"] = $gross["overnight"] - $imported["overnight"];
     
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"hydro"=>$hydro,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
+    return array("kwh"=>$kwh,"generation"=>$generation,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------
@@ -155,23 +155,23 @@ function get_club_consumption($baseurl,$token) {
     if ($date1!=$date2) return "Invalid data";
     if ($date1!=$date3) return "Invalid data";
     
-    // Build import + hydro consumption object
+    // Build import + generation consumption object
     // 1. start with imported data
     $kwh = $imported;
-    // 2. hydro consumption = total - imported
-    $kwh["hydro"] = $gross["total"] - $imported["total"];
+    // 2. generation consumption = total - imported
+    $kwh["generation"] = $gross["total"] - $imported["total"];
     $kwh["total"] = $gross["total"];
     
-    $hydro = array();
-    $hydro["morning"] = $gross["morning"] - $imported["morning"];
-    $hydro["midday"] = $gross["midday"] - $imported["midday"];
-    $hydro["evening"] = $gross["evening"] - $imported["evening"];
-    $hydro["overnight"] = $gross["overnight"] - $imported["overnight"];
+    $generation = array();
+    $generation["morning"] = $gross["morning"] - $imported["morning"];
+    $generation["midday"] = $gross["midday"] - $imported["midday"];
+    $generation["evening"] = $gross["evening"] - $imported["evening"];
+    $generation["overnight"] = $gross["overnight"] - $imported["overnight"];
     
     $date1 = str_replace(",","",$date1);
     $date_parts = explode(" ",$date1);
     
-    return array("kwh"=>$kwh,"hydro"=>$hydro,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
+    return array("kwh"=>$kwh,"generation"=>$generation,"cost"=>$cost,"month"=>$date_parts[0],"day"=>$date_parts[1],"date"=>$date1,"timestamp"=>decode_date($date1));
 }
 
 // -------------------------------------------------------------
@@ -257,7 +257,7 @@ function get_household_consumption_monthly_old($baseurl,$token) {
     if (!isset($result18->DATA)) return "Invalid data";
     if (!isset($result18->DATA[0])) return "Invalid data";
     
-    // API: 19 (User’s Monthly kWh import allocated to hydro)
+    // API: 19 (User’s Monthly kWh import allocated to generation)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
     //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
@@ -305,19 +305,19 @@ function get_household_consumption_monthly_old($baseurl,$token) {
         $v = $result18->DATA[$m];
         $month["demand"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
         $v = $result19->DATA[$m];
-        $month["hydro"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
+        $month["generation"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
         $v = $result20->DATA[$m];
         $month["import"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
         $v = $result21->DATA[$m];
         $month["cost"] = array("morning"=>$v[0],"midday"=>$v[1],"evening"=>$v[2],"overnight"=>$v[3],"total"=>$v[4]);
 
         foreach ($month["demand"] as $period=>$val) {
-            $importA = $month["demand"][$period] - $month["hydro"][$period];
+            $importA = $month["demand"][$period] - $month["generation"][$period];
             $importB = $month["import"][$period];
             $diff = abs($importA-$importB);
             
             // Large errors in last three months!!
-            // if ($diff>0.5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
+            // if ($diff>0.5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." generation:".$month["generation"][$period]." Imports: $importA != $importB\n";
         }
         
         $data[] = $month;
@@ -352,7 +352,7 @@ function get_household_consumption_monthly($baseurl,$token) {
         $month["estimate"] = $m[20];
         
         $month["demand"] = array("morning"=>$m[0],"midday"=>$m[1],"evening"=>$m[2],"overnight"=>$m[3],"total"=>$m[4]);
-        $month["hydro"] = array("morning"=>$m[0]-$m[6],"midday"=>$m[1]-$m[7],"evening"=>$m[2]-$m[8],"overnight"=>$m[3]-$m[9],"total"=>$m[5]);
+        $month["generation"] = array("morning"=>$m[0]-$m[6],"midday"=>$m[1]-$m[7],"evening"=>$m[2]-$m[8],"overnight"=>$m[3]-$m[9],"total"=>$m[5]);
         $month["import"] = array("morning"=>$m[6],"midday"=>$m[7],"evening"=>$m[8],"overnight"=>$m[9],"total"=>$m[10]);
         $month["cost"] = array("morning"=>$m[11],"midday"=>$m[12],"evening"=>$m[13],"overnight"=>$m[14],"total"=>$m[15]);
     
@@ -379,7 +379,7 @@ function get_club_consumption_monthly($baseurl,$token) {
     if ($result22==null) return "Invalid data";
     if (!isset($result22->DATA)) return "Invalid data";
     
-    // API: 23 (Community monthly kWh import allocated to hydro)
+    // API: 23 (Community monthly kWh import allocated to generation)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
     //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
@@ -426,19 +426,19 @@ function get_club_consumption_monthly($baseurl,$token) {
         $v = $result22->DATA[$m];
         $month["demand"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
         $v = $result23->DATA[$m];
-        $month["hydro"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
+        $month["generation"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
         $v = $result24->DATA[$m];
         $month["import"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
         $v = $result25->DATA[$m];
         $month["cost"] = array("morning"=>$v[1],"midday"=>$v[2],"evening"=>$v[3],"overnight"=>$v[4],"total"=>$v[5]);
         
         foreach ($month["demand"] as $period=>$val) {
-            $importA = $month["demand"][$period] - $month["hydro"][$period];
+            $importA = $month["demand"][$period] - $month["generation"][$period];
             $importB = $month["import"][$period];
             $diff = abs($importA-$importB);
             
             // Large errors in last three months!!
-            //if ($diff>5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." Hydro:".$month["hydro"][$period]." Imports: $importA != $importB\n";
+            //if ($diff>5) print "error ".$month["monthdesc"]." ".$period." Demand:".$month["demand"][$period]." generation:".$month["generation"][$period]." Imports: $importA != $importB\n";
         }
     
         $data[] = $month;

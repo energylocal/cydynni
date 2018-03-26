@@ -44,7 +44,7 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
-chdir("/var/www/dev");
+chdir("/var/www/cydynni");
 
 require("user_model.php");
 $user = new User($mysqli);
@@ -133,7 +133,7 @@ switch ($q)
     case "":
         $format = "html";
         unset($session["token"]);
-        $content = view("client.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name, 'club_generator'=>$club_generator, 'languages'=>$languages));
+        $content = view("client.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name,'club_generator'=>$club_generator,'languages'=>$languages));
         break;
         
     case "admin":
@@ -146,7 +146,7 @@ switch ($q)
         $format = "html";
         if ($session["read"]) {
             unset($session["token"]);
-            $content = view("report.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
+            $content = view("report.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name,'club_generator'=>$club_generator,'languages'=>$languages));
         } else {
             $content = "session not valid";
         }
@@ -156,7 +156,7 @@ switch ($q)
         $format = "html";
         if ($session["read"]) {
             unset($session["token"]);
-            $content = view("account.php",array('session'=>$session,'club'=>$club,'languages'=>$languages));
+            $content = view("account.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name,'club_generator'=>$club_generator,'languages'=>$languages));
         } else {
             $content = "session not valid";
         }
@@ -573,17 +573,25 @@ switch ($q)
         
     case "update":
         $format = "text";
+        $content = "";
+        
         // generation
-        $content = get_meter_data($meter_data_api_baseurl,$club_root_token,4);
-        if (count($content)>0) $redis->set("$club:generation:data",json_encode($content));
+        $result = get_meter_data($meter_data_api_baseurl,$club_root_token,4);
+        if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
         // Club half-hour
-        $content = get_meter_data($meter_data_api_baseurl,$club_root_token,11);
-        if (count($content)>0) $redis->set("$club:club:data",json_encode($content));
+        $result = get_meter_data($meter_data_api_baseurl,$club_root_token,11);
+        if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
         // Club totals
-        $content = get_club_consumption($meter_data_api_baseurl,$club_root_token);
-        if ($content!="invalid data") $redis->set("$club:club:summary:day",json_encode($content));
+        $content .= "$club:summary:day: ";
+        $result = get_club_consumption($meter_data_api_baseurl,$club_root_token);
+        if ($result!="invalid data") {
+            $redis->set("$club:club:summary:day",json_encode($result));
+            $content .= json_encode($result)."\n";
+        } else {
+            $content .= "invalid\n";
+        }
         // Store Updated
-        $content = "store updated";
+        
         break;
 }
 
