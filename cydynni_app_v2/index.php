@@ -296,22 +296,15 @@ if ($club)
             
             $live->tariff = $tariff;
             
-            if ($club=="towerpower") {
-                $live->generation = 0;
-                $live->club = 2;
-                $live->tariff = "evening";
-            }
-            
-            
             $content = $live;
             break;
             
         case "generation/estimate":
             $format = "json";
 
-            $interval = (int) $_GET['interval'];
             if (isset($_GET['lasttime'])) $estimatestart = $_GET['lasttime'];
-            if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
+            $interval = (int) $_GET['interval'];
+
             
             if (isset($_GET['start']) && isset($_GET['end'])) {
                 $end = $_GET['end'];
@@ -322,26 +315,28 @@ if ($club)
                 $start = $estimatestart;
             }
             
-            $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+            $feed = 166913;
+            if ($club=="towerpower") $feed = 179247;
             
-            $scale = 1.1;
+            $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feed&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
             
-            // $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
-            
+            $scale = 1.1;  
             // Scale ynni padarn peris data and impose min/max limits
             for ($i=0; $i<count($data); $i++) {
                 if ($data[$i][1]==null) $data[$i][1] = 0;
-                $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                if ($data[$i][1]<0) $data[$i][1] = 0;
-                if ($data[$i][1]>49) $data[$i][1] = 49;
+                if ($club=="bethesda") {
+                
+                    $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                    if ($data[$i][1]<0) $data[$i][1] = 0;
+                    if ($data[$i][1]>49) $data[$i][1] = 49;
+                } else if ($club=="towerpower") {
+                    $data[$i][1] = -1 * $data[$i][1] * 0.001;
+                }
             }
             
             // remove last half hour if null
             if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            // if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            
-            
-            $content = $data;
+            $content = $data;   
             
             break;
             
@@ -353,7 +348,7 @@ if ($club)
             
             $start = $end - (3600*24.0*7*1000);
             
-            $data = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
+            $data = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
 
             $divisions = round((24*3600) / $interval);
 

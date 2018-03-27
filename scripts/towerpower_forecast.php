@@ -1,4 +1,5 @@
 <?php
+$club="towerpower";
 
 // This forecast script is ran every 30 mins
 sleep(10);
@@ -30,18 +31,23 @@ $end = time() * 1000;
 $start = floor(($start*0.001)/$interval)*$interval*1000;
 $end = floor(($end*0.001)/$interval)*$interval*1000;
 
-// Request Ynni Padarn Peris data
-$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+$feed = 166913;
+if ($club=="towerpower") $feed = 179247;
 
-// Visually matched scale factor
-$scale = 1.1;
+$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feed&start=$start&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
 
+$scale = 1.1;  
 // Scale ynni padarn peris data and impose min/max limits
 for ($i=0; $i<count($data); $i++) {
     if ($data[$i][1]==null) $data[$i][1] = 0;
-    $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-    if ($data[$i][1]<0) $data[$i][1] = 0;
-    if ($data[$i][1]>49) $data[$i][1] = 49;
+    if ($club=="bethesda") {
+    
+        $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+        if ($data[$i][1]<0) $data[$i][1] = 0;
+        if ($data[$i][1]>49) $data[$i][1] = 49;
+    } else if ($club=="towerpower") {
+        $data[$i][1] = -1 * $data[$i][1] * 0.001;
+    }
 }
 
 // remove last half hour if null
@@ -58,7 +64,7 @@ $lasttime = $lastvalue["time"];
 $end = $lasttime*1000;
 
 $start = $end - (3600*24.0*7*1000);
-$result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
+$result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
 
 $divisions = round((24*3600) / $interval);
 
@@ -135,4 +141,4 @@ print $date->format("H:i:s")." ".json_encode($result)."\n";
 
 $redis = new Redis();
 $connected = $redis->connect("localhost");
-$redis->set("bethesda:live",json_encode($result));
+$redis->set("towerpower:live",json_encode($result));

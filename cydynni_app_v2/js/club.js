@@ -237,7 +237,7 @@ function club_bargraph_load() {
         var hour = d.getHours();
         
         var generation = generation_data[z][1] * scale;
-        var club = club_data[z][1] * scale;
+        var consumption = club_data[z][1] * scale;
         
         var overnight = 0;
         var morning = 0;
@@ -247,18 +247,18 @@ function club_bargraph_load() {
         var used_generation = 0;
 
         // When available generation is more than club consumption
-        if (generation>club) {
+        if (generation>consumption) {
             // generation export
-            exported_generation = generation - club;
+            exported_generation = generation - consumption;
             // generation used
-            used_generation = club;
+            used_generation = consumption;
             // No imported power at tariff periods:
 
         } else {
             // generation used
             used_generation = generation;
             // Grid import
-            var grid_import = club - generation;
+            var grid_import = consumption - generation;
             // Import times
             if (hour<6) overnight = grid_import;
             if (hour>=6 && hour<11) morning = grid_import;
@@ -276,11 +276,11 @@ function club_bargraph_load() {
         
         if (units=="kW") {
             total_generation += generation * (interval/3600);
-            total_club += club * (interval/3600);
+            total_club += consumption * (interval/3600);
             total_used_generation += used_generation * (interval/3600);
         } else {
             total_generation += generation;
-            total_club += club;
+            total_club += consumption;
             total_used_generation += used_generation;
         }
         total_time += interval;
@@ -301,11 +301,12 @@ function club_bargraph_load() {
         } 
     }
     
-    if (generation_feed==1 && (((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
+    if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
         // generation estimate USING YNNI PADARN PERIS DATA
         // ----------------------------------------------------------------------------
         if (lasttime==0) lasttime = view.start;
+        
         $.ajax({                                      
             url: path+club+"/generation/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
             dataType: 'json', async: false, success: function(result) {
@@ -315,7 +316,6 @@ function club_bargraph_load() {
                 generation_estimate[z][1] = generation_estimate[z][1] * scale;
             }
         }});
-        
         // ----------------------------------------------------------------------------
         // CONSUMPTION estimate
         // ----------------------------------------------------------------------------
@@ -328,23 +328,23 @@ function club_bargraph_load() {
         
         var club_estimate_raw = [];
         
+        var time = lasttime;
         if (generation_estimate.length>0) {
-            var time = generation_estimate[0][0];
-            
-            $.ajax({                                      
-                url: path+club+"/club/estimate?lasttime="+lasttime+"&interval="+interval,
-                dataType: 'json',
-                async: false,                      
-                success: function(result) {
-                    var club_estimate_raw = result;
-                    var l = club_estimate_raw.length;
-                    
-                    club_estimate = [];
-                    for (var h=0; h<divisions_behind; h++) {
-                        club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
-                    }
-            }});
-       }
+            time = generation_estimate[0][0];
+        }
+        $.ajax({                                      
+            url: path+club+"/club/estimate?lasttime="+lasttime+"&interval="+interval,
+            dataType: 'json',
+            async: false,                      
+            success: function(result) {
+                var club_estimate_raw = result;
+                var l = club_estimate_raw.length;
+                
+                club_estimate = [];
+                for (var h=0; h<divisions_behind; h++) {
+                    club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
+                }
+        }});
        
     }
     // ----------------------------------------------------------------------------
