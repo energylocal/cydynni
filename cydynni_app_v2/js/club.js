@@ -34,7 +34,7 @@ var day_view = 1;
 function club_summary_load()
 {
   $.ajax({                                      
-      url: path+club_name+"/club/summary/day",
+      url: path+club+"/club/summary/day",
       dataType: 'json',                  
       success: function(result) {
           
@@ -307,7 +307,7 @@ function club_bargraph_load() {
         // ----------------------------------------------------------------------------
         if (lasttime==0) lasttime = view.start;
         $.ajax({                                      
-            url: path+club_name+"/generation/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
+            url: path+club+"/generation/estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
             dataType: 'json', async: false, success: function(result) {
             generation_estimate = result;
             
@@ -332,7 +332,7 @@ function club_bargraph_load() {
             var time = generation_estimate[0][0];
             
             $.ajax({                                      
-                url: path+club_name+"/club/estimate?lasttime="+lasttime+"&interval="+interval,
+                url: path+club+"/club/estimate?lasttime="+lasttime+"&interval="+interval,
                 dataType: 'json',
                 async: false,                      
                 success: function(result) {

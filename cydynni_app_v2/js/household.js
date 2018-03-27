@@ -28,7 +28,7 @@ var household_view = "piechart";
 function household_summary_load()
 {    
   $.ajax({                                      
-      url: path+club_name+"/household/summary/day",
+      url: path+club+"/household/summary/day",
       dataType: 'json',                  
       success: function(result) {
           
@@ -168,7 +168,7 @@ function household_bargraph_load() {
   
     var data = [];
     $.ajax({                                      
-        url: path+club_name+"/data"+history,
+        url: path+club+"/data"+history,
         dataType: 'json',
         async: true,                      
         success: function(result) {

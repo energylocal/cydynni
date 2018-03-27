@@ -9,7 +9,7 @@ function cydynnistatus_update() {
   var tariff = {};
 
   $.ajax({                                      
-      url: path+club_name+"/live",
+      url: path+club+"/live",
       dataType: 'json',
       async: false,                      
       success: function(result) {

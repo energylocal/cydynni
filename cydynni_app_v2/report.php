@@ -159,9 +159,9 @@ $v=1;
 
 <script>
 var path = "<?php echo $path; ?>";
-var club_name = "<?php echo $club; ?>";
-var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
+var club = "<?php echo $club; ?>";
 var lang = "<?php echo $lang; ?>";
+var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var session = <?php echo json_encode($session); ?>;
 
 var max_wrapper_width = 960;
@@ -195,7 +195,7 @@ if (!session.write) {
 sidebar_resize();
 
 $.ajax({                                      
-    url: path+club_name+"/household/summary/monthly?apikey="+session.apikey_read,
+    url: path+club+"/household/summary/monthly?apikey="+session.apikey_read,
     dataType: 'json',      
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact cydynni@energylocal.co.uk or try again later.");
@@ -209,7 +209,7 @@ $.ajax({
             $(".appmenu").html(out);
         
             $.ajax({                                      
-                url: path+club_name+"/club/summary/monthly?apikey="+session.apikey_read,
+                url: path+club+"/club/summary/monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
                     club = result;
@@ -461,8 +461,8 @@ $("#logout").click(function(event) {
     });
 });
 
-$("#dashboard").click(function(){ window.location = path+club_name+"?lang="+lang; });
-$("#reports").click(function(){ window.location = path+club_name+"/report?lang="+lang; });
-$("#account").click(function(){ window.location = path+club_name+"/account?lang="+lang; });
+$("#dashboard").click(function(){ window.location = path+club+"?lang="+lang; });
+$("#reports").click(function(){ window.location = path+club+"/report?lang="+lang; });
+$("#account").click(function(){ window.location = path+club+"/account?lang="+lang; });
 
 </script>
