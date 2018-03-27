@@ -720,6 +720,8 @@ $v = 5;
 
 var path = "<?php echo $path; ?>";
 var club_name = "<?php echo $club; ?>";
+var generation_feed = <?php echo $generation_feed; ?>;
+var consumption_feed = <?php echo $consumption_feed; ?>;
 var languages = <?php echo json_encode($languages); ?>;
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;

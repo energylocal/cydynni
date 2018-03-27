@@ -4,9 +4,14 @@
 // CydYnni bulk importer
 // -------------------------------------------------------------------------------------------------
 
+$club = "bethesda";
+$club = "towerpower";
+
 define('EMONCMS_EXEC', 1);
+chdir("/var/www/emoncms");
+require "process_settings.php";
+
 chdir("/var/www/cydynni");
-require "settings.php";
 require "meter_data_api.php";
 require "EmonLogger.php";
 require "PHPFina.php";
@@ -36,26 +41,29 @@ while ($end<(time()+(3600*24*$days)))
     $endms = ($end-(3600*24)) * 1000;
     $startms = $start * 1000;
 
-    $data = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,28,$startms,$endms);
-    print json_encode($data)."\n";
+    $data = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],28,$startms,$endms);
+    // print json_encode($data)."\n";
     
-    // Visual output to check that we are not missing data in our queries
-    // Start time of data
-    $date->setTimestamp($data[0][0]*0.001);
-    print $date->format('Y-m-d H:i:s')."\n";
-    // End time of data
-    $date->setTimestamp($data[count($data)-1][0]*0.001);
-    print $date->format('Y-m-d H:i:s')."\n";
-    // Number of half hours in result
-    print count($data)."\n";
+    if (isset($data[0]) && isset($data[0][0]))
+    {
+        // Visual output to check that we are not missing data in our queries
+        // Start time of data
+        $date->setTimestamp($data[0][0]*0.001);
+        print $date->format('Y-m-d H:i:s')."\n";
+        // End time of data
+        $date->setTimestamp($data[count($data)-1][0]*0.001);
+        print $date->format('Y-m-d H:i:s')."\n";
+        // Number of half hours in result
+        print count($data)."\n";
 
-    // Insert data in PHPFina Timeseries
-    for ($i=0; $i<count($data); $i++) {
-       $phpfina->post(1,$data[$i][0]*0.001,$data[$i][1],null);
+        // Insert data in PHPFina Timeseries
+        for ($i=0; $i<count($data); $i++) {
+           $phpfina->post($club_settings[$club]["generation_feed"],$data[$i][0]*0.001,$data[$i][1],null);
+        }
     }
-
     // Itterate forwards to our next period
     $start = $end+1800;
     $end = $start + (3600*24*$days);
     print "-------------------------------\n";
+
 }

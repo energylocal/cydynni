@@ -33,10 +33,10 @@
   31. User list
 */
 
-function get_meter_data($baseurl,$token,$rid) {
+function get_meter_data($baseurl,$club_api_prefix,$token,$rid) {
 
     // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-$rid");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-$rid");
     // print $str;
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
@@ -62,13 +62,13 @@ function get_meter_data($baseurl,$token,$rid) {
     return $data;
 }
 
-function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
+function get_meter_data_history($baseurl,$club_api_prefix,$token,$rid,$start,$end) {
 
     $start = time_to_date((int) $start*0.001);
     $end = time_to_date((int) $end*0.001);
    
     // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-$rid?dateStart=$start&dateEnd=$end");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-$rid?dateStart=$start&dateEnd=$end");
     
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
@@ -101,14 +101,14 @@ function get_meter_data_history($baseurl,$token,$rid,$start,$end) {
 // -------------------------------------------------------------
 // Last day household consumption summary
 // -------------------------------------------------------------
-function get_household_consumption($baseurl,$token) {
+function get_household_consumption($baseurl,$club_api_prefix,$token) {
 
     // 1. Fetch gross club demand in each tariff period and the total
-    if (!$gross = get_latest_day($baseurl,$token,6)) return "Invalid data";
+    if (!$gross = get_latest_day($baseurl,$club_api_prefix,$token,6)) return "Invalid data";
     // 2. Fetch net/imported club demand in each tariff period and the total
-    if (!$imported = get_latest_day($baseurl,$token,7)) return "Invalid data";
+    if (!$imported = get_latest_day($baseurl,$club_api_prefix,$token,7)) return "Invalid data";
     // 3. Fetch net charge to be billed
-    if (!$cost = get_latest_day($baseurl,$token,8)) return "Invalid data";
+    if (!$cost = get_latest_day($baseurl,$club_api_prefix,$token,8)) return "Invalid data";
     
     $date1 = $gross["date"]; unset($gross["date"]);
     $date2 = $imported["date"]; unset($imported["date"]);
@@ -139,14 +139,14 @@ function get_household_consumption($baseurl,$token) {
 // -------------------------------------------------------------
 // Last day club consumption summary
 // -------------------------------------------------------------
-function get_club_consumption($baseurl,$token) {
+function get_club_consumption($baseurl,$club_api_prefix,$token) {
 
     // 1. Fetch gross club demand in each tariff period and the total
-    if (!$gross = get_latest_day($baseurl,$token,13)) return "Invalid data";
+    if (!$gross = get_latest_day($baseurl,$club_api_prefix,$token,13)) return "Invalid data";
     // 2. Fetch net/imported club demand in each tariff period and the total
-    if (!$imported = get_latest_day($baseurl,$token,14)) return "Invalid data";
+    if (!$imported = get_latest_day($baseurl,$club_api_prefix,$token,14)) return "Invalid data";
     // 3. Fetch net charge to be billed
-    if (!$cost = get_latest_day($baseurl,$token,15)) return "Invalid data";
+    if (!$cost = get_latest_day($baseurl,$club_api_prefix,$token,15)) return "Invalid data";
     
     $date1 = $gross["date"]; unset($gross["date"]);
     $date2 = $imported["date"]; unset($imported["date"]);
@@ -177,10 +177,10 @@ function get_club_consumption($baseurl,$token) {
 // -------------------------------------------------------------
 // Used by the above functions to fetch the last day
 // -------------------------------------------------------------
-function get_latest_day($baseurl,$token,$api) {
+function get_latest_day($baseurl,$club_api_prefix,$token,$api) {
 
     // Fetch data from data server
-    $str = @file_get_contents($baseurl."1-$token-$api");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-$api");
     
     // Decode JSON result remove present // at start of message.
     $result = json_decode(substr($str,2));
@@ -245,13 +245,13 @@ function time_to_date($time) {
 // -------------------------------------------------------------
 // Monthly household consumption for report
 // -------------------------------------------------------------
-function get_household_consumption_monthly_old($baseurl,$token) {
+function get_household_consumption_monthly_old($baseurl,$club_api_prefix,$token) {
     
     // API: 18 (User’s Monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
     //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-18");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-18");
     $result18 = json_decode(substr($str,2));
     if ($result18==null) return "Invalid data";
     if (!isset($result18->DATA)) return "Invalid data";
@@ -261,7 +261,7 @@ function get_household_consumption_monthly_old($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
     //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-19");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-19");
     $result19 = json_decode(substr($str,2));
     if ($result19==null) return "Invalid data";
     if (!isset($result19->DATA)) return "Invalid data";
@@ -271,7 +271,7 @@ function get_household_consumption_monthly_old($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
     //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
-    $str = @file_get_contents($baseurl."1-$token-20");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-20");
     $result20 = json_decode(substr($str,2));
     if ($result20==null) return "Invalid data";
     if (!isset($result20->DATA)) return "Invalid data";
@@ -281,7 +281,7 @@ function get_household_consumption_monthly_old($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[3.89,4.98,7.56,9.64,26.07,1,"JAN",2017,31],
     //         [3.81,6.29,8.19,9.85,28.14,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-21");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-21");
     $result21 = json_decode(substr($str,2));
     if ($result21==null) return "Invalid data";
     if (!isset($result21->DATA)) return "Invalid data";
@@ -329,10 +329,10 @@ function get_household_consumption_monthly_old($baseurl,$token) {
 // -------------------------------------------------------------
 // Monthly household consumption for report
 // -------------------------------------------------------------
-function get_household_consumption_monthly($baseurl,$token) {
+function get_household_consumption_monthly($baseurl,$club_api_prefix,$token) {
     
 
-    $str = @file_get_contents($baseurl."1-$token-32");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-32");
     $result = json_decode(substr($str,2));
     if ($result==null) return "Invalid data";
     
@@ -359,7 +359,7 @@ function get_household_consumption_monthly($baseurl,$token) {
         $data[] = $month;
     }
     
-    // $test = get_household_consumption_monthly_old($baseurl,$token);
+    // $test = get_household_consumption_monthly_old($baseurl,$club_api_prefix,$token);
     // if (json_encode($test)==json_encode($data)) print "equalls";
     
     return $data;
@@ -368,13 +368,13 @@ function get_household_consumption_monthly($baseurl,$token) {
 // -------------------------------------------------------------
 // Monthly club consumption for report
 // -------------------------------------------------------------
-function get_club_consumption_monthly($baseurl,$token) {
+function get_club_consumption_monthly($baseurl,$club_api_prefix,$token) {
 
     // API: 22 (Community monthly kWh import total)
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[41.8,54.1,81.1,103.9,280.9,1,"JAN",2017,31],
     //         [36.9,60.8,73.7,96.8,268.2,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-22");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-22");
     $result22 = json_decode(substr($str,2));
     if ($result22==null) return "Invalid data";
     if (!isset($result22->DATA)) return "Invalid data";
@@ -383,7 +383,7 @@ function get_club_consumption_monthly($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[33.43,41.96,46.82,78.57,200.78,1,"JAN",2017,31],
     //         [12.18,20.57,12.11,30.64,75.5,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-23");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-23");
     $result23 = json_decode(substr($str,2));
     if ($result23==null) return "Invalid data";
     if (!isset($result23->DATA)) return "Invalid data";
@@ -392,7 +392,7 @@ function get_club_consumption_monthly($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[8.37,12.14,34.28,25.33,80.12,1,"JAN",2017,31],
     //         [24.72,40.23,61.59,66.16,192.7,12,"DEC",2016,31]] 
-    $str = @file_get_contents($baseurl."1-$token-24");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-24");
     $result24 = json_decode(substr($str,2));
     if ($result24==null) return "Invalid data";
     if (!isset($result24->DATA)) return "Invalid data";
@@ -401,7 +401,7 @@ function get_club_consumption_monthly($baseurl,$token) {
     // "COLUMNS":["PERIOD1","PERIOD2","PERIOD3","PERIOD4","TOTAL","MONTH","MONTHDESC","YEAR","DAYSINMONTH"],
     // "DATA":[[3.89,4.98,7.56,9.64,26.07,1,"JAN",2017,31],
     //         [3.81,6.29,8.19,9.85,28.14,12,"DEC",2016,31]]
-    $str = @file_get_contents($baseurl."1-$token-25");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-25");
     $result25 = json_decode(substr($str,2));
     if ($result25==null) return "Invalid data";
     if (!isset($result25->DATA)) return "Invalid data";
@@ -447,9 +447,9 @@ function get_club_consumption_monthly($baseurl,$token) {
     return $data;
 }
 
-function get_demand_shaper($baseurl,$token) {
+function get_demand_shaper($baseurl,$club_api_prefix,$token) {
 
-    $str = @file_get_contents($baseurl."1-$token-30");
+    $str = @file_get_contents($baseurl."$club_api_prefix-$token-30");
     $data = json_decode(substr($str,2));
     return $data;
 }

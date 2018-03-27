@@ -207,8 +207,8 @@ function club_bargraph_load() {
     view.start = Math.floor(view.start / intervalms) * intervalms;
 
     // Load data from server
-    var generation_data = feed.getaverage(1,view.start,view.end,interval,1,1);
-    var club_data = feed.getaverage(2,view.start,view.end,interval,1,1);
+    var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
+    var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
     
     // -------------------------------------------------------------------------
     // Colour code graph
@@ -301,7 +301,7 @@ function club_bargraph_load() {
         } 
     }
     
-    if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
+    if (generation_feed==1 && (((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
         // generation estimate USING YNNI PADARN PERIS DATA
         // ----------------------------------------------------------------------------
@@ -439,7 +439,7 @@ function club_bargraph_draw() {
         }
     }
     
-    if (units=="kW") options.yaxis.max = 100;
+    if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
     
     if ($("#club_bargraph_placeholder").width()>0) {
         $.plot("#club_bargraph_placeholder",clubseries, options);

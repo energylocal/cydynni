@@ -110,9 +110,13 @@ if (isset($club_settings[$club])) {
     $q = implode("/",$query_parts);
 
     $club_root_token = $club_settings[$club]["root_token"];
+    $club_api_prefix = $club_settings[$club]["api_prefix"];
     $club_generator = $club_settings[$club]["generator"];
     $club_name = $club_settings[$club]["name"];
     $languages = $club_settings[$club]["languages"];
+    $generation_feed = $club_settings[$club]["generation_feed"];
+    $consumption_feed = $club_settings[$club]["consumption_feed"];
+    $club_generator = $club_settings[$club]["generator"];
     $lang = $languages[0];
 } else {
     $club = false;
@@ -139,7 +143,8 @@ if ($club)
         case "":
             $format = "html";
             unset($session["token"]);
-            $content = view("client.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name,'club_generator'=>$club_generator,'languages'=>$languages));
+            
+            $content = view("client.php",array('session'=>$session,'club'=>$club,'club_name'=>$club_name,'club_generator'=>$club_generator,'languages'=>$languages,'generation_feed'=>$generation_feed,'consumption_feed'=>$consumption_feed));
             break;
             
         case "report":
@@ -189,7 +194,7 @@ if ($club)
             $format = "json";
             if ($session["read"]) {
                 $month = get("month");
-                $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['token']);
+                $content = get_household_consumption_monthly($meter_data_api_baseurl,$club_api_prefix,$session['token']);
             } else {
                 $content = "session not valid";
             }
@@ -205,9 +210,9 @@ if ($club)
                     $start = (int) $_GET['start'];
                     $end = (int) $_GET['end'];
                     
-                    $content = get_meter_data_history($meter_data_api_baseurl,$session['token'],27,$start,$end);
+                    $content = get_meter_data_history($meter_data_api_baseurl,$club_api_prefix,$session['token'],27,$start,$end);
                 } else {
-                    $content = get_meter_data($meter_data_api_baseurl,$session['token'],10);
+                    $content = get_meter_data($meter_data_api_baseurl,$club_api_prefix,$session['token'],10);
                 }
             } else {
                 $content = "session not valid";
@@ -223,9 +228,9 @@ if ($club)
                 $start = (int) $_GET['start'];
                 $end = (int) $_GET['end'];
                 if ($use_local_cache) {
-                    $content = $phpfina->get_data(1,$start,$end,1800,1,0);
+                    $content = $phpfina->get_data($club_settings[$club]["generation_feed"],$start,$end,1800,1,0);
                 } else {
-                    $content = get_meter_data_history($meter_data_api_baseurl,$club_root_token,28,$start,$end);
+                    $content = get_meter_data_history($meter_data_api_baseurl,$club_api_prefix,$club_root_token,28,$start,$end);
                 }
             } else {
                 $content = json_decode($redis->get("$club:generation:data"));
@@ -253,7 +258,7 @@ if ($club)
         case "club/summary/monthly":
             $format = "json";
             $month = get("month");
-            $content = get_club_consumption_monthly($meter_data_api_baseurl,$club_root_token);
+            $content = get_club_consumption_monthly($meter_data_api_baseurl,$club_api_prefix,$club_root_token);
             break;
                     
         case "club/data":
@@ -266,7 +271,7 @@ if ($club)
                 if ($use_local_cache) {
                     $content = $phpfina->get_data(2,$start,$end,1800,1,0);
                 } else {
-                    $content = get_meter_data_history($meter_data_api_baseurl,$club_root_token,29,$start,$end);
+                    $content = get_meter_data_history($meter_data_api_baseurl,$club_api_prefix,$club_root_token,29,$start,$end);
                 }
                 
             } else {
@@ -279,7 +284,7 @@ if ($club)
             
             // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
             $live = json_decode($redis->get("$club:live"));
-            
+                      
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone("Europe/London"));
             $date->setTimestamp(time());
@@ -294,6 +299,14 @@ if ($club)
             if ($live->generation>=$live->club) $tariff = "generation";
             
             $live->tariff = $tariff;
+            
+            if ($club=="towerpower") {
+                $live->generation = 0;
+                $live->club = 2;
+                $live->tariff = "evening";
+            }
+            
+            
             $content = $live;
             break;
             
@@ -376,7 +389,7 @@ if ($club)
         
         case "demandshaper":
             $format = "json";
-            $content = get_demand_shaper($meter_data_api_baseurl,$club_root_token);
+            $content = get_demand_shaper($meter_data_api_baseurl,$club_api_prefix,$club_root_token);
             break;
         
         case "epower-api":
@@ -392,7 +405,7 @@ if ($club)
                         $other = "?dateStart=".$_GET['start']."&dateEnd=".$_GET['end'];
                     }
 
-                    $result = @file_get_contents($meter_data_api_baseurl."1-$token-$api".$other);
+                    $result = @file_get_contents($meter_data_api_baseurl."$club_api_prefix-$token-$api".$other);
                     $json = json_decode(substr($result,2));
                     $content = json_encode($json,JSON_PRETTY_PRINT);
                 } else {
@@ -433,6 +446,27 @@ if ($club)
                 $content = $user->change_password($session['userid'], post("old"), post("new"));
             } else {
                 $content = "session not valid";
+            }
+            break;
+            
+        case "update":
+            $format = "text";
+            $content = "";
+            
+            // generation
+            $result = get_meter_data($meter_data_api_baseurl,$club_api_prefix,$club_root_token,4);
+            if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
+            // Club half-hour
+            $result = get_meter_data($meter_data_api_baseurl,$club_api_prefix,$club_root_token,11);
+            if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
+            // Club totals
+            $content .= "$club:summary:day: ";
+            $result = get_club_consumption($meter_data_api_baseurl,$club_api_prefix,$club_root_token);
+            if ($result!="invalid data") {
+                $redis->set("$club:club:summary:day",json_encode($result));
+                $content .= json_encode($result)."\n";
+            } else {
+                $content .= "invalid\n";
             }
             break;
     }
@@ -543,27 +577,6 @@ else
             $format = "text";
             if ($session['admin']) {
                 $content = $user->send_report_email(get('userid'));
-            }
-            break;
-            
-        case "update":
-            $format = "text";
-            $content = "";
-            
-            // generation
-            $result = get_meter_data($meter_data_api_baseurl,$club_root_token,4);
-            if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
-            // Club half-hour
-            $result = get_meter_data($meter_data_api_baseurl,$club_root_token,11);
-            if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
-            // Club totals
-            $content .= "$club:summary:day: ";
-            $result = get_club_consumption($meter_data_api_baseurl,$club_root_token);
-            if ($result!="invalid data") {
-                $redis->set("$club:club:summary:day",json_encode($result));
-                $content .= json_encode($result)."\n";
-            } else {
-                $content .= "invalid\n";
             }
             break;
     }
