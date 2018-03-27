@@ -48,7 +48,7 @@ function household_summary_load()
                   $(".household_status").html(t("You are using power in a very expensive way"));
               }
               if (score>=30 && score<70) {
-                  $(".household_status").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
+                  $(".household_status").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
               }
               if (score>=70) {
                   $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
@@ -78,7 +78,7 @@ function household_summary_load()
             {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
             {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
             {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-            {name:t("HYDRO"), value: result.kwh.generation, color:"#29aae3"} 
+            {name:t(club_settings.generator.toUpperCase()), value: result.kwh.generation, color:"#29aae3"} 
           ];
 
           // household pie chart

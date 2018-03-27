@@ -1,6 +1,6 @@
 /*
 
-Hydro CydYnni Status page
+Status page
 
 */
 
@@ -98,10 +98,10 @@ function cydynnistatus_update() {
   if (tariff=="generation") {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
-      $("#tariff_summary").html(t("Now")+": "+t("Hydro Price"));
-      $("#status-until").html(t("Why? Plenty of hydro currently available"));
+      $("#tariff_summary").html(t("Now")+": "+t(ucfirst(club_settings.generator)+" Price"));
+      $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available"));
       
-      $("#tariff-now-title").html(t("HYDRO<br>PRICE")).css("color","#29aae3");
+      $("#tariff-now-title").html(t(club_settings.generator.toUpperCase()+"<br>PRICE")).css("color","#29aae3");
       $("#tariff-now-circle").css("background-color","#29aae3");
       $("#tariff-now-price").html("7p");
   }

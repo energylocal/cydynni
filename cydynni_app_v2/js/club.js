@@ -64,10 +64,10 @@ function club_summary_load()
                       $("#club_statusmsg").html(t("We are using power in a very expensive way"));
                   }
                   if (score>=30 && score<70) {
-                      $("#club_statusmsg").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+                      $("#club_statusmsg").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
                   }
                   if (score>=70) {
-                      $("#club_statusmsg").html(t("We’re doing really well using the hydro and cheaper power"));
+                      $("#club_statusmsg").html(t("We’re doing really well using the "+club_settings.generator+" and cheaper power"));
                   }
                   //club_resize();
               }, 400);
@@ -94,7 +94,7 @@ function club_summary_load()
                 {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
                 {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
                 {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-                {name:t("HYDRO"), value: result.kwh.generation, color:"#29aae3"} 
+                {name:t(club_settings.generator.toUpperCase()), value: result.kwh.generation, color:"#29aae3"} 
               ];
 
               // Club pie chart
@@ -356,7 +356,7 @@ function club_bargraph_load() {
     
     // Actual
     clubseries.push({
-        stack: true, data: used_generation_data, color: "#29aae3", label: t("Used Hydro"),
+        stack: true, data: used_generation_data, color: "#29aae3", label: t("Used "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
@@ -376,13 +376,13 @@ function club_bargraph_load() {
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
-        stack: true, data: exported_generation_data, color: "#a5e7ff", label: t("Exported Hydro"),
+        stack: true, data: exported_generation_data, color: "#a5e7ff", label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
 
     // estimate
     clubseries.push({
-        data: generation_estimate, color: "#dadada", label: t("Hydro estimate"),
+        data: generation_estimate, color: "#dadada", label: t(ucfirst(club_settings.generator)+" estimate"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
@@ -546,7 +546,7 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             var out = date+"<br>";
                         
             // Non estimate part of the graph
-            if (selected_series!=t("Hydro estimate") && selected_series!=t("Club estimate")) {
+            if (selected_series!=t(ucfirst(club_settings.generator)+" estimate") && selected_series!=t("Club estimate")) {
 
                 // Draw non estimate tooltip
                 var total_consumption = 0;
@@ -554,9 +554,9 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                     var series = clubseries[i];
                     // Only show tooltip item if defined and more than zero
                     if (series.data[z]!=undefined && series.data[z][1]>0) {
-                        if (series.label!=t("Hydro estimate") && series.label!=t("Club estimate")) {
+                        if (series.label!=t(ucfirst(club_settings.generator)+" estimate") && series.label!=t("Club estimate")) {
                             out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+units+"<br>";
-                            if (series.label!=t("Exported Hydro")) total_consumption += series.data[z][1]*1;
+                            if (series.label!=t("Exported "+ucfirst(club_settings.generator))) total_consumption += series.data[z][1]*1;
                         }
                     }
                 }
