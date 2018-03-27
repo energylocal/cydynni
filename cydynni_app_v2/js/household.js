@@ -7,11 +7,8 @@ Household page
 var end = 0;
 var start = 0;
 
-var household_pie1_data = [];
-var household_pie2_data = [];
-
-var household_pie3_data_cost = [];
-var household_pie3_data_energy = [];
+var household_pie_data_cost = [];
+var household_pie_data_energy = [];
 
 var household_generation_use = 0;
 var householdseries = [];
@@ -72,51 +69,30 @@ function household_summary_load()
           var costsaving = totalcostflatrate - result.cost.total;
           $(".household_costsaving").html("£"+costsaving.toFixed(2));
 
-          // household pie chart
-          household_pie1_data = [
-            {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-            {name:t(club_settings.generator.toUpperCase()), value: result.kwh.generation, color:"#29aae3"} 
-          ];
-
-          // household pie chart
-          household_pie2_data = [
-            {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
-          ];
+          household_pie_data_cost = [];
+          household_pie_data_energy = [];
           
-          // household pie chart
-          household_pie3_data_cost = [
-            {name:t("MORNING"), generation: result.generation.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
-            {name:t("MIDDAY"), generation: result.generation.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
-            {name:t("EVENING"), generation: result.generation.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
-            {name:t("OVERNIGHT"), generation: result.generation.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
-          ];
+          for (var z in tariffs) {
+              if (z!="generation") {
+                  household_pie_data_cost.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z]*tariffs.generation.cost, 
+                      import: result.kwh[z]*tariffs[z].cost, 
+                      color:tariffs[z].color
+                  });
+                  
+                  household_pie_data_energy.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z], 
+                      import: result.kwh[z], 
+                      color:tariffs[z].color
+                  });
+              }
           
-          // household pie chart
-          household_pie3_data_energy = [
-            {name:t("MORNING"), generation: result.generation.morning, import: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), generation: result.generation.midday, import: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), generation: result.generation.evening, import: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), generation: result.generation.overnight, import: result.kwh.overnight, color:"#274e3f"} 
-          ];
-          
-          $("#household_generation_kwh").html(result.kwh.generation);
-          $("#household_morning_kwh").html(result.kwh.morning);
-          $("#household_midday_kwh").html(result.kwh.midday);
-          $("#household_evening_kwh").html(result.kwh.evening);
-          $("#household_overnight_kwh").html(result.kwh.overnight);
-
-          $("#household_generation_cost").html((result.kwh.generation*0.07).toFixed(2));
-          $("#household_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
-          $("#household_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
-          $("#household_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
-          $("#household_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
-          
+              $("#household_"+z+"_kwh").html(result.kwh[z]);
+              $("#household_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+          }
+              
           household_generation_use = result.kwh.generation;
           household_pie_draw();
       } 
@@ -140,13 +116,8 @@ function household_pie_draw() {
       height: height
     };
     
-    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
-
-   
-    // Pie chart
-    // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_generation_use,options);
-
-    piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
+    piegraph3("household_piegraph1_placeholder",household_pie_data_energy,options);
+    piegraph3("household_piegraph2_placeholder",household_pie_data_cost,options);
 
 
     var options = {
@@ -156,10 +127,8 @@ function household_pie_draw() {
       height: 50
     };
     
-    hrbar("household_hrbar1_placeholder",household_pie3_data_energy,options); 
-    hrbar("household_hrbar2_placeholder",household_pie3_data_cost,options); 
-    // generation droplet
-    // generationdroplet("generation_droplet_placeholder",(community_generation_use*1).toFixed(1),{width: width,height: height});
+    hrbar("household_hrbar1_placeholder",household_pie_data_energy,options); 
+    hrbar("household_hrbar2_placeholder",household_pie_data_cost,options);
 }
 
 function household_bargraph_load() {
@@ -228,11 +197,6 @@ function household_bargraph_load() {
                     stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
-                
-                //householdseries.push({
-                //    data: household_data, color: "#e62f31",
-                //    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                //});
                 
                 household_bargraph_resize();
             }

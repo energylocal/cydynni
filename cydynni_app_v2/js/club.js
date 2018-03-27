@@ -14,10 +14,8 @@ var exported_generation_data = [];
 var used_generation_data = [];
 var clubseries = [];
 
-var club_pie1_data = [];
-var club_pie2_data = [];
-var club_pie3_data_cost = [];
-var club_pie3_data_energy = [];
+var club_pie_data_cost = [];
+var club_pie_data_energy = [];
 
 var club_score = -1;
 var club_generation_use = 0;
@@ -73,7 +71,7 @@ function club_summary_load()
               }, 400);
               
               // generation value retained in the club
-              var generation_value = result.kwh.generation * 0.07;
+              var generation_value = result.kwh.generation * tariffs.generation.cost;
 
               var ext = "";
               if (result.day==1) ext = "st";
@@ -88,50 +86,29 @@ function club_summary_load()
               $(".club_generation_value").html("£"+(generation_value).toFixed(2));
               $("#club_value_summary").html("£"+(generation_value).toFixed(2)+" "+t("kept in the club"));
               
-              // Club pie chart
-              club_pie1_data = [
-                {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-                {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-                {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-                {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-                {name:t(club_settings.generator.toUpperCase()), value: result.kwh.generation, color:"#29aae3"} 
-              ];
-
-              // Club pie chart
-              club_pie2_data = [
-                {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-                {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-                {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-                {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
-              ];
+              club_pie_data_cost = [];
+              club_pie_data_energy = [];
               
-              // club pie chart
-              club_pie3_data_cost = [
-                {name:t("MORNING"), generation: result.generation.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
-                {name:t("MIDDAY"), generation: result.generation.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
-                {name:t("EVENING"), generation: result.generation.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
-                {name:t("OVERNIGHT"), generation: result.generation.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
-              ];
+              for (var z in tariffs) {
+                  if (z!="generation") {
+                      club_pie_data_cost.push({
+                          name:t(z.toUpperCase()), 
+                          generation: result.generation[z]*tariffs.generation.cost, 
+                          import: result.kwh[z]*tariffs[z].cost, 
+                          color:tariffs[z].color
+                      });
+                      
+                      club_pie_data_energy.push({
+                          name:t(z.toUpperCase()), 
+                          generation: result.generation[z], 
+                          import: result.kwh[z], 
+                          color:tariffs[z].color
+                      });
+                  }
               
-              // household pie chart
-              club_pie3_data_energy = [
-                {name:t("MORNING"), generation: result.generation.morning, import: result.kwh.morning, color:"#ffdc00"},
-                {name:t("MIDDAY"), generation: result.generation.midday, import: result.kwh.midday, color:"#4abd3e"},
-                {name:t("EVENING"), generation: result.generation.evening, import: result.kwh.evening, color:"#c92760"},
-                {name:t("OVERNIGHT"), generation: result.generation.overnight, import: result.kwh.overnight, color:"#274e3f"} 
-              ];
-              
-              $("#club_generation_kwh").html(result.kwh.generation);
-              $("#club_morning_kwh").html(result.kwh.morning);
-              $("#club_midday_kwh").html(result.kwh.midday);
-              $("#club_evening_kwh").html(result.kwh.evening);
-              $("#club_overnight_kwh").html(result.kwh.overnight);
-
-              $("#club_generation_cost").html((result.kwh.generation*0.07).toFixed(2));
-              $("#club_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
-              $("#club_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
-              $("#club_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
-              $("#club_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
+                  $("#club_"+z+"_kwh").html(result.kwh[z]);
+                  $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+              }
                                          
               club_generation_use = result.kwh.generation
               
@@ -146,11 +123,6 @@ function club_summary_load()
 }
 
 function club_pie_draw() {
-
-    //var width = $("#piegraph_bound").width();
-    //var height = $("#piegraph_bound").height();
-    //if (width>400) width = 400;
-    //var height = width*0.9;
     
     width = 300;
     height = 300;
@@ -160,10 +132,6 @@ function club_pie_draw() {
     $('#club_piegraph1_placeholder').attr("height",height);
     $('#club_piegraph2_placeholder').attr("height",height);
     
-    //$("#generation_droplet_placeholder").attr('width',width);
-    //$('#generation_droplet_bound').attr("height",height);
-    //$('#generation_droplet_placeholder').attr("height",height);
-    
     var options = {
       color: "#3b6358",
       centertext: "THIS WEEK",
@@ -171,15 +139,9 @@ function club_pie_draw() {
       height: height
     };
     
-    // piegraph1("club_piegraph1_placeholder",club_pie1_data,options); 
-    piegraph3("club_piegraph1_placeholder",club_pie3_data_energy,options); 
+    piegraph3("club_piegraph1_placeholder",club_pie_data_energy,options); 
+    piegraph3("club_piegraph2_placeholder",club_pie_data_cost,options);
     
-    // piegraph2("club_piegraph2_placeholder",club_pie2_data,club_generation_use,options);
-    piegraph3("club_piegraph2_placeholder",club_pie3_data_cost,options);
-     
-    // generation droplet
-    // generationdroplet("generation_droplet_placeholder",(club_generation_use*1).toFixed(1),{width: width,height: height});
-
     var options = {
       color: "#3b6358",
       centertext: "THIS WEEK",
@@ -187,8 +149,8 @@ function club_pie_draw() {
       height: 50
     };
     
-    hrbar("club_hrbar1_placeholder",club_pie3_data_energy,options); 
-    hrbar("club_hrbar2_placeholder",club_pie3_data_cost,options);
+    hrbar("club_hrbar1_placeholder",club_pie_data_energy,options); 
+    hrbar("club_hrbar2_placeholder",club_pie_data_cost,options);
 }
 
 

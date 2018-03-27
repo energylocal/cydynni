@@ -3,6 +3,23 @@
 global $path, $translation, $lang;
 $v = 6;
 
+$tariffs = array(
+    "bethesda"=>array(
+        "generation"=>array("name"=>"Hydro","cost"=>0.07,"color"=>"#29aae3"),
+        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
+        "midday"=>array("name"=>"Midday","cost"=>0.10,"color"=>"#4abd3e"),
+        "evening"=>array("name"=>"Evening","cost"=>0.14,"color"=>"#c92760"),
+        "overnight"=>array("name"=>"Overnight","cost"=>0.0725,"color"=>"#274e3f")
+    ),
+    "towerpower"=>array(
+        "generation"=>array("name"=>"Solar","cost"=>0.07,"color"=>"#29aae3"),
+        "morning"=>array("name"=>"Morning","cost"=>0.14,"color"=>"#ffdc00"),
+        "midday"=>array("name"=>"Midday","cost"=>0.14,"color"=>"#4abd3e"),
+        "evening"=>array("name"=>"Evening","cost"=>0.14,"color"=>"#c92760"),
+        "overnight"=>array("name"=>"Overnight","cost"=>0.14,"color"=>"#274e3f")
+    )
+);
+
 ?>
 
 <!DOCTYPE html>
@@ -423,26 +440,12 @@ $v = 6;
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
+                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
-                            <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t(ucfirst($club_settings["generator"])." Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
+                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
                           </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#ffdc00"></div></td>
-                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#4abd3e"></div></td>
-                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#c92760"></div></td>
-                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#274e3f"></div></td>
-                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
-                          </tr>
+                          <?php } ?>
                         </table>
                       </div>
                     </div>
@@ -566,26 +569,12 @@ $v = 6;
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
+                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
-                            <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t(ucfirst($club_settings["generator"])." Power");?></b><br><span id="club_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="club_generation_cost"></span></td>
+                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo number_format($tariff['cost']*100,1); ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
                           </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#ffdc00"></div></td>
-                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="club_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="club_morning_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#4abd3e"></div></td>
-                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="club_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="club_midday_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#c92760"></div></td>
-                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="club_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="club_evening_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#274e3f"></div></td>
-                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="club_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="club_overnight_cost"></span></td>
-                          </tr>
+                          <?php } ?>
                         </table>
                       </div>
                     </div>
@@ -729,6 +718,8 @@ var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
+
+var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
 
 // Language selection top-right
 
