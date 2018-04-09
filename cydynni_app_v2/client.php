@@ -13,10 +13,10 @@ $tariffs = array(
     ),
     "towerpower"=>array(
         "generation"=>array("name"=>"Solar","cost"=>0.07,"color"=>"#29aae3"),
-        "morning"=>array("name"=>"Morning","cost"=>0.14,"color"=>"#ffdc00"),
-        "midday"=>array("name"=>"Midday","cost"=>0.14,"color"=>"#4abd3e"),
-        "evening"=>array("name"=>"Evening","cost"=>0.14,"color"=>"#c92760"),
-        "overnight"=>array("name"=>"Overnight","cost"=>0.14,"color"=>"#274e3f")
+        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
+        "midday"=>array("name"=>"Midday","cost"=>0.12,"color"=>"#4abd3e"),
+        "evening"=>array("name"=>"Evening","cost"=>0.12,"color"=>"#c92760"),
+        "overnight"=>array("name"=>"Overnight","cost"=>0.12,"color"=>"#274e3f")
     )
 );
 
@@ -572,7 +572,7 @@ $tariffs = array(
                           <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
                             <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo number_format($tariff['cost']*100,1); ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
                           </tr>
                           <?php } ?>
                         </table>

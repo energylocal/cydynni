@@ -4,9 +4,14 @@
 // CydYnni bulk importer
 // -------------------------------------------------------------------------------------------------
 
+$club = "bethesda";
+//$club = "towerpower";
+
 define('EMONCMS_EXEC', 1);
+chdir("/var/www/emoncms");
+require "process_settings.php";
+
 chdir("/var/www/cydynni");
-require "settings.php";
 require "meter_data_api.php";
 require "EmonLogger.php";
 require "PHPFina.php";
@@ -31,7 +36,7 @@ print $start." ".$end." ".(($end-$start)/3600)."\n";
 $endms = $end * 1000;
 $startms = $start * 1000;
 
-$data = get_meter_data_history($meter_data_api_baseurl,$meter_data_api_hydrotoken,29,$startms,$endms);
+$data = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],29,$startms,$endms);
 
 if (count($data)) {
     // Visual output to check that we are not missing data in our queries

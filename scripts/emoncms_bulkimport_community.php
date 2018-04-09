@@ -5,7 +5,7 @@
 // -------------------------------------------------------------------------------------------------
 
 $club = "bethesda";
-$club = "towerpower";
+//$club = "towerpower";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");

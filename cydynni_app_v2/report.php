@@ -169,7 +169,7 @@ var sidebar_enabled = true;
 var sidebar_visible = true;
 
 var household = {};
-var club = {};
+var clubdata = {};
 
 var data = {};
 var generation = 0;
@@ -212,7 +212,7 @@ $.ajax({
                 url: path+club+"/club/summary/monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
-                    club = result;
+                    clubdata = result;
                     load();
                 }
             });
@@ -336,7 +336,7 @@ function load()
 
     // ---------------------------------------------
     
-    var month = club[selected_month];   
+    var month = clubdata[selected_month];   
     var eid = 1;   
     
     var score_club = Math.round(100*((month.import.overnight + month.import.midday + month.generation.total) / month.demand.total));
