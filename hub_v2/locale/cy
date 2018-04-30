@@ -300,5 +300,11 @@
 "Change":"Newid",
 "Your prices for power":"Eich prisiau am bŵer",
 "Prices for extra electricity (in the event your local electricity is not covering all of your needs)":"Prisiau ar gyfer trydan ychwanegol (os nad yw eich trydan lleol yn cwrdd eich holl anghenion)",
-"--------------------------------------------------------------------":""
+"--------------------------------------------------------------------":"",
+
+"Password changed":"Cyfrinair wedi'i newid",
+"Old password incorect": "Hen cyfrinair yn anghywir",
+"New passwords don't match": "Nid yw cyfrineiriau'n cyfateb",
+"Request sent": "Cais wedi'i anfon",
+"Confirm new password": "Cadarnhau'r cyfrinair Newydd"
 }

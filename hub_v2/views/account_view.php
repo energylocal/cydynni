@@ -35,6 +35,8 @@ $v=1;
       <input id="change-password-current" type="password"></p>
       <p><?php echo t("New password"); ?><br>
       <input id="change-password-new" type="password"></p>  
+      <p><?php echo t("Confirm new password"); ?><br>
+      <input id="change-password-new-confirm" type="password"></p>  
       <button id="change-password" class="btn"><?php echo t("Change"); ?></button>   
       <span id="change-password-alert" style="padding-left:10px"></span>   
     </div>
