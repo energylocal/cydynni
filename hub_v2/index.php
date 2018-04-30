@@ -102,7 +102,7 @@ if (isset($_GET['iaith']) && $_GET['iaith']=="en") $lang = "en";
 $format = "html";
 $content = "Sorry page not found";
 
-$club = "";
+$club = "bethesda";
 $club_settings = array(
     "name"=>"Bethesda",
     "generator"=>"hydro",

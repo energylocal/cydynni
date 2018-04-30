@@ -110,17 +110,17 @@ function cydynnistatus_update() {
 
   //$(".tariff-img").hide();
  // $(".tariff-img[tariff="+tariff+"]").show();
- 
+
   var levels = {
       bethesda: {high:50,medium:30,low:10},
       towerpower: {high:3,medium:1,low:0.5}
   }
  
-  if (live.generation>=levels[club].high) {
+  if (live.generation>=levels["bethesda"].high) {
       $("#generation-status").html(t("HIGH"));
-  } else if (live.generation>=levels[club].medium) {
+  } else if (live.generation>=levels["bethesda"].medium) {
       $("#generation-status").html(t("MEDIUM"));
-  } else if (live.generation>=levels[club].low) {
+  } else if (live.generation>=levels["bethesda"].low) {
       $("#generation-status").html(t("LOW"));
   } else {
       $("#generation-status").html(t("VERY LOW"));

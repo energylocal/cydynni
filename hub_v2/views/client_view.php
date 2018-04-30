@@ -59,7 +59,7 @@ $tariffs = array(
     <script type="text/javascript" src="<?php echo $path; ?>lib/vis.helper.js"></script>
     <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css?v=<?php echo $v; ?>" />
     
     </head>
     <body>
@@ -839,7 +839,7 @@ $tariffs = array(
 <script>
 
 var path = "<?php echo $path; ?>";
-var club = "<?php echo $club; ?>";
+var club = "";
 var club_settings = <?php echo json_encode($club_settings);?>;
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
@@ -855,7 +855,7 @@ var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
-var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
+var tariffs = <?php echo json_encode($tariffs["bethesda"]); ?>;
 
 // Language selection top-right
 
