@@ -46,13 +46,13 @@ if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$
 
 chdir("/var/www/cydynni");
 
-require("user_model.php");
+require("lib/user_model.php");
 $user = new User($mysqli);
 
 require "meter_data_api.php";
 $path = get_application_path();
 
-require "PHPFina.php";
+require "lib/PHPFina.php";
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 $use_local_cache = true;
 
@@ -136,7 +136,7 @@ if ($club)
             unset($session["token"]);
             unset($club_settings[$club]["root_token"]);
             
-            $content = view("client.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            $content = view("views/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             break;
             
         case "report":
@@ -145,7 +145,7 @@ if ($club)
                 unset($session["token"]);
                 unset($club_settings[$club]["root_token"]);
                 
-                $content = view("report.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+                $content = view("views/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             } else {
                 $content = "session not valid";
             }
@@ -157,7 +157,7 @@ if ($club)
                 unset($session["token"]);
                 unset($club_settings[$club]["root_token"]);
                 
-                $content = view("account.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+                $content = view("views/account_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             } else {
                 $content = "session not valid";
             }
@@ -498,7 +498,7 @@ else
         case "admin":
             $format = "html";
             unset($session["token"]);
-            $content = view("admin.php",array('session'=>$session));
+            $content = view("views/admin_view.php",array('session'=>$session));
             break;
             
         case "admin/users":

@@ -9,6 +9,21 @@ body {
     background-color:WhiteSmoke;
 }
 
+a {
+   text-decoration:none;
+   color:#fff;
+}
+
+a:hover {
+   text-decoration:none;
+   color:#fff;
+}
+
+a:visited {
+   text-decoration:none;
+   color:#fff;
+}
+
 :root {
     --forecast-bg-color: #39aa1a; /*site colors used as variables*/
     --household-bg-color: #c20000;
@@ -319,7 +334,7 @@ body {
 	  font-weight:bold;
 }
 
-.bg-hydro { background-color: #29aae3; color:#fff; }
+.bg-generation { background-color: #29aae3; color:#fff; }
 .bg-morning { background-color: #ffb401; color:#fff; }
 .bg-midday { background-color: #4dac34; color:#fff; }
 .bg-evening { background-color: #e6602b; color:#fff; }

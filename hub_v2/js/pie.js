@@ -2,7 +2,7 @@ var droplet = new Image();
 droplet.src = "images/droplet.png";
 droplet.onload = function () { }
     
-function hydrodroplet(element,value,options)
+function generationdroplet(element,value,options)
 {
     // Droplet size based on width
     var size = options.width;
@@ -114,7 +114,7 @@ function piegraph1(element,data,options) {
     }
 }
 
-function piegraph2(element,data,hydro,options) {
+function piegraph2(element,data,generation,options) {
     // Pie chart size based on width
     var size = options.width;
     var midx = options.width * 0.5;
@@ -166,7 +166,7 @@ function piegraph2(element,data,hydro,options) {
         ctx.stroke();
     }
 
-    var prc = (hydro/(total+hydro));
+    var prc = (generation/(total+generation));
     //var prc = 0.5;
     
     // Math.PI * 
@@ -204,14 +204,14 @@ function piegraph2(element,data,hydro,options) {
         
         if (data[z].value>0) {
             // Percentage label
-            var prc = 100*(data[z].value/(total+hydro));
+            var prc = 100*(data[z].value/(total+generation));
             ctx.fillStyle = "#333";
             ctx.font=textsize_prc+"px Arial";
             if (prc>=1.0) ctx.fillText(Math.round(prc)+"%",prclabelx,prclabely+5);
         }
     }
     
-    var prc = 100*(hydro/(total+hydro));
+    var prc = 100*(generation/(total+generation));
     ctx.fillStyle = "#fff";
     ctx.font=textsize_prc+"px Arial";
     ctx.fillText(Math.round(prc)+"%",midx,midy+5);
@@ -223,10 +223,10 @@ function piegraph3(element,data,options) {
     var midx = options.width * 0.5;
     var midy = options.height * 0.5;
     
-    var hydro = 1;
+    var generation = 1;
     
     // Calculate total of pie chart segments 
-    var total = 0; for (z in data) total += data[z].hydro + data[z].import;
+    var total = 0; for (z in data) total += data[z].generation + data[z].import;
     
     // Context and clear
     var c = document.getElementById(element);  
@@ -256,7 +256,7 @@ function piegraph3(element,data,options) {
     var x = 0;
     var l = -Math.PI *0.5;
     for (z in data) {
-        x += data[z].hydro + data[z].import;
+        x += data[z].generation + data[z].import;
         
         var lastl = l
         l = (2 * Math.PI * (x / total)) - (Math.PI *0.5);
@@ -271,8 +271,8 @@ function piegraph3(element,data,options) {
         ctx.closePath();
         ctx.stroke();
         
-        // Hydro part
-        var prc = data[z].hydro / (data[z].hydro+data[z].import);
+        // generation part
+        var prc = data[z].generation / (data[z].generation+data[z].import);
 
         var r = size*0.2875;
         var fullarea = Math.PI * r*r;
@@ -298,7 +298,7 @@ function piegraph3(element,data,options) {
     var x = 0;
     var l = -Math.PI *0.5;
     for (z in data) {
-        var val = data[z].hydro + data[z].import;
+        var val = data[z].generation + data[z].import;
         x += val;
         
         var lastl = l
@@ -331,13 +331,13 @@ function hrbar(element,data,options) {
     var segments = {};
     
     // Calculate total of segments 
-    var total = 0; for (var z in data) total += data[z].hydro + data[z].import;
+    var total = 0; for (var z in data) total += data[z].generation + data[z].import;
     
-    segments.hydro = {val:0, color:"#29aae3"};
+    segments.generation = {val:0, color:"#29aae3"};
     
     for (var z in data) {
         segments[z] = {val:data[z].import, color:data[z].color};
-        segments.hydro.val += data[z].hydro;
+        segments.generation.val += data[z].generation;
     }
     
     // Context and clear

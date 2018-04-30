@@ -68,6 +68,15 @@ class User
         );
     }
     
+    public function get_id($username)
+    {
+        if (!ctype_alnum($username)) return false;
+
+        $result = $this->mysqli->query("SELECT id FROM users WHERE username = '$username';");
+        $row = $result->fetch_array();
+        return $row['id'];
+    }
+    
     public function apikey_session($apikey_in)
     {
         $apikey_in = $this->mysqli->real_escape_string($apikey_in);
