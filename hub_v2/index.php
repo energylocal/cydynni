@@ -19,7 +19,7 @@ define('EMONCMS_EXEC', 1);
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
-
+$base_url = "http://cydynni.org.uk/bethesda";
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
@@ -231,7 +231,7 @@ switch ($q)
         $format = "json";
 
         if (!$result = $redis->get("community:summary:day")) {
-            $result = http_request("GET","https://cydynni.org.uk/club/summary/day",array());
+            $result = http_request("GET","$base_url/club/summary/day",array());
             if ($result) $redis->set("community:summary:day",$result);
         }
         $content = json_decode($result);
@@ -248,7 +248,7 @@ switch ($q)
     case "club/summary/monthly":
         $format = "json";
 	$month = get("month");
-        $content = file_get_contents("https://cydynni.org.uk/community/summary/monthly?month=$month");
+        $content = file_get_contents("$base_url/community/summary/monthly?month=$month");
         break;
                 
     case "club/data":
@@ -304,7 +304,7 @@ switch ($q)
         $format = "json";
         
         if (!$result = $redis->get("live")) {
-            $result = http_request("GET","https://cydynni.org.uk/live",array());
+            $result = http_request("GET","$base_url/live",array());
             if ($result) $redis->set("live",$result);
         }
         $live = json_decode($result);
@@ -320,9 +320,9 @@ switch ($q)
         if ($hour>=11 && $hour<16) $tariff = "midday";
         if ($hour>=16 && $hour<20) $tariff = "evening";
         if ($hour>=20) $tariff = "overnight";
-        if ($live->hydro>=$live->community) $tariff = "hydro";
+        if ($live->generation>=$live->club) $tariff = "hydro";
         
-        $live->club = $live->community;
+//        $live->club = $live->community;
         
         $live->tariff = $tariff;
         $content = $live;
@@ -502,10 +502,10 @@ switch ($q)
     case "admin/cron":
         $format = "text";
         // Hydro
-        $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-        $redis->set("hydro:data",file_get_contents("https://cydynni.org.uk/hydro"));
-        $redis->set("community:data",file_get_contents("https://cydynni.org.uk/community/data"));
-        $redis->set("community:summary:day",file_get_contents("https://cydynni.org.uk/community/summary/day"));
+        $redis->set("live",file_get_contents("$base_url/live"));
+        $redis->set("hydro:data",file_get_contents("$base_url/hydro"));
+        $redis->set("community:data",file_get_contents("$base_url/community/data"));
+        $redis->set("community:summary:day",file_get_contents("$base_url/community/summary/day"));
         // Store Updated
         $content = "store updated";
         break;

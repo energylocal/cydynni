@@ -6,6 +6,7 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
 require "Lib/EmonLogger.php";
+$base_url = "https://cydynni.org.uk/bethesda";
 
 // 1. Load redis
 $redis = new Redis();
@@ -103,37 +104,37 @@ if ($result) {
 
 print "Loading cache:\n";
 
-$result = http_request("GET","https://cydynni.org.uk/live",array());
+$result = http_request("GET","$base_url/live",array());
 if ($result) {
     $redis->set("live",$result);
     print "-- live\n";
 }
 
-$result = http_request("GET","https://cydynni.org.uk/hydro",array());
+$result = http_request("GET","$base_url/hydro",array());
 if ($result) {
     $redis->set("hydro:data",$result);
     print "-- hydro:data\n";
 }
 
-$result = http_request("GET","https://cydynni.org.uk/club/data",array());
+$result = http_request("GET","$base_url/club/data",array());
 if ($result) {
     $redis->set("community:data",$result);
     print "-- community:data\n";
 }
 
-$result = http_request("GET","https://cydynni.org.uk/club/summary/day",array());
+$result = http_request("GET","$base_url/club/summary/day",array());
 if ($result) {
     $redis->set("community:summary:day",$result);
     print "-- community:summary:day\n";
 }
 
-$result = http_request("GET","https://cydynni.org.uk/household/summary/day",array("apikey"=>$user->apikey_read));
+$result = http_request("GET","$base_url/household/summary/day",array("apikey"=>$user->apikey_read));
 if ($result) {
     $redis->set("user:summary:lastday:$userid",$result);
     print "-- user:summary:lastday\n";
 }
 
-$result = http_request("GET","https://cydynni.org.uk/demandshaper",array());
+$result = http_request("GET","$base_url/demandshaper",array());
 if ($result) {
     $redis->set("demandshaper",$result);
     print "-- demandshaper\n";
