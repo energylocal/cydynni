@@ -29,5 +29,11 @@
 "MORNING TARIFF":"TARIFF BORE",
 "MIDDAY TARIFF":"TARIFF CANOL DYDD",
 "EVENING TARIFF":"TARIFF GYDA'R NOS",
-"OVERNIGHT TARIFF":"TARIFF DROS NOS"
+"OVERNIGHT TARIFF":"TARIFF DROS NOS",
+
+"Password changed":"Cyfrinair wedi'i newid",
+"Old password incorect": "Hen cyfrinair yn anghywir",
+"New passwords don't match": "Nid yw cyfrineiriau'n cyfateb",
+"Request sent": "Cais wedi'i anfon"
+"Confirm new password": "Cadarnhau'r cyfrinair Newydd"
 }

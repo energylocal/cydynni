@@ -14,12 +14,14 @@
       <div style="text-align:left">
       <p><b>Email:</b><br><span id="user-email"></span></p>
       <br>
-      <p><b>Change password</b><br>
-      <p>Current password<br>
+      <p><b><?php echo t("Change password");?></b><br>
+      <p><?php echo t("Current password");?><br>
       <input id="change-password-current" type="password"></p>
-      <p>New password<br>
-      <input id="change-password-new" type="password"></p>  
-      <button id="change-password" class="btn">Change</button>   
+      <p><?php echo t("New password");?><br>
+      <input id="change-password-new" type="password"></p>
+      <p><?php echo t("Confirm new password"); ?><br>
+      <input id="change-password-new-confirm" type="password"></p>  
+      <button id="change-password" class="btn"><?php echo t("Change");?></button>   
       <span id="change-password-alert" style="padding-left:10px"></span>   
       </div>
     </div>

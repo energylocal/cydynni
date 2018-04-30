@@ -433,7 +433,7 @@ switch ($q)
         if ($session["write"]) {
             $content = $user->change_password($session['userid'], post("old"), post("new"));
         } else {
-            $content = "session not valid";
+            $content = t("Session not valid");
         }
         break;
         

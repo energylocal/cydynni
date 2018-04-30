@@ -19,7 +19,6 @@
 "Your overall score is":"Eich sgôr ar y cyfan",
 "Last month we scored":"Ein sgôr ni dros y mis ddiwethaf",
 "Our overall score is":"Ein sgôr ni ar y cyfan",
-
 "no imported power":"dim pwer wedi mewnforio",
 "Cost breakdown: ":"Dadansoddiad cost: ",
 "Electricity charge":"Tâl trydan",
@@ -210,5 +209,11 @@
 "COOKING":"COGINIO",
 "Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.":"Mae rhoi caead ar eich sosban pan fyddwch yn coginio yn cadw’r gwres i mewn ac felly nid oes angen bod â gwres mor uchel o dan y sosban. Ffordd syml ac effeithiol o ddefnyddio llai o drydan.",
 "FRIDGE/FREEZER":"OERGELL/RHEWGELL",
-"Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.":"Ceisiwch agor y drysau mor anaml ag y gallwch, am cyn lleied o amser ag sy’n bosibl. Arhoswch i fwyd sydd wedi’i goginio oeri cyn ei roi yn yr oergell. Mae hen oergell neu rewgell yn gallu bod yn aneffeithlon iawn ac yn ddrud i’w rhedeg.."
+"Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.":"Ceisiwch agor y drysau mor anaml ag y gallwch, am cyn lleied o amser ag sy’n bosibl. Arhoswch i fwyd sydd wedi’i goginio oeri cyn ei roi yn yr oergell. Mae hen oergell neu rewgell yn gallu bod yn aneffeithlon iawn ac yn ddrud i’w rhedeg..",
+
+"Password changed":"Cyfrinair wedi'i newid",
+"Old password incorect": "Hen cyfrinair yn anghywir",
+"New passwords don't match": "Nid yw cyfrineiriau'n cyfateb",
+"Request sent": "Cais wedi'i anfon"
+"Confirm new password": "Cadarnhau'r cyfrinair Newydd"
 }

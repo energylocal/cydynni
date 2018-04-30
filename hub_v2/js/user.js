@@ -94,17 +94,19 @@ $(".myaccount").click(function() {
 $("#change-password").click(function() {
     var current_password = $("#change-password-current").val();
     var new_password = $("#change-password-new").val();
-    console.log(current_password);
-    console.log(new_password);
-    $("#change-password-alert").html("Request sent");
-    $.ajax({   
-        type: "POST",           
-        url: path+"changepassword",                         
-        data: "old="+current_password+"&new="+new_password,
-        dataType: 'text',
-        success: function(result) {
-            console.log(result);
-            $("#change-password-alert").html(result);
-        }
-    });
+    var new_password_confirm = $("#change-password-new-confirm").val();
+    if(new_password!=new_password_confirm){
+        $("#change-password-alert").html(t("New passwords don't match"));
+    }else{
+        $("#change-password-alert").html(t("Request sent"));
+        $.ajax({   
+            type: "POST",           
+            url: path+"changepassword",                         
+            data: "old="+current_password+"&new="+new_password,
+            dataType: 'text',
+            success: function(result) {
+                $("#change-password-alert").html(t(result));
+            }
+        });
+    }
 });
