@@ -102,6 +102,15 @@ if (isset($_GET['iaith']) && $_GET['iaith']=="en") $lang = "en";
 $format = "html";
 $content = "Sorry page not found";
 
+$club = "";
+$club_settings = array(
+    "name"=>"Bethesda",
+    "generator"=>"hydro",
+    "languages"=>array("cy","en"),
+    "generation_feed"=>1,
+    "consumption_feed"=>2
+);
+
 $logger = new EmonLogger();
 switch ($q)
 {
@@ -109,7 +118,7 @@ switch ($q)
         $format = "html";
         
         if ($session["write"]) {
-            $content = view("views/client_view.php",array('session'=>$session));
+            $content = view("views/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings));
         } else {
         
             if ($wifisetup) {
@@ -126,7 +135,7 @@ switch ($q)
     case "report":
         $format = "html";
         if ($session["read"]) {
-            $content = view("views/report_view.php",array('session'=>$session));
+            $content = view("views/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings));
         } else {
             $content = "session not valid";
         }
@@ -135,7 +144,7 @@ switch ($q)
     case "account":
         $format = "html";
         if ($session["read"]) {
-            $content = view("views/account_view.php",array('session'=>$session));
+            $content = view("views/account_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings));
         } else {
             $content = "session not valid";
         }
