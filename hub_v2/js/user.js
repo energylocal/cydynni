@@ -4,7 +4,7 @@ $("#login").click(function() {
 
     $.ajax({
         type: 'POST',                                    
-        url: path+"login",                         
+        url: path+club+"/login",                         
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
@@ -33,7 +33,7 @@ $("#login").click(function() {
 $("#logout").click(function(event) {
     event.stopPropagation();
     $.ajax({                   
-        url: path+"/logout",
+        url: path+club+"/logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();

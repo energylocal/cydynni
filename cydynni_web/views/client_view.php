@@ -66,7 +66,7 @@ $tariffs = array(
         <div class="oembluebar">
             <div class="oembluebar-inner">
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
-                <!--<div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>-->
+                <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
 
                 <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
                 <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
@@ -89,8 +89,8 @@ $tariffs = array(
                     <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <!--<li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>-->
-                    <li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
+                    <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                    <!--<li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>-->
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
@@ -121,7 +121,7 @@ $tariffs = array(
                   <div class="visnav-club club-right">></div>
                   <div class="visnav-club club-month"><?php echo t("MONTH");?></div>
                   <div class="visnav-club club-week"><?php echo t("WEEK");?></div>
-                  <!--<div class="visnav-club club-day"><?php echo t("DAY");?></div>-->
+                  <div class="visnav-club club-day"><?php echo t("DAY");?></div>
                 </div>
                 
                 
@@ -326,26 +326,6 @@ $tariffs = array(
                           <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
                         </p>
                         <div id="passwordreset-alert"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="meterdatablock" class="block household-block">
-                <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                
-                    <div class="bg-household2">
-
-                        <div style="padding:20px; text-align:left;">
-                        
-                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Power:</div>
-                        <div style="font-weight:bold; font-size:32px" class="meterdata-power"></div>
-                        
-                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Latest meter reading:</div>
-                        <div style="font-weight:bold; font-size:32px" class="meterdata-kwh"></div>
-                        
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -705,36 +685,6 @@ $tariffs = array(
             </div>
         </div>
         
-        
-        <div class="page" name="devices">
-            <div class="block">
-                
-                <div class="block-content" style="color:#ea510e">
-                  
-                  <!-- COPIED FROM emoncms/../device_view.php -->
-                  
-	                <div id="auth-check" class="hide">
-	                    <i class="icon-exclamation-sign icon-white"></i> Device on ip address: <span id="auth-check-ip"></span> would like to connect 
-	                    <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>
-	                </div>
-	
-	                <div id="table"></div>
-	
-	                <div id="output"></div>
-
-	                <div id="noinputs" class="alert alert-block hide" style="background-color:#ea510e; color:#fff; padding:20px">
-			    <h4 class="alert-heading">No Devices created</h4>
-			    <p>Devices such as smartplugs and temperature and humidity nodes will appear here once powered up and connected to the WIFI network</p>
-	                </div>
-	
-	                <div id="input-loader" class="ajax-loader"></div>
-        
-                  <!---------------------------------------------->
-                  
-                </div>
-            </div>
-        </div>    
-        
         <div style="clear:both; height:85px"></div>
 
     </div></div>
@@ -748,84 +698,6 @@ $tariffs = array(
     </div>
 </div></div>
 
-
-<div class="scheduler-template hide">
-  <div class="scheduler-inner">
-    <div class="scheduler-startsin"><span class='startsin'></span></div>
-    <div class="scheduler-title">Schedule</div>
-
-    <div class="scheduler-inner2">
-      <div class="scheduler-controls">
-      
-        <!---------------------------------------------------------------------------------------------------------------------------->
-        <!-- CONTROLS -->
-        <!---------------------------------------------------------------------------------------------------------------------------->
-        <div name="active" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Active</div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <div style="display:inline-block; width:120px;">Run period:</div>
-          <input class="input timepicker-hour" type="text" name="period-hour" style="width:45px" /> hrs
-          <input class="input timepicker-minute" type="text" name="period-minute" style="width:45px" /> mins
-        <br><br>
-
-        <div style="display:inline-block; width:120px;">Complete by:</div>
-          <input class="input timepicker-hour" type="text" name="end-hour" style="width:45px" /> : 
-          <input class="input timepicker-minute" type="text" name="end-minute" style="width:45px" />
-        <br>
-        <br>
-        <div name="interruptible" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Ok to interrupt schedule</div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <div name="runonce" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Run once</div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <p>Repeat:</p>
-        <div class="weekly-scheduler-days">
-          <div name="repeat" day=0 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Mon</div></div>
-          <div name="repeat" day=1 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Tue</div></div>
-          <div name="repeat" day=2 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Wed</div></div>
-          <div name="repeat" day=3 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Thu</div></div>
-          <div name="repeat" day=4 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Fri</div></div>
-          <div name="repeat" day=5 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Sat</div></div>
-          <div name="repeat" day=6 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Sun</div></div>
-        </div>
-        <br>
-        <!---------------------------------------------------------------------------------------------------------------------------->
-      </div>
-
-      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px">Clear</button>
-      <br><br>
-      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div>Schedule Output</div>
-
-      <div class="schedule-output-box">
-        <div id="schedule-output"></div>
-        <div id="placeholder_bound" style="width:100%; height:300px">
-          <div id="placeholder" style="height:300px"></div>
-        </div>
-
-        Higher bar height equals more power available
-      </div> <!-- schedule-output-box -->      
-    </div> <!-- schedule-inner2 -->
-  </div> <!-- schedule-inner -->
-</div>
-
-<!-- The Modal -->
-<div id="DeviceDeleteModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="device-delete-modal-cancel modal-close">&times;</span>
-    <h3>Delete Device</h3>
-    <p>Are you sure you want to delete device <span id="device-delete-modal-name"></span>?</p>
-    <button class="device-delete-modal-cancel btn">Cancel</button> <button class="device-delete-modal-delete btn">Delete</button>
-  </div>
-</div>
-
 </body>
 </html>
 
@@ -834,28 +706,21 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
-var club = "";
+var club = "<?php echo $club; ?>";
 var club_settings = <?php echo json_encode($club_settings);?>;
-var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
 
-// Device 
-auth_check();
-setInterval(auth_check,5000);
-
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
-var tariffs = <?php echo json_encode($tariffs["bethesda"]); ?>;
+var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
 
 // Language selection top-right
 
@@ -943,7 +808,6 @@ club_bargraph_load();
 if (session.write) {
     household_summary_load();
     household_bargraph_load();
-    device_load();
 }
 
 resize();

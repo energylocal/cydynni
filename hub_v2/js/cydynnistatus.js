@@ -1,6 +1,6 @@
 /*
 
-Hydro CydYnni Status page
+Status page
 
 */
 
@@ -9,7 +9,7 @@ function cydynnistatus_update() {
   var tariff = {};
 
   $.ajax({                                      
-      url: path+"live",
+      url: path+club+"/live",
       dataType: 'json',
       async: false,                      
       success: function(result) {
@@ -25,11 +25,11 @@ function cydynnistatus_update() {
 
   $("#status-next").html("");
   
-  if (tariff=="morning") $("#status-img").attr("src","images/waiting-icon.png");
-  if (tariff=="midday") $("#status-img").attr("src","images/new-tick.png");
-  if (tariff=="evening") $("#status-img").attr("src","images/waiting-icon.png");
-  if (tariff=="overnight") $("#status-img").attr("src","images/new-tick.png");
-  if (tariff=="hydro") $("#status-img").attr("src","images/new-tick.png");
+  if (tariff=="morning") $("#status-img").attr("src",path+"images/waiting-icon.png");
+  if (tariff=="midday") $("#status-img").attr("src",path+"images/new-tick.png");
+  if (tariff=="evening") $("#status-img").attr("src",path+"images/waiting-icon.png");
+  if (tariff=="overnight") $("#status-img").attr("src",path+"images/new-tick.png");
+  if (tariff=="generation") $("#status-img").attr("src",path+"images/new-tick.png");
   
   
   // If morning peak then wait until midday tariff
@@ -95,13 +95,13 @@ function cydynnistatus_update() {
   }
   
   // If evening peak then wait until overnight tariff
-  if (tariff=="hydro") {
+  if (tariff=="generation") {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
-      $("#tariff_summary").html(t("Now")+": "+t("Hydro Price"));
-      $("#status-until").html(t("Why? Plenty of hydro currently available"));
+      $("#tariff_summary").html(t("Now")+": "+t(ucfirst(club_settings.generator)+" Price"));
+      $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available"));
       
-      $("#tariff-now-title").html(t("HYDRO<br>PRICE")).css("color","#29aae3");
+      $("#tariff-now-title").html(t(club_settings.generator.toUpperCase()+"<br>PRICE")).css("color","#29aae3");
       $("#tariff-now-circle").css("background-color","#29aae3");
       $("#tariff-now-price").html("7p");
   }
@@ -110,17 +110,22 @@ function cydynnistatus_update() {
 
   //$(".tariff-img").hide();
  // $(".tariff-img[tariff="+tariff+"]").show();
+
+  var levels = {
+      bethesda: {high:50,medium:30,low:10},
+      towerpower: {high:3,medium:1,low:0.5}
+  }
  
-  if (live.hydro>=50) {
-      $("#hydro-status").html(t("HIGH"));
-  } else if (live.hydro>=30) {
-      $("#hydro-status").html(t("MEDIUM"));
-  } else if (live.hydro>=10) {
-      $("#hydro-status").html(t("LOW"));
+  if (live.generation>=levels["bethesda"].high) {
+      $("#generation-status").html(t("HIGH"));
+  } else if (live.generation>=levels["bethesda"].medium) {
+      $("#generation-status").html(t("MEDIUM"));
+  } else if (live.generation>=levels["bethesda"].low) {
+      $("#generation-status").html(t("LOW"));
   } else {
-      $("#hydro-status").html(t("VERY LOW"));
+      $("#generation-status").html(t("VERY LOW"));
   }
 
-  $("#hydro-power").html(Math.round(live.hydro));
+  $("#generation-power").html(Math.round(live.generation));
 }
 

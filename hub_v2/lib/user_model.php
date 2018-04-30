@@ -18,10 +18,11 @@ class User
         if (!isset($session['admin'])) $session['admin'] = 0;
         return $session;
     }
-
-    private function getbyusername($username) {
-        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+    
+    private function getbyemail($email) {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return false;
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ? LIMIT 1");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows!=1) return false;
@@ -37,10 +38,10 @@ class User
             "admin"=>$admin
         );
     }
-       
-    private function getbyemail($email) {
-        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
+    
+    private function getbyusername($username) {
+        $stmt = $this->mysqli->prepare("SELECT id,username,email,password,salt,admin FROM users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
         if ($stmt->num_rows!=1) return false;
@@ -206,6 +207,13 @@ class User
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Invalid email";
         $this->mysqli->query("UPDATE users SET email = '$email' WHERE id = '$userid'");
         return "Email updated";
+    }
+    
+    public function change_username($userid, $username) 
+    {
+        $userid = (int) $userid;
+        $this->mysqli->query("UPDATE users SET username = '$username' WHERE id = '$userid'");
+        return "Username updated";
     }
 
     //---------------------------------------------------------------------------------------
