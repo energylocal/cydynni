@@ -1,7 +1,24 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 3;
+$v = 6;
+
+$tariffs = array(
+    "bethesda"=>array(
+        "generation"=>array("name"=>"Hydro","cost"=>0.07,"color"=>"#29aae3"),
+        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
+        "midday"=>array("name"=>"Midday","cost"=>0.10,"color"=>"#4abd3e"),
+        "evening"=>array("name"=>"Evening","cost"=>0.14,"color"=>"#c92760"),
+        "overnight"=>array("name"=>"Overnight","cost"=>0.0725,"color"=>"#274e3f")
+    ),
+    "towerpower"=>array(
+        "generation"=>array("name"=>"Solar","cost"=>0.07,"color"=>"#29aae3"),
+        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
+        "midday"=>array("name"=>"Midday","cost"=>0.12,"color"=>"#4abd3e"),
+        "evening"=>array("name"=>"Evening","cost"=>0.12,"color"=>"#c92760"),
+        "overnight"=>array("name"=>"Overnight","cost"=>0.12,"color"=>"#274e3f")
+    )
+);
 
 ?>
 
@@ -14,35 +31,35 @@ $v = 3;
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"
     <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="images/icon/ms-icon-144x144.png">
+    <meta name="msapplication-TileImage" content="<?php echo $path; ?>images/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#006400">
-    <link rel="apple-touch-icon" sizes="57x57" href="images/icon/apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="images/icon/apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="images/icon/apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="images/icon/apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="images/icon/apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="images/icon/apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="images/icon/apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="images/icon/apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="images/icon/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="images/icon/android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="57x57" href="<?php echo $path; ?>images/icon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="<?php echo $path; ?>images/icon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="<?php echo $path; ?>images/icon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="<?php echo $path; ?>images/icon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="<?php echo $path; ?>images/icon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="<?php echo $path; ?>images/icon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="<?php echo $path; ?>images/icon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="<?php echo $path; ?>images/icon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo $path; ?>images/icon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="<?php echo $path; ?>images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo $path; ?>images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="<?php echo $path; ?>images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo $path; ?>images/icon/favicon-16x16.png">
+    <link rel="manifest" href="<?php echo $path; ?>manifest.json">
 
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
     
-    <script type="text/javascript" src="lib/flot/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.time.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.selection.min.js"></script>
-    <script type="text/javascript" src="lib/flot/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="lib/flot/date.format.js"></script>
-    <script type="text/javascript" src="lib/vis.helper.js"></script>
-    <script type="text/javascript" src="lib/feed.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.time.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.selection.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/jquery.flot.stack.min.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/flot/date.format.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/vis.helper.js"></script>
+    <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css?v=<?php echo $v; ?>" />
     
     </head>
     <body>
@@ -51,8 +68,8 @@ $v = 3;
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
                 <div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>
 
-                <div id="logout" class="oembluebar-item" style="float:right"><img src="images/logout.png" height="18px"/></div>
-                <div id="account" class="oembluebar-item" style="float:right"><img src="images/el-person-icon.png" height="18px"/></div>
+                <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
+                <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
                 <div id="togglelang" class="oembluebar-item" style="float:right"></div>
 
             </div>
@@ -61,18 +78,18 @@ $v = 3;
             <div class="app">
                 <div class="app-inner">
                     <div class="title-wrapper">
-                        <img class="logo-full" src='images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
-                        <img class="logo-mobile" src='images/logo.png'>
+                        <img class="logo-full" src='<?php echo $path; ?>images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
+                        <img class="logo-mobile" src='<?php echo $path; ?>images/logo.png'>
                         <div class="app-title">
                         <div class="app-title-content"><?php echo t("Energy<br>Dashboard"); ?>
                         </div>
                     </div>
                 </div>
                 <ul class="navigation">
-                    <li name="forecast"><div><img src="images/forecast.png"><div class="nav-text"><?php echo t("CydYnni<br>Forecast"); ?></div></div></li>
-                    <li name="household"><div><img src="images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
-                    <li name="club"><div><img src="images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <li name="tips"><div><img src="images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                    <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
+                    <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+                    <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
+                    <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
@@ -86,7 +103,7 @@ $v = 3;
                   <div style="background-color:#39aa1a; color:#fff">
                   
                     <div id="status-pre" style="padding:10px;"></div>
-                    <img id="status-img" src="images/new-tick.png"/>
+                    <img id="status-img" src="<?php echo $path; ?>images/new-tick.png"/>
                     <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
                     <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
                     
@@ -111,8 +128,8 @@ $v = 3;
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
-                    <div id="hydro-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> <span id="hydro-power">0</span> kW <?php echo t("now"); ?>
+                    <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <?php echo t("Forecasting"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
                   </div>
                   
                   <div class="no-padding">
@@ -134,7 +151,7 @@ $v = 3;
                       <div class="legend-label-box" style="background-color:#014c2d"></div>
                       <span class="legend-label"><?php echo t("Overnight");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
-                      <span class="legend-label" ><?php echo t("Hydro"); ?></span>
+                      <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
                     </div>
                     
                     <div id="club_bargraph_bound" style="width:100%; height:405px;">
@@ -143,8 +160,8 @@ $v = 3;
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t("Hydro output is currently exceeding club consumption"); ?><br>
-                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated hydro output and club consumption up to the present time"); ?></span>
+                  <?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?><br>
+                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>
                   </div>
 
                 </div>
@@ -168,8 +185,8 @@ $v = 3;
                   </div>
                     
                   <br>
-                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t("HYDRO<br>PRICE"); ?></div>
-                  <div id="tariff-now-circle" class="circle bg-hydro">
+                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
+                  <div id="tariff-now-circle" class="circle bg-generation">
                       <div class="circle-inner">
                           <div id="tariff-now-price" style="font-size:36px">7p</div>
                           <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -185,11 +202,11 @@ $v = 3;
 
                   <br>
 
-                  <div id="hydro-tariff-box" class="box5" style="color:#29aae3">
-                      <div style="font-size:26px; font-weight:bold"><?php echo t("HYDRO<br>PRICE"); ?></div>
+                  <div id="generation-tariff-box" class="box5" style="color:#29aae3">
+                      <div style="font-size:26px; font-weight:bold"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
                       <div style="font-size:14px; padding:5px"><?php echo t("Your local electricity"); ?></div>
 
-                      <div class="circle bg-hydro">
+                      <div class="circle bg-generation">
                           <div class="circle-inner">
                               <div style="font-size:36px">7p</div>
                               <div style="font-size:22px"><?php echo t("per unit"); ?></div>
@@ -330,11 +347,11 @@ $v = 3;
                   </div>
                 </div>
                 <br>
-                <img id="household_star1" src="images/starred.png" style="width:45px">
-                <img id="household_star2" src="images/starred.png" style="width:45px">
-                <img id="household_star3" src="images/star20red.png" style="width:45px">
-                <img id="household_star4" src="images/star20red.png" style="width:45px">
-                <img id="household_star5" src="images/star20red.png" style="width:45px">
+                <img id="household_star1" src="<?php echo $path; ?>images/starred.png" style="width:45px">
+                <img id="household_star2" src="<?php echo $path; ?>images/starred.png" style="width:45px">
+                <img id="household_star3" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
+                <img id="household_star4" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
+                <img id="household_star5" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
               
                 <p class="household_status"></p>
                 
@@ -423,26 +440,12 @@ $v = 3;
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
+                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
-                            <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t("Hydro Power");?></b><br><span id="household_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_hydro_cost"></span></td>
+                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
                           </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#ffdc00"></div></td>
-                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#4abd3e"></div></td>
-                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#c92760"></div></td>
-                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#274e3f"></div></td>
-                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
-                          </tr>
+                          <?php } ?>
                         </table>
                       </div>
                     </div>
@@ -480,11 +483,11 @@ $v = 3;
                     </div>
                   </div>
                   <br>
-                  <img id="club_star1" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star2" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star3" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star4" src="images/star20yellow.png" style="width:45px">
-                  <img id="club_star5" src="images/star20yellow.png" style="width:45px">
+                  <img id="club_star1" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star2" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star3" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star4" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
+                  <img id="club_star5" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
                 
                   <br><br>
                   <div class="bound" id="club_statusmsg"></div><br>
@@ -506,13 +509,13 @@ $v = 3;
                 <br>
                 <div class="circle bg-club">
                     <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px" class="club_hydro_value" >£00.00</div>
+                        <div style="font-size:36px" class="club_generation_value" >£00.00</div>
                     </div>
                 </div>
                 <br>
                 
                 <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource hydro power!"); ?></div>
+                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?></div>
                 </div>
                   
                 </div>
@@ -522,7 +525,7 @@ $v = 3;
                 <div class="block-content">
                 
                     <div class="bg-club2">
-                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the hydro."); ?></div>
+                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the ".$club_settings["generator"]."."); ?></div>
                     </div>
                     
                     <div class="no-padding">
@@ -536,8 +539,8 @@ $v = 3;
 
                     <!--
                     <div class="box3">
-                      <div id="hydro_droplet_bound" style="margin: 0 auto">
-                        <canvas id="hydro_droplet_placeholder"></canvas>
+                      <div id="generation_droplet_bound" style="margin: 0 auto">
+                        <canvas id="generation_droplet_placeholder"></canvas>
                       </div>
                     </div>-->
                     
@@ -566,26 +569,12 @@ $v = 3;
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
+                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
-                            <td><div class="key" style="background-color:#29abe2"></div></td>
-                            <td><b><?php echo t("Hydro Power");?></b><br><span id="club_hydro_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="club_hydro_cost"></span></td>
+                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
                           </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#ffdc00"></div></td>
-                            <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="club_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="club_morning_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#4abd3e"></div></td>
-                            <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="club_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="club_midday_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#c92760"></div></td>
-                            <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="club_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="club_evening_cost"></span></td>
-                          </tr>
-                          <tr>
-                            <td><div class="key" style="background-color:#274e3f"></div></td>
-                            <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="club_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="club_overnight_cost"></span></td>
-                          </tr>
+                          <?php } ?>
                         </table>
                       </div>
                     </div>
@@ -593,7 +582,7 @@ $v = 3;
                     <div style="clear:both"></div>
 
                     <div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of hydro, the more money stays in the local club."); ?></div>
+                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings["generator"].", the more money stays in the local club."); ?></div>
                     </div>
                     
                 </div>
@@ -609,17 +598,17 @@ $v = 3;
                 <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content bg-tips" style="padding:20px">
                     <figure class="tips-appliance show-fig">
-                        <img src="images/dishwasher.png">
+                        <img src="<?php echo $path; ?>images/dishwasher.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("DISHWASHER") ?></h2>
                             </div>
-                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/lamp.png">
+                        <img src="<?php echo $path; ?>images/lamp.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("LED LIGHTS") ?></h2>
@@ -629,7 +618,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/stove.png">
+                        <img src="<?php echo $path; ?>images/stove.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("COOKING") ?></h2>
@@ -639,7 +628,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/slowcooker.png">
+                        <img src="<?php echo $path; ?>images/slowcooker.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("SLOW COOKING") ?></h2>
@@ -649,17 +638,17 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/washingmachine.png">
+                        <img src="<?php echo $path; ?>images/washingmachine.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("WASHING MACHINE") ?></h2>
                             </div>
-                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of hydro power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/fridge.png">
+                        <img src="<?php echo $path; ?>images/fridge.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("FRIDGES & FREEZERS") ?></h2>
@@ -669,7 +658,7 @@ $v = 3;
                         </figcaption>
                     </figure>
                     <figure class="tips-appliance">
-                        <img src="images/lightbulb.png">
+                        <img src="<?php echo $path; ?>images/lightbulb.png">
                         <figcaption>
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("LIGHTS") ?></h2>
@@ -711,23 +700,35 @@ $v = 3;
 </body>
 </html>
 
-<script language="javascript" type="text/javascript" src="js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/pie.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/household.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/club.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="js/user.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/household.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/club.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script>
 
 var path = "<?php echo $path; ?>";
+var club = "<?php echo $club; ?>";
+var club_settings = <?php echo json_encode($club_settings);?>;
+
+var generation_feed = club_settings.generation_feed;
+var consumption_feed = club_settings.consumption_feed;
+var languages = club_settings.languages;
+
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
+var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
+
 // Language selection top-right
-if (lang=="cy") {
-    $("#togglelang").html("English");
-} else {
-    $("#togglelang").html("Cymraeg");
+
+if (languages.length>1) {
+    if (lang=="cy") {
+        $("#togglelang").html("English");
+    } else {
+        $("#togglelang").html("Cymraeg");
+    }
 }
 
 if (!session.write) {
@@ -852,9 +853,9 @@ $(".rightclick").click(function(){
         }
 });
 
-$("#dashboard").click(function(){ window.location = "/?lang="+lang; });
-$("#reports").click(function(){ window.location = "report?lang="+lang; });
-$("#account").click(function(){ window.location = "account?lang="+lang; });
+$("#dashboard").click(function(){ window.location = path+club+"?lang="+lang; });
+$("#reports").click(function(){ window.location = path+club+"/report?lang="+lang; });
+$("#account").click(function(){ window.location = path+club+"/account?lang="+lang; });
 
 // Javascript text translation function
 function t(s) {
@@ -863,5 +864,9 @@ function t(s) {
     } else {
         return s;
     }
+}
+
+function ucfirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 </script>

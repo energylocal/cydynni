@@ -34,7 +34,7 @@ while ($row = $result_users->fetch_object())
 
     if ($cydynni->token!="") 
     {
-        $content = get_household_consumption($meter_data_api_baseurl,$cydynni->token);
+        $content = get_household_consumption($meter_data_api_baseurl,1,$cydynni->token);
         
         if ($content!="Invalid data" && $content!="Date mismatch") {
             print json_encode($content)."\n";

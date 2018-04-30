@@ -8,11 +8,9 @@
     <title>Cyd Ynni</title>
 
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <link rel="stylesheet" type="text/css" href="theme/forms.css" />
-    <link rel="stylesheet" type="text/css" href="theme/buttons.css" />
     <link rel="stylesheet" type="text/css" href="admin.css" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
-    <script language="javascript" type="text/javascript" src="lib/jquery-1.11.3.min.js"></script>
+    <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
     
     <style>
       .container {
@@ -108,7 +106,6 @@
 
 <script>
 var path = "<?php echo $path; ?>";
-console.log(path);
 var session = <?php echo json_encode($session); ?>;
 
 var users = [];

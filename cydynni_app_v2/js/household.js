@@ -7,13 +7,10 @@ Household page
 var end = 0;
 var start = 0;
 
-var household_pie1_data = [];
-var household_pie2_data = [];
+var household_pie_data_cost = [];
+var household_pie_data_energy = [];
 
-var household_pie3_data_cost = [];
-var household_pie3_data_energy = [];
-
-var household_hydro_use = 0;
+var household_generation_use = 0;
 var householdseries = [];
 
 var household_overnight_data = [];
@@ -28,19 +25,19 @@ var household_view = "piechart";
 function household_summary_load()
 {    
   $.ajax({                                      
-      url: path+"household/summary/day",
+      url: path+club+"/household/summary/day",
       dataType: 'json',                  
       success: function(result) {
           
           // 1. Determine score
-          // Calculated as amount of power consumed at times off peak times and from hydro
-          var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.hydro) / result.kwh.total));
+          // Calculated as amount of power consumed at times off peak times and from generation
+          var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
           
-          if (score>20) $("#household_star1").attr("src","images/starred.png");
-          if (score>40) setTimeout(function() { $("#household_star2").attr("src","images/starred.png"); }, 100);
-          if (score>60) setTimeout(function() { $("#household_star3").attr("src","images/starred.png"); }, 200);
-          if (score>80) setTimeout(function() { $("#household_star4").attr("src","images/starred.png"); }, 300);
-          if (score>90) setTimeout(function() { $("#household_star5").attr("src","images/starred.png"); }, 400);
+          if (score>20) $("#household_star1").attr("src",path+"images/starred.png");
+          if (score>40) setTimeout(function() { $("#household_star2").attr("src",path+"images/starred.png"); }, 100);
+          if (score>60) setTimeout(function() { $("#household_star3").attr("src",path+"images/starred.png"); }, 200);
+          if (score>80) setTimeout(function() { $("#household_star4").attr("src",path+"images/starred.png"); }, 300);
+          if (score>90) setTimeout(function() { $("#household_star5").attr("src",path+"images/starred.png"); }, 400);
           
           // Show status summary ( below score stars )
           setTimeout(function() {
@@ -48,7 +45,7 @@ function household_summary_load()
                   $(".household_status").html(t("You are using power in a very expensive way"));
               }
               if (score>=30 && score<70) {
-                  $(".household_status").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
+                  $(".household_status").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
               }
               if (score>=70) {
                   $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
@@ -72,52 +69,31 @@ function household_summary_load()
           var costsaving = totalcostflatrate - result.cost.total;
           $(".household_costsaving").html("£"+costsaving.toFixed(2));
 
-          // household pie chart
-          household_pie1_data = [
-            {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"},
-            {name:t("HYDRO"), value: result.kwh.hydro, color:"#29aae3"} 
-          ];
-
-          // household pie chart
-          household_pie2_data = [
-            {name:t("MORNING"), value: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), value: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), value: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), value: result.kwh.overnight, color:"#274e3f"} 
-          ];
+          household_pie_data_cost = [];
+          household_pie_data_energy = [];
           
-          // household pie chart
-          household_pie3_data_cost = [
-            {name:t("MORNING"), hydro: result.hydro.morning*0.07, import: result.kwh.morning*0.12, color:"#ffdc00"},
-            {name:t("MIDDAY"), hydro: result.hydro.midday*0.07, import: result.kwh.midday*0.10, color:"#4abd3e"},
-            {name:t("EVENING"), hydro: result.hydro.evening*0.07, import: result.kwh.evening*0.14, color:"#c92760"},
-            {name:t("OVERNIGHT"), hydro: result.hydro.overnight*0.07, import: result.kwh.overnight*0.0725, color:"#274e3f"} 
-          ];
+          for (var z in tariffs) {
+              if (z!="generation") {
+                  household_pie_data_cost.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z]*tariffs.generation.cost, 
+                      import: result.kwh[z]*tariffs[z].cost, 
+                      color:tariffs[z].color
+                  });
+                  
+                  household_pie_data_energy.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z], 
+                      import: result.kwh[z], 
+                      color:tariffs[z].color
+                  });
+              }
           
-          // household pie chart
-          household_pie3_data_energy = [
-            {name:t("MORNING"), hydro: result.hydro.morning, import: result.kwh.morning, color:"#ffdc00"},
-            {name:t("MIDDAY"), hydro: result.hydro.midday, import: result.kwh.midday, color:"#4abd3e"},
-            {name:t("EVENING"), hydro: result.hydro.evening, import: result.kwh.evening, color:"#c92760"},
-            {name:t("OVERNIGHT"), hydro: result.hydro.overnight, import: result.kwh.overnight, color:"#274e3f"} 
-          ];
-          
-          $("#household_hydro_kwh").html(result.kwh.hydro);
-          $("#household_morning_kwh").html(result.kwh.morning);
-          $("#household_midday_kwh").html(result.kwh.midday);
-          $("#household_evening_kwh").html(result.kwh.evening);
-          $("#household_overnight_kwh").html(result.kwh.overnight);
-
-          $("#household_hydro_cost").html((result.kwh.hydro*0.07).toFixed(2));
-          $("#household_morning_cost").html((result.kwh.morning*0.12).toFixed(2));
-          $("#household_midday_cost").html((result.kwh.midday*0.10).toFixed(2));
-          $("#household_evening_cost").html((result.kwh.evening*0.14).toFixed(2));
-          $("#household_overnight_cost").html((result.kwh.overnight*0.0725).toFixed(2));
-          
-          household_hydro_use = result.kwh.hydro;
+              $("#household_"+z+"_kwh").html(result.kwh[z]);
+              $("#household_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+          }
+              
+          household_generation_use = result.kwh.generation;
           household_pie_draw();
       } 
   });
@@ -140,13 +116,8 @@ function household_pie_draw() {
       height: height
     };
     
-    piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
-
-   
-    // Pie chart
-    // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_hydro_use,options);
-
-    piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
+    piegraph3("household_piegraph1_placeholder",household_pie_data_energy,options);
+    piegraph3("household_piegraph2_placeholder",household_pie_data_cost,options);
 
 
     var options = {
@@ -156,10 +127,8 @@ function household_pie_draw() {
       height: 50
     };
     
-    hrbar("household_hrbar1_placeholder",household_pie3_data_energy,options); 
-    hrbar("household_hrbar2_placeholder",household_pie3_data_cost,options); 
-    // Hydro droplet
-    // hydrodroplet("hydro_droplet_placeholder",(community_hydro_use*1).toFixed(1),{width: width,height: height});
+    hrbar("household_hrbar1_placeholder",household_pie_data_energy,options); 
+    hrbar("household_hrbar2_placeholder",household_pie_data_cost,options);
 }
 
 function household_bargraph_load() {
@@ -168,7 +137,7 @@ function household_bargraph_load() {
   
     var data = [];
     $.ajax({                                      
-        url: path+"data"+history,
+        url: path+club+"/data"+history,
         dataType: 'json',
         async: true,                      
         success: function(result) {
@@ -228,11 +197,6 @@ function household_bargraph_load() {
                     stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                 });
-                
-                //householdseries.push({
-                //    data: household_data, color: "#e62f31",
-                //    bars: { show: true, align: "center", barWidth: 0.75*3600*0.5*1000, fill: 1.0, lineWidth:0}
-                //});
                 
                 household_bargraph_resize();
             }

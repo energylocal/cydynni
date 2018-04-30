@@ -2,7 +2,7 @@ var droplet = new Image();
 droplet.src = "images/droplet.png";
 droplet.onload = function () { }
     
-function hydrodroplet(element,value,options)
+function generationdroplet(element,value,options)
 {
     // Droplet size based on width
     var size = options.width;

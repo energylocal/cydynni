@@ -13,7 +13,7 @@ $mysqli = @new mysqli($mysql['server'],$mysql['username'],$mysql['password'],$my
 $schema = array();
 $schema['users'] = array(
     'id' => array('type' => 'int(11)', 'Null'=>'NO', 'Key'=>'PRI', 'Extra'=>'auto_increment'),
-    'email' => array('type' => 'varchar(30)'),
+    'email' => array('type' => 'varchar(64)'),
     'dbhash' => array('type' => 'varchar(64)'),
     'salt' => array('type' => 'varchar(32)'),
     'admin' => array('type' => 'int(11)', 'Null'=>'NO'),
