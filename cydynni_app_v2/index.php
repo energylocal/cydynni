@@ -91,6 +91,8 @@ $lang = "";
 // 1. Fetch query
 $q = ""; if (isset($_GET['q'])) $q = $_GET['q'];
 
+if ($q=="report") $q="bethesda/report";
+
 // 2. Explode into parts
 $query_parts = explode("/",$q);
 
