@@ -59,7 +59,7 @@ $tariffs = array(
     <script type="text/javascript" src="<?php echo $path; ?>lib/vis.helper.js"></script>
     <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css?v=<?php echo $v; ?>" />
     
     </head>
     <body>
@@ -90,7 +90,7 @@ $tariffs = array(
                     <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
                     <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
-                    <li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
+                    <!--<li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>-->
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
