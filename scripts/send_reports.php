@@ -44,7 +44,7 @@ while ($row = $result_users->fetch_object())
     if ($cydynni->mpan && array_search($cydynni->mpan,$skip)===false) {
 
         
-        $report = get_household_consumption_monthly($meter_data_api_baseurl,$cydynni->token);
+        $report = get_household_consumption_monthly($meter_data_api_baseurl,$club_settings["bethesda"]["api_prefix"],$cydynni->token);
         if ($report!="Invalid data") {
             // print "Report: ".json_encode($report);
             // print $user->send_report_email($userid);
@@ -53,7 +53,7 @@ while ($row = $result_users->fetch_object())
                 
                 if (($report[0]["estimate"]*1)<15) {
                     //print "sending";
-                    if ($cydynni->reportdate!="13-03-2018") {
+                    if ($cydynni->reportdate!="18-04-2018") {
                         print $user->send_report_email($userid);
                     }
                 }
