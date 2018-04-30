@@ -8,8 +8,8 @@ $v=1;
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>CydYnni Report</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>style.css" />
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>report.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/report.css" />
   </head>
 
   <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
