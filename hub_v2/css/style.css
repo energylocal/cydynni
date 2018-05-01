@@ -10,18 +10,18 @@ body {
 }
 
 a {
-    text-decoration:none;
-    color:#fff;
+   text-decoration:none;
+   color:#fff;
 }
 
 a:hover {
-    text-decoration:none;
-    color:#fff;
+   text-decoration:none;
+   color:#fff;
 }
 
 a:visited {
-    text-decoration:none;
-    color:#fff;
+   text-decoration:none;
+   color:#fff;
 }
 
 :root {
@@ -310,28 +310,28 @@ a:visited {
 
 .circle {
     margin: 0 auto;
-    border-radius: 50%;
-    width: 150px;
-    height: 150px;
+	  border-radius: 50%;
+	  width: 150px;
+	  height: 150px;
 }
 
 .circle-inner {
-    color:#fff;
-    padding-top: 40px;
-    font-weight:bold;
+	  color:#fff;
+	  padding-top: 40px;
+	  font-weight:bold;
 }
 
 .circle-small {
     margin: 0 auto;
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
+	  border-radius: 50%;
+	  width: 120px;
+	  height: 120px;
 }
 
 .circle-small-inner {
-    color:#fff;
-    padding-top: 30px;
-    font-weight:bold;
+	  color:#fff;
+	  padding-top: 30px;
+	  font-weight:bold;
 }
 
 .bg-generation { background-color: #29aae3; color:#fff; }
@@ -448,22 +448,22 @@ a:visited {
 
 
 .visnav-block {
-    float:right;
-    margin-top:-10px;
-    margin-right:10px;
+  float:right;
+  margin-top:-10px;
+  margin-right:10px;
 }
 
 .visnav-club {
-    display:inline-block;
-    border-left: 1px solid rgba(255,255,255,0.2);
-    padding:10px;
-    cursor:pointer;
-    font-size:14px;
-    float:left;
+  display:inline-block;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding:10px;
+  cursor:pointer;
+  font-size:14px;
+  float:left;
 }
 
 .visnav-club:hover {
-    background-color:rgba(255,255,255,0.2);
+  background-color:rgba(255,255,255,0.2);
 }
 
 
@@ -509,16 +509,15 @@ input[type="url"],
 input[type="password"],
 textarea,
 select {
-    height: 38px;
-    padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
-    background-color: #fff;
-    border: 0;
-    font-size:18px;
-    
-    box-shadow: none;
-    box-sizing: border-box;
-}
-
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 0;
+  font-size:18px;
+  
+  box-shadow: none;
+  box-sizing: border-box; }
+  
 /* Removes awkward default styles on some inputs for iOS */
 input[type="email"],
 input[type="number"],
@@ -528,10 +527,9 @@ input[type="tel"],
 input[type="url"],
 input[type="password"],
 textarea {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none; 
-}
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
 
 /* --------------------------------------------------------------- */
 
@@ -554,41 +552,41 @@ textarea {
 /* --------------------------------------------------------------- */
 
 @media (max-width: 650px) {
-    .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
-    
-    /*.app-title {font-size:24px}*/
-    
-    .logo-full {
-        height:70px;
-        padding:10px;
-    }
-    
-    .logo-mobile {
-        height:70px;
-        padding:10px;
-    }
+  .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
+  
+  /*.app-title {font-size:24px}*/
+  
+  .logo-full {
+      height:70px;
+      padding:10px;
+  }
+
+  .logo-mobile {
+      height:70px;
+      padding:10px;
+  }
 }
 
 @media (max-width: 750px) {
-    .nav-text {
-        display:none;
-    }
-    
-    .navigation li > div {
-        text-align:center;
-    }
-    
-    .navigation li > div > img {
-        float:none;
-    }
-    
-    .logo-mobile { display: inline-block }
-    .logo-full { display:none }
+  .nav-text {
+      display:none;
+  }
+  
+  .navigation li > div {
+      text-align:center;
+  }
+  
+  .navigation li > div > img {
+      float:none;
+  }
+  
+  .logo-mobile { display: inline-block }
+  .logo-full { display:none }
 }
-
+    
 @media (min-width: 750px) {
-    .logo-mobile { display:none }
-    .logo-full { display:block }
+  .logo-mobile { display:none }
+  .logo-full { display:block }
 }
 
 /* --------------------------------------------------------------- */
@@ -622,56 +620,56 @@ textarea {
 }
 
 .device-name { 
-    font-weight:bold;
-    float:left;
-    padding:10px;
-    padding-right:5px;
+  font-weight:bold;
+	float:left;
+	padding:10px;
+	padding-right:5px;
 }
 
 .device-description { 
-    color:#eac9ba;
-    float:left;
-    padding-top:10px;
+  color:#eac9ba;
+	float:left;
+	padding-top:10px;
 }
 
 .device-key {
-    float:right;
-    padding:10px;
-    min-width:30px;
-    text-align:center;
-    color:#fff;
-    border-left: 1px solid #eee;
+	float:right;
+	padding:10px;
+	min-width:30px;
+	text-align:center;
+	color:#fff;
+	border-left: 1px solid #eee;
 }
 
 .device-schedule {
-    float:right;
-    padding:10px;
-    min-width:30px;
-    text-align:center;
-    color:#fff;
-    border-left: 1px solid #eee;
-    display:none;
+	float:right;
+	padding:10px;
+	min-width:30px;
+	text-align:center;
+	color:#fff;
+	border-left: 1px solid #eee;
+	display:none;
 }
 
 .device-delete {
-    float:right;
-    padding:10px;
-    min-width:30px;
-    text-align:center;
-    color:#fff;
+	float:right;
+	padding:10px;
+	min-width:30px;
+	text-align:center;
+	color:#fff;
 }
 
 .device-delete:hover {
-    background-color:rgba(255,255,255,0.2);
+  background-color:rgba(255,255,255,0.2);
 }
 
 .device-configure {
-    float:right;
-    padding:10px;
-    width:30px;
-    text-align:center;
-    color:#666;
-    border-left: 1px solid #eee;
+	float:right;
+	padding:10px;
+	width:30px;
+	text-align:center;
+	color:#666;
+	border-left: 1px solid #eee;
 }
 
 .device-key:hover {background-color:#eaeaea;}
@@ -730,7 +728,7 @@ textarea {
     width:40px;
     padding-top:10px;
     text-align:center;
-    cursor:pointer;
+	  cursor:pointer;
 }
 
 .ipad {
@@ -810,9 +808,9 @@ input[type="checkbox"] { margin:0px; }
 }
 
 .scheduler-checkbox-label {
-    padding-top:7px;
-    padding-left:10px;
-    float:left;
+  padding-top:7px;
+  padding-left:10px;
+  float:left;
 }
 
 .scheduler-checkbox[state="1"] {
@@ -889,6 +887,7 @@ input[type="checkbox"] { margin:0px; }
     text-decoration: none;
     cursor: pointer;
 } 
+
 /*alert style boxes*/
 .notification{
     border-radius: 4px;
