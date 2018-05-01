@@ -800,18 +800,18 @@ $tariffs = array(
         <!---------------------------------------------------------------------------------------------------------------------------->
       </div>
 
-      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px">Clear</button>
+      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px"><?php echo t('Clear') ?></button>
       <span id="scheduler-notification"></span>
       <br><br>
-      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div>Schedule Output</div>
+      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div><?php echo t('Schedule Output') ?></div>
 
       <div class="schedule-output-box">
         <div id="schedule-output"></div>
         <div id="placeholder_bound" style="width:100%; height:300px">
           <div id="placeholder" style="height:300px"></div>
         </div>
-
-        Higher bar height equals more power available
+        <?php echo t('Higher bar height equals more power available') ?>
+        
       </div> <!-- schedule-output-box -->      
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
