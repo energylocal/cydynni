@@ -915,12 +915,12 @@ input[type="checkbox"] { margin:0px; }
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;
 }
-  
-  @keyframes fadeOut {
+
+@keyframes fadeOut {
     from {
-      opacity: 1;
+        opacity: 1;
     }
     to {
-      opacity: 0;
+        opacity: 0;
     }
-  }
+}
