@@ -148,6 +148,8 @@ function scheduler_save(data,event) {
     if (notification){
         notification.classList.remove('fadeOut');//allow notification to be shown again.
         notification.innerText = '';
+    }else{
+        notification = document.createElement('span');
     }
     //effect the clicked button
     let button = event ? event.target: false;
@@ -157,10 +159,10 @@ function scheduler_save(data,event) {
         dataType: 'json',
         async: true,
         success: function(result) {
-            schedule = result.schedule;
-            if (result==null || result.schedule==null) schedule = {};
-            draw_schedule_output(schedule);
-            if (notification){//if dom element exists show notification
+            schedule = (result==null || result.schedule==null) ? {} : result.schedule;
+            success = !(result.hasOwnProperty('success') && result.success === false);
+            if (success){
+                draw_schedule_output(schedule);
                 if(result.schedule.end==0 && result.schedule.period==0){
                     message = t('Cleared');
                 }else{
@@ -172,8 +174,15 @@ function scheduler_save(data,event) {
             }
         }
     })
-    .always(function(){
-      button.classList.remove('is-faded');//remove the faded effect from the clicked button once the ajax finishes
+    .always(function(result){
+        //notify user of session timeout
+        success = !(result.hasOwnProperty('success') && result.success === false);
+        if(!success && result.message === 'Username or password empty'){
+            notification.classList.remove('hide');//remove the default hide class
+            notification.innerHTML = t('Session Timed out. <a href="/cydynni" class="btn">Please login</a>');
+            notification.classList.add('notification');//show notification and wait 3 seconds before fading out (using css class fadeOut
+        }
+        button.classList.remove('is-faded');//remove the faded effect from the clicked button once the ajax finishes
     });
 }
 
