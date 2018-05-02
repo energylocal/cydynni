@@ -308,13 +308,13 @@
 "Request sent": "Cais wedi'i anfon",
 "Confirm new password": "Cadarnhau'r cyfrinair Newydd",
 
-"Active": "Active",
-"Run period": "Run period",
-"hrs": "hrs",
-"Complete by": "Complete by",
-"Ok to interrupt schedule": "Ok to interrupt schedule",
-"Run once": "Run once",
-"Clear": "Clear",
-"Schedule Output": "Schedule Output",
-"Higher bar height equals more power available": "Higher bar height equals more power available"
+"Active": "Gweithredol",
+"Run period": "Cyfnod rhedeg",
+"hrs": "awr",
+"Complete by": "Cwblhau erbyn",
+"Ok to interrupt schedule": "Iawn i dorri ar draws yr amserlen",
+"Run once": "Rhedeg unwaith",
+"Clear": "Gwagio",
+"Schedule Output": "Amserlen",
+"Higher bar height equals more power available": "Mae bariau uwch yn cyfateb i fwy o bŵer sydd ar gael"
 }

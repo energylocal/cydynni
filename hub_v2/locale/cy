@@ -306,5 +306,15 @@
 "Old password incorect": "Hen cyfrinair yn anghywir",
 "New passwords don't match": "Nid yw cyfrineiriau'n cyfateb",
 "Request sent": "Cais wedi'i anfon",
-"Confirm new password": "Cadarnhau'r cyfrinair Newydd"
+"Confirm new password": "Cadarnhau'r cyfrinair Newydd",
+
+"Active": "Gweithredol",
+"Run period": "Cyfnod rhedeg",
+"hrs": "awr",
+"Complete by": "Cwblhau erbyn",
+"Ok to interrupt schedule": "Iawn i dorri ar draws yr amserlen",
+"Run once": "Rhedeg unwaith",
+"Clear": "Gwagio",
+"Schedule Output": "Amserlen",
+"Higher bar height equals more power available": "Mae bariau uwch yn cyfateb i fwy o bŵer sydd ar gael"
 }
