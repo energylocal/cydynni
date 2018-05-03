@@ -837,17 +837,7 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/bundled/html4+html5/jquery.history.js"></script>
-<script>
-    (function(window,undefined){
-        History.options.initialTitle = 'forecast';
-        // Bind to StateChange Event
-        History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
-        var State = History.getState(); // Note: We are using History.getState() instead of event.state
-        console.log('within statechange event');
-        show_page(State.title);
-    });
-})(window);
-</script>
+
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -895,7 +885,13 @@ if (!session.write) {
   $("#reports").show();
 }
 
-show_page("forecast");
+//show tab related to the page name shown after the ? (or show first tab)
+first_page = location.href.split('?');
+if (first_page.length>1){
+    show_page(first_page[first_page.length-1]);
+}else{
+    show_page("forecast");
+}
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
@@ -926,9 +922,8 @@ function show_page(page) {
         household_pie_draw();
         household_bargraph_resize();
     }
-    pages = "forecast|household|club|devices".split("|");
-    console.log('before pushstate');
-    History.pushState({state:1}, page, "?state="+pages.indexOf(page)); // logs {state:1}, "State 1", "?state=1"
+
+    History.pushState({}, page, "?"+page); 
 }
 
 $(window).resize(function(){
