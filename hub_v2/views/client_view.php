@@ -895,7 +895,7 @@ if (first_page.length>1){
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
-    show_page(page);
+    History.pushState({}, page, "?"+page);  
 });
 
 $(".block-title").click(function() {
@@ -922,8 +922,6 @@ function show_page(page) {
         household_pie_draw();
         household_bargraph_resize();
     }
-
-    History.pushState({}, page, "?"+page); 
 }
 
 $(window).resize(function(){
@@ -1020,7 +1018,6 @@ function ucfirst(string) {
 // Bind to StateChange Event
 History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
     var State = History.getState(); // Note: We are using History.getState() instead of event.state
-    History.pushState({}, State.title, "?"+State.title);
     show_page(State.title);
 });
 
