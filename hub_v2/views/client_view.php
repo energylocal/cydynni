@@ -887,9 +887,17 @@ if (!session.write) {
 }
 
 //show tab related to the page name shown after the ? (or show first tab)
-first_page = location.href.split('?');
-if (first_page.length>1){
-    show_page(first_page[first_page.length-1]);
+var url_string = location.href
+var url = new URL(url_string);
+var entries = url.searchParams.entries();
+var page = "";
+for(let entry of entries){
+    if(entry[0]!=="lang"){
+        page = entry[0];
+    }
+}
+if (page!=""){
+    show_page(page);
 }else{
     show_page("forecast");
 }

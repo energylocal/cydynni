@@ -36,17 +36,17 @@ or:
 
     http://cydynni/
     
-You will now be greated with the CydYnni hub login page. Enter your CydYnni username and password.
+You will now be greeted with the CydYnni hub login page. Enter your CydYnni username and password.
 
 ![setup5.png](images/setup5.png)
 
 ### 4. Explore your hub dashboard
 
-The first page presents the CydYnni forecast showing when its a good time to use electricity or not and the recent history of club consumption and generator output.
+The first page presents the CydYnni forecast showing when it's a good time to use electricity or not and the recent history of club consumption and generator output.
 
 ![setup7.png](images/setup7.png)
 
-The second page shows your score, which relates to how well your managing to match your use to local electricity and cheap times for extra electricity.
+The second page shows your score, which relates to how well you're managing to match your use to local electricity and cheap times for extra electricity.
 
 ![setup8.png](images/setup8.png)
 
@@ -70,7 +70,7 @@ The WIFI Access Point should appear in your laptop or phones available WIFI netw
 
 Select the WIFI network you wish to connect to, enter the passkey and click connect. 
 
-The green light on the smartplug will now turn on again. If the connection is successful you will see 10 very fast consequative flashes. 
+The green light on the smartplug will now turn on again. If the connection is successful you will see 10 very fast  consecutive flashes. 
 
 The web interface will also show that the module has connected and its IP address:
 
@@ -78,11 +78,11 @@ The web interface will also show that the module has connected and its IP addres
 
 **Failed Connection**
 
-If the smartplug fails to connect to the selected WIFI network the green LED will stay on with a slight pulsing rythym for 30 seconds before the plug automatically resets and tries again. To re-enter setup mode hold the button on the front of the smartplug down while the green led is on.
+If the smartplug fails to connect to the selected WIFI network the green LED will stay on with a slight pulsing rythym for 30 seconds before the plug automatically resets and tries again. To re-enter setup mode hold the button on the front of the smartplug down while the green LED is on.
 
 ---
 
-Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip  address to connect:
+Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
 
 ![setup13.png](images/setup13.png)
 
