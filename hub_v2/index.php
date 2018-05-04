@@ -329,7 +329,7 @@ switch ($q)
         if ($hour>=11 && $hour<16) $tariff = "midday";
         if ($hour>=16 && $hour<20) $tariff = "evening";
         if ($hour>=20) $tariff = "overnight";
-        if ($live->generation>=$live->club) $tariff = "hydro";
+        if ($live->generation>=$live->club) $tariff = "generation";
         
 //        $live->club = $live->community;
         
