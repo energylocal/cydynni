@@ -376,8 +376,7 @@ function auth_check(){
         } else {
             //show ip authorise message
             $("#auth-check").show();
-            $("#auth-check").html('Device on ip address: <span id="auth-check-ip"></span> would like to connect '+
-            '<button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>');
+            $("#auth-check").html(t('Device on ip address: <span id="auth-check-ip"></span> would like to connect <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>'));
             $("#auth-check-ip").text(data.ip);
         }
     })
