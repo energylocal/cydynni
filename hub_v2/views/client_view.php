@@ -60,6 +60,7 @@ $tariffs = array(
     <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
     <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/bulma.min.css" />
     
     </head>
     <body>
@@ -94,7 +95,7 @@ $tariffs = array(
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         <div class="page" name="forecast">
 
@@ -290,7 +291,7 @@ $tariffs = array(
 
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         
         <div class="page" name="household">
@@ -483,7 +484,7 @@ $tariffs = array(
        
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="club">
             <div class="block">
@@ -612,7 +613,7 @@ $tariffs = array(
         
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="tips">
             <div class="block">
@@ -752,7 +753,7 @@ $tariffs = array(
 <div class="scheduler-template hide">
   <div class="scheduler-inner">
     <div class="scheduler-startsin"><span class='startsin'></span></div>
-    <div class="scheduler-title">Schedule</div>
+    <div class="scheduler-title"><?php echo t("Schedule") ?></div>
 
     <div class="scheduler-inner2">
       <div class="scheduler-controls">
@@ -761,27 +762,27 @@ $tariffs = array(
         <!-- CONTROLS -->
         <!---------------------------------------------------------------------------------------------------------------------------->
         <div name="active" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Active</div>
+          <div class="scheduler-checkbox-label"><?php echo t("Active") ?></div>
           <div style='clear:both'></div>
         <br>
         
-        <div style="display:inline-block; width:120px;">Run period:</div>
-          <input class="input timepicker-hour" type="text" name="period-hour" style="width:45px" /> hrs
-          <input class="input timepicker-minute" type="text" name="period-minute" style="width:45px" /> mins
+        <div style="display:inline-block; width:120px;"><?php echo t("Run period") ?>:</div>
+          <input class="input timepicker-hour" data-lpignore="true" type="number" min="0" max="23" step="1" name="period-hour" style="width:65px" /> <?php echo t("hrs") ?>
+          <input class="input timepicker-minute" data-lpignore="true" type="number" min="0" max="59" step="30" name="period-minute" style="width:65px" /> <?php echo t("mins") ?>
         <br><br>
 
-        <div style="display:inline-block; width:120px;">Complete by:</div>
-          <input class="input timepicker-hour" type="text" name="end-hour" style="width:45px" /> : 
-          <input class="input timepicker-minute" type="text" name="end-minute" style="width:45px" />
+        <div style="display:inline-block; width:120px;"><?php echo t("Complete by") ?>:</div>
+          <input class="input timepicker-hour" data-lpignore="true" type="number" min="0" max="23" step="1" name="end-hour" style="width:65px" /> : 
+          <input class="input timepicker-minute" data-lpignore="true" type="number" min="0" max="59" step="30" name="end-minute" style="width:65px" />
         <br>
         <br>
         <div name="interruptible" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Ok to interrupt schedule</div>
+          <div class="scheduler-checkbox-label"><?php echo t("Ok to interrupt schedule") ?></div>
           <div style='clear:both'></div>
         <br>
         
         <div name="runonce" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label">Run once</div>
+          <div class="scheduler-checkbox-label"><?php echo t("Run once") ?></div>
           <div style='clear:both'></div>
         <br>
         
@@ -799,17 +800,18 @@ $tariffs = array(
         <!---------------------------------------------------------------------------------------------------------------------------->
       </div>
 
-      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px">Clear</button>
+      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px"><?php echo t('Clear') ?></button>
+      <span id="scheduler-notification"></span>
       <br><br>
-      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div>Schedule Output</div>
+      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div><?php echo t('Schedule Output') ?></div>
 
       <div class="schedule-output-box">
         <div id="schedule-output"></div>
         <div id="placeholder_bound" style="width:100%; height:300px">
           <div id="placeholder" style="height:300px"></div>
         </div>
-
-        Higher bar height equals more power available
+        <?php echo t('Higher bar height equals more power available') ?>
+        
       </div> <!-- schedule-output-box -->      
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
@@ -836,6 +838,8 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
+
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -882,11 +886,17 @@ if (!session.write) {
   $("#reports").show();
 }
 
-show_page("forecast");
+//show tab related to the page name shown after the ? (or show first tab)
+first_page = location.href.split('?');
+if (first_page.length>1){
+    show_page(first_page[first_page.length-1]);
+}else{
+    show_page("forecast");
+}
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
-    show_page(page);
+    History.pushState({}, page, "?"+page);  
 });
 
 $(".block-title").click(function() {
@@ -1005,4 +1015,11 @@ function t(s) {
 function ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Bind to StateChange Event
+History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
+    var State = History.getState(); // Note: We are using History.getState() instead of event.state
+    show_page(State.title);
+});
+
 </script>

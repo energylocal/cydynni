@@ -7,7 +7,7 @@ var options = {};
 var schedule = {};
 var scheduler_html = $(".scheduler-template").html();
 $(".scheduler-template").html("");
-            
+
 function draw_scheduler(devicein) 
 {   
     device = devicein;
@@ -36,17 +36,17 @@ function draw_scheduler(devicein)
             
             scheduler_update_ui();
             draw_schedule_output(schedule);
-
+            
         }});
     }});
 }
 
 // -------------------------------------------------------------------------
 
-$("#table").on("click",".scheduler-save",function(e) {
-
-    console.log("save");
-
+$("#table").on("click",".scheduler-save",function(event) {
+    
+    // console.log("save");
+    
     var tosave = {};
     for (var property in controls) {
         tosave[property] = controls[property].default;
@@ -54,11 +54,11 @@ $("#table").on("click",".scheduler-save",function(e) {
     
     for (var property in controls) {
         if (controls[property].type=="text") 
-            tosave[property] = $("input[name='"+property+"']").val();
+        tosave[property] = $("input[name='"+property+"']").val();
         if (controls[property].type=="checkbox") 
-            tosave[property] = $(".scheduler-checkbox[name='"+property+"']").attr("state")*1;
+        tosave[property] = $(".scheduler-checkbox[name='"+property+"']").attr("state")*1;
         if (controls[property].type=="time")
-            tosave[property] = (1*$("input[name='"+property+"-hour']").val()) + ($("input[name='"+property+"-minute']").val()/60);
+        tosave[property] = (1*$("input[name='"+property+"-hour']").val()) + ($("input[name='"+property+"-minute']").val()/60);
         if (controls[property].type=="weekly-scheduler") {
             tosave[property] = [];
             for (var i=0; i<7; i++) {
@@ -69,31 +69,31 @@ $("#table").on("click",".scheduler-save",function(e) {
         }
     }
     
-    scheduler_save(tosave);
+    scheduler_save(tosave,event);
 });
 
-$("#table").on("click",".scheduler-clear",function(e) {
-
+$("#table").on("click",".scheduler-clear",function(event) {
+    
     var tosave = {};
     for (var property in controls) {
         tosave[property] = controls[property].default;
     }
     
-    scheduler_save(tosave);
+    scheduler_save(tosave,event);
     scheduler_update_ui();
 });
 
 $("#table").on("click",".schedule-output-heading",function(e) {
-
-   var visible = $(".schedule-output-box").is(":visible");
-
-   if (visible) {
-       $(".schedule-output-box").hide(); 
-   } else {
-       $(".schedule-output-box").show(); 
-       draw_schedule_output(schedule);
-   }
-   
+    
+    var visible = $(".schedule-output-box").is(":visible");
+    
+    if (visible) {
+        $(".schedule-output-box").hide(); 
+    } else {
+        $(".schedule-output-box").show(); 
+        draw_schedule_output(schedule);
+    }
+    
     $(this).find(".triangle-dropdown").toggle();
     $(this).find(".triangle-pushup").toggle();
 });
@@ -135,19 +135,55 @@ function scheduler_update_ui() {
 }
 
 
-function scheduler_save(data) {    
+function scheduler_save(data,event) {    
     // ----------------------------------------------------------------------------------------------------
     // Scheduler
     // ----------------------------------------------------------------------------------------------------
+    var event = typeof event != 'undefined' ? event : false;
     var schedule = data;
     schedule.device = device;
     schedule.basic = 0;
+    //before ajax
+    let notification = document.getElementById('scheduler-notification');   
+    if (notification){
+        notification.classList.remove('fadeOut');//allow notification to be shown again.
+        notification.innerText = '';
+    }else{
+        notification = document.createElement('span');
+    }
+    //effect the clicked button
+    let button = event ? event.target: false;
+    if(button) button.classList.add('is-faded');
 
-    $.ajax({ url: emoncmspath+"demandshaper/submit?schedule="+JSON.stringify(schedule), dataType: 'json', async: true, success: function(result) {
-        schedule = result.schedule;
-        if (result==null || result.schedule==null) schedule = {};
-        draw_schedule_output(schedule);
-    }});
+    $.ajax({ url: emoncmspath+"demandshaper/submit?schedule="+JSON.stringify(schedule),
+        dataType: 'json',
+        async: true,
+        success: function(result) {
+            schedule = (result==null || result.schedule==null) ? {} : result.schedule;
+            success = !(result.hasOwnProperty('success') && result.success === false);
+            if (success){
+                draw_schedule_output(schedule);
+                if(result.schedule.end==0 && result.schedule.period==0){
+                    message = t('Cleared');
+                }else{
+                    message = t('Saved');
+                }
+                notification.classList.remove('hide');//remove the default hide class
+                notification.innerText = message;
+                notification.classList.add('fadeOut','notification');//show notification and wait 3 seconds before fading out (using css class fadeOut
+            }
+        }
+    })
+    .always(function(result){
+        //notify user of session timeout
+        success = !(result.hasOwnProperty('success') && result.success === false);
+        if(!success && result.message === 'Username or password empty'){
+            notification.classList.remove('hide');//remove the default hide class
+            notification.innerHTML = t('Session Timed out. <a href="/cydynni" class="btn">Please login</a>');
+            notification.classList.add('notification');//show notification and wait 3 seconds before fading out (using css class fadeOut
+        }
+        button.classList.remove('is-faded');//remove the faded effect from the clicked button once the ajax finishes
+    });
 }
 
 function draw_schedule_output(schedule)
@@ -161,9 +197,9 @@ function draw_schedule_output(schedule)
         
         var startsin = 0;
         if (now_hours>period_start) {
-           startsin = (24 - now_hours) + period_start
+            startsin = (24 - now_hours) + period_start
         } else {
-           startsin = period_start - now_hours
+            startsin = period_start - now_hours
         }
         
         var hour = Math.floor(startsin);
@@ -175,10 +211,10 @@ function draw_schedule_output(schedule)
         $(".startsin").html(text);
     } 
     
-
+    
     var periods = [];
     for (var z in schedule.periods) {
-
+        
         var start = 1*schedule.periods[z].start;
         if (start==0) start = "Midnight";
         else if (start==12) start = "Noon";
@@ -198,24 +234,24 @@ function draw_schedule_output(schedule)
         }
         periods.push(start+" to "+end+" ");
     }
-
+    
     out += "<b>"+periods.join(", ")+"</b>";
-
+    
     $("#schedule-output").html(out);
-
+    
     if (schedule.probability!=undefined) {
         var probability = schedule.probability;
-
+        
         var hh = 0;
         for (var z in probability) {
             if (1*probability[z][2]==schedule.end) hh = z;
         }
-
+        
         var markings = [];
         // { color: "#000", lineWidth: 2, xaxis: { from: probability[hh][0], to: probability[hh][0] } },
         if (hh>0) markings.push({ color: "rgba(0,0,0,0.1)", xaxis: { from: probability[hh][0] } });
-
-
+        
+        
         options = {
             bars: { show: true, barWidth:1800*1000*0.75 },// align: 'center'
             xaxis: { mode: "time", timezone: "browser" },
@@ -224,14 +260,14 @@ function draw_schedule_output(schedule)
             selection: { mode: "x" },
             touch: { pan: "x", scale: "x" }
         }
-
+        
         available = [];
         unavailable = [];
         for (var z in probability) {
             if (probability[z][4]) available.push([probability[z][0],probability[z][1]]);
             if (!probability[z][4]) unavailable.push([probability[z][0],probability[z][1]]);
         }
-
+        
         var width = $("#placeholder_bound").width();
         if (width>0) {
             $("#placeholder").width(width);
@@ -307,9 +343,9 @@ $("#table").on("click",".scheduler-checkbox",function(){
 
 $("#table").on("click",".weekly-scheduler-repeat",function(){
     if ($(this)[0].checked) {
-
+        
     } else {
-    
+        
     }
 });
 
@@ -318,7 +354,7 @@ $('#placeholder').bind("plothover", function (event, pos, item)
     if (item) {
         if (previousPoint != item.datapoint) {
             previousPoint = item.datapoint;
-
+            
             $("#tooltip").remove();
             var itemTime = item.datapoint[0];
             var itemVal = item.datapoint[1];
