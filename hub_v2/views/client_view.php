@@ -95,7 +95,7 @@ $tariffs = array(
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         <div class="page" name="forecast">
 
@@ -291,7 +291,7 @@ $tariffs = array(
 
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         
         <div class="page" name="household">
@@ -484,7 +484,7 @@ $tariffs = array(
        
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="club">
             <div class="block">
@@ -613,7 +613,7 @@ $tariffs = array(
         
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="tips">
             <div class="block">
@@ -838,6 +838,8 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
+
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -885,11 +887,17 @@ if (!session.write) {
   $("#reports").show();
 }
 
-show_page("forecast");
+//show tab related to the page name shown after the ? (or show first tab)
+first_page = location.href.split('?');
+if (first_page.length>1){
+    show_page(first_page[first_page.length-1]);
+}else{
+    show_page("forecast");
+}
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
-    show_page(page);
+    History.pushState({}, page, "?"+page);  
 });
 
 $(".block-title").click(function() {
@@ -1008,4 +1016,11 @@ function t(s) {
 function ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Bind to StateChange Event
+History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
+    var State = History.getState(); // Note: We are using History.getState() instead of event.state
+    show_page(State.title);
+});
+
 </script>
