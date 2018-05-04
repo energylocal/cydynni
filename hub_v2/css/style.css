@@ -888,7 +888,18 @@ input[type="checkbox"] { margin:0px; }
     cursor: pointer;
 } 
 
-/*alert style boxes*/
+.clearfix:before,
+.clearfix:after {
+  content: "";
+  display: table;
+} 
+.clearfix:after {
+  clear: both;
+}
+.clearfix {
+  zoom: 1; /* For IE 6/7 (trigger hasLayout) */
+}
+  /*alert style boxes*/
 .notification{
     border-radius: 4px;
     padding: 0.6rem 0.8rem;

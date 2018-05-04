@@ -359,14 +359,45 @@ $("#save-processlist").click(function (){
 // -------------------------------------------------------------------------------------------------------
 
 function auth_check(){
-    $.ajax({ url: emoncmspath+"device/auth/check.json", dataType: 'json', async: true, success: function(data) {
-        if (data!="no devices") {
-            $("#auth-check").show();
-            $("#auth-check-ip").html(data.ip);
-        } else {
+    $.ajax({ 
+        url: emoncmspath+"device/auth/check.json", 
+        dataType: 'json', 
+        async: true,
+        timeout: 3000
+    })
+    .done(function(data){
+        if (data==="no devices") {
+            //all good
             $("#auth-check").hide();
+        } else if(data.hasOwnProperty('success') && data.success===false){
+            //show session timeout message
+            $("#auth-check").show();
+            $("#auth-check").html(t('Session Timed out. <a href="/cydynni?return=/cydynni/?devices" class="btn">Please login</a>'));
+        } else {
+            //show ip authorise message
+            $("#auth-check").show();
+            $("#auth-check").html('Device on ip address: <span id="auth-check-ip"></span> would like to connect '+
+            '<button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>');
+            $("#auth-check-ip").text(data.ip);
         }
-    }});
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        //issue with connecting with hub
+        message = {"success":false,"message":t("Error Connecting to Hub")};
+        switch(textStatus){
+            case 'error':
+            case 'timeout':
+            default:
+                $("#auth-check").show();
+                $("#auth-check").html(t('Hub not available. Please ensure the Hub is powered and <a href="/cydynni?return=/cydynni/?devices" class="btn">Re-Login</a>'));
+        }
+    })
+    .always(function(){
+        //try agian after 5000ms (after success or fail)
+        window.setTimeout(function(){
+            auth_check();
+        }, 5000)
+    });
 }
 
 $(".auth-check-allow").click(function(){
