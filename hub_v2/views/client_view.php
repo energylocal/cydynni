@@ -713,7 +713,7 @@ $tariffs = array(
                   
                   <!-- COPIED FROM emoncms/../device_view.php -->
                   
-	                <div id="auth-check" class="hide">
+	                <div id="auth-check" class="hide clearfix">
 	                    <i class="icon-exclamation-sign icon-white"></i> Device on ip address: <span id="auth-check-ip"></span> would like to connect 
 	                    <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>
 	                </div>
@@ -849,7 +849,6 @@ var languages = club_settings.languages;
 
 // Device 
 auth_check();
-setInterval(auth_check,5000);
 
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;

@@ -154,7 +154,7 @@ function draw_schedule_output(schedule)
 {
     var out = jsUcfirst(device)+" scheduled to run: ";
     
-    if (schedule.periods.length) {
+    if (schedule.periods && schedule.periods.length) {
         var now = new Date();
         var now_hours = (now.getHours() + (now.getMinutes()/60));
         var period_start = (schedule.periods[0].start);

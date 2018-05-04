@@ -6,7 +6,7 @@ Status page
 
 function cydynnistatus_update() {
 
-  var tariff = {};
+  var tariff = {}, live = {};
 
   $.ajax({                                      
       url: path+club+"/live",
@@ -16,7 +16,7 @@ function cydynnistatus_update() {
           live = result;
   }});
   
-  tariff = live.tariff;
+  tariff = live.tariff || '';
 
   var time = new Date();
 
