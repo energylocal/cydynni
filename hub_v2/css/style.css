@@ -887,3 +887,39 @@ input[type="checkbox"] { margin:0px; }
     text-decoration: none;
     cursor: pointer;
 } 
+
+/*alert style boxes*/
+.notification{
+    border-radius: 4px;
+    padding: 0.6rem 0.8rem;
+    margin: 0 1.1em;
+    display: inline-block;
+    line-height: 0.9em;
+    text-transform: uppercase;
+    color: rgba(72,72,72,0.9);
+}
+/* not used these until a colour scheme is decided */
+.is-success{background-color:#23d160;color:white}
+.is-info{background-color:#209cee;color:white}
+.is-warning{background-color:#ffdd57;color:rgba(0,0,0,0.7)}
+.is-danger{background-color:#ff3860;color: white}
+.is-primary{background-color:#00d1b2;color:white}
+.is-faded{opacity:.5;transition:.3s ease-out}
+
+/*fade any element out after 3s*/
+.fadeOut{
+    animation-delay: 3s;
+    animation-duration: .8s;
+    animation-name: fadeOut;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
