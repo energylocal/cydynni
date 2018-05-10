@@ -9,7 +9,7 @@ function cydynnistatus_update() {
   var tariff = {}, live = {};
 
   $.ajax({                                      
-      url: path+club+"/live",
+      url: club_path+"/live",
       dataType: 'json',
       async: false,                      
       success: function(result) {
@@ -116,11 +116,11 @@ function cydynnistatus_update() {
       towerpower: {high:3,medium:1,low:0.5}
   }
  
-  if (live.generation>=levels["bethesda"].high) {
+  if (live.generation>=levels[club].high) {
       $("#generation-status").html(t("HIGH"));
-  } else if (live.generation>=levels["bethesda"].medium) {
+  } else if (live.generation>=levels[club].medium) {
       $("#generation-status").html(t("MEDIUM"));
-  } else if (live.generation>=levels["bethesda"].low) {
+  } else if (live.generation>=levels[club].low) {
       $("#generation-status").html(t("LOW"));
   } else {
       $("#generation-status").html(t("VERY LOW"));

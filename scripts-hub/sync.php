@@ -88,7 +88,7 @@ if ($lastvalue!==false) {
 }
 
 // -----------------------------------------------------
-$result = @http_request("GET","$remote_host/feed/list.json",array("apikey"=>$user->apikey_read));
+$result = http_request("GET","$remote_host/feed/list.json",array("apikey"=>$user->apikey_read));
 if ($result) {
     $tmp = json_decode($result);
     if ($tmp!=null) {
