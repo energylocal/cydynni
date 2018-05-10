@@ -18,6 +18,7 @@ $("#login").click(function() {
                     $("#account").show();
                     $("#reports").show();
                     $(".household-block").show();
+                    $("#alert").html("");
 
                     household_summary_load();
                     household_bargraph_load();
@@ -43,9 +44,10 @@ $("#logout").click(function(event) {
             $("#logout").hide();
             $("#account").hide();
             $("#reports").hide();
+            $("#alert").html("");
             $(".household-block").hide();
             session = false;
-            window.location = "";
+            //window.location = "";
         }
     });
 });
