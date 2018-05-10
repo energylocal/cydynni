@@ -6,17 +6,17 @@ Status page
 
 function cydynnistatus_update() {
 
-  var tariff = {};
+  var tariff = {}, live = {};
 
   $.ajax({                                      
-      url: path+club+"/live",
+      url: club_path+"/live",
       dataType: 'json',
       async: false,                      
       success: function(result) {
           live = result;
   }});
   
-  tariff = live.tariff;
+  tariff = live.tariff || '';
 
   var time = new Date();
 

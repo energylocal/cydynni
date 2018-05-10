@@ -713,6 +713,8 @@ $tariffs = array(
 
 var path = "<?php echo $path; ?>";
 var club = "<?php echo $club; ?>";
+var club_path = path+club;
+
 var club_settings = <?php echo json_encode($club_settings);?>;
 
 var generation_feed = club_settings.generation_feed;
