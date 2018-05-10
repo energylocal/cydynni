@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 7;
+$v = 11;
 
 $tariffs = array(
     "bethesda"=>array(

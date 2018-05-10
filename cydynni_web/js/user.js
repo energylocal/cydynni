@@ -69,18 +69,26 @@ $("#passwordreset").click(function() {
     $("#passwordreset-alert").html("");
     $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
-        url: path+"/passwordreset",                         
+        url: club_path+"/passwordreset",                         
         data: "email="+email,
-        dataType: 'text',
+        dataType: 'json',
         success: function(result) {
-            if (result!="Email sent") {
-                $("#passwordreset").show();
-                $("#passwordreset-email").show();
-                $("#passwordreset-alert").html(result);
-                $("#passwordreset-title").html(t("Please enter email address to reset password"));
+            if (result.success!=undefined) {
+                if (result.success) {
+                    if (result.message!="Password recovery email sent!") {
+                        $("#passwordreset").show();
+                        $("#passwordreset-email").show();
+                        $("#passwordreset-alert").html(result.message);
+                        $("#passwordreset-title").html(t("Please enter email address to reset password"));
+                    } else {
+                        $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
+                        $("#passwordreset-cancel").html(t("Return to Login"));
+                    }
+                } else {
+                    $("#passwordreset-alert").html(result.message);
+                }
             } else {
-                $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
-                $("#passwordreset-cancel").html(t("Return to Login"));
+                $("#passwordreset-alert").html(result);
             }
             
         }

@@ -448,7 +448,7 @@ if ($club)
             break;
             
         case "passwordreset":
-            $format = "text";
+            $format = "json";
             $user->appname = "Cydynni";
             $users = $user->get_usernames_by_email(get('email'));
             if (count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
