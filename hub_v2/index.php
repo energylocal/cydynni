@@ -215,7 +215,13 @@ switch ($q)
 
         $content = json_decode(json_encode($content));
         break;
-        
+
+    case "household/summary/monthly":
+        $format = "json";
+	      $month = get("month");
+        $content = file_get_contents("$base_url/household/summary/monthly?month=$month");
+        break;
+            
     case "meter/live":
         $format = "json";
         if ($session["read"]) {
@@ -228,18 +234,6 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-    
-    /*
-    case "household/summary/monthly":
-        $format = "json";
-        if ($session["read"]) {
-            $month = get("month");
-            $content = get_household_consumption_monthly($meter_data_api_baseurl,$session['token']);
-        } else {
-            $content = "session not valid";
-        }
-        break;
-    */
         
     // ------------------------------------------------------------------------
     // Generic meter API    
@@ -265,7 +259,7 @@ switch ($q)
     // ------------------------------------------------------------------------
     // Historic hydro API
     // ------------------------------------------------------------------------
-    case "hydro":
+    case "generation":
         $format = "json";
         if (isset($_GET['start']) && isset($_GET['end'])) {
             $start = (int) $_GET['start'];
@@ -299,7 +293,7 @@ switch ($q)
 
     case "club/summary/monthly":
         $format = "json";
-	$month = get("month");
+	      $month = get("month");
         $content = file_get_contents("$base_url/community/summary/monthly?month=$month");
         break;
                 

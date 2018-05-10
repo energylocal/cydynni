@@ -215,7 +215,20 @@ if ($club)
                 $content = "session not valid";
             }
             break;
-            
+
+        /*case "meter/live":
+            $format = "json";
+            if ($session["read"]) {
+                $userid = $session["userid"];
+                $content = array(
+                  "power"=>$redis->get("meterdata:total_kW"),
+                  "kwh"=>$redis->get("meterdata:total_im_kWh")
+                );
+            } else {
+                $content = "session not valid";
+            }
+            break;*/
+        
         // ------------------------------------------------------------------------
         // Generic meter API    
         // ------------------------------------------------------------------------
