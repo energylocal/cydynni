@@ -41,13 +41,16 @@ $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
 
+require("Modules/user/user_model.php");
+$user = new User($mysqli,$redis);
+
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
 chdir("/var/www/cydynni");
 
-require("lib/user_model.php");
-$user = new User($mysqli);
+require("lib/cydynni_emails.php");
+$cydynni_emails = new CydynniEmails($mysqli,$user);
 
 require "meter_data_api.php";
 $path = get_application_path();
@@ -65,7 +68,13 @@ if ($apikey) {
 } else {
     ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
     session_start();
-    $session = $user->status();
+    
+    if (!isset($_SESSION['userid'])) $session = false;
+    else if ($_SESSION['userid']<1) $session = false;
+    else {
+         $session = $_SESSION;
+         if (!isset($session['admin'])) $session['admin'] = 0;
+    }
 }
 
 // Load token
@@ -420,7 +429,17 @@ if ($club)
                     
         case "login":
             $format = "json";
-            $content = $user->login(post('email'),post('password'));
+            
+            $email_or_username = post('email');
+            $content = $user->login($email_or_username,post('password'),false);
+            
+            // Login with email address if username did not work
+            if (!$content["success"]) {
+                $users = $user->get_usernames_by_email($email_or_username);
+                if (count($users)) $content = $user->login($users[0]["username"],post('password'),false);
+                else $content = array("success"=>false, "message"=>"User not found");
+            }
+            
             break;
             
         case "logout":
@@ -430,7 +449,11 @@ if ($club)
             
         case "passwordreset":
             $format = "text";
-            $content = $user->passwordreset(get('email'));
+            $user->appname = "Cydynni";
+            $users = $user->get_usernames_by_email(get('email'));
+            if (count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
+            else $content = array("success"=>false, "message"=>"User not found");
+            
             break;
             
         case "changepassword":
@@ -528,7 +551,7 @@ else
         case "admin/registeremail":
             $format = "text";
             if ($session['admin']) {
-                $content = $user->registeremail(get('userid'));
+                $content = $cydynni_emails->registeremail(get('userid'));
             }
             break;
             
@@ -551,10 +574,7 @@ else
             if ($session['admin']) {
                 $userid = (int) get("userid");
                 
-                // fetch email
-                $u = $user->getbyid($userid);
                 $_SESSION["userid"] = $userid;
-                $_SESSION['email'] = $u->email;
                 
                 // fetch token
                 $result = $mysqli->query("SELECT token FROM cydynni WHERE `userid`='$userid'");
@@ -569,7 +589,7 @@ else
         case "admin/sendreport":
             $format = "text";
             if ($session['admin']) {
-                $content = $user->send_report_email(get('userid'));
+                $content = $cydynni_emails->send_report_email(get('userid'));
             }
             break;
     }

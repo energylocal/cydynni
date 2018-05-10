@@ -8,21 +8,24 @@ $("#login").click(function() {
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
-            if (result.userid!=undefined) {
-                session = result;
-                $("#user-email").html(session.email);
-                
-                $("#login-block").hide();
-                $("#logout").show();
-                $("#account").show();
-                $("#reports").show();
-                $(".household-block").show();
+            if (result.success!=undefined) {
+                if (result.success) {
+                    // session = result;
+                    // $("#user-email").html(session.email);
+                    
+                    $("#login-block").hide();
+                    $("#logout").show();
+                    $("#account").show();
+                    $("#reports").show();
+                    $(".household-block").show();
 
-                household_summary_load();
-                household_bargraph_load();
-                household_pie_draw();
-                household_bargraph_resize();
-                
+                    household_summary_load();
+                    household_bargraph_load();
+                    household_pie_draw();
+                    household_bargraph_resize();
+                } else {
+                    $("#alert").html(result.message);
+                }
             } else {
                 $("#alert").html(result);
             }
