@@ -22,6 +22,8 @@ var household_data = [];
 
 var household_view = "piechart";
 
+var meterdataenable = false;
+
 function household_summary_load()
 {    
   $.ajax({                                      
@@ -96,6 +98,28 @@ function household_summary_load()
           household_generation_use = result.kwh.generation;
           household_pie_draw();
       } 
+  });
+  
+  if (meterdataenable) {
+      $("#meterdatablock").show();
+      household_update_live();
+      setInterval(household_update_live,5000);
+  } else {
+      $("#meterdatablock").hide();
+  }
+  
+}
+
+function household_update_live() {
+
+  $.ajax({                                      
+      url: path+"meter/live",
+      dataType: 'json',                  
+      success: function(result) {
+      
+          $(".meterdata-power").html((result.power*1000)+"W");
+          $(".meterdata-kwh").html((result.kwh)+" kWh");
+      }
   });
 }
 

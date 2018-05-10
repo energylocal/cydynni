@@ -8,21 +8,25 @@ $("#login").click(function() {
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
-            if (result.userid!=undefined) {
-                session = result;
-                $("#user-email").html(session.email);
-                
-                $("#login-block").hide();
-                $("#logout").show();
-                $("#account").show();
-                $("#reports").show();
-                $(".household-block").show();
+            if (result.success!=undefined) {
+                if (result.success) {
+                    // session = result;
+                    // $("#user-email").html(session.email);
+                    
+                    $("#login-block").hide();
+                    $("#logout").show();
+                    $("#account").show();
+                    $("#reports").show();
+                    $(".household-block").show();
+                    $("#alert").html("");
 
-                household_summary_load();
-                household_bargraph_load();
-                household_pie_draw();
-                household_bargraph_resize();
-                
+                    household_summary_load();
+                    household_bargraph_load();
+                    household_pie_draw();
+                    household_bargraph_resize();
+                } else {
+                    $("#alert").html(result.message);
+                }
             } else {
                 $("#alert").html(result);
             }
@@ -40,9 +44,10 @@ $("#logout").click(function(event) {
             $("#logout").hide();
             $("#account").hide();
             $("#reports").hide();
+            $("#alert").html("");
             $(".household-block").hide();
             session = false;
-            window.location = "";
+            //window.location = "";
         }
     });
 });
@@ -66,18 +71,26 @@ $("#passwordreset").click(function() {
     $("#passwordreset-alert").html("");
     $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
-        url: path+"/passwordreset",                         
+        url: club_path+"/passwordreset",                         
         data: "email="+email,
-        dataType: 'text',
+        dataType: 'json',
         success: function(result) {
-            if (result!="Email sent") {
-                $("#passwordreset").show();
-                $("#passwordreset-email").show();
-                $("#passwordreset-alert").html(result);
-                $("#passwordreset-title").html(t("Please enter email address to reset password"));
+            if (result.success!=undefined) {
+                if (result.success) {
+                    if (result.message!="Password recovery email sent!") {
+                        $("#passwordreset").show();
+                        $("#passwordreset-email").show();
+                        $("#passwordreset-alert").html(result.message);
+                        $("#passwordreset-title").html(t("Please enter email address to reset password"));
+                    } else {
+                        $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
+                        $("#passwordreset-cancel").html(t("Return to Login"));
+                    }
+                } else {
+                    $("#passwordreset-alert").html(result.message);
+                }
             } else {
-                $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
-                $("#passwordreset-cancel").html(t("Return to Login"));
+                $("#passwordreset-alert").html(result);
             }
             
         }

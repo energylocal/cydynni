@@ -3,12 +3,10 @@
 class CydynniEmails
 {
     private $mysqli;
-    private $user;
     
-    public function __construct($mysqli,$user)
+    public function __construct($mysqli)
     {
         $this->mysqli = $mysqli;
-        $this->user = $user;
     }
     
     //---------------------------------------------------------------------------------------
@@ -37,43 +35,24 @@ class CydynniEmails
 
         $subject = "Welcome to CydYnni, account details";   
                          
-        $message = view("emailbound.php",array(
+        $message = view("lib/emailbound.php",array(
             "title"=>"Croeso i CydYnni, Welcome to CydYnni",
             "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda enw: $username a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with username: $username and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
         ));
 
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
-
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
+        $email = new Email();
+        $email->to(array($email));
+        $email->subject($subject);
+        $email->body($message);
+        $result = $email->send();
         
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        
-        $welcomedate = date("d-m-Y");
-        $this->mysqli->query("UPDATE cydynni SET welcomedate = '$welcomedate' WHERE `userid`='$userid'");
-        return "Email sent";
+        if ($result['success']) {
+            $welcomedate = date("d-m-Y");
+            $this->mysqli->query("UPDATE cydynni SET welcomedate = '$welcomedate' WHERE `userid`='$userid'");
+            return "Email sent";
+        } else {
+            return "Error sending email";
+        }
     }
     
     
@@ -111,100 +90,24 @@ class CydynniEmails
         
         $c .= "<i style='font-size:12px'>Questions? cwestiynau?, cysylltwch â: cydynni@energylocal.co.uk</i><br>";
         
-        $message = view("emailbound.php",array(
+        $message = view("lib/emailbound.php",array(
             "title"=>"Mae eich adroddiad CydYnni yn barod<br>Your CydYnni report is ready",
             "message"=>$c
         ));
 
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
 
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
+        $email = new Email();
+        $email->to(array($email));
+        $email->subject($subject);
+        $email->body($message);
+        $result = $email->send();
         
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        
-        $reportdate = date("d-m-Y");
-        $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
-        return "Email sent $month_en:$month_cy";
-    }
-    
-    //---------------------------------------------------------------------------------------
-    // Forgotten password
-    //--------------------------------------------------------------------------------------- 
-    public function passwordreset($email)
-    {
-        // return false;
-        
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return "Email address format error";
-
-        if (!$u = $this->user->getbyemail($email)) return "User not found";
-        $userid = $u['id'];
-
-        // Generate new random password
-        $newpass = hash('sha256',md5(uniqid(rand(), true)));
-        $newpass = substr($newpass, 0, 10);
-
-        // Hash and salt
-        $hash = hash('sha256', $newpass);
-        $salt = md5(uniqid(rand(), true));
-        $dbhash = hash('sha256', $salt . $hash);
-
-        // Save password and salt
-        $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
-
-        $subject = "CydYnni password reset";                    
-        $message = "<p>A password reset was requested for your CydYnni account.</p><p>Your can now login with password: $newpass </p>";
-
-        // ------------------------------------------------------------------
-        // Email with swift
-        // ------------------------------------------------------------------
-        $have_swift = @include_once ("lib/swift/swift_required.php"); 
-
-        if (!$have_swift){
-            print "Could not find SwiftMailer - cannot proceed";
-            exit;
-        };
-
-        global $smtp_email_settings;
-        
-        // ---------------------------------------------------------
-        // Removed sequre connect $smtp_email_settings['port'],'ssl'
-        // Not supported by 123reg
-        // ---------------------------------------------------------
-        $transport = Swift_SmtpTransport::newInstance($smtp_email_settings['host'],25)
-          ->setUsername($smtp_email_settings['username'])
-          ->setPassword($smtp_email_settings['password']);
-
-        $mailer = Swift_Mailer::newInstance($transport);
-        $message = Swift_Message::newInstance()
-          ->setSubject($subject)
-          ->setFrom($smtp_email_settings['from'])
-          ->setTo(array($email))
-          ->setBody($message, 'text/html');
-        $result = $mailer->send($message);
-        // ------------------------------------------------------------------
-        return "Email sent";
+        if ($result['success']) {
+            $welcomedate = date("d-m-Y");
+            $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
+            return "Email sent $month_en:$month_cy";
+        } else {
+            return "Error sending email";
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 6;
+$v = 13;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -331,7 +331,7 @@ $tariffs = array(
                 </div>
             </div>
             
-            <div id="meterdatablock" class="block household-block">
+            <div id="meterdatablock" class="block household-block hide">
                 <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                 

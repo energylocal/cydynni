@@ -51,7 +51,7 @@ $user = new User($mysqli,$redis);
 chdir("/var/www/cydynni");
 
 require("lib/cydynni_emails.php");
-$cydynni_emails = new CydynniEmails($mysqli,$user);
+$cydynni_emails = new CydynniEmails($mysqli);
 
 require "meter_data_api.php";
 $path = get_application_path();
