@@ -7,7 +7,7 @@ var feed = {
         
         var feeds = {};
         $.ajax({                                      
-            url: path+"/feed/list.json"+apikeystr,
+            url: path+"feed/list.json"+apikeystr,
             dataType: 'json',
             async: true,                      
             success: function(result) {
@@ -30,7 +30,7 @@ var feed = {
         
         var feeds = {};
         $.ajax({                                      
-            url: path+"/feed/list.json"+apikeystr,
+            url: path+"feed/list.json"+apikeystr,
             dataType: 'json',
             async: false,                      
             success: function(result) {
@@ -65,7 +65,7 @@ var feed = {
         
         var data = [];
         $.ajax({                                      
-            url: path+"/feed/data.json"+apikeystr,                         
+            url: path+"feed/data.json"+apikeystr,                         
             data: "id="+id+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing="+skipmissing+"&limitinterval="+limitinterval,
             dataType: 'json',
             async: false,                      
@@ -86,7 +86,7 @@ var feed = {
         
         var data = [];
         $.ajax({                                      
-            url: path+"/feed/average.json"+apikeystr,                         
+            url: path+"feed/average.json"+apikeystr,                         
             data: "id="+id+"&start="+start+"&end="+end+"&interval="+interval,
             dataType: 'json',
             async: false,                      
@@ -107,7 +107,7 @@ var feed = {
         
         var data = [];
         $.ajax({                                      
-            url: path+"/feed/data.json"+apikeystr,                         
+            url: path+"feed/data.json"+apikeystr,                         
             data: "id="+id+"&start="+start+"&end="+end+"&mode="+mode,
             dataType: 'json',
             async: false,                      
@@ -128,7 +128,7 @@ var feed = {
         
         var data = [];
         $.ajax({                                      
-            url: path+"/feed/data.json"+apikeystr,                         
+            url: path+"feed/data.json"+apikeystr,                         
             data: "id="+id+"&start="+start+"&end="+end+"&mode="+mode+"&split="+timeofusesplit,
             dataType: 'json',
             async: false,                      
@@ -149,7 +149,7 @@ var feed = {
         
         var meta = {};
         $.ajax({                                      
-            url: path+"/feed/getmeta.json"+apikeystr,                         
+            url: path+"feed/getmeta.json"+apikeystr,                         
             data: "id="+id,
             dataType: 'json',
             async: false,
@@ -174,7 +174,7 @@ var feed = {
     {   
         var data = [];
         $.ajax({                                      
-            url: path+"/app/dataremote",
+            url: path+"app/dataremote",
             data: "id="+id+"&start="+start+"&end="+end+"&interval="+interval+"&skipmissing=0&limitinterval=0",
             dataType: 'json',
             async: false,                      
@@ -193,7 +193,7 @@ var feed = {
     {   
         var value = 0;
         $.ajax({                                      
-            url: path+"/app/valueremote",                       
+            url: path+"app/valueremote",                       
             data: "id="+id, dataType: 'json', async: false,                      
             success: function(result) {
                 if (isNaN(result)) {

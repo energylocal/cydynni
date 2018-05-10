@@ -60,6 +60,7 @@ $tariffs = array(
     <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
     <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css?v=<?php echo $v; ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/bulma.min.css" />
     
     </head>
     <body>
@@ -94,7 +95,7 @@ $tariffs = array(
                 </ul>
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         <div class="page" name="forecast">
 
@@ -290,7 +291,7 @@ $tariffs = array(
 
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
 
         
         <div class="page" name="household">
@@ -463,7 +464,7 @@ $tariffs = array(
        
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="club">
             <div class="block">
@@ -592,7 +593,7 @@ $tariffs = array(
         
 <!------------------------------------------------------------------------------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------------------------------- -->
         
         <div class="page" name="tips">
             <div class="block">
@@ -706,6 +707,8 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
+
 <script>
 
 var path = "<?php echo $path; ?>";
@@ -715,6 +718,9 @@ var club_settings = <?php echo json_encode($club_settings);?>;
 var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
+
+// Device 
+// auth_check();
 
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
@@ -748,11 +754,25 @@ if (!session.write) {
   $("#reports").show();
 }
 
-show_page("forecast");
+//show tab related to the page name shown after the ? (or show first tab)
+var url_string = location.href
+var url = new URL(url_string);
+var entries = url.searchParams.entries();
+var page = "";
+for(let entry of entries){
+    if(entry[0]!=="lang"){
+        page = entry[0];
+    }
+}
+if (page!=""){
+    show_page(page);
+}else{
+    show_page("forecast");
+}
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
-    show_page(page);
+    History.pushState({}, page, "?"+page);  
 });
 
 $(".block-title").click(function() {
@@ -808,6 +828,7 @@ club_bargraph_load();
 if (session.write) {
     household_summary_load();
     household_bargraph_load();
+    // device_load();
 }
 
 resize();
@@ -870,4 +891,11 @@ function t(s) {
 function ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+// Bind to StateChange Event
+History.Adapter.bind(window,'statechange',function(){ // Note: We are using statechange instead of popstate
+    var State = History.getState(); // Note: We are using History.getState() instead of event.state
+    show_page(State.title);
+});
+
 </script>

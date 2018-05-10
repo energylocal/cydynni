@@ -110,7 +110,7 @@ function cydynnistatus_update() {
 
   //$(".tariff-img").hide();
  // $(".tariff-img[tariff="+tariff+"]").show();
- 
+
   var levels = {
       bethesda: {high:50,medium:30,low:10},
       towerpower: {high:3,medium:1,low:0.5}
