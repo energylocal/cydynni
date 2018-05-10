@@ -351,7 +351,7 @@ switch ($q)
         $feed = 166913;
         if ($club=="towerpower") $feed = 179247;
         
-       $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
 
         if ($result) {
             $data = json_decode($result);
@@ -474,6 +474,7 @@ switch ($q)
         }
         
         break;
+
         
     case "logout":
         $format = "text";
@@ -529,8 +530,14 @@ switch ($q)
         $interval = (int) get("interval");
         $skipmissing = (int) get("skipmissing");
         $limitinterval = (int) get("limitinterval");
-        // Request
-        $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval"));
+        
+        $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
+
+        $result = file_get_contents("https://emoncms.cydynni.org.uk/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
+        
+        $content = json_decode($result);
+        if ($content==null) $content = $result;
+        
         break;
         
     case "feed/average.json":
@@ -540,8 +547,14 @@ switch ($q)
         $start = (int) get("start");
         $end = (int) get("end");
         $interval = (int) get("interval");
-        // Request
-        $content = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval"));
+        
+        $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
+        
+        $result = file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr);
+        
+        $content = json_decode($result);
+        if ($content==null) $content = $result;
+        
         break;
 
     // ----------------------------------------------------------------------
@@ -662,3 +675,31 @@ function translate($s,$lang) {
         return $s;
     }
 }
+
+// -------------------------------------------------------------
+// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
+// -------------------------------------------------------------
+/*function decode_date($datestr) {
+    $datestr = str_replace(",","",$datestr);
+    $date_parts = explode(" ",$datestr);
+    if (count($date_parts)!=4) return "invalid date string";
+    $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
+    
+    $day = $date_parts[1];
+    $month = $date_parts[0];
+    $year = $date_parts[2];
+    
+    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
+    
+    $date = new DateTime();
+    $date->setTimezone(new DateTimeZone("Europe/London"));
+    $date->setDate($year,$months[$month],$day);
+    $date->setTime(0,0,0);
+    
+    //$date->modify("midnight");
+    $time = $date->getTimestamp();
+    // November, 02 2016 00:00:00
+    // print $date2."\n";
+    // Mid night start of day
+    return $time; //strtotime($date2);
+}*/
