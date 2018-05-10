@@ -41,6 +41,7 @@ $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
 
+require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
@@ -434,9 +435,9 @@ if ($club)
             $content = $user->login($email_or_username,post('password'),false);
             
             // Login with email address if username did not work
-            if (!$content["success"]) {
+            if ($content["message"]=="Username does not exist") {
                 $users = $user->get_usernames_by_email($email_or_username);
-                if (count($users)) $content = $user->login($users[0]["username"],post('password'),false);
+                if ($users && count($users)) $content = $user->login($users[0]["username"],post('password'),false);
                 else $content = array("success"=>false, "message"=>"User not found");
             }
             
@@ -451,7 +452,7 @@ if ($club)
             $format = "json";
             $user->appname = "Cydynni";
             $users = $user->get_usernames_by_email(get('email'));
-            if (count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
+            if ($users && count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
             else $content = array("success"=>false, "message"=>"User not found");
             
             break;
