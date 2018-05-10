@@ -13,8 +13,8 @@ require "process_settings.php";
 
 chdir("/var/www/cydynni");
 require "meter_data_api.php";
-require "EmonLogger.php";
-require "PHPFina.php";
+require "lib/EmonLogger.php";
+require "lib/PHPFina.php";
 
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 

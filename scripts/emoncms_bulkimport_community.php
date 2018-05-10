@@ -13,8 +13,8 @@ require "process_settings.php";
 
 chdir("/var/www/cydynni");
 require "meter_data_api.php";
-require "EmonLogger.php";
-require "PHPFina.php";
+require "lib/EmonLogger.php";
+require "lib/PHPFina.php";
 
 // file_get_contents("https://emoncms.cydynni.org.uk/feed/create.json?name=community&datatype=1&engine=5&options={'interval':1800}");
 

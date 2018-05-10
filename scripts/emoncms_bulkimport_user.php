@@ -1,5 +1,5 @@
 <?php
-
+$club = "bethesda";
 // -------------------------------------------------------------------------------------------------
 // CydYnni bulk importer
 // -------------------------------------------------------------------------------------------------
@@ -78,9 +78,8 @@ while ($row = $result_users->fetch_object())
         {
             $endms = ($end-(3600*24)) * 1000;
             $startms = $start * 1000;
+            $data = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$cydynni->token,27,$startms,$endms);
 
-            $data = get_meter_data_history($meter_data_api_baseurl,$cydynni->token,27,$startms,$endms);
-            
             if (count($data)>0) {
                 // Visual output to check that we are not missing data in our queries
                 // Start time of data
