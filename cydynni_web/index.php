@@ -19,7 +19,7 @@ define('EMONCMS_EXEC', 1);
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
-
+// $base_url = "http://cydynni.org.uk/bethesda";
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
@@ -41,12 +41,20 @@ $redis = new Redis();
 $connected = $redis->connect($redis_server['host'], $redis_server['port']);
 if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
 
+//$wifisetup = false;
+//if (file_exists("Modules/setup")) {
+//    require "Modules/setup/setup_model.php";
+//    $setup = new Setup($mysqli);
+//    if ($setup->status()=="unconfigured") $wifisetup = true;
+//}
+
+// ---------------------------------------------------------
+// ---------------------------------------------------------
+
 require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
-// ---------------------------------------------------------
-// ---------------------------------------------------------
 
 chdir("/var/www/cydynni");
 
@@ -290,8 +298,11 @@ if ($club)
         case "live":
             $format = "json";
             
-            // $redis->set("live",file_get_contents("https://cydynni.org.uk/live"));
-            $live = json_decode($redis->get("$club:live"));
+            if (!$redis->get("$club:live")) {
+                // $result = http_request("GET","$base_url/live",array());
+                // if ($result) $redis->set("live",$result);
+            }
+            $live = json_decode($result);
                       
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -314,10 +325,10 @@ if ($club)
         case "generation/estimate":
             $format = "json";
 
-            if (isset($_GET['lasttime'])) $estimatestart = $_GET['lasttime'];
             $interval = (int) $_GET['interval'];
-
-            
+            if (isset($_GET['lasttime'])) $estimatestart = $_GET['lasttime'];
+            if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
+                    
             if (isset($_GET['start']) && isset($_GET['end'])) {
                 $end = $_GET['end'];
                 $start = $_GET['start'];
@@ -330,25 +341,36 @@ if ($club)
             $feed = 166913;
             if ($club=="towerpower") $feed = 179247;
             
-            $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feed&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+           $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+
+            if ($result) {
+                $data = json_decode($result);
+                if ($data!=null && is_array($data)) {
             
-            $scale = 1.1;  
-            // Scale ynni padarn peris data and impose min/max limits
-            for ($i=0; $i<count($data); $i++) {
-                if ($data[$i][1]==null) $data[$i][1] = 0;
-                if ($club=="bethesda") {
-                
-                    $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                    if ($data[$i][1]<0) $data[$i][1] = 0;
-                    if ($data[$i][1]>49) $data[$i][1] = 49;
-                } else if ($club=="towerpower") {
-                    $data[$i][1] = -1 * $data[$i][1] * 0.001;
+                    $scale = 1.1;  
+                    // Scale ynni padarn peris data and impose min/max limits
+                    for ($i=0; $i<count($data); $i++) {
+                        if ($data[$i][1]==null) $data[$i][1] = 0;
+                        if ($club=="bethesda") {
+                        
+                            $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                            if ($data[$i][1]<0) $data[$i][1] = 0;
+                            if ($data[$i][1]>49) $data[$i][1] = 49;
+                        } else if ($club=="towerpower") {
+                            $data[$i][1] = -1 * $data[$i][1] * 0.001;
+                        }
+                    }
+            
+                    // remove last half hour if null
+                    if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
+            
+                    $content = $data;
+                } else {
+                    $content = $result;
                 }
-            }
-            
-            // remove last half hour if null
-            if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            $content = $data;   
+            } else {
+                $content = array();
+            }  
             
             break;
             
@@ -628,7 +650,6 @@ function t($s) {
     }
 }
 
-
 function translate($s,$lang) {
     global $translation;
     
@@ -637,5 +658,33 @@ function translate($s,$lang) {
     } else { 
         return $s;
     }
+}
+
+// -------------------------------------------------------------
+// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
+// -------------------------------------------------------------
+function decode_date($datestr) {
+    $datestr = str_replace(",","",$datestr);
+    $date_parts = explode(" ",$datestr);
+    if (count($date_parts)!=4) return "invalid date string";
+    $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
+    
+    $day = $date_parts[1];
+    $month = $date_parts[0];
+    $year = $date_parts[2];
+    
+    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
+    
+    $date = new DateTime();
+    $date->setTimezone(new DateTimeZone("Europe/London"));
+    $date->setDate($year,$months[$month],$day);
+    $date->setTime(0,0,0);
+    
+    //$date->modify("midnight");
+    $time = $date->getTimestamp();
+    // November, 02 2016 00:00:00
+    // print $date2."\n";
+    // Mid night start of day
+    return $time; //strtotime($date2);
 }
 

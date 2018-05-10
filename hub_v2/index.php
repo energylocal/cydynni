@@ -51,11 +51,16 @@ if (file_exists("Modules/setup")) {
 // ---------------------------------------------------------
 // ---------------------------------------------------------
 
+// require "Lib/email.php";
+require("Modules/user/user_model.php");
+$user = new User($mysqli,$redis);
+
 chdir("/var/www/cydynni");
 
-require("lib/user_model.php");
-$user = new User($mysqli);
+// require("lib/cydynni_emails.php");
+// $cydynni_emails = new CydynniEmails($mysqli);
 
+// require "meter_data_api.php";
 $path = get_application_path();
 
 require "lib/PHPFina.php";
@@ -71,13 +76,25 @@ if ($apikey) {
 } else {
     ini_set('session.cookie_lifetime', 60 * 60 * 24 * 7);
     session_start();
-    $session = $user->status();
+    
+    if (!isset($_SESSION['userid'])) $session = false;
+    else if ($_SESSION['userid']<1) $session = false;
+    else {
+         $session = $_SESSION;
+         if (!isset($session['admin'])) $session['admin'] = 0;
+    }
 }
 
 // Load token
 if ($session['read']) {
     $userid = (int) $session["userid"];
     
+    // $redis->incr("userhits:$userid");
+
+    // $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
+    // $row = $result->fetch_object();
+    // if (isset($row->token)) $session["token"] = $row->token;
+     
     $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
     $row = $result->fetch_object();
     $session["email"] = $row->email;
@@ -86,8 +103,34 @@ if ($session['read']) {
 
 // ---------------------------------------------------------
 
-$q = "";
-if (isset($_GET['q'])) $q = $_GET['q'];
+$lang = "";
+
+// 1. Fetch query
+$q = ""; if (isset($_GET['q'])) $q = $_GET['q'];
+
+/* if ($q=="report") $q="bethesda/report";
+
+// 2. Explode into parts
+$query_parts = explode("/",$q);
+
+// 3, Default club
+if ($query_parts[0]=="") {
+    header("Location: bethesda");
+}
+
+// 4. Club name is the first parameter
+$club = $query_parts[0];
+
+// 5. Check if club exists in root tokens
+if (isset($club_settings[$club])) {
+    // remove club from query string
+    unset($query_parts[0]);
+    // rebuild query string without club name
+    $q = implode("/",$query_parts);
+    $lang = $club_settings[$club]["languages"][0];
+} else {
+    $club = false;
+} */
 
 $translation = new stdClass();
 $translation->cy = json_decode(file_get_contents("locale/cy"));
@@ -337,7 +380,7 @@ switch ($q)
         $content = $live;
         break;
         
-    case "hydro/estimate":
+    case "generation/estimate":
         $format = "json";
 
         $interval = (int) $_GET['interval'];
@@ -353,20 +396,27 @@ switch ($q)
             $start = $estimatestart;
         }
         
-        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>166913,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $feed = 166913;
+        if ($club=="towerpower") $feed = 179247;
+            
+        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
         
         if ($result) {
             $data = json_decode($result);
             if ($data!=null && is_array($data)) {
 
-                $scale = 1.1;
-            
+                $scale = 1.1;  
                 // Scale ynni padarn peris data and impose min/max limits
                 for ($i=0; $i<count($data); $i++) {
                     if ($data[$i][1]==null) $data[$i][1] = 0;
-                    $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                    if ($data[$i][1]<0) $data[$i][1] = 0;
-                    if ($data[$i][1]>49) $data[$i][1] = 49;
+                    if ($club=="bethesda") {
+                    
+                        $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                        if ($data[$i][1]<0) $data[$i][1] = 0;
+                        if ($data[$i][1]>49) $data[$i][1] = 49;
+                    } else if ($club=="towerpower") {
+                        $data[$i][1] = -1 * $data[$i][1] * 0.001;
+                    }
                 }
             
                 // remove last half hour if null
@@ -549,6 +599,16 @@ function t($s) {
         echo $translation->$lang->$s;
     } else {
         echo $s;
+    }
+}
+
+function translate($s,$lang) {
+    global $translation;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        return $translation->$lang->$s;
+    } else { 
+        return $s;
     }
 }
 
