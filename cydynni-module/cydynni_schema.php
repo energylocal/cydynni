@@ -10,6 +10,7 @@ $schema['cydynni'] = array(
     'clubs_id' => array('type'=>'int(11)')
 );
 $schema['cydynni_clubs'] = array(
+    'id' => array('type' => 'int(11)', 'Null'=>'NO', 'Key'=>'PRI', 'Extra'=>'auto_increment'),    
     'name' => array('type' => 'varchar(128)'),
     'generator' => array('type' => 'varchar(128)'),
     'root_token' => array('type' => 'varchar(128)'),

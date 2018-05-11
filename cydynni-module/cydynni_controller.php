@@ -24,7 +24,11 @@ function cydynni_controller()
     
     $route->format = "json";
     $result = false;
-    
+    require "Modules/cydynni/cydynni_model.php";
+    //$club = new Club($mysqli);
+    $cydynni = new Cydynni($mysqli,$redis);
+
+
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
     // -----------------------------------------------------------------------------------------
@@ -197,6 +201,25 @@ function cydynni_controller()
             }
             
             break;
+
+            case "admin":
+                if($session["admin"]){
+                    if($route->subaction=='users'){
+                        $route->format = "json";
+                        $club = $cydynni->getClubs($route->subaction2)[0];
+                        $result = $cydynni->getUsers($club->id);
+                        return $result;
+                    }elseif (empty($route->subaction)){
+                        $route->format = "html";
+                        return view("Modules/cydynni/admin_view.php", array());
+                    }
+                }
+                
+            break;
+
+            default:
+            $route->format = "html";
+            return "<h1>default</h1>";
     }
     
     return array("content"=>$result);   
