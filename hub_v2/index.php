@@ -487,7 +487,7 @@ switch ($q)
                 
     case "login":
         $format = "json";
-        $content = $user->login(post('username'),post('password'));
+        $content = $user->login(post('username'),post('password'),false);
         break;
 
     case "register":

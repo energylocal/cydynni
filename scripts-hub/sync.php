@@ -1,12 +1,14 @@
 <?php
 
+$club = "bethesda";
+
 define('EMONCMS_EXEC', 1);
 require "phpfina.php";
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
 require "Lib/EmonLogger.php";
-$base_url = "https://cydynni.org.uk/bethesda";
+$base_url = "https://cydynni.org.uk/$club";
 
 // 1. Load redis
 $redis = new Redis();
@@ -106,25 +108,25 @@ print "Loading cache:\n";
 
 $result = http_request("GET","$base_url/live",array());
 if ($result) {
-    $redis->set("live",$result);
+    $redis->set("$club:live",$result);
     print "-- live\n";
 }
 
 $result = http_request("GET","$base_url/hydro",array());
 if ($result) {
-    $redis->set("hydro:data",$result);
+    $redis->set("$club:generator:data",$result);
     print "-- hydro:data\n";
 }
 
 $result = http_request("GET","$base_url/club/data",array());
 if ($result) {
-    $redis->set("community:data",$result);
+    $redis->set("$club:club:data",$result);
     print "-- community:data\n";
 }
 
 $result = http_request("GET","$base_url/club/summary/day",array());
 if ($result) {
-    $redis->set("community:summary:day",$result);
+    $redis->set("$club:club:summary:day",$result);
     print "-- community:summary:day\n";
 }
 
