@@ -580,8 +580,8 @@ switch ($q)
         $format = "json";
         // Params
         $id = (int) get("id");
-        $start = (int) get("start");
-        $end = (int) get("end");
+        $start = get("start");
+        $end = get("end");
         $interval = (int) get("interval");
         $skipmissing = (int) get("skipmissing");
         $limitinterval = (int) get("limitinterval");
@@ -599,14 +599,14 @@ switch ($q)
         $format = "json";
         // Params
         $id = (int) get("id");
-        $start = (int) get("start");
-        $end = (int) get("end");
+        $start = get("start");
+        $end = get("end");
         $interval = (int) get("interval");
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
         
         $result = file_get_contents("http://localhost/emoncms/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr);
-        
+
         $content = json_decode($result);
         if ($content==null) $content = $result;
         
