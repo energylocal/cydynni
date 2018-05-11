@@ -268,16 +268,19 @@ switch ($q)
     // ------------------------------------------------------------------------
     case "club/summary/day":
         $format = "json";
-        
-        $content = json_decode($redis->get("$club:club:summary:day"));
+
+        if (!$result = $redis->get("$club:club:summary:day")) {
+            // $result = http_request("GET","$base_url/club/summary/day",array());
+            // if ($result) $redis->set("community:summary:day",$result);
+        }
+        $content = json_decode($result);
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
         $date->setTimestamp(time());
         $date->modify("midnight");
         $time = $date->getTimestamp();
-        $content->dayoffset = 0; //($time - decode_date($content->date))/(3600*24);
-        //$content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
         
         break;
 
@@ -475,7 +478,60 @@ switch ($q)
         
         break;
 
+    /*case "register":
+        $format = "json";
         
+        if ($user->get_number_of_users()==0)
+        {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            
+            // Send request
+            $ch = curl_init();
+            curl_setopt($ch,CURLOPT_URL,"https://emoncms.cydynni.org.uk/user/auth.json");
+            curl_setopt($ch,CURLOPT_POST,1);
+            curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
+            curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            $result = json_decode($result);
+            if ($result!=null && isset($result->success) && $result->success) {
+
+                // Fetch full account details from remote emoncms
+                $u = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/user/get.json?apikey=".$result->apikey_write));
+
+                // Register account locally
+                $result = $user->register($username, $password, $u->email);
+                
+                // Save remote account apikey to local hub
+                if ($result['success']==true) {
+                    $userid = $result['userid'];
+                    $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
+                    $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
+                    
+                    // Trigger download of user data
+                    $sync_flag = "/tmp/emoncms-flag-sync";
+                    $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
+                    $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                    $fh = @fopen($sync_flag,"w");
+                    if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
+                    @fclose($fh);
+                    
+                    $content = $user->login($username, $password);
+                    
+                    $content = array("success"=>true);
+                    
+                } else {
+                    $content = array("success"=>false, "message"=>"error creating account");
+                }
+            } else {
+                $content = array("success"=>false, "message"=>"cydynni online account not found");
+            }
+        }
+        
+        break;*/
+    
     case "logout":
         $format = "text";
         $content = $user->logout();
@@ -525,8 +581,8 @@ switch ($q)
         $format = "json";
         // Params
         $id = (int) get("id");
-        $start = (int) get("start");
-        $end = (int) get("end");
+        $start = get("start");
+        $end = get("end");
         $interval = (int) get("interval");
         $skipmissing = (int) get("skipmissing");
         $limitinterval = (int) get("limitinterval");
@@ -544,8 +600,8 @@ switch ($q)
         $format = "json";
         // Params
         $id = (int) get("id");
-        $start = (int) get("start");
-        $end = (int) get("end");
+        $start = get("start");
+        $end = get("end");
         $interval = (int) get("interval");
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];

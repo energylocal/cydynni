@@ -291,7 +291,7 @@ switch ($q)
     case "club/summary/day":
         $format = "json";
 
-        if (!$result = $redis->get("community:summary:day")) {
+        if (!$result = $redis->get("$club:club:summary:day")) {
             $result = http_request("GET","$base_url/club/summary/day",array());
             if ($result) $redis->set("community:summary:day",$result);
         }
@@ -487,7 +487,17 @@ switch ($q)
                 
     case "login":
         $format = "json";
-        $content = $user->login(post('username'),post('password'),false);
+        
+        $email_or_username = post('username');
+        $content = $user->login($email_or_username,post('password'),false);
+        
+        // Login with email address if username did not work
+        //if ($content["message"]=="Username does not exist") {
+        //    $users = $user->get_usernames_by_email($email_or_username);
+        //    if ($users && count($users)) $content = $user->login($users[0]["username"],post('password'),false);
+        //    else $content = array("success"=>false, "message"=>"User not found");
+        //}
+        
         break;
 
     case "register":
@@ -543,17 +553,20 @@ switch ($q)
         }
         
         break;
-
-        
+    
     case "logout":
         $format = "text";
         $content = $user->logout();
         break;
         
-    case "passwordreset":
-        $format = "text";
-        $content = $user->passwordreset(get('email'));
-        break;
+    /*case "passwordreset":
+        $format = "json";
+        $user->appname = "Cydynni";
+        $users = $user->get_usernames_by_email(get('email'));
+        if ($users && count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
+        else $content = array("success"=>false, "message"=>"User not found");
+        
+        break;*/
         
     case "changepassword":
         $format = "text";
