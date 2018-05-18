@@ -207,7 +207,6 @@ function cydynni_controller()
                 if($route->subaction=='user'){
                     $route->format = "json";
                     $result = $cydynni->getUser($route->subaction2);//get user by user_id
-                    
                 }elseif($route->subaction=='users'){
                     //get/set group users
                     //users CRUD                    

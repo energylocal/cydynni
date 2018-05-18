@@ -296,6 +296,8 @@ button:focus {
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <span class="message" style="position:absolute"></span>
+                    <span class="loader" style="margin-top:1.2em;position:absolute"><img src="data:image/gif;base64,R0lGODlhEgAPAPIAAPX19ZeXl5eXl7i4uNjY2AAAAAAAAAAAACH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAFAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEgAPAAADHAi63P4wykmrvThXIS7n1tcBAwWSQwkQBKVqTgIAIfkEAAUAAQAsAAAAABIADwAAAx4Iutz+MMpJq23iAsF11sowXKJolSNAUKZKrBcMPgkAIfkEAAUAAgAsAAAAABIADwAAAxwIutz+MEogxLw4q6HB+B3XKQShlWWGmio7vlMCACH5BAAFAAMALAAAAAASAA8AAAMXCLrcvuLJ+cagOGtHtiKgB3RiaZ5oiiUAIfkEAAUABAAsAAAAABIADwAAAxQIuty+48knJCEz6827/2AojiSYAAAh+QQABQAFACwAAAAAEgAPAAADFAi63L7kyTemvTgvobv/YCiOJJAAACH5BAAFAAYALAAAAAASAA8AAAMTCLrc/jAqIqu9duDNu4/CJ45XAgAh+QQABQAHACwAAAAAEgAPAAADFAi63P4wykmrBeTqzTsbHiUIIZcAACH5BAAFAAgALAAAAAASAA8AAAMXCLrc/jDKSau9OOvtiBSYICrDQIFckwAAOwAAAAAAAAAAAA==" alt="" /></span>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button class="btn btn-primary">Save Changes</button>
                 </div>
@@ -626,11 +628,7 @@ $('#newUserModal,#editUserModal').on('show', function(event){
         clubs.forEach(function(club) {
             $(`<option class="added" value="${club.id}">${club.name}</option>`).appendTo($select);
         });
-
-        if($.hasData($select)){
-            console.log('hasData',$select.data());
-            $select.val($select.data('value'));
-        }
+        $select.val($select.data('value'));
     })
     .fail(function() {
         console.log( "error" );
@@ -638,15 +636,53 @@ $('#newUserModal,#editUserModal').on('show', function(event){
     .always(function() {
         //hide loader
     });
-});
+}); 
+
 //clear select values once modal is hidden
-$('#newUserModal').on('hidden', function(event){
+$('#newUserModal,#editUserModal').on('hidden', function(event){
     $modal = $(this);
-    $select = $modal.find('#new_user_club_id');
+    $select = $modal.find('[name="club_id"]');
     $select.find('.added').remove();
 });
 
+$('#edit-user').on('submit', function(event){
+    event.preventDefault();
+    $form = $(this);//set a form jquery object
+    loader = $form.find('.loader');//show loading animation
+    message = $form.find('.message');//show user feedback
+    timeout = false;
+    //ASYNC FUNCTIONS
+    saved = function( data, textStatus, jqXHR ) {
+        if(data.hasOwnProperty('success')&&!data.success){
+            message.text('Not saved! Your session has timed out. Please login.').fadeIn();
+        }else{
+            $form.find(':text,:checkbox').prop("disabled", true);
+            message.text('Saved').fadeIn();
+            window.setTimeout(function(){
+                $form.parents('.modal').modal('hide');
+            }, 2000);
+        }
+    }
+    failed = function(jqXHR, textStatus, errorThrown){ message.text('error: '+errorThrown).fadeIn(); }
+    finished = function(data, textStatus, jqXHR){
+        loader.fadeOut('fast');
+        timeout = window.setTimeout(function(){ message.fadeOut('fast')}, 2500 );
+    }
+    //PRE AJAX FUNCTIONS
+    loader.fadeIn();
+    message.hide().text('');
+    clearTimeout(timeout);
+    //AJAX REQUEST AND PROMISE CALLBACKS
+    $.ajax({
+        url: event.target.action,
+        data: $(this).serialize(),
+        method: 'PUT'
+    })
+    .done(saved)
+    .fail(failed)
+    .always(finished);
 
+});
 
 
 function setInputValue(form, name, value){
@@ -690,8 +726,8 @@ function edit_user(user_id){
         for (var i in data) {
             setInputValue(form, i, data[i]);
         }
-        console.log('edit_user',data.club_id);
-        $(form).find('[name="club_id"]').data('value',data['club_id']);
+        $(form).find('[name="club_id"]').data('value',data.clubs_id);
+        $(form).attr('action', $(form).attr('action')+"/"+data.clubs_id);
     })
 }
 
