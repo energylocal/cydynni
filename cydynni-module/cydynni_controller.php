@@ -25,9 +25,8 @@ function cydynni_controller()
     $route->format = "json";
     $result = false;
     require "Modules/cydynni/cydynni_model.php";
-    //$club = new Club($mysqli);
-    $cydynni = new Cydynni($mysqli,$redis);
 
+    $cydynni = new Cydynni($mysqli,$redis);
 
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
@@ -202,24 +201,135 @@ function cydynni_controller()
             
             break;
 
-            case "admin":
-                if($session["admin"]){
-                    if($route->subaction=='users'){
-                        $route->format = "json";
-                        $club = $cydynni->getClubs($route->subaction2)[0];
-                        $result = $cydynni->getUsers($club->id);
-                        return $result;
-                    }elseif (empty($route->subaction)){
-                        $route->format = "html";
-                        return view("Modules/cydynni/admin_view.php", array());
-                    }
-                }
-                
-            break;
+        case "admin":
+            if($session["admin"]){
+                //get single user
+                if($route->subaction=='user'){
+                    $route->format = "json";
+                    $result = $cydynni->getUser($route->subaction2);//get user by user_id
+                    
+                }elseif($route->subaction=='users'){
+                    //get/set group users
+                    //users CRUD                    
+                    $route->format = "json";
+                    if($route->method=="POST"){
+                        //CREATE
+                        //user model save
+                        $returned = $user->register($_POST['username'], $_POST['password'], $_POST['email']);
+                        if($returned['success']){
+                            //cydynni model save
+                            $returned2 = $cydynni->saveUser($_POST, $returned['userid']);
+                            if($returned2['success'] && ($returned2['affected_rows']>0||!empty($returned2['user_id']>0))){
+                                $result = $cydynni->getUser($returned2['user_id']);
+                            }elseif(!$returned2['success'] && $returned2['affected_rows']==0 && empty($returned2['error'])){
+                                $result = array('success'=>false,'message'=>'no added rows');
+                            }else{
+                                $result = array('success'=>false,'message'=>$returned2['error']);
+                            }
+                        }else{
+                            $result = array('success'=>false,'message'=>'error in creating user');
+                        }
+                    }elseif($route->method=="GET"){
+                        //READ
+                        if(!empty($route->subaction2)){
+                            $club = $cydynni->getClubs($route->subaction2);//identify single club by slug
+                            $result = $cydynni->getUsers($club->id);//get users by club_id
+                        }else{
+                            $result = $cydynni->getUsers();//get all users in all clubs
+                        }
+                    }elseif($route->method=="PUT"){
+                        //UPDATE
+                        parse_str(file_get_contents("php://input"),$_PUT);//create array with posted (PUT method) values
+                        $user_id = !(empty($_PUT['user_id'])) ? $_PUT['user_id'] : false;
+                        if(!$user_id){
+                            $result = array('success'=>false,'message'=>'no user id sent');
+                        }else{
+                            $returned = $cydynni->saveUser($_PUT, $user_id);
+                            
+                            $user->change_password($userid, $old, $new);
 
-            default:
-            $route->format = "html";
-            return "<h1>default</h1>";
+                            if($returned['success'] && $returned['affected_rows']>0){
+                                $result = $cydynni->getUser($returned['data'][0]['user_id']);
+                            }elseif($returned['affected_rows']==0){
+                                $result = array('success'=>false,'message'=>'no affected rows');
+                            }else{
+                                $result = array('success'=>false,'message'=>$returned['error']);
+                            }
+                        }
+                    }elseif($route->method=="DELETE"){
+                        //DELETE
+                        parse_str(file_get_contents("php://input"),$_DELETE);//create array with posted (DELETE method) values
+                        $user_id = !(empty($_DELETE['user_id'])) ? $_DELETE['user_id'] : false;
+                        $result = $cydynni->deleteUser($_DELETE, $user_id);
+                    }
+
+
+
+
+                }elseif($route->subaction=='clubs'){
+                    //clubs CRUD
+                    
+                    if($route->method=="POST"){
+                        //CREATE
+                        $club = $cydynni->saveClub($_POST);
+                        if(!empty($club['success']) && $club['success']){
+                            $result = array($club['data']);
+                        }else{
+                            $result = array('success'=>false, 'message'=>$club['error'], 'params'=>$club['params']);
+                        }
+                    }elseif($route->method=="GET"){
+                        //READ
+                        if(empty($route->subaction2)){
+                            //select all clubs
+                            $result = $cydynni->getClubs();
+                        }else{
+                            //select club by id or slug
+                            if(is_numeric($route->subaction2)){
+                                $result = $cydynni->getClubById($route->subaction2);
+                            }else{
+                                $result = $cydynni->getClubs($route->subaction2);
+                            }
+                        }
+                    }elseif($route->method=="PUT"){
+                        //UPDATE
+                        parse_str(file_get_contents("php://input"),$_PUT);//create array with posted (PUT method) values
+                        $club_id = !(empty($_PUT['club_id'])) ? $_PUT['club_id'] : false;
+                        if($club_id) {
+                            unset($_PUT['club_id']);//dont update the ID
+                            $returned = $cydynni->saveClub($_PUT, $club_id);
+                            var_dump($returned);exit();
+                            if(!empty($returned['success']) && $returned['success']){
+                                $result = $cydynni->getClubById($returned['data'][0]['club_id']);
+                            }else{
+                                $result = array('success'=>false,'message'=>$returned['error']);
+                            }
+                        }else{
+                            $result = array('success'=>false,'message'=>'club id not given');
+                        }
+                    }elseif($route->method=="DELETE"){
+                        //DELETE
+                        parse_str(file_get_contents("php://input"),$_DELETE);//create array with posted (DELETE method) values
+                        $club_id = !(empty($_DELETE['club_id'])) ? $_DELETE['club_id'] : false;
+                        if($club_id) {
+                            // $result = $cydynni->deleteClub($_DELETE, $club_id);
+                        }else{
+                            $result = array('success'=>false,'message'=>'club id not given');
+                        }
+                    }
+                    $route->format = "json";
+                }else{
+                    //show list of clubs 
+                    $route->format = "html";
+                    return view("Modules/cydynni/admin_view.php", array());
+                }
+            }else{
+                //does not have privilates or may not be logged in
+                if(!$route->is_ajax){
+                    $route->format = "html";
+                }
+                return false;
+            }
+        break;
     }
     
     return array("content"=>$result);   

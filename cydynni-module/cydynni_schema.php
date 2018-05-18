@@ -18,5 +18,6 @@ $schema['cydynni_clubs'] = array(
     'languages' => array('type' => 'text'),
     'generation_feed' => array('type' => 'int(11)'),
     'consumption_feed' => array('type' => 'int(11)'),
-    'color' => array('type' => 'varchar(11)')
+    'color' => array('type' => 'varchar(11)'),
+    'slug'=> array('type'=>'varchar(24)')
 );

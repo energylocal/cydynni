@@ -3,12 +3,13 @@
     $domain = "messages";
 
     $menu_left[] = array(
-        'id'=>"cydynni_admin_menu",
+        'id'=>"cydynni_menu",
         'name'=>"Cydynni",
         'path'=>"cydynni/admin" , 
         'session'=>"write", 
-        'order' => 999,
-        'icon'=>'icon-user icon-white'
+        'order' => 3,
+        'icon'=>'icon-user icon-white',
+        'hideinactive'=>0
     );
     
 
