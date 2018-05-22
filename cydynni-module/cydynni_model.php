@@ -45,7 +45,7 @@ class Cydynni{
         }
         //return single row or array of multiple rows.
         if(!empty($clubs)){
-            return count($clubs)>1 ? $clubs : $clubs[0];
+            return $clubs;
         }else{
             return false;
         }
@@ -124,6 +124,13 @@ class Cydynni{
     }
 
 //USER FUNCTIONS
+
+/**
+ * get array of users. if userid given only single user returned
+ *
+ * @param int $userid
+ * @return array
+ */
     public function getUsers($userid = "") {
         if (!empty($userid)) {
             $stmt = $this->mysqli->prepare('SELECT userid,mpan,token,premisestoken,welcomedate,reportdate,clubs_id FROM cydynni WHERE userid = ?');
@@ -140,7 +147,7 @@ class Cydynni{
             );
             $stmt->fetch();
             $stmt->close();
-            return $user;
+            return array($user);
         }else{
             //show all users if no userid passed
             $sql = "SELECT userid,mpan,token,premisestoken,welcomedate,reportdate,clubs_id FROM cydynni";
@@ -152,8 +159,14 @@ class Cydynni{
         }
         return $users;
     }
-    
+    /**
+     * return array of users by given club_id
+     *
+     * @param int $club_id
+     * @return array
+     */
     public function getUsersByClub($club_id = "") {
+        $users = array();
         if (!empty($club_id)) {
             $stmt = $this->mysqli->prepare('SELECT userid,mpan,token,premisestoken,welcomedate,reportdate,clubs_id FROM cydynni WHERE clubs_id = ?');
             $stmt->bind_param("i", $club_id);
@@ -170,8 +183,8 @@ class Cydynni{
             while ($stmt->fetch()) $users[] = $user; 
             $stmt->close();
 
-            return $users;
         }
+        return $users;
     }
     /**
      * insert if no user_id passed
@@ -187,12 +200,10 @@ class Cydynni{
         $this->addToBindArray($fields, $data, 'clubs_id', 'i');//int type
 
         //extract the parts for each name, value and type (for each table)
-        foreach($fields as $table_name=>$field){
-            foreach($field as $key=>$value){
-                $values[$table_name][] = $key;
-                $values[$table_name][] = $value['value'];
-                $types[$table_name][]  = $value['type'];
-            }
+        foreach($fields as $key=>$v){
+            $names[] = $key;
+            $values[] = $v['value'];
+            $types[] = $v['type'];
         }
 
         //create the update or insert statements

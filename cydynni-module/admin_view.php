@@ -141,7 +141,6 @@ button:focus {
                             <dt>Report Key</dt><dd class="apikey_read"></dd>
                             <dt>Welcome Email</dt><dd class="welcomedate"></dd>
                             <dt>Report Email</dt><dd class="reportdate"></dd>
-                            <dt>Hits</dt><dd class="hits"></dd>
                             <dt></dt><dd><a class="btn btn-info link btn-small edit-user-button" data-toggle="modal" data-target="#editUserModal">Edit User</a></dd>
                         </dl>
                     </div>
@@ -208,16 +207,16 @@ button:focus {
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="new_user_name">Password</label>
+                        <label class="control-label" for="new_user_password">Password</label>
                         <div class="controls">
-                            <input type="password" name="password" id="new_user_name" data-lpignore="true" placeholder="Password">
+                            <input type="text" name="password" id="new_user_password" data-lpignore="true">
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label" for="new_user_club_id">Club</label>
                         <div class="controls">
                             <select name="club_id" id="new_user_club_id">
-                                <option>Choose a club&hellip;</option>
+                                <option selected value="">Choose a club&hellip;</option>
                             </select>
                         </div>
                     </div>
@@ -247,7 +246,7 @@ button:focus {
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <form id="edit-user" style="margin:0" action="<?php echo $path ?>cydynni/admin/user" method="POST" class="form-horizontal">
-        <input name="user_id" type="hidden">
+        <input name="userid" type="hidden">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -260,18 +259,14 @@ button:focus {
                         <label class="control-label" for="edit_user_email">Email</label>
                         <div class="controls">
                             <input type="email" name="email" id="edit_user_email" class="input-xlarge" data-lpignore="true" placeholder="Email Address">
+                            <input type="hidden" name="email-original">
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label" for="edit_user_username">Username</label>
                         <div class="controls">
-                            <input type="text" name="email" id="edit_user_username" data-lpignore="true" placeholder="Email">
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="edit_user_password">Password</label>
-                        <div class="controls">
-                            <input type="text" name="password" id="edit_user_password" data-lpignore="true" placeholder="Password">
+                            <input type="text" name="username" id="edit_user_username" data-lpignore="true" placeholder="Username">
+                            <input type="hidden" name="username-original">
                         </div>
                     </div>
                     <div class="control-group">

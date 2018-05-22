@@ -215,7 +215,7 @@ function cydynni_controller()
                             //cydynni model save
                             $returned2 = $cydynni->saveUser($_POST, $returned['userid']);
                             if($returned2['success'] && ($returned2['affected_rows']>0||!empty($returned2['user_id']>0))){
-                                $result = $cydynni->getUser($returned2['user_id']);
+                                $result = $cydynni->getUsers($returned2['user_id']);
                             }elseif(!$returned2['success'] && $returned2['affected_rows']==0 && empty($returned2['error'])){
                                 $result = array('success'=>false,'message'=>'no added rows');
                             }else{
@@ -243,8 +243,8 @@ function cydynni_controller()
                         }
                         // add club and emoncms user data
                         foreach ($cydynni_users as $key=>$value) {
-                            $cydynni_users[$key]['club'] = $cydynni->getClubs($cydynni_users[$key]['clubs_id']);
-                            $cydynni_users[$key]['user'] = $user->get($cydynni_users[$key]['userid']);
+                            $cydynni_users[$key]['club'] = $cydynni->getClubs($value['clubs_id']);
+                            $cydynni_users[$key]['user'] = $user->get($value['userid']);
                         }
                         $result = $cydynni_users;
                         
@@ -252,7 +252,7 @@ function cydynni_controller()
                         //UPDATE USER
                         $userid = put('userid');
                         if(!$userid){
-                            $result = array('success'=>false,'message'=>'no user id sent');
+                            $result = array('success'=>false,'message'=>'no userid sent');
                         }else{
                             $data = array(
                                 'mpan'=>put('mpan'),
@@ -265,18 +265,14 @@ function cydynni_controller()
                             array_filter($data);
                             $returned = $cydynni->saveUser($data, $userid);
                             if ($returned['success'] && $returned['affected_rows']>0) {
-                                if(!empty(put('username'))) $user->change_username($userid,put('username'));
-                                if(!empty(put('email'))) $user->change_email($userid,put('email'));
-                                $userdata = array(
-                                    'name'=>put('name'),
-                                    'location'=>put('location'),
-                                    'bio'=>put('bio')
-                                );
-                                array_filter($userdata);
-                                if (!empty($userdata) && $user->set($userid, $userdata)) {
-                                    //cydynni and user tables updated. return with newly edited user 
-                                    $result = $cydynni->getUser($userid);
+                                //@todo: should i check for changed values?
+                                if (put('username')!=put('username-original')) {
+                                    $user->change_username($userid,put('username'));
                                 }
+                                if (put('email')!=put('email-original')) {
+                                    $user->change_email($userid,put('email'));
+                                }
+                                $result = $cydynni->getUsers($userid);
                             }elseif ($returned['affected_rows']==0) {
                                 $result = array('success'=>false,'message'=>'no affected rows');
                             }else{

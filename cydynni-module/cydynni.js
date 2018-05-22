@@ -81,6 +81,7 @@ $(function(){
                 $form.find(':text,:checkbox').prop("disabled", true);
                 message.text('Saved').fadeIn();
                 window.setTimeout(function(){
+                    load_clubs();
                     $form.parents('.modal').modal('hide');
                 }, 2000);
             }
@@ -108,15 +109,19 @@ $(function(){
 })
 
 //load clubs into a dropdown
-$('#newUserModal,#editUserModal').on('show', function(event){
-    $modal = $(this);
-    $select = $modal.find('[name="club_id"]');
-    $.get( path + 'cydynni/admin/clubs/')
+$('#newUserModal, #editUserModal').on('show', function(event){
+    modal = this;
+    select = modal.querySelector('[name="club_id"]');
+    $.get( path + 'cydynni/admin/clubs')
     .done(function(clubs) {
         clubs.forEach(function(club) {
-            $(`<option class="added" value="${club.id}">${club.name}</option>`).appendTo($select);
+            $(`<option class="added" value="${club.id}">${club.name}</option>`).appendTo($(select));
         });
-        $select.val($select.data('value'));
+        for(i=0; i<select.options.length; i++){
+            if(select.options[i].value === select.dataset.value){
+                select.options[i].selected = true;
+            }
+        }
     })
     .fail(function() {
         console.log( "error" );
@@ -147,6 +152,7 @@ $('#edit-user').on('submit', function(event){
             $form.find(':text,:checkbox').prop("disabled", true);
             message.text('Saved').fadeIn();
             window.setTimeout(function(){
+                load_users();
                 $form.parents('.modal').modal('hide');
             }, 2000);
         }
@@ -162,7 +168,7 @@ $('#edit-user').on('submit', function(event){
     clearTimeout(timeout);
     //AJAX REQUEST AND PROMISE CALLBACKS
     $.ajax({
-        url: event.target.action,
+        url: event.target.action+"/"+event.target.querySelector('[name="club_id"]').value,
         data: $(this).serialize(),
         method: 'PUT'
     })
@@ -172,11 +178,23 @@ $('#edit-user').on('submit', function(event){
 
 });
 
-
+/**
+ * set form input value based on input name attribute
+ * 
+ * @param {HTMLElement} form 
+ * @param {string} name 
+ * @param {string} value 
+ */
 function setInputValue(form, name, value){
     input = form.querySelector('[name="'+name+'"]');
-    if(input){
-        input.value = value;
+    if (!input){
+        return;
+    }else{
+        if(input.tagName=='SELECT'){
+            input.dataset.value = value;
+        }else{
+            input.value = value;
+        }
     }
     group = form.querySelectorAll('[name="'+name+'[]"]');
     group.forEach(function(input){
@@ -196,7 +214,8 @@ function edit_club(club_id){
     form.querySelector('[name="club_id"]').value = club_id;
     $.get(path+'cydynni/admin/clubs/'+club_id)
     .success(function(data){
-        for (var i in data) {
+        //data is array of clubs
+        for (var i in data[0]) {
             setInputValue(form, i, data[i]);
         }
     })
@@ -205,17 +224,26 @@ function edit_club(club_id){
 /**
  * @param <int> user_id
  */
-function edit_user(user_id){
+function edit_user(userid){
     //populate user details in the modal form
     form = document.getElementById('edit-user');
-    form.querySelector('[name="user_id"]').value = user_id;
-    $.get(path+'cydynni/admin/user/'+user_id)
+    form.querySelector('[name="userid"]').value = userid;
+    $.get(path+'cydynni/admin/users/'+userid)
     .success(function(data){
-        for (var i in data) {
-            setInputValue(form, i, data[i]);
+        cydynni_user = data[0]
+        //data is array of users
+        for (var i in cydynni_user) {
+            if(typeof cydynni_user[i] != 'object'){
+                setInputValue(form, i, cydynni_user[i]);
+            }
         }
-        $(form).find('[name="club_id"]').data('value',data.clubs_id);
-        $(form).attr('action', $(form).attr('action')+"/"+data.clubs_id);
+        for (var k in cydynni_user.user) {
+            setInputValue(form, k, cydynni_user.user[k]);
+        }
+        setInputValue(form, 'club_id', cydynni_user.clubs_id);
+        setInputValue(form, 'email-original', cydynni_user.user.email);
+        setInputValue(form, 'username-original', cydynni_user.user.username);
+        form.querySelector('[name="club_id"]').dataset.value = cydynni_user.clubs_id;
     })
 }
 
@@ -224,12 +252,13 @@ $('#clublist').on('click', '.edit_club', function(event){
     edit_club($(this).data('club_id'));
 })
 
+//call the edit_user function on click of the modal overlay trigger
 $('#userlist').on('click', '.edit-user-button', function(event){
     edit_user($(this).data('user_id'));
 });
 
+//populate sidebar menu
 function load_clubs(){
-    //populate sidebar menu
     $('#clublist').find('.added').each(function(item){
         $(this).remove();
     });
@@ -257,16 +286,23 @@ function load_clubs(){
     .always(function(){
         $('#clublist').fadeIn();
     });
-
 }
+/**
+ * load users as expandable list
+ * this also loads club detail for each club
+ * 
+ * @param {int} club_id 
+ */
 function load_users(club_id) {
     $("#login-block").hide();
     $("#admin-block").show();
-    club_id = club_id || 0;
+    club_id = club_id || null;
     $('#userlist').html('');
     //populate user list
+    url = path + 'cydynni/admin/users';
+    url += club_id ? +'/'+club_id : ''; 
     $.ajax({
-        url: club_id.length>0 ? path+"cydynni/admin/users/"+club_id : path+"cydynni/admin/users",
+        url: url,
         dataType: 'json',
         success: function(result) {
             users = result;
@@ -274,38 +310,41 @@ function load_users(club_id) {
                 for (var z in result) {
                     template = $('#userlist-item').clone();
                     //append copy of template with replaced values for each user
+                    club = result[z].club[0];
+                    user = result[z].user;
+                    cydynni_user = result[z];
+                    
                     $(template.html()).appendTo('#userlist')
-                    .attr('href',result[z].id)
-                    .find('.email').text(result[z].email).end()
-                    .find('.token').text(result[z].token).end()
-                    .find('.apikey_read').text(result[z].apikey_read).end()
-                    .find('.welcomedate').text(result[z].welcomedate).end()
-                    .find('.reportdate').text(result[z].reportdate).end()
-                    .find('.hits').text(result[z].hits).end()
-                    .find('.username').text(result[z].username).end()
-                    .find('.mpan').text(result[z].mpan).end()
+                    .attr('href',cydynni_user.userid)
+                    .find('.email').text(user.email).end()
+                    .find('.token').text(cydynni_user.token).end()
+                    .find('.apikey_read').text(user.apikey_read).end()
+                    .find('.welcomedate').text(user.welcomedate).end()
+                    .find('.reportdate').text(cydynni_user.reportdate).end()
+                    .find('.username').text(user.username).end()
+                    .find('.mpan').text(cydynni_user.mpan).end()
 
-                    .find('.registeremail').data('userid',result[z].id).end()
-                    .find('.reportemail').data('userid',result[z].id).end()
-                    .find('.edituser').data('userid',result[z].id).end()
-                    .find('.editclub').data('clubid',result[z].club.id).end()
+                    .find('.registeremail').data('userid',cydynni_user.userid).end()
+                    .find('.reportemail').data('userid',cydynni_user.userid).end()
+                    .find('.edituser').data('userid',cydynni_user.userid).end()
+                    .find('.editclub').data('clubid',club.id).end()
 
-                    .find('.club-name').text(result[z].club.name).end()
-                    .find('.club-slug').text(result[z].club.slug).end()
-                    .find('.generator').text(result[z].club.generator).end()
-                    .find('.root_token').text(result[z].club.root_token).end()
-                    .find('.api_prefix').text(result[z].club.api_prefix).end()
-                    .find('.languages').text(result[z].club.languages).end()
-                    .find('.generation_feed').text(result[z].club.generation_feed).end()
-                    .find('.consumption_feed').text(result[z].club.consumption_feed).end()
-                    .find('.color').text(result[z].club.color).end()
-                    .find('.bg-color').css('background-color', result[z].club.color).end()
-                    .find('.club-id').text(result[z].club.id).end()
-                    .find('.club-name').text(result[z].club.name).end()
+                    .find('.club-name').text(club.name).end()
+                    .find('.club-slug').text(club.slug).end()
+                    .find('.generator').text(club.generator).end()
+                    .find('.root_token').text(club.root_token).end()
+                    .find('.api_prefix').text(club.api_prefix).end()
+                    .find('.languages').text(club.languages).end()
+                    .find('.generation_feed').text(club.generation_feed).end()
+                    .find('.consumption_feed').text(club.consumption_feed).end()
+                    .find('.color').text(club.color).end()
+                    .find('.bg-color').css('background-color', club.color).end()
+                    .find('.club-id').text(club.id).end()
+                    .find('.club-name').text(club.name).end()
 
-                    .find('.accordion-toggle').attr('href','#collapse'+result[z].id).end()
-                    .find('.accordion-body').attr('id','collapse'+result[z].id).end()
-                    .find('.edit-user-button').data('user_id',result[z].id);
+                    .find('.accordion-toggle').attr('href','#collapse'+cydynni_user.userid).end()
+                    .find('.accordion-body').attr('id','collapse'+cydynni_user.userid).end()
+                    .find('.edit-user-button').data('user_id',cydynni_user.userid);
                 }
             }else{
                 //none found
@@ -318,6 +357,7 @@ function load_users(club_id) {
         }
     });
 }
+//expand the list of users on click of the title
 $(document).click('#userList', function(event){
     expandable = event.target.tagName == 'A' ? $(event.target) : $(event.target).parents('a').first();
     if(event.target.id == '#userList') {
@@ -356,7 +396,6 @@ $("#register").click(function() {
         dataType: 'text',
         success: function(result) {
             $(".alert").html(result);
-            load();
         }
     });
 });
