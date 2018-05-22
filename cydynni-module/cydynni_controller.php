@@ -19,7 +19,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 
 function cydynni_controller()
 {
-    global $mysqli, $redis, $session, $route, $homedir;
+    global $mysqli, $redis, $session, $route, $homedir, $user;
     $result = false;
     
     $route->format = "json";
@@ -204,16 +204,12 @@ function cydynni_controller()
         case "admin":
             if($session["admin"]){
                 //get single user
-                if($route->subaction=='user'){
-                    $route->format = "json";
-                    $result = $cydynni->getUser($route->subaction2);//get user by user_id
-                }elseif($route->subaction=='users'){
+                if ($route->subaction=='users') {
                     //get/set group users
                     //users CRUD                    
                     $route->format = "json";
-                    if($route->method=="POST"){
-                        //CREATE
-                        //user model save
+                    if ($route->method=="POST") {
+                        //CREATE USER
                         $returned = $user->register($_POST['username'], $_POST['password'], $_POST['email']);
                         if($returned['success']){
                             //cydynni model save
@@ -228,48 +224,79 @@ function cydynni_controller()
                         }else{
                             $result = array('success'=>false,'message'=>'error in creating user');
                         }
-                    }elseif($route->method=="GET"){
-                        //READ
+                    } elseif ($route->method=="GET") {
+                        //READ USER
+                        $route->format = "json";
                         if(!empty($route->subaction2)){
-                            $club = $cydynni->getClubs($route->subaction2);//identify single club by slug
-                            $result = $cydynni->getUsers($club->id);//get users by club_id
+                            if(is_numeric($route->subaction2)){
+                                //identify single user by id
+                                $cydynni_users = $cydynni->getUsers($route->subaction2);
+                            }else{
+                                //identify single club by slug
+                                $club = $cydynni->getClubBySlug($route->subaction2);
+                                //identify all users by club _id
+                                $cydynni_users = $cydynni->getUsersByClub($club['id']);
+                            }
                         }else{
-                            $result = $cydynni->getUsers();//get all users in all clubs
+                            //get all users
+                            $cydynni_users = $cydynni->getUsers();
                         }
-                    }elseif($route->method=="PUT"){
-                        //UPDATE
-                        parse_str(file_get_contents("php://input"),$_PUT);//create array with posted (PUT method) values
-                        $user_id = !(empty($_PUT['user_id'])) ? $_PUT['user_id'] : false;
-                        if(!$user_id){
+                        // add club and emoncms user data
+                        foreach ($cydynni_users as $key=>$value) {
+                            $cydynni_users[$key]['club'] = $cydynni->getClubs($cydynni_users[$key]['clubs_id']);
+                            $cydynni_users[$key]['user'] = $user->get($cydynni_users[$key]['userid']);
+                        }
+                        $result = $cydynni_users;
+                        
+                    } elseif ($route->method=="PUT") {
+                        //UPDATE USER
+                        $userid = put('userid');
+                        if(!$userid){
                             $result = array('success'=>false,'message'=>'no user id sent');
                         }else{
-                            $returned = $cydynni->saveUser($_PUT, $user_id);
-                            
-                            $user->change_password($userid, $old, $new);
-
-                            if($returned['success'] && $returned['affected_rows']>0){
-                                $result = $cydynni->getUser($returned['data'][0]['user_id']);
-                            }elseif($returned['affected_rows']==0){
+                            $data = array(
+                                'mpan'=>put('mpan'),
+                                'token'=>put('token'),
+                                'premisestoken'=>put('premisestoken'),
+                                'welcomedate'=>put('welcomedate'),
+                                'reportdate'=>put('reportdate'),
+                                'clubs_id'=>put('clubs_id')
+                            );
+                            array_filter($data);
+                            $returned = $cydynni->saveUser($data, $userid);
+                            if ($returned['success'] && $returned['affected_rows']>0) {
+                                if(!empty(put('username'))) $user->change_username($userid,put('username'));
+                                if(!empty(put('email'))) $user->change_email($userid,put('email'));
+                                $userdata = array(
+                                    'name'=>put('name'),
+                                    'location'=>put('location'),
+                                    'bio'=>put('bio')
+                                );
+                                array_filter($userdata);
+                                if (!empty($userdata) && $user->set($userid, $userdata)) {
+                                    //cydynni and user tables updated. return with newly edited user 
+                                    $result = $cydynni->getUser($userid);
+                                }
+                            }elseif ($returned['affected_rows']==0) {
                                 $result = array('success'=>false,'message'=>'no affected rows');
                             }else{
                                 $result = array('success'=>false,'message'=>$returned['error']);
                             }
                         }
-                    }elseif($route->method=="DELETE"){
-                        //DELETE
-                        parse_str(file_get_contents("php://input"),$_DELETE);//create array with posted (DELETE method) values
-                        $user_id = !(empty($_DELETE['user_id'])) ? $_DELETE['user_id'] : false;
-                        $result = $cydynni->deleteUser($_DELETE, $user_id);
+                    } elseif ($route->method=="DELETE"){
+                        //DELETE USER
+                        $userid = delete('userid');
+                        if($cydynni->deleteUser($userid)){
+                            if($user->delete($userid)){
+                                return array('success'=>'true', 'message'=>"User $userid Deleted");
+                            }
+                        }
                     }
-
-
-
 
                 }elseif($route->subaction=='clubs'){
                     //clubs CRUD
-                    
                     if($route->method=="POST"){
-                        //CREATE
+                        //CREATE CLUB
                         $club = $cydynni->saveClub($_POST);
                         if(!empty($club['success']) && $club['success']){
                             $result = array($club['data']);
@@ -277,28 +304,38 @@ function cydynni_controller()
                             $result = array('success'=>false, 'message'=>$club['error'], 'params'=>$club['params']);
                         }
                     }elseif($route->method=="GET"){
-                        //READ
+                        //READ CLUB
                         if(empty($route->subaction2)){
                             //select all clubs
-                            $result = $cydynni->getClubs();
+                            return $cydynni->getClubs();
                         }else{
                             //select club by id or slug
                             if(is_numeric($route->subaction2)){
-                                $result = $cydynni->getClubById($route->subaction2);
-                            }else{
                                 $result = $cydynni->getClubs($route->subaction2);
+                            }else{
+                                $result = $cydynni->getClubBySlug($route->subaction2);
                             }
                         }
                     }elseif($route->method=="PUT"){
-                        //UPDATE
-                        parse_str(file_get_contents("php://input"),$_PUT);//create array with posted (PUT method) values
-                        $club_id = !(empty($_PUT['club_id'])) ? $_PUT['club_id'] : false;
+                        //UPDATE CLUB
+                        $club_id = put('clubid');
                         if($club_id) {
-                            unset($_PUT['club_id']);//dont update the ID
-                            $returned = $cydynni->saveClub($_PUT, $club_id);
-                            var_dump($returned);exit();
+                            $data = array(
+                                'name'=>put('name'),
+                                'generator'=>put('generator'),
+                                'root_token'=>put('root_token'),
+                                'api_prefix'=>put('api_prefix'),
+                                'languages'=>put('languages'),
+                                'generation_feed'=>put('generation_feed'),
+                                'consumption_feed'=>put('consumption_feed'),
+                                'color'=>put('color'),
+                                'id'=>put('id'),
+                                'slug'=>put('slug')
+                            );
+                            array_filter($data);
+                            $returned = $cydynni->saveClub($data, $club_id);
                             if(!empty($returned['success']) && $returned['success']){
-                                $result = $cydynni->getClubById($returned['data'][0]['club_id']);
+                                $result = $cydynni->getClubs($returned['data'][0]['club_id']);
                             }else{
                                 $result = array('success'=>false,'message'=>$returned['error']);
                             }
@@ -306,11 +343,12 @@ function cydynni_controller()
                             $result = array('success'=>false,'message'=>'club id not given');
                         }
                     }elseif($route->method=="DELETE"){
-                        //DELETE
-                        parse_str(file_get_contents("php://input"),$_DELETE);//create array with posted (DELETE method) values
-                        $club_id = !(empty($_DELETE['club_id'])) ? $_DELETE['club_id'] : false;
+                        //DELETE CLUB
+                        $club_id = delete('club_id');
                         if($club_id) {
-                            // $result = $cydynni->deleteClub($_DELETE, $club_id);
+                            if($cydynni->deleteClub($club_id)){
+                                return array('success'=>'true', 'message'=>"Club $club_id Deleted");                                
+                            }
                         }else{
                             $result = array('success'=>false,'message'=>'club id not given');
                         }
