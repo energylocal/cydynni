@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 6;
+$v = 13;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -331,7 +331,7 @@ $tariffs = array(
                 </div>
             </div>
             
-            <div id="meterdatablock" class="block household-block">
+            <div id="meterdatablock" class="block household-block hide">
                 <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                 
@@ -843,7 +843,9 @@ $tariffs = array(
 <script>
 
 var path = "<?php echo $path; ?>";
-var club = "";
+var club = "<?php echo $club; ?>";
+var club_path = path;
+
 var club_settings = <?php echo json_encode($club_settings);?>;
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
@@ -858,7 +860,7 @@ var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
-var tariffs = <?php echo json_encode($tariffs["bethesda"]); ?>;
+var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
 
 // Language selection top-right
 

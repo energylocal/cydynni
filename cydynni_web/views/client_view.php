@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 6;
+$v = 13;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -327,6 +327,26 @@ $tariffs = array(
                           <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
                         </p>
                         <div id="passwordreset-alert"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="meterdatablock" class="block household-block hide">
+                <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                
+                    <div class="bg-household2">
+
+                        <div style="padding:20px; text-align:left;">
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Power:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-power"></div>
+                        
+                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Latest meter reading:</div>
+                        <div style="font-weight:bold; font-size:32px" class="meterdata-kwh"></div>
+                        
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -713,6 +733,8 @@ $tariffs = array(
 
 var path = "<?php echo $path; ?>";
 var club = "<?php echo $club; ?>";
+var club_path = path+club;
+
 var club_settings = <?php echo json_encode($club_settings);?>;
 
 var generation_feed = club_settings.generation_feed;
