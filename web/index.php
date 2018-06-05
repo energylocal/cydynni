@@ -19,7 +19,7 @@ define('EMONCMS_EXEC', 1);
 
 // ---------------------------------------------------------
 // ---------------------------------------------------------
-if (IS_HUB) $base_url = "http://cydynni.org.uk/bethesda";
+
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
@@ -56,21 +56,20 @@ if (!IS_HUB) require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
+$base_url = IS_HUB ? "http://cydynni.org.uk/bethesda" : "";
+$emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
 
 chdir("/var/www/cydynni");
 
 if (!IS_HUB) require("lib/cydynni_emails.php");
 if (!IS_HUB) $cydynni_emails = new CydynniEmails($mysqli);
 
-if (!IS_HUB) require "meter_data_api.php";
+require "meter_data_api.php";
 $path = get_application_path();
 
 require "lib/PHPFina.php";
-if (IS_HUB) {
-	$phpfina = new PHPFina(array("datadir"=>"/home/pi/data/phpfina/"));
-}else{
-	$phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
-}
+$path_to_fina = IS_HUB ? "/home/pi/data/phpfina/" : "/var/lib/phpfina/";
+$phpfina = new PHPFina(array("datadir" => $path_to_fina));
 $use_local_cache = true;
 
 $apikey = false;
@@ -95,21 +94,23 @@ if ($apikey) {
 if ($session['read']) {
     $userid = (int) $session["userid"];
     
-if (IS_HUB) {
-    $redis->incr("userhits:$userid");
-    
-    $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
-    $row = $result->fetch_object();
-    if (isset($row->token)) $session["token"] = $row->token;
-}   
+    if (!IS_HUB) {
+        $redis->incr("userhits:$userid");
+        
+        $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
+        $row = $result->fetch_object();
+        if (isset($row->token)) $session["token"] = $row->token;
+    }   
     $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
     $row = $result->fetch_object();
     $session["email"] = $row->email;
     $session["apikey_read"] = $row->apikey_read;
 }
 
-// ---------------------------------------------------------
 if (IS_HUB) {
+// ---------------------------------------------------------
+// manually set club per installation
+// ---------------------------------------------------------
 	$club = "bethesda";
 	$club_settings = array();
 	$club_settings[$club] = array(
@@ -169,20 +170,22 @@ switch ($q)
         if (!IS_HUB) unset($session["token"]);
         if (!IS_HUB) unset($club_settings[$club]["root_token"]);
         if (IS_HUB) {
-		if ($session["write"]) {
-		    $content = view("views/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
-		} else {
-		
-		    if ($wifisetup) {
-		        header('Location: ../emoncms');
-		    } else {
-		
-		        // check register status
-		        $register = true; if ($user->get_number_of_users()>0) $register = false;
-		        $content = view("views/login_view.php",array('session'=>$session,'register'=>$register));
-		    }
-		}
-	}
+            //show register view for hubs
+            if ($session["write"]) {
+                $content = view("views/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            } else {
+                if ($wifisetup) {
+                    header('Location: ../emoncms');
+                } else {
+                    // check register status
+                    $register = true; if ($user->get_number_of_users()>0) $register = false;
+                    $content = view("views/login_view.php",array('session'=>$session,'register'=>$register));
+                }
+            }
+        }else{
+            //show content on web
+            $content = view("views/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+        }
         break;
 
     case "report":
@@ -223,8 +226,11 @@ switch ($q)
             $date->setTimestamp(time());
             $date->modify("midnight");
             $time = $date->getTimestamp();
-            $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
-            
+            if ($content){
+                $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+            } else {
+                $content = "Invalid data";
+            }
         } else {
             $content = "session not valid";
         }
@@ -245,8 +251,9 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-    if (IS_HUB) {
-        case "meter/live":
+
+    case "meter/live":
+        if (IS_HUB) {
             $format = "json";
             if ($session["read"]) {
                 $userid = $session["userid"];
@@ -257,8 +264,9 @@ switch ($q)
             } else {
                 $content = "session not valid";
             }
-            break;
-    }
+        }
+        break;
+
     // ------------------------------------------------------------------------
     // Generic meter API    
     // ------------------------------------------------------------------------
@@ -302,9 +310,11 @@ switch ($q)
     case "club/summary/day":
         $format = "json";
 
-        if (IS_HUB && !$result = $redis->get("$club:club:summary:day")) {
-            $result = http_request("GET","$base_url/club/summary/day",array());
-            if ($result) $redis->set("community:summary:day",$result);
+        if (!$result = $redis->get("$club:club:summary:day")) {
+            if( IS_HUB ) {
+                $result = file_get_contents("$base_url/club/summary/day");
+                if ($result) $redis->set("community:summary:day",$result);
+            }
         }
         $content = json_decode($result);
         
@@ -313,19 +323,22 @@ switch ($q)
         $date->setTimestamp(time());
         $date->modify("midnight");
         $time = $date->getTimestamp();
-        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
-        
+        if ($content){
+            $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        } else {
+            $content = "Invalid data";
+        }
         break;
 
     case "club/summary/monthly":
         $format = "json";
         $month = get("month");
 
-	if (IS_HUB) {
-		$content = file_get_contents("$base_url/community/summary/monthly?month=$month");
-	}else{
-		$content = get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
-	}
+        if (IS_HUB) {
+            $content = file_get_contents("$base_url/community/summary/monthly?month=$month");
+        }else{
+            $content = get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+        }
         break;
                 
     case "club/data":
@@ -349,28 +362,30 @@ switch ($q)
     case "live":
         $format = "json";
         
-        if (!IS_HUB && !$result = $redis->get("$club:live")) {
-            $result = http_request("GET","$base_url/live",array());
-            if ($result) $redis->set("live",$result);
+        if (!$result = $redis->get("$club:live")) {
+		if (IS_HUB) {
+            $result = file_get_contents("$base_url/live");
+		    if ($result) $redis->set("live",$result);
+		}
         }
-        $live = json_decode($result);
-                  
-        $date = new DateTime();
-        $date->setTimezone(new DateTimeZone("Europe/London"));
-        $date->setTimestamp(time());
-        $hour = $date->format("H");
+        if ($live = json_decode($result)) {
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $date->setTimestamp(time());
+            $hour = $date->format("H");
 
-        $tariff = "";
-        if ($hour<6) $tariff = "overnight";
-        if ($hour>=6 && $hour<11) $tariff = "morning";
-        if ($hour>=11 && $hour<16) $tariff = "midday";
-        if ($hour>=16 && $hour<20) $tariff = "evening";
-        if ($hour>=20) $tariff = "overnight";
-        if ($live->generation>=$live->club) $tariff = "generation";
-        
-        $live->tariff = $tariff;
-        
-        $content = $live;
+            $tariff = "";
+            if ($hour<6) $tariff = "overnight";
+            if ($hour>=6 && $hour<11) $tariff = "morning";
+            if ($hour>=11 && $hour<16) $tariff = "midday";
+            if ($hour>=16 && $hour<20) $tariff = "evening";
+            if ($hour>=20) $tariff = "overnight";
+            if ($live->generation>=$live->club) $tariff = "generation";
+            
+            $live->tariff = $tariff;
+            
+            $content = $live;
+        }
         break;
         
     case "generation/estimate":
@@ -391,8 +406,7 @@ switch ($q)
         
         $feed = 166913;
         if ($club=="towerpower") $feed = 179247;
-        
-        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $result = file_get_contents('https://emoncms.org/feed/average.json?'.http_build_query(array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1)));
 
         if ($result) {
             $data = json_decode($result);
@@ -432,12 +446,9 @@ switch ($q)
         $interval = (int) $_GET['interval'];
         
         $start = $end - (3600*24.0*7*1000);
-        if (IS_HUB) {
-	        $data = json_decode(file_get_contents("http://localhost/emoncms/feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
-        }else{
-            $data = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
-        }
-
+        
+        $data = json_decode(file_get_contents($emoncms_url."feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
+    
         $divisions = round((24*3600) / $interval);
 
         $days = count($data)/$divisions;
@@ -467,12 +478,14 @@ switch ($q)
         break;
     
     case "demandshaper":
-        $format = "json";
-        $content = get_demand_shaper($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+        if (!IS_HUB) {
+            $format = "json";
+            $content = get_demand_shaper($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+        }
         break;
     
-    if (IS_HUB) {
-        case "epower-api":
+    case "epower-api":
+        if (!IS_HUB) {
             $format = "text";
             if ($session["read"]) {
                 $token = $session['token'];
@@ -494,8 +507,9 @@ switch ($q)
             } else {
                 $content = "session not valid";
             }
-            break;
-    }
+        }
+        break;
+
     // ------------------------------------------------------------------------
     // User    
     // ------------------------------------------------------------------------
@@ -508,91 +522,90 @@ switch ($q)
     case "login":
         $format = "json";
         
-        if (IS_HUB) {
-		    $email_or_username = post('username');
-        } else {
-            $email_or_username = post('email');
-        }
+        $email_or_username = IS_HUB ? post('username') : post('email');
+
         $content = $user->login($email_or_username,post('password'),false);
         
         // Login with email address if username did not work
-	if (!IS_HUB) {
-		if ($content["message"]=="Username does not exist") {
-		    $users = $user->get_usernames_by_email($email_or_username);
-		    if ($users && count($users)) $content = $user->login($users[0]["username"],post('password'),false);
-		    else $content = array("success"=>false, "message"=>"User not found");
-		}
-    }
-        break;
-    if (IS_HUB) {
-    case "register":
-        $format = "json";
-        
-        if ($user->get_number_of_users()==0)
-        {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            
-            // Send request
-            $ch = curl_init();
-            curl_setopt($ch,CURLOPT_URL,"https://emoncms.cydynni.org.uk/user/auth.json");
-            curl_setopt($ch,CURLOPT_POST,1);
-            curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
-            curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-            $result = curl_exec($ch);
-            curl_close($ch);
-
-            $result = json_decode($result);
-            if ($result!=null && isset($result->success) && $result->success) {
-
-                // Fetch full account details from remote emoncms
-                $u = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/user/get.json?apikey=".$result->apikey_write));
-
-                // Register account locally
-                $result = $user->register($username, $password, $u->email);
-                
-                // Save remote account apikey to local hub
-                if ($result['success']==true) {
-                    $userid = $result['userid'];
-                    $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
-                    $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
-                    
-                    // Trigger download of user data
-                    $sync_flag = "/tmp/emoncms-flag-sync";
-                    $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
-                    $sync_logfile = "/home/pi/data/cydynni-sync.log";
-                    $fh = @fopen($sync_flag,"w");
-                    if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
-                    @fclose($fh);
-                    
-                    $content = $user->login($username, $password);
-                    
-                    $content = array("success"=>true);
-                    
-                } else {
-                    $content = array("success"=>false, "message"=>"error creating account");
-                }
-            } else {
-                $content = array("success"=>false, "message"=>"cydynni online account not found");
+        if (!IS_HUB) {
+            if ($content["message"]=="Username does not exist") {
+                $users = $user->get_usernames_by_email($email_or_username);
+                if ($users && count($users)) $content = $user->login($users[0]["username"],post('password'),false);
+                else $content = array("success"=>false, "message"=>"User not found");
             }
         }
-        
         break;
-    }
+
+    case "register":
+        if (IS_HUB) {
+            $format = "json";
+            
+            if ($user->get_number_of_users()==0)
+            {
+                $username = $_POST['username'];
+                $password = $_POST['password'];
+                
+                // Send request
+                $ch = curl_init();
+                curl_setopt($ch,CURLOPT_URL,"https://emoncms.cydynni.org.uk/user/auth.json");
+                curl_setopt($ch,CURLOPT_POST,1);
+                curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
+                curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+                $result = curl_exec($ch);
+                curl_close($ch);
+
+                $result = json_decode($result);
+                if ($result!=null && isset($result->success) && $result->success) {
+
+                    // Fetch full account details from remote emoncms
+                    $u = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/user/get.json?apikey=".$result->apikey_write));
+
+                    // Register account locally
+                    $result = $user->register($username, $password, $u->email);
+                    
+                    // Save remote account apikey to local hub
+                    if ($result['success']==true) {
+                        $userid = $result['userid'];
+                        $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
+                        $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
+                        
+                        // Trigger download of user data
+                        $sync_flag = "/tmp/emoncms-flag-sync";
+                        $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
+                        $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                        $fh = @fopen($sync_flag,"w");
+                        if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
+                        @fclose($fh);
+                        
+                        $content = $user->login($username, $password);
+                        
+                        $content = array("success"=>true);
+                        
+                    } else {
+                        $content = array("success"=>false, "message"=>"error creating account");
+                    }
+                } else {
+                    $content = array("success"=>false, "message"=>"cydynni online account not found");
+                }
+            }
+        }
+        break;
+    
     case "logout":
         $format = "text";
         $content = $user->logout();
         break;
-    if (!IS_HUB) {    
-        case "passwordreset":
+
+    case "passwordreset":
+        if (!IS_HUB) {    
             $format = "json";
             $user->appname = "Cydynni";
             $users = $user->get_usernames_by_email(get('email'));
             if ($users && count($users)) $content = $user->passwordreset($users[0]["username"],get('email'));
             else $content = array("success"=>false, "message"=>"User not found");
-            
-            break;
-    }   
+        }   
+    	break;
+    
     case "changepassword":
         $format = "text";
         if ($session["write"]) {
@@ -604,7 +617,7 @@ switch ($q)
         
     case "update":
         $format = "text";
-        $content  = "";
+	$content  = "";
         if (IS_HUB) {
             // Hydro
             $redis->set("live",file_get_contents("$base_url/live"));
@@ -644,11 +657,8 @@ switch ($q)
         $limitinterval = (int) get("limitinterval");
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
-	if (IS_HUB) {
-        $result = file_get_contents("http://localhost/emoncms/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
-	} else {
-		$result = file_get_contents("https://emoncms.cydynni.org.uk/feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
-	}
+
+        $result = file_get_contents($emoncms_url."feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
         
         $content = json_decode($result);
         if ($content==null) $content = $result;
@@ -664,12 +674,9 @@ switch ($q)
         $interval = (int) get("interval");
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
-        
-        if (IS_HUB) {
-            $result = file_get_contents("http://localhost/emoncms/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr);
-        } else {
-            $result = file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=$id&start=$start&end=$end&interval=$interval".$apikeystr);
-        }
+        $params = http_build_query(array("id"=>$id, "start"=>$start, "end"=>$end, "interval"=>$interval));
+        //apikey not valid in web mode..?
+        $result = file_get_contents($emoncms_url.'feed/average.json?'.$params.$apikeystr);
 
         $content = json_decode($result);
         if ($content==null) $content = $result;
@@ -677,16 +684,18 @@ switch ($q)
         break;
 
     // ----------------------------------------------------------------------
-    // Administration functions
+    // Administration functions 
     // ----------------------------------------------------------------------
-    if (!IS_HUB) {
-        case "admin":
+    case "admin":
+        if (IS_HUB) {
             $format = "html";
             unset($session["token"]);
             $content = view("views/admin_view.php",array('session'=>$session));
-            break;
-            
-        case "admin/users":
+        }
+        break;
+        
+    case "admin/users":
+        if (!IS_HUB) {
             $format = "json";
             if ($session['admin']) {
                 // Include data from cydynni table here too
@@ -706,30 +715,38 @@ switch ($q)
                 }
                 $content = $users;
             }
-            break;
-            
-        case "admin/registeremail":
+        }
+        break;
+        
+    case "admin/registeremail":
+        if (!IS_HUB) {
             $format = "text";
             if ($session['admin']) {
                 $content = $cydynni_emails->registeremail(get('userid'));
             }
-            break;
-            
-        case "admin/change-user-email":
+        }
+        break;
+        
+    case "admin/change-user-email":
+        if (!IS_HUB) {
             $format = "json";
             if ($session['admin']) {
                 $content = $user->change_email(get("userid"),get("email"));
             }
-            break;
+        }
+        break;
 
-        case "admin/change-user-username":
+    case "admin/change-user-username":
+        if (!IS_HUB) {
             $format = "json";
             if ($session['admin']) {
                 $content = $user->change_username(get("userid"),get("username"));
             }
-            break;
-                    
-        case "admin/switchuser":
+        }
+        break;
+                
+    case "admin/switchuser":
+        if (!IS_HUB) {
             $format = "text";
             if ($session['admin']) {
                 $userid = (int) get("userid");
@@ -744,15 +761,17 @@ switch ($q)
                 $content = "User switched";
             }
             header('Location: '."http://cydynni.org.uk/#household");
-            break;
+        }
+        break;
 
-        case "admin/sendreport":
+    case "admin/sendreport":
+        if (!IS_HUB) {
             $format = "text";
             if ($session['admin']) {
                 $content = $cydynni_emails->send_report_email(get('userid'));
             }
-            break;
-    } // end if not hub
+        }
+        break;
 } // end switch
 
 switch ($format) 
@@ -795,34 +814,4 @@ function translate($s,$lang) {
     } else { 
         return $s;
     }
-}
-
-// -------------------------------------------------------------
-// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
-// -------------------------------------------------------------
-if (IS_HUB) {
-	function decode_date($datestr) {
-	    $datestr = str_replace(",","",$datestr);
-	    $date_parts = explode(" ",$datestr);
-	    if (count($date_parts)!=4) return "invalid date string";
-	    $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
-	    
-	    $day = $date_parts[1];
-	    $month = $date_parts[0];
-	    $year = $date_parts[2];
-	    
-	    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
-	    
-	    $date = new DateTime();
-	    $date->setTimezone(new DateTimeZone("Europe/London"));
-	    $date->setDate($year,$months[$month],$day);
-	    $date->setTime(0,0,0);
-	    
-	    //$date->modify("midnight");
-	    $time = $date->getTimestamp();
-	    // November, 02 2016 00:00:00
-	    // print $date2."\n";
-	    // Mid night start of day
-	    return $time; //strtotime($date2);
-	}
 }

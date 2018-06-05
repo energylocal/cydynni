@@ -198,7 +198,7 @@ function club_bargraph_load() {
         var d = new Date(time);
         var hour = d.getHours();
         
-        var generation = generation_data[z][1] * scale;
+        var generation = generation_data[z] ? generation_data[z][1] * scale : 0;
         var consumption = club_data[z][1] * scale;
         
         var overnight = 0;

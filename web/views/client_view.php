@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 13;
+$v = 6;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -67,7 +67,7 @@ $tariffs = array(
         <div class="oembluebar">
             <div class="oembluebar-inner">
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
-                <!--<div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div>-->
+                <?php if(IS_HUB): ?><div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div><?php endif; ?>
 
                 <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
                 <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
@@ -90,652 +90,33 @@ $tariffs = array(
                     <li name="forecast"><div><img src="<?php echo $path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="<?php echo $path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <!--<li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>-->
-                    <li name="devices"><div><img src="images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
+                    <?php if(!IS_HUB):?>
+                    <li name="tips"><div><img src="<?php echo $path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+                    <?php else : ?>
+                    <li name="devices"><div><img src="<?php echo $path; ?>images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
+                    <?php endif; ?>
                 </ul>
-<!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
-<!----------------------------------------------------------------------------------------------------------------- -->
 
         <div class="page" name="forecast">
-
-            <div class="block">
-                <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                  <div style="background-color:#39aa1a; color:#fff">
-                  
-                    <div id="status-pre" style="padding:10px;"></div>
-                    <img id="status-img" src="<?php echo $path; ?>images/new-tick.png"/>
-                    <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
-                    <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
-                    
-                  </div>
-                </div>
-            </div>
-        
-            <div class="block">
-                <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity Forecast"); ?>
-                
-                <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                <div class="visnav-block">
-                  <div class="visnav-club club-left"><</div>
-                  <div class="visnav-club club-right">></div>
-                  <div class="visnav-club club-month"><?php echo t("MONTH");?></div>
-                  <div class="visnav-club club-week"><?php echo t("WEEK");?></div>
-                  <!--<div class="visnav-club club-day"><?php echo t("DAY");?></div>-->
-                </div>
-                
-                
-                </div>
-                <div class="block-content">
-
-                  <div style="background-color:#088400; color:#fff">
-                    <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
-                  </div>
-                  
-                  <div class="no-padding">
-                    <div class="triangle-wrapper">
-                      <div class="triangle-down">
-                        <div class="triangle-down-content triangle-forecast2-bg"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="padding:10px">
-                    <div style="padding-top:5px; padding-bottom:5px">
-                      <div class="legend-label-box" style="background-color:#ffb401"></div>
-                      <span class="legend-label"><?php echo t("Morning");?></span>
-                      <div class="legend-label-box" style="background-color:#4dac34"></div>
-                      <span class="legend-label"><?php echo t("Midday");?></span>
-                      <div class="legend-label-box" style="background-color:#e6602b"></div>
-                      <span class="legend-label"><?php echo t("Evening");?></span>
-                      <div class="legend-label-box" style="background-color:#014c2d"></div>
-                      <span class="legend-label"><?php echo t("Overnight");?></span>
-                      <div class="legend-label-box" style="background-color:#29aae3"></div>
-                      <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
-                    </div>
-                    
-                    <div id="club_bargraph_bound" style="width:100%; height:405px;">
-                      <div id="club_bargraph_placeholder" style="height:405px"></div>
-                    </div>
-                  </div>
-                  
-                  <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?><br>
-                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>
-                  </div>
-
-                </div>
-            </div>
-
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Current Tariff"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
-                <div class="block-content hide">
-                  <div style="background-color:#005b0b; color:#fff">
-                    <div class="bound">
-                    <b><?php echo t("You're currently on the"); ?></b>
-                    </div>
-                  </div>
-                  
-                  <div class="no-padding">
-                    <div class="triangle-wrapper">
-                      <div class="triangle-down">
-                        <div class="triangle-down-content triangle-topup-bg"></div>
-                      </div>
-                    </div>
-                  </div>
-                    
-                  <br>
-                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
-                  <div id="tariff-now-circle" class="circle bg-generation">
-                      <div class="circle-inner">
-                          <div id="tariff-now-price" style="font-size:36px">7p</div>
-                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
-                      </div>
-                  </div>
-                  <br>
-                </div>
-            </div>
-                                    
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
-                <div class="block-content hide">
-
-                  <br>
-
-                  <div id="generation-tariff-box" class="box5" style="color:#29aae3">
-                      <div style="font-size:26px; font-weight:bold"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Your local electricity"); ?></div>
-
-                      <div class="circle bg-generation">
-                          <div class="circle-inner">
-                              <div style="font-size:36px">7p</div>
-                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:22px; font-weight:bold"></div>
-                  </div>
-                    
-                  <div style="margin-bottom:10px; color:#444;"><?php echo t("Prices for extra electricity (in the event your local electricity is not covering all of your needs)"); ?></div>  
-                    
-                  <div id="morning-tariff-box" class="box5" style="color:#ffb401">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
-
-                      <div class="circle-small bg-morning">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px">12p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:22px; font-weight:bold">6am - 11am</div>
-                  </div>
-                  
-                  <div id="midday-tariff-box" class="box5" style="color:#4dac34">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
-
-                      <div class="circle-small bg-midday">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px">10p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:24px; font-weight:bold">11am - 4pm</div>
-                  </div>
-                  
-                  <div id="evening-tariff-box" class="box5" style="color:#e6602b">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>
-                      <div class="circle-small bg-evening">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px">14p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-                      <div style="font-size:22px; font-weight:bold">4pm - 8pm</div>
-                  </div>
-                  
-                  <div id="overnight-tariff-box" class="box5" style="color:#014c2d">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
-                      
-                      <div class="circle-small bg-overnight">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px">7.25p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-                      
-                      <div style="font-size:22px; font-weight:bold">8pm - 6am</div>
-                  </div>
-                  
-
-                  
-                  <div style="clear:both"></div>
-                  <br>
-                  
-                  <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
-                    <div style="padding:20px">
-                      <?php echo t("Check the Local Electricity Forecast tab to see if it is high or low!"); ?>
-                    </div>
-                  </div>
-                  
-                </div>
-            </div>
+            <?php include("client_forecast_view.php") ?>
         </div>
 
-<!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
-<!----------------------------------------------------------------------------------------------------------------- -->
-
-        
         <div class="page" name="household">
-            
-            <div id="login-block" class="block">
-                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                    
-                    <div class="bg-household" style="padding:20px">
-                    
-                        <div style="font-weight:bold; font-size:32px"><?php echo t("Log in"); ?></div>
-                        <?php echo t("Please login to view account"); ?><br><br>
-                    
-                        <input id="email" type="text" placeholder="Username or email..."><br><br>
-                        <input id="password" type="password" placeholder="Password..."><br>
-                        
-                        <br>
-                        <button id="login" class="btn"><?php echo t("Login");?></button><br><br>
-                        <div id="passwordreset-start" style="display:inline-block; cursor:pointer;"><?php echo t("Forgotten your password?");?></div>
-                        <br><br>
-                        <div id="alert"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="passwordreset-block" class="block" style="display:none">
-                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">                    
-                    <div class="bg-household" style="padding:20px">
-                        <p id="passwordreset-title"></p>
-                        <p>
-                          <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
-                          <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
-                        </p>
-                        <div id="passwordreset-alert"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="meterdatablock" class="block household-block hide">
-                <div class="block-title bg-household2"><?php echo t("Live Meter Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                
-                    <div class="bg-household2">
-
-                        <div style="padding:20px; text-align:left;">
-                        
-                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Power:</div>
-                        <div style="font-weight:bold; font-size:32px" class="meterdata-power"></div>
-                        
-                        <div style="font-weight:bold; font-size:22px; color:rgba(255,255,255,0.8)">Latest meter reading:</div>
-                        <div style="font-weight:bold; font-size:32px" class="meterdata-kwh"></div>
-                        
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="block household-block">
-              <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div></div>
-              
-              <div class="block-content" style="color:#c20000">
-              
-                <div class="bg-household">
-                  <b><?php echo t("On the"); ?> <span class="household_date"></span> <?php echo t("you scored"); ?>:</b>
-                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score"></span>/100</div>
-                </div>
-                
-                <div class="no-padding">
-                  <div class="triangle-wrapper">
-                    <div class="triangle-down">
-                      <div class="triangle-down-content triangle-household-bg"></div>
-                    </div>
-                  </div>
-                </div>
-                <br>
-                <img id="household_star1" src="<?php echo $path; ?>images/starred.png" style="width:45px">
-                <img id="household_star2" src="<?php echo $path; ?>images/starred.png" style="width:45px">
-                <img id="household_star3" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
-                <img id="household_star4" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
-                <img id="household_star5" src="<?php echo $path; ?>images/star20red.png" style="width:45px">
-              
-                <p class="household_status"></p>
-                
-                <div class="bg-household" style="height:100px">
-                  <div style="padding:5px">
-                    <p><?php echo t("You used"); ?> <span class="household_totalkwh"></span> kWh. <?php echo t("It cost"); ?> £<span class="household_totalcost"></span></p>
-                    <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?>:</p>
-                  </div>
-                </div>
-                
-                <div class="no-padding">
-                  <div class="triangle-wrapper">
-                    <div class="triangle-down">
-                      <div class="triangle-down-content triangle-household-bg"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <br>
-                <div class="circle bg-household">
-                    <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px" class="household_costsaving">£0.00</div>
-                    </div>
-                </div>
-                <br>
-                
-              </div>
-            </div>
-            
-            <div class="block household-block">
-                <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                
-                    <div class="bg-household2">
-                      <div class="bound"><?php echo t("Here's what your electricity use looked like on"); ?><br><b><span class="household_date"></span> 2017</b></div>
-                    </div>
-                    
-                    <div class="no-padding">
-                      <div class="triangle-wrapper">
-                        <div class="triangle-down">
-                          <div class="triangle-down-content triangle-household2-bg"></div>
-                        </div>
-                      </div>
-                    </div>
-                
-                    <div style="padding:10px">
-                        <div id="household_bargraph_bound" style="width:100%; height:405px;">
-                            <div id="household_bargraph_placeholder" style="height:405px"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="block household-block">
-                <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                
-                    <div class="bg-household3">
-                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you used on"); ?> <span class="household_date"></span> 2017</div>
-                    </div>
-                    
-                    <br>
-                    
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("ELECTRICITY"); ?></div>
-                      <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="household_piegraph1_placeholder"></canvas>
-                      </div>
-                      <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="household_hrbar1_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("COST"); ?></div>
-                      <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="household_piegraph2_placeholder"></canvas>
-                      </div>
-                      <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="household_hrbar2_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                    
-                    <div class="box3">
-                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table class="keytable">
-                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
-                          <tr>
-                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
-                          </tr>
-                          <?php } ?>
-                        </table>
-                      </div>
-                    </div>
-                    
-                    <div style="clear:both"></div>
-
-                    <div class="bg-household3" style="padding:20px">
-                      <div class="bound"><?php echo t("Head to the tips section or get in touch with your Energy Local club to see how you can shift more of your use to cheaper times."); ?></div>
-                    </div>
-                    
-                </div>
-            </div>
+            <?php include("client_household_view.php") ?>
         </div>
        
-<!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
-<!----------------------------------------------------------------------------------------------------------------- -->
-        
         <div class="page" name="club">
-            <div class="block">
-                <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                
-                <div class="block-content" style="color:#ffb401">
-                
-                  <div style="background-color:#ffb401; color:#fff">
-                    <b><?php echo t("On the"); ?> <span class="club_date"></span> <?php echo t("we scored"); ?>:</b>
-                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="club_score">50</span>/100</div>
-                  </div>
-                  
-                  <div class="no-padding">
-                    <div class="triangle-wrapper">
-                      <div class="triangle-down">
-                        <div class="triangle-down-content triangle-club-bg"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <br>
-                  <img id="club_star1" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-                  <img id="club_star2" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-                  <img id="club_star3" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-                  <img id="club_star4" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-                  <img id="club_star5" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-                
-                  <br><br>
-                  <div class="bound" id="club_statusmsg"></div><br>
-                  
-                <div style="background-color:#ffb401; color:#fff; height:50px">
-                  <div style="padding:5px">
-                    <p><?php echo t("Together we've kept"); ?></p>
-                  </div>
-                </div>
-                
-                <div class="no-padding">
-                  <div class="triangle-wrapper">
-                    <div class="triangle-down">
-                      <div class="triangle-down-content triangle-club-bg"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                <br>
-                <div class="circle bg-club">
-                    <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px" class="club_generation_value" >£00.00</div>
-                    </div>
-                </div>
-                <br>
-                
-                <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?></div>
-                </div>
-                  
-                </div>
-            </div>
-            <div class="block">
-                <div class="block-title bg-club2"><?php echo t("Club breakdown"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                
-                    <div class="bg-club2">
-                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the ".$club_settings["generator"]."."); ?></div>
-                    </div>
-                    
-                    <div class="no-padding">
-                      <div class="triangle-wrapper">
-                        <div class="triangle-down">
-                          <div class="triangle-down-content triangle-club2-bg"></div>
-                        </div>
-                      </div>
-                    </div>
-                    <br>
-
-                    <!--
-                    <div class="box3">
-                      <div id="generation_droplet_bound" style="margin: 0 auto">
-                        <canvas id="generation_droplet_placeholder"></canvas>
-                      </div>
-                    </div>-->
-                    
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("ELECTRICITY"); ?></div>
-                      <div id="club_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="club_piegraph1_placeholder"></canvas>
-                      </div>
-                      <div id="club_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="club_hrbar1_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("COST"); ?></div>
-                      <div id="club_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="club_piegraph2_placeholder"></canvas>
-                      </div>
-                      <div id="club_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="club_hrbar2_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                    
-                    <div class="box3">
-                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table class="keytable">
-                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
-                          <tr>
-                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
-                          </tr>
-                          <?php } ?>
-                        </table>
-                      </div>
-                    </div>
-                    
-                    <div style="clear:both"></div>
-
-                    <div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings["generator"].", the more money stays in the local club."); ?></div>
-                    </div>
-                    
-                </div>
-            </div>
+            <?php include("client_club_view.php") ?>
         </div>
-        
-<!------------------------------------------------------------------------------------------------------------------->
-<!------------------------------------------------------------------------------------------------------------------->
-<!----------------------------------------------------------------------------------------------------------------- -->
-        
+        <?php if (!IS_HUB): ?>
         <div class="page" name="tips">
-            <div class="block">
-                <div class="block-title bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content bg-tips" style="padding:20px">
-                    <figure class="tips-appliance show-fig">
-                        <img src="<?php echo $path; ?>images/dishwasher.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("DISHWASHER") ?></h2>
-                            </div>
-                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/lamp.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("LED LIGHTS") ?></h2>
-                            </div>
-                            <?php echo t("LED lights can cut your lighting costs by up to 90%. There’s more information on our website and in the info pack on installing them in your house.")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/stove.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("COOKING") ?></h2>
-                            </div>
-                            <?php echo t("Putting a lid on your pan when you're cooking traps the heat inside so you don’t need to have the hob on as high. A simple and effective way to use less electricity.")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/slowcooker.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("SLOW COOKING") ?></h2>
-                            </div>
-                            <?php echo t("Slow cookers are very energy efficient, make tasty dinners and help you avoid using electricity during the evening peak (4 - 8pm) when you might otherwise be using an electric oven.")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/washingmachine.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("WASHING MACHINE") ?></h2>
-                            </div>
-                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/fridge.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("FRIDGES & FREEZERS") ?></h2>
-                            </div>
-                            <?php echo t("Try to minimise how often and how long you need to open the doors. Wait for cooked food to cool before putting it in the fridge. Older fridges and freezers can be very inefficient and costly to run.")
-                            ?>
-                        </figcaption>
-                    </figure>
-                    <figure class="tips-appliance">
-                        <img src="<?php echo $path; ?>images/lightbulb.png">
-                        <figcaption>
-                            <div class="tips-appliance-name">
-                                <h2><?php echo t("LIGHTS") ?></h2>
-                            </div>
-                            <?php echo t("Switching off lights and appliances when not in use is a simple and effective way to use less electricity. You can make a special effort to do this during the morning and evening peaks.")
-                            ?>
-                        <figcaption>
-                    </figure>
-                    
-                    <div>
-                        <div class="tips-arrow-outer-wrapper">
-                            <div class="tips-arrow-inner-wrapper leftclick">
-                                <div class="tips-leftarrow"></div>
-                                <div class="tips-directions"><?php echo t("PREVIOUS"); ?></div>
-                            </div>
-                            <div class="tips-arrow-inner-wrapper rightclick">
-                                <div class="tips-directions"><?php echo t("NEXT TIP"); ?></div>
-                                <div class="tips-rightarrow"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php include("client_tips_view.php") ?>
         </div>
-        
-        
+        <?php else : ?>
         <div class="page" name="devices">
-            <div class="block">
-                
-                <div class="block-content" style="color:#ea510e">
-                  
-                  <!-- COPIED FROM emoncms/../device_view.php -->
-                  
-	                <div id="auth-check" class="hide clearfix">
-	                    <i class="icon-exclamation-sign icon-white"></i> Device on ip address: <span id="auth-check-ip"></span> would like to connect 
-	                    <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>
-	                </div>
-	
-	                <div id="table"></div>
-	
-	                <div id="output"></div>
-
-	                <div id="noinputs" class="alert alert-block hide" style="background-color:#ea510e; color:#fff; padding:20px">
-			    <h4 class="alert-heading">No Devices created</h4>
-			    <p>Devices such as smartplugs and temperature and humidity nodes will appear here once powered up and connected to the WIFI network</p>
-	                </div>
-	
-	                <div id="input-loader" class="ajax-loader"></div>
-        
-                  <!---------------------------------------------->
-                  
-                </div>
-            </div>
+            <?php include("client_devices_view.php") ?>
         </div>    
-        
+        <?php endif; ?>
         <div style="clear:both; height:85px"></div>
 
     </div></div>
@@ -836,17 +217,18 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
+<?php if(IS_HUB): ?>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
+<?php endif; ?>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
 
 <script>
 
 var path = "<?php echo $path; ?>";
 var club = "<?php echo $club; ?>";
-var club_path = path;
-
 var club_settings = <?php echo json_encode($club_settings);?>;
+var club_path = path;
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 var generation_feed = club_settings.generation_feed;
@@ -854,8 +236,9 @@ var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
 
 // Device 
+<?php if (IS_HUB): ?>
 auth_check();
-
+<?php endif; ?>
 var session = <?php echo json_encode($session); ?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
@@ -962,7 +345,9 @@ club_bargraph_load();
 if (session.write) {
     household_summary_load();
     household_bargraph_load();
+<?php if (IS_HUB): ?>
     device_load();
+<?php endif; ?>
 }
 
 resize();
