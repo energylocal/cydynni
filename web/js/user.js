@@ -4,7 +4,7 @@ $("#login").click(function() {
 
     $.ajax({
         type: 'POST',                                    
-        url: club_path+"/login",                         
+        url: club_path+"login",                         
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
@@ -37,7 +37,7 @@ $("#login").click(function() {
 $("#logout").click(function(event) {
     event.stopPropagation();
     $.ajax({                   
-        url: club_path+"/logout",
+        url: club_path+"logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();
@@ -71,7 +71,7 @@ $("#passwordreset").click(function() {
     $("#passwordreset-alert").html("");
     $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
-        url: club_path+"/passwordreset",                         
+        url: club_path+"passwordreset",                         
         data: "email="+email,
         dataType: 'json',
         success: function(result) {
