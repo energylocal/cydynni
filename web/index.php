@@ -56,7 +56,7 @@ if (!IS_HUB) require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
-$base_url = IS_HUB ? "http://cydynni.org.uk/bethesda" : "";
+$base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "";
 $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
 
 chdir("/var/www/cydynni");

@@ -32,7 +32,7 @@ var day_view = 1;
 function club_summary_load()
 {
   $.ajax({                                      
-      url: club_path+"/club/summary/day",
+      url: club_path+"club/summary/day",
       dataType: 'json',                  
       success: function(result) {
           
