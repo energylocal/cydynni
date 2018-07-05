@@ -56,7 +56,7 @@ if (!IS_HUB) require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
-$base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "";
+$base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
 $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
 
 chdir("/var/www/cydynni");
@@ -117,8 +117,8 @@ if (IS_HUB) {
 	    "name"=>"Bethesda",
 	    "generator"=>"hydro",
 	    "languages"=>array("cy","en"),
-	    "generation_feed"=>1,
-	    "consumption_feed"=>2
+	    "generation_feed"=>2,
+	    "consumption_feed"=>3
 	);
 }
 $lang = "";
@@ -361,12 +361,12 @@ switch ($q)
         
     case "live":
         $format = "json";
-        
-        if (!$result = $redis->get("$club:live")) {
-		if (IS_HUB) {
-            $result = file_get_contents("$base_url/live");
-		    if ($result) $redis->set("live",$result);
-		}
+        $result = false;
+        if (IS_HUB) {
+            if (!$result = $redis->get("$club:live")) {
+                $result = file_get_contents("${base_url}live");
+                if ($result) $redis->set("live",$result);
+            }
         }
         if ($live = json_decode($result)) {
             $date = new DateTime();
@@ -385,6 +385,8 @@ switch ($q)
             $live->tariff = $tariff;
             
             $content = $live;
+        } else {
+            $content = array('success'=>false,'message'=>'Feed not available');
         }
         break;
         
@@ -676,7 +678,7 @@ switch ($q)
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
         $params = http_build_query(array("id"=>$id, "start"=>$start, "end"=>$end, "interval"=>$interval));
         //apikey not valid in web mode..?
-        $result = file_get_contents($emoncms_url.'feed/average.json?'.$params.$apikeystr);
+        $result = @file_get_contents($emoncms_url.'feed/average.json?'.$params.$apikeystr);
 
         $content = json_decode($result);
         if ($content==null) $content = $result;

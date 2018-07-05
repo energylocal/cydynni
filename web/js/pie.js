@@ -1,5 +1,5 @@
 var droplet = new Image();
-droplet.src = "images/droplet.png";
+droplet.src = typeof path == 'undefined' ? "images/droplet.png" : path+"images/droplet.png";
 droplet.onload = function () { }
     
 function generationdroplet(element,value,options)

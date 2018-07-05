@@ -60,7 +60,6 @@ $tariffs = array(
     <script type="text/javascript" src="<?php echo $path; ?>lib/feed.js"></script>
     
     <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css?v=<?php echo $v; ?>" />
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/bulma.min.css" />
     
     </head>
     <body>
@@ -211,6 +210,10 @@ $tariffs = array(
 
 </body>
 </html>
+<script>
+var path = "<?php echo $path; ?>";
+var club = "<?php echo $club; ?>";
+</script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
@@ -224,11 +227,8 @@ $tariffs = array(
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
 
 <script>
-
-var path = "<?php echo $path; ?>";
-var club = "<?php echo $club; ?>";
 var club_settings = <?php echo json_encode($club_settings);?>;
-var club_path = path;
+var club_path = path+club+'/';
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 var generation_feed = club_settings.generation_feed;

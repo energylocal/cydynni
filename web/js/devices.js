@@ -366,14 +366,13 @@ function auth_check(){
         timeout: 3000
     })
     .done(function(data){
-        if (data==="no devices") {
-            //all good
-            $("#auth-check").hide();
-        } else if(data.hasOwnProperty('success') && data.success===false){
+        var club_path = club_path ? club_path : path;
+        $("#auth-check").hide();
+        if(data.hasOwnProperty('success') && data.success===false){
             //show session timeout message
             $("#auth-check").show();
-            $("#auth-check").html(t('Session Timed out. <a href="/cydynni?return=/cydynni/?devices" class="btn">Please login</a>'));
-        } else {
+            $("#auth-check").html(t('Session Timed out.')+'<a href="'+club_path+'?return=/cydynni/?devices" class="btn">'+t('Please login')+'</a>');
+        } else if(data.hasOwnProperty('ip')){
             //show ip authorise message
             $("#auth-check").show();
             $("#auth-check").html('Device on ip address: <span id="auth-check-ip"></span> would like to connect '+
