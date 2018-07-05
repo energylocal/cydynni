@@ -86,7 +86,7 @@ $("#togglelang").click(function(){
 $("#logout").click(function(event) {
     event.stopPropagation();
     $.ajax({                   
-        url: path+"/logout",
+        url: path+"logout",
         dataType: 'text',
         success: function(result) {
             window.location = "/";

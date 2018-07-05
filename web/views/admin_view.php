@@ -277,7 +277,7 @@ $("body").on("click",".edit-save",function(){
 
 function logout() {
     $.ajax({
-        url: path+"/logout",
+        url: path+"logout",
         dataType: 'text',
         success: function(result) {
             $("#login-block").show();
