@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cyd Ynni</title>
 
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link rel="stylesheet" type="text/css" href="css/admin.css" />
-    <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $path ?>css/style.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo $path ?>css/admin.css" />
+
     <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
     
     <style>
@@ -40,7 +40,8 @@
    
   </head>
   <body>
-  
+
+
     <div class="admin-top-nav">
       <div class="container">
         <div class="admin-top-nav-title">CydYnni App Administration</div>
@@ -165,6 +166,10 @@ function load() {
         }
     });
 }
+// click login button if [ENTER] key pressed in username or password fields
+$("#login-block #email, #login-block #password").keyup(function(e){
+    if(e.hasOwnProperty('key') && e.key==='Enter') $("#login").click();
+});
 
 $("#login").click(function() {
     var email = $("#email").val();
@@ -176,8 +181,8 @@ $("#login").click(function() {
         data: "email="+email+"&password="+password,
         dataType: 'json',
         success: function(result) {
-            if (result.admin) {
-                window.location = path+"admin";
+            if (result.success) {
+                location.reload();
             } else {
                 $(".alert").html("Administrator access only");
             }
