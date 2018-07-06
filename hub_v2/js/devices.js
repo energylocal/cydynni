@@ -372,11 +372,18 @@ function auth_check(){
         } else if(data.hasOwnProperty('success') && data.success===false){
             //show session timeout message
             $("#auth-check").show();
-            $("#auth-check").html(t('Session Timed out. <a href="/cydynni?return=/cydynni/?devices" class="btn">Please login</a>'));
+            $("#auth-check").html(t('Session Timed out')+'. <a href="/cydynni?return=/cydynni/?devices" class="btn">' + t('Please login') +'</a>');
         } else {
             //show ip authorise message
             $("#auth-check").show();
-            $("#auth-check").html(t('Device on ip address: <span id="auth-check-ip"></span> would like to connect <button class="btn btn-small auth-check-btn auth-check-allow">Allow</button>'));
+            html = "";
+            html+=t('Device on ip address: ');
+            html+='<span id="auth-check-ip"></span> ';
+            html+=t('would like to connect');
+            html+='<button class="btn btn-small auth-check-btn auth-check-allow">';
+            html+=t('Allow');
+            html+='</button>';
+            $("#auth-check").html(html);
             $("#auth-check-ip").text(data.ip);
         }
     })
@@ -388,7 +395,12 @@ function auth_check(){
             case 'timeout':
             default:
                 $("#auth-check").show();
-                $("#auth-check").html(t('Hub not available. Please ensure the Hub is powered and <a href="/cydynni?return=/cydynni/?devices" class="btn">Re-Login</a>'));
+                html = "";
+                html+= t('Hub not available. Please ensure the Hub is powered on.');
+                html+= ' <a href="/cydynni?return=/cydynni/?devices" class="btn">';
+                html+= t('Re - Login');
+                html+= '</a>';
+                $("#auth-check").html(html);
         }
     })
     .always(function(){

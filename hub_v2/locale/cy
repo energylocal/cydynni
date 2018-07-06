@@ -321,8 +321,15 @@
 "Schedule Output": "Amserlen",
 "Higher bar height equals more power available": "Mae bariau uwch yn cyfateb i fwy o bŵer sydd ar gael",
 
-"Hub not available. Please ensure the Hub is powered and <a href=\"\/cydynni?return=\/cydynni\/?devices\" class = \"btn\"> Re - Login <\/a>": "Nid yw Hub ar gael. Sicrhewch fod y Hub yn cael ei bweru ac <a href=\"\/cydynni?return=\/cydynni\/?devices\" class = \"btn\"> Ail - Mewngofnodi <\/a>",
+
+"Device on ip address": "Dyfais ar gyfeiriad IP",
+"would like to connect": "angen cysylltu",
+"Allow": "Caniatáu",
+
+"Hub not available. Please ensure the Hub is powered on.": "Nid yw Hub ar gael. Sicrhewch fod y Hub yn cael ei bweru.",
+"Re - Login": "Ail - Mewngofnodi",
 "Error Connecting to Hub": "Problem cysylltu hefo'r Hwb",
-"Session Timed out. <a href=\"\/cydynni?return=\/cydynni\/?devices\" class=\"btn\">Please login</a>": "Sesiwn wedi'i golli. <a href=\"\/cydynni?return=\/cydynni\/?devices\" class=\"btn\">Ail - Mewngofnodi</a>",
-"Device on ip address: <span id=\"auth-check-ip\"><\/span> would like to connect <button class=\"btn btn-small auth-check-btn auth-check-allow\">Allow<\/button>": "Dyfais ar gyfeiriad IP: <span id=\"auth-check-ip\"><\/span> angen cysylltu <button class=\"btn btn-small auth-check-btn auth-check-allow\">Caniatáu<\/button>"
+"Session Timed out.": "Sesiwn wedi'i golli.",
+"Please login": "Ail mewngofnodwch"
+
 }
