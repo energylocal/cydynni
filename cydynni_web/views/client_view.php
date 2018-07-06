@@ -29,7 +29,7 @@ $tariffs = array(
     <title>Cyd Ynni</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes"
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="<?php echo $path; ?>images/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#006400">
@@ -162,7 +162,7 @@ $tariffs = array(
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?><br>
+                  <p id="status-summary" style="margin:0"><?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?></p>
                   <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>
                   </div>
 
@@ -719,8 +719,6 @@ $tariffs = array(
     </div>
 </div></div>
 
-</body>
-</html>
 
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
@@ -921,3 +919,7 @@ History.Adapter.bind(window,'statechange',function(){ // Note: We are using stat
 });
 
 </script>
+
+
+</body>
+</html>
