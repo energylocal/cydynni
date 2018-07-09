@@ -314,7 +314,7 @@ function cydynni_controller()
                         }
                     }elseif($route->method=="PUT"){
                         //UPDATE CLUB
-                        $club_id = put('clubid');
+                        $club_id = put('club_id');
                         if($club_id) {
                             $data = array(
                                 'name'=>put('name'),

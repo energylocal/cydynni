@@ -113,7 +113,7 @@ button:focus {
 
 <!-- list of clubs template-->
 <template id="clublist-item">
-    <li>
+    <li class="added">
         <button class="edit_club" type="button" data-toggle="modal" data-target="#editClubModal" data-club_id="0">Edit</button>
         <a href="<?php echo $path; ?>cydynni/admin/clubs/"></a>
     </li>
@@ -245,7 +245,7 @@ button:focus {
 <!-- EDIT USER Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form id="edit-user" style="margin:0" action="<?php echo $path ?>cydynni/admin/user" method="POST" class="form-horizontal">
+        <form id="edit-user" style="margin:0" action="<?php echo $path ?>cydynni/admin/users" method="POST" class="form-horizontal">
         <input name="userid" type="hidden">
             <div class="modal-content">
                 <div class="modal-header">

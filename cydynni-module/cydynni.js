@@ -216,7 +216,7 @@ function edit_club(club_id){
     .success(function(data){
         //data is array of clubs
         for (var i in data[0]) {
-            setInputValue(form, i, data[i]);
+            setInputValue(form, i, data[0][i]);
         }
     })
     $(form).find(':text,:checkbox').removeAttr("disabled");
@@ -276,8 +276,7 @@ function load_clubs(){
                 .attr('href', item.find('a').attr('href') + club.slug)
                 .text(club.name)
                 .attr('data-club_id', club.id)
-                .attr('data-slug', club.slug)
-                .addClass('added');
+                .attr('data-slug', club.slug);
         });
     })
     .fail(function() {
@@ -300,7 +299,7 @@ function load_users(club_id) {
     $('#userlist').html('');
     //populate user list
     url = path + 'cydynni/admin/users';
-    url += club_id ? +'/'+club_id : ''; 
+    url += club_id ? '/'+club_id : ''; 
     $.ajax({
         url: url,
         dataType: 'json',
