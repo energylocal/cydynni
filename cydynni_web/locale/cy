@@ -262,6 +262,7 @@
 "Current Forecast":"Rhagolwg",
 "Hydro":"Hydro",
 "Hydro output is currently exceeding club consumption":"Ar hyn o bryd, mae allbwn hydro yn fwy na'r defnydd clwb",
+"Hydro output is currently lower than club consumption":"Ar hyn o bryd, mae allbwn hydro yn is na defnydd y clwb",
 "Light and dark grey portion indicates estimated hydro output and club consumption up to the present time":"Mae rhan lwyd ysgafn a tywyll yn dynodi amcangyfrif o allbwn hydro a defnydd clwb hyd at y presennol",
 "Top up electricity":"Trydan ychwanegol",
 "Sometimes we need electricity from the grid to top up the power produced by the hydro.":"Weithiau mae angen trydan arnom o'r grid i ychwanegu at y pŵer a gynhyrchir gan y hydro.",

@@ -187,15 +187,14 @@ switch ($q)
         $format = "json";
         if ($session["read"]) {
             $userid = $session["userid"];
-            $content = json_decode($redis->get("user:summary:lastday:$userid"));
-        
-            $date = new DateTime();
-            $date->setTimezone(new DateTimeZone("Europe/London"));
-            $date->setTimestamp(time());
-            $date->modify("midnight");
-            $time = $date->getTimestamp();
-            $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
-            
+            if ($content = json_decode($redis->get("user:summary:lastday:$userid"))) {
+                $date = new DateTime();
+                $date->setTimezone(new DateTimeZone("Europe/London"));
+                $date->setTimestamp(time());
+                $date->modify("midnight");
+                $time = $date->getTimestamp();
+                $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+            }
         } else {
             $content = "session not valid";
         }
@@ -270,18 +269,20 @@ switch ($q)
         $format = "json";
 
         if (!$result = $redis->get("$club:club:summary:day")) {
-            // $result = http_request("GET","$base_url/club/summary/day",array());
+            // $result = @file_get_contents("${base_url}summary/day");
             // if ($result) $redis->set("community:summary:day",$result);
         }
         $content = json_decode($result);
-        
-        $date = new DateTime();
-        $date->setTimezone(new DateTimeZone("Europe/London"));
-        $date->setTimestamp(time());
-        $date->modify("midnight");
-        $time = $date->getTimestamp();
-        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
-        
+        if(!empty($content)){
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $date->setTimestamp(time());
+            $date->modify("midnight");
+            $time = $date->getTimestamp();
+            $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        }else{
+            $content = "Invalid data";
+        }
         break;
 
     case "club/summary/monthly":
@@ -312,11 +313,10 @@ switch ($q)
         $format = "json";
         
         if (!$result = $redis->get("$club:live")) {
-            // $result = http_request("GET","$base_url/live",array());
-            // if ($result) $redis->set("live",$result);
+            $result = @file_get_contents("https://emoncms.cydynni.org.uk/cydynni/live");
+            if ($result) $redis->set("live",$result);
+            $live = json_decode($result);
         }
-        $live = json_decode($result);
-                  
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
         $date->setTimestamp(time());
@@ -328,7 +328,7 @@ switch ($q)
         if ($hour>=11 && $hour<16) $tariff = "midday";
         if ($hour>=16 && $hour<20) $tariff = "evening";
         if ($hour>=20) $tariff = "overnight";
-        if ($live->generation>=$live->club) $tariff = "generation";
+        if (!empty($live->generation) && $live->generation>=$live->club) $tariff = "generation";
         
         $live->tariff = $tariff;
         
@@ -354,7 +354,9 @@ switch ($q)
         $feed = 166913;
         if ($club=="towerpower") $feed = 179247;
         
-        $result = http_request("GET","https://emoncms.org/feed/average.json",array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $url = "https://emoncms.org/feed/average.json?";
+        $url .= http_build_query(array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $result = @file_get_contents($url);
 
         if ($result) {
             $data = json_decode($result);

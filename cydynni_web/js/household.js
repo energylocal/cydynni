@@ -30,7 +30,7 @@ function household_summary_load()
       url: path+club+"/household/summary/day",
       dataType: 'json',                  
       success: function(result) {
-          
+          if (!result) return;
           // 1. Determine score
           // Calculated as amount of power consumed at times off peak times and from generation
           var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
