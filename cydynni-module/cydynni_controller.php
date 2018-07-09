@@ -117,7 +117,7 @@ function cydynni_controller()
                 $live->tariff = $tariff;
                 $result = $live;
             } else {
-                $result = json_decode(file_get_contents($emoncms_url."cydynni/live"));
+                $result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/cydynni/live"));
             }
             break;
             
@@ -137,7 +137,7 @@ function cydynni_controller()
                 $start = $estimatestart;
             }
             
-            $data = json_decode(file_get_contents($emoncms_url."feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+            $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
             
             $scale = 1.1;
             
