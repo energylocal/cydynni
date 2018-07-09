@@ -366,7 +366,7 @@ function auth_check(){
         timeout: 3000
     })
     .done(function(data){
-        if (data==="no devices") {
+        if (data.message!=undefined && data.message==="No authentication request registered") {
             //all good
             $("#auth-check").hide();
         } else if(data.hasOwnProperty('success') && data.success===false){
