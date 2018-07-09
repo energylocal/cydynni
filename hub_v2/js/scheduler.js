@@ -179,7 +179,10 @@ function scheduler_save(data,event) {
         success = !(result.hasOwnProperty('success') && result.success === false);
         if(!success && result.message === 'Username or password empty'){
             notification.classList.remove('hide');//remove the default hide class
-            notification.innerHTML = t('Session Timed out. <a href="/cydynni" class="btn">Please login</a>');
+            notification.innerHTML = t('Session Timed out.') +
+                '<a href="/cydynni" class="btn">' +
+                t('Please login') + 
+                '</a>';
             notification.classList.add('notification');//show notification and wait 3 seconds before fading out (using css class fadeOut
         }
         button.classList.remove('is-faded');//remove the faded effect from the clicked button once the ajax finishes
