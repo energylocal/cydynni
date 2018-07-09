@@ -184,7 +184,7 @@ button:focus {
 <!-- NEW USER Modal -->
 <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="newUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form id="create-user" style="margin:0" action="<?php echo $path ?>cydynni/admin/clubs/new" method="POST" class="form-horizontal">
+        <form id="create-user" style="margin:0" action="<?php echo $path ?>cydynni/admin/clubs/new" method="POST" class="form-horizontal" autocomplete="off">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -252,7 +252,7 @@ button:focus {
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
-                    <h5 class="modal-title" id="newUserModalLabel">Edit existing User</h5>
+                    <h5 class="modal-title" id="editUserModalLabel">Edit existing User</h5>
                 </div>
                 <div class="modal-body">
                     <div class="control-group">
@@ -319,14 +319,14 @@ button:focus {
                     <div class="control-group">
                         <label class="control-label" for="new_club_name">Name</label>
                         <div class="controls">
-                            <input type="text" name="name" class="input-xlarge" id="new_club_name" data-lpignore="true" placeholder="Club Name">
+                            <input type="text" name="name" class="input-xlarge" id="new_club_name" data-lpignore="true" placeholder="Club Name" required>
                         </div>
                     </div>
 
                     <div class="control-group">
                         <label class="control-label" for="new_club_slug">Short Name</label>
                         <div class="controls">
-                            <input type="text" name="slug" id="new_club_slug" data-lpignore="true" placeholder="URL friendly name">
+                            <input type="text" name="slug" id="new_club_slug" data-lpignore="true" placeholder="URL friendly name" required>
                         </div>
                     </div>
 
@@ -483,7 +483,8 @@ button:focus {
                 </div>
 
                 <div class="modal-footer">
-                    <span class="message" style="position:absolute"></span>
+                    <button type="button" id="delete-club" class="btn btn-danger pull-left">Delete</button>
+                    <span class="message" data-style="position:absolute"></span>
                     <span class="loader" style="margin-top:1.2em;position:absolute"><img src="data:image/gif;base64,R0lGODlhEgAPAPIAAPX19ZeXl5eXl7i4uNjY2AAAAAAAAAAAACH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAFAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEgAPAAADHAi63P4wykmrvThXIS7n1tcBAwWSQwkQBKVqTgIAIfkEAAUAAQAsAAAAABIADwAAAx4Iutz+MMpJq23iAsF11sowXKJolSNAUKZKrBcMPgkAIfkEAAUAAgAsAAAAABIADwAAAxwIutz+MEogxLw4q6HB+B3XKQShlWWGmio7vlMCACH5BAAFAAMALAAAAAASAA8AAAMXCLrcvuLJ+cagOGtHtiKgB3RiaZ5oiiUAIfkEAAUABAAsAAAAABIADwAAAxQIuty+48knJCEz6827/2AojiSYAAAh+QQABQAFACwAAAAAEgAPAAADFAi63L7kyTemvTgvobv/YCiOJJAAACH5BAAFAAYALAAAAAASAA8AAAMTCLrc/jAqIqu9duDNu4/CJ45XAgAh+QQABQAHACwAAAAAEgAPAAADFAi63P4wykmrBeTqzTsbHiUIIZcAACH5BAAFAAgALAAAAAASAA8AAAMXCLrc/jDKSau9OOvtiBSYICrDQIFckwAAOwAAAAAAAAAAAA==" alt="" /></span>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button class="btn btn-primary">Save Chanages</button>
