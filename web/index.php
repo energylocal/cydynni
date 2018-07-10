@@ -53,7 +53,7 @@ if (IS_HUB) {
 // ---------------------------------------------------------
 
 if (!IS_HUB) require "Lib/email.php";
-if (!is_defined('IS_HUB')) define('IS_HUB',true);
+if (!defined('IS_HUB')) define('IS_HUB',true);
 
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
