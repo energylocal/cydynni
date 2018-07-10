@@ -162,8 +162,7 @@ function household_bargraph_load() {
 
     var history = "";
     if (end>0 && start>0) history = "?start="+start+"&end="+end;
-    // emrys
-    // @todo: needs testing
+
     if (is_hub) {
 	url = path+"feed/average.json?id=3&start="+start+"&end="+end+"&interval=1800&apikey="+session['apikey_read'];
     } else {
