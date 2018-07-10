@@ -24,90 +24,89 @@ var household_view = "piechart";
 
 var meterdataenable = false;
 
-function household_summary_load() {    
-    $.ajax({                                      
-        url: path+club+"/household/summary/day",
-        dataType: 'json',                  
-        success: function(result) {
-            if (result!="Invalid data") {
-                
-                // 1. Determine score
-                // Calculated as amount of power consumed at times off peak times and from generation
-                var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
-                
-                if (score>20) $("#household_star1").attr("src",path+"images/starred.png");
-                if (score>40) setTimeout(function() { $("#household_star2").attr("src",path+"images/starred.png"); }, 100);
-                if (score>60) setTimeout(function() { $("#household_star3").attr("src",path+"images/starred.png"); }, 200);
-                if (score>80) setTimeout(function() { $("#household_star4").attr("src",path+"images/starred.png"); }, 300);
-                if (score>90) setTimeout(function() { $("#household_star5").attr("src",path+"images/starred.png"); }, 400);
-                
-                // Show status summary ( below score stars )
-                setTimeout(function() {
-                    if (score<30) {
-                        $(".household_status").html(t("You are using power in a very expensive way"));
-                    }
-                    if (score>=30 && score<70) {
-                        $(".household_status").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
-                    }
-                    if (score>=70) {
-                        $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
-                    }
-                }, 400);
+function household_summary_load()
+{    
+  $.ajax({                                      
+      url: path+club+"/household/summary/day",
+      dataType: 'json',                  
+      success: function(result) {
+          if (!result) return;
+          // 1. Determine score
+          // Calculated as amount of power consumed at times off peak times and from generation
+          var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
+          
+          if (score>20) $("#household_star1").attr("src",path+"images/starred.png");
+          if (score>40) setTimeout(function() { $("#household_star2").attr("src",path+"images/starred.png"); }, 100);
+          if (score>60) setTimeout(function() { $("#household_star3").attr("src",path+"images/starred.png"); }, 200);
+          if (score>80) setTimeout(function() { $("#household_star4").attr("src",path+"images/starred.png"); }, 300);
+          if (score>90) setTimeout(function() { $("#household_star5").attr("src",path+"images/starred.png"); }, 400);
+          
+          // Show status summary ( below score stars )
+          setTimeout(function() {
+              if (score<30) {
+                  $(".household_status").html(t("You are using power in a very expensive way"));
+              }
+              if (score>=30 && score<70) {
+                  $(".household_status").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
+              }
+              if (score>=70) {
+                  $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
+              }
+          }, 400);
 
-                var ext = "";
-                if (result.day==1) ext = "st";
-                if (result.day==2) ext = "nd";
-                if (result.day==3) ext = "rd";
-                if (result.day>3) ext = "th";
-                if (lang=="cy") ext = "";
-                
-                $(".household_date").html(result.day+t(ext)+" "+t(result.month));
-                $(".household_score").html(score);
-                $(".household_totalkwh").html(result.kwh.total.toFixed(1));
-                $(".household_totalcost").html(result.cost.total.toFixed(2));
-                
-                // Saving calculation
-                var totalcostflatrate = result.kwh.total * 0.12;
-                var costsaving = totalcostflatrate - result.cost.total;
-                $(".household_costsaving").html("£"+costsaving.toFixed(2));
+          var ext = "";
+          if (result.day==1) ext = "st";
+          if (result.day==2) ext = "nd";
+          if (result.day==3) ext = "rd";
+          if (result.day>3) ext = "th";
+          if (lang=="cy") ext = "";
+          
+          $(".household_date").html(result.day+t(ext)+" "+t(result.month));
+          $(".household_score").html(score);
+          $(".household_totalkwh").html(result.kwh.total.toFixed(1));
+          $(".household_totalcost").html(result.cost.total.toFixed(2));
+          
+          // Saving calculation
+          var totalcostflatrate = result.kwh.total * 0.12;
+          var costsaving = totalcostflatrate - result.cost.total;
+          $(".household_costsaving").html("£"+costsaving.toFixed(2));
 
-                household_pie_data_cost = [];
-                household_pie_data_energy = [];
-                
-                for (var z in tariffs) {
-                    if (z!="generation") {
-                        household_pie_data_cost.push({
-                            name:t(z.toUpperCase()), 
-                            generation: result.generation[z]*tariffs.generation.cost, 
-                            import: result.kwh[z]*tariffs[z].cost, 
-                            color:tariffs[z].color
-                        });
-                        
-                        household_pie_data_energy.push({
-                            name:t(z.toUpperCase()), 
-                            generation: result.generation[z], 
-                            import: result.kwh[z], 
-                            color:tariffs[z].color
-                        });
-                    }
-                
-                    $("#household_"+z+"_kwh").html(result.kwh[z]);
-                    $("#household_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
-                }
-                    
-                household_generation_use = result.kwh.generation;
-                household_pie_draw();
-            }
-        }
-    });
+          household_pie_data_cost = [];
+          household_pie_data_energy = [];
+          
+          for (var z in tariffs) {
+              if (z!="generation") {
+                  household_pie_data_cost.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z]*tariffs.generation.cost, 
+                      import: result.kwh[z]*tariffs[z].cost, 
+                      color:tariffs[z].color
+                  });
+                  
+                  household_pie_data_energy.push({
+                      name:t(z.toUpperCase()), 
+                      generation: result.generation[z], 
+                      import: result.kwh[z], 
+                      color:tariffs[z].color
+                  });
+              }
+          
+              $("#household_"+z+"_kwh").html(result.kwh[z]);
+              $("#household_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+          }
+              
+          household_generation_use = result.kwh.generation;
+          household_pie_draw();
+      } 
+  });
   
-    if (meterdataenable) {
-        $("#meterdatablock").show();
-        household_update_live();
-        setInterval(household_update_live,5000);
-    } else {
-        $("#meterdatablock").hide();
-    }
+  if (meterdataenable) {
+      $("#meterdatablock").show();
+      household_update_live();
+      setInterval(household_update_live,5000);
+  } else {
+      $("#meterdatablock").hide();
+  }
   
 }
 
@@ -162,11 +161,18 @@ function household_bargraph_load() {
     start = end - (3600000*24.0*6);
 
     var history = "";
-    if (end>0 && start>0) history = "&start="+start+"&end="+end+"&interval=1800";
-  
+    if (end>0 && start>0) history = "?start="+start+"&end="+end;
+    // emrys
+    // @todo: needs testing
+    if (is_hub) {
+	url = path+"feed/average.json?id=3&start="+start+"&end="+end+"&interval=1800&apikey="+session['apikey_read'];
+    } else {
+	url = path+club+"/data"+history;
+    }
+
     var data = [];
     $.ajax({                                      
-        url: path+"feed/average.json?id=3&start="+start+"&end="+end+"&interval=1800&apikey="+session['apikey_read'],
+        url: url,
         dataType: 'json',
         async: true,                      
         success: function(result) {

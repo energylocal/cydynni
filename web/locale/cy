@@ -257,10 +257,12 @@
 "CydYnni<br>Forecast":"Rhagolwg<br>CydYnni",
 "Your<br>Score":"Eich<br>Sgôr",
 "Club<br>Score":"Sgôr<br>Clwb",
+"Devices": "Dyfeisiau",
 "Good time to use?":"Amser da i'w ddefnyddio?",
 "Current Forecast":"Rhagolwg",
 "Hydro":"Hydro",
 "Hydro output is currently exceeding club consumption":"Ar hyn o bryd, mae allbwn hydro yn fwy na'r defnydd clwb",
+"Hydro output is currently lower than club consumption":"Ar hyn o bryd, mae allbwn hydro yn is na defnydd y clwb",
 "Light and dark grey portion indicates estimated hydro output and club consumption up to the present time":"Mae rhan lwyd ysgafn a tywyll yn dynodi amcangyfrif o allbwn hydro a defnydd clwb hyd at y presennol",
 "Top up electricity":"Trydan ychwanegol",
 "Sometimes we need electricity from the grid to top up the power produced by the hydro.":"Weithiau mae angen trydan arnom o'r grid i ychwanegu at y pŵer a gynhyrchir gan y hydro.",
@@ -318,5 +320,17 @@
 "Save": "Cadw",
 "Clear": "Gwagio",
 "Schedule Output": "Amserlen",
-"Higher bar height equals more power available": "Mae bariau uwch yn cyfateb i fwy o bŵer sydd ar gael"
+"Higher bar height equals more power available": "Mae bariau uwch yn cyfateb i fwy o bŵer sydd ar gael",
+
+
+"Device on ip address": "Dyfais ar gyfeiriad IP",
+"would like to connect": "angen cysylltu",
+"Allow": "Caniatáu",
+
+"Hub not available. Please ensure the Hub is powered on.": "Nid yw Hub ar gael. Sicrhewch fod y Hub yn cael ei bweru.",
+"Re - Login": "Ail - Mewngofnodi",
+"Error Connecting to Hub": "Problem cysylltu hefo'r Hwb",
+"Session Timed out.": "Sesiwn wedi'i golli.",
+"Please login": "Ail mewngofnodwch"
+
 }

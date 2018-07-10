@@ -14,7 +14,7 @@ function draw_scheduler(devicein)
     $("#devicename").html(jsUcfirst(device));
     
     // 1. Load device template to get the control definition
-    $.ajax({ url: emoncmspath+"device/template/get.json?device="+devices[device].type, dataType: 'json', async: true, success: function(template) { 
+    $.ajax({ url: emoncmspath+"device/template/get.json?type="+devices[device].type, dataType: 'json', async: true, success: function(template) { 
         controls = template.control;
         
         // 2. Fetch device settings stored in the demandshaper module
@@ -179,7 +179,10 @@ function scheduler_save(data,event) {
         success = !(result.hasOwnProperty('success') && result.success === false);
         if(!success && result.message === 'Username or password empty'){
             notification.classList.remove('hide');//remove the default hide class
-            notification.innerHTML = t('Session Timed out. <a href="/cydynni" class="btn">Please login</a>');
+            notification.innerHTML = t('Session Timed out.') +
+                '<a href="/cydynni" class="btn">' +
+                t('Please login') + 
+                '</a>';
             notification.classList.add('notification');//show notification and wait 3 seconds before fading out (using css class fadeOut
         }
         button.classList.remove('is-faded');//remove the faded effect from the clicked button once the ajax finishes
