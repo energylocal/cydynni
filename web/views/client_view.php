@@ -213,6 +213,7 @@ $tariffs = array(
 var path = "<?php echo $path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
+var is_hub = <?php echo IS_HUB ? 'true':'false'; ?>;
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
