@@ -125,7 +125,16 @@ function cydynnistatus_update() {
   } else {
       $("#generation-status").html(t("VERY LOW"));
   }
-
-  $("#generation-power").html(Math.round(live.generation));
+  generation = Math.round(live.hydro||0);
+  $("#generation-power").html(generation);
+  consumption = Math.round(live.community||0);
+  if (generation < consumption ) {
+    $('#status-summary').text(t('Hydro output is currently lower than club consumption'));
+  } else if (generation == consumption) {
+    $('#status-summary').text(t('Hydro output currently matches club consumption'));
+  } else {
+    $('#status-summary').text(t('Hydro output is currently exceeding club consumption'));
+  }
+  
 }
 

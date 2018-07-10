@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 6;
+$v = 13;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -29,7 +29,7 @@ $tariffs = array(
     <title>Cyd Ynni</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes"
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="<?php echo $path; ?>images/icon/ms-icon-144x144.png">
     <meta name="theme-color" content="#006400">
@@ -208,11 +208,11 @@ $tariffs = array(
   </div>
 </div>
 
-</body>
-</html>
+
 <script>
 var path = "<?php echo $path; ?>";
 var club = "<?php echo $club; ?>";
+var club_path = [path, club, '/'].join('');
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
@@ -228,7 +228,6 @@ var club = "<?php echo $club; ?>";
 
 <script>
 var club_settings = <?php echo json_encode($club_settings);?>;
-var club_path = path+club+'/';
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 var generation_feed = club_settings.generation_feed;
@@ -418,3 +417,6 @@ History.Adapter.bind(window,'statechange',function(){ // Note: We are using stat
 });
 
 </script>
+
+</body>
+</html>

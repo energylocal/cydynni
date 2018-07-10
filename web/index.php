@@ -117,8 +117,8 @@ if (IS_HUB) {
 	    "name"=>"Bethesda",
 	    "generator"=>"hydro",
 	    "languages"=>array("cy","en"),
-	    "generation_feed"=>2,
-	    "consumption_feed"=>3
+	    "generation_feed"=>1,
+	    "consumption_feed"=>2
 	);
 }
 $lang = "";
@@ -408,7 +408,10 @@ switch ($q)
         
         $feed = 166913;
         if ($club=="towerpower") $feed = 179247;
-        $result = file_get_contents('https://emoncms.org/feed/average.json?'.http_build_query(array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1)));
+        
+        $url = "https://emoncms.org/feed/average.json?";
+        $url .= http_build_query(array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $result = @file_get_contents($url);
 
         if ($result) {
             $data = json_decode($result);

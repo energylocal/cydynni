@@ -32,7 +32,7 @@ var day_view = 1;
 function club_summary_load()
 {
   $.ajax({                                      
-      url: club_path+"club/summary/day",
+      url: club_path+"/club/summary/day",
       dataType: 'json',                  
       success: function(result) {
           
@@ -198,7 +198,7 @@ function club_bargraph_load() {
         var d = new Date(time);
         var hour = d.getHours();
         
-        var generation = generation_data[z] ? generation_data[z][1] * scale : 0;
+        var generation = generation_data[z][1] * scale;
         var consumption = club_data[z][1] * scale;
         
         var overnight = 0;
