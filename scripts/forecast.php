@@ -8,6 +8,7 @@ define('EMONCMS_EXEC', 1);
 
 chdir("/var/www/emoncms");
 require "process_settings.php";
+require "core.php";
 
 chdir("/var/www/dev");
 require "EmonLogger.php";
@@ -136,3 +137,11 @@ print $date->format("H:i:s")." ".json_encode($result)."\n";
 $redis = new Redis();
 $connected = $redis->connect("localhost");
 $redis->set("bethesda:live",json_encode($result));
+
+$base_url = "https://cydynni.org.uk";
+$result = http_request("GET","$base_url/demandshaper",array());
+if ($result) {
+    $redis->set("demandshaper",$result);
+    print "-- demandshaper\n";
+}
+
