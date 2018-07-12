@@ -363,9 +363,9 @@ switch ($q)
         
     case "live":
         $format = "json";
-        $result = false;
+        $result = $redis->get("$club:live");
         if (IS_HUB) {
-            if (!$result = $redis->get("$club:live")) {
+            if (!$result) {
                 $result = file_get_contents("${base_url}live");
                 if ($result) $redis->set("live",$result);
             }

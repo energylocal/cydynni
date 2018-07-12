@@ -66,7 +66,7 @@ $tariffs = array(
         <div class="oembluebar">
             <div class="oembluebar-inner">
                 <div id="dashboard" class="oembluebar-item active" ><?php echo t("Dashboard"); ?></div>
-                <?php if(IS_HUB): ?><div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div><?php endif; ?>
+                <?php if(!IS_HUB): ?><div id="reports" class="oembluebar-item"><?php echo t("Reports"); ?></div><?php endif; ?>
 
                 <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
                 <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
