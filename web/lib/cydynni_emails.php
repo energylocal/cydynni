@@ -40,11 +40,11 @@ class CydynniEmails
             "message"=>"Gallwch fewngofnodi nawr ar <a href='http://cydynni.org.uk'>cydynni.org.uk</a> gyda enw: $username a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar cydynni.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='http://cydynni.org.uk'>cydynni.org.uk</a> with username: $username and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at cydynni.org.uk then click on the My Account icon."
         ));
 
-        $email = new Email();
-        $email->to(array($email));
-        $email->subject($subject);
-        $email->body($message);
-        $result = $email->send();
+        $emailer = new Email();
+        $emailer->to(array($email));
+        $emailer->subject($subject);
+        $emailer->body($message);
+        $result = $emailer->send();
         
         if ($result['success']) {
             $welcomedate = date("d-m-Y");
@@ -80,8 +80,8 @@ class CydynniEmails
         $c = "";
         $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan the dilyn y ddolen isod:<br>";
         $c .= "<i>Your CydYnni report for $month_en is now ready. Please login to view your report by following the link below:</i><br><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
-        $c .= "<a href='https://cydynni.org.uk/report?apikey=".$row["apikey_read"]."&lang=en'>CydYnni Report (English)</a><br><br>";
+        $c .= "<a href='https://cydynni.org.uk/bethesda/report?apikey=".$row["apikey_read"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
+        $c .= "<a href='https://cydynni.org.uk/bethesda/report?apikey=".$row["apikey_read"]."&lang=en'>CydYnni Report (English)</a><br><br>";
 
         $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
         
@@ -96,14 +96,14 @@ class CydynniEmails
         ));
 
 
-        $email = new Email();
-        $email->to(array($email));
-        $email->subject($subject);
-        $email->body($message);
-        $result = $email->send();
+        $emailer = new Email();
+        $emailer->to(array($email));
+        $emailer->subject($subject);
+        $emailer->body($message);
+        $result = $emailer->send();
         
         if ($result['success']) {
-            $welcomedate = date("d-m-Y");
+            $reportdate = date("d-m-Y");
             $this->mysqli->query("UPDATE cydynni SET reportdate = '$reportdate' WHERE `userid`='$userid'");
             return "Email sent $month_en:$month_cy";
         } else {
