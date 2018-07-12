@@ -280,7 +280,7 @@ switch ($q)
         $date->setTimestamp(time());
         $date->modify("midnight");
         $time = $date->getTimestamp();
-        $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+        if (isset($content->date)) $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
         
         break;
 
