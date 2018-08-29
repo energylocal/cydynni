@@ -694,7 +694,7 @@ switch ($q)
     // Administration functions 
     // ----------------------------------------------------------------------
     case "admin":
-        if (IS_HUB) {
+        if (!IS_HUB) {
             $format = "html";
             unset($session["token"]);
             $content = view("views/admin_view.php",array('session'=>$session));
@@ -721,6 +721,37 @@ switch ($q)
                     $users[] = $row;
                 }
                 $content = $users;
+            }
+        }
+        break;
+        
+    case "admin/users/csv":
+        if (!IS_HUB) {
+            $format = "text";
+            if ($session['admin']) {
+                // Include data from cydynni table here too
+                $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
+                $users = array();
+                while($row = $result->fetch_object()) {
+                    $userid = $row->id;
+                    // Include fields from cydynni table
+                    $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                    $user_row = $user_result->fetch_object();
+                    if ($user_row) {
+                        foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                    }
+                    $row->hits = $redis->get("userhits:$userid");
+                    $users[] = $row;
+                }
+                
+                $content = "";
+                foreach ($users as $user) {
+                    $tmp = array();
+                    foreach ($user as $key=>$val) {
+                        $tmp[] = $val;
+                    }
+                    $content .= implode(",",$tmp)."\n";
+                }
             }
         }
         break;

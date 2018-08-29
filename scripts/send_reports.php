@@ -72,7 +72,7 @@ while ($row = $result_users->fetch_object())
                 
                 if (($report[0]["estimate"]*1)<15) {
                     //print "sending";
-                    if ($cydynni->reportdate!="12-07-2018") {
+                    if ($cydynni->reportdate!="16-08-2018") {
                         print $cydynni_emails->send_report_email($userid);
                     }
                 }

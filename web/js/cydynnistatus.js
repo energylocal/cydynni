@@ -125,15 +125,21 @@ function cydynnistatus_update() {
   } else {
       $("#generation-status").html(t("VERY LOW"));
   }
-  generation = Math.round(live.hydro||0);
+  
+
+  
+  var generation = Math.round(live.generation||0);
   $("#generation-power").html(generation);
-  consumption = Math.round(live.community||0);
-  if (generation < consumption ) {
-    $('#status-summary').text(t('Hydro output is currently lower than club consumption'));
+  var consumption = Math.round(live.club||0);
+  
+  console.log(generation+" "+consumption);
+  
+  if (generation > consumption ) {
+    $('#status-summary').text(t('Hydro output is currently exceeding club consumption'));
   } else if (generation == consumption) {
     $('#status-summary').text(t('Hydro output currently matches club consumption'));
   } else {
-    $('#status-summary').text(t('Hydro output is currently exceeding club consumption'));
+    $('#status-summary').text(t('Hydro output is currently lower than club consumption'));
   }
   
 }

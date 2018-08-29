@@ -62,7 +62,7 @@
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?><br>
+                  <div id="status-summary"><?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?></div>
                   <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>
                   </div>
 
