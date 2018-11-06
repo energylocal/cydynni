@@ -20,34 +20,8 @@ Connect to the Hub via SSH:
 Default emonSD password: emonpi2016
 
 ## Hub Emoncms requirements
-
-**1. Switch to emoncms device-support branch**
-
-The device-support branch provides support for device configuration in the emoncms input list extending and providing support for the device module installed in step 2 below.
-
-    rpi-rw
-    cd /var/www/emoncms
-    git pull
-    git checkout device-support
-    
-**2. Install emoncms device module**
-
-The device module is used for device auto-configuration on the hub. It handles the automatic setup of inputs and feeds when it detects a known device such as the CydYnni smart-meter gateway.
-
-    cd /var/www/emoncms/Modules
-    git clone https://github.com/emoncms/device.git
-    cd /var/www/emoncms/Modules/device
-    git checkout device-integration
-    
-Modify emoncms settings.php to use the integrated device UI:
-
-    nano /var/www/emoncms/settings.php
-
-Add line to bottom of settings.php:
-
-    $ui_version_2 = true;
      
-**3. Install emoncms Demand Shaper module**
+**1. Install emoncms Demand Shaper module**
 
 The demand shaper module uses a day ahead power availability forecast and user set schedules to determine the best time to run household loads.
 
