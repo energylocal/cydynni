@@ -34,19 +34,11 @@ Link the 'demandshaper-module' into the emoncms Modules folder:
 
     ln -s /home/pi/demandshaper/demandshaper-module /var/www/emoncms/Modules/demandshaper
 
-Add demand shaper background process to crontab:
+Add demand shaper background process to crontab & add UDP Broadcast for hub detection at the same time:
 
     crontab -e
     * * * * * php /home/pi/demandshaper/run.php 2>&1
-
-**4. Add UDP Broadcast to cron for hub detection:**
-
-    crontab -e
     * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
-    
-**5. Update emoncms database**
-
-    php /home/pi/emonpi/emoncmsdbupdate.php
 
 ### CydYnni App front-end
 
@@ -59,7 +51,7 @@ Install the cydynni repository:
     
 Create a symbolic link of the public_html_hub directory to /var/www
 
-    ln -s /home/pi/cydynni/hub_v2 /var/www/cydynni
+    ln -s /home/pi/cydynni/hweb /var/www/cydynni
     sudo ln -s /var/www/cydynni /var/www/html/cydynni
 
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
