@@ -192,7 +192,14 @@ $tariffs = array(
         </div>
         <?php echo t('Higher bar height equals more power available') ?>
         
-      </div> <!-- schedule-output-box -->      
+      </div> <!-- schedule-output-box -->   
+      <br>
+      <span class="">Demand shaper signal: </span>
+      <select name="signal" class="input scheduler-select" style="margin-top:10px">
+          <option value="carbonintensity">UK Grid Carbon Intensity</option>
+          <option value="cydynni">Energy Local: Bethesda</option>
+          <option value="economy7">Economy 7</option>
+      </select>   
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
 </div>
