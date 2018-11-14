@@ -569,25 +569,22 @@ switch ($q)
 
                     // Register account locally
                     $result = $user->register($username, $password, $u->email);
-                    
+
                     // Save remote account apikey to local hub
                     if ($result['success']==true) {
                         $userid = $result['userid'];
                         $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
                         $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
-                        
+
                         // Trigger download of user data
-                        $sync_flag = "/tmp/emoncms-flag-sync";
                         $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
                         $sync_logfile = "/home/pi/data/cydynni-sync.log";
-                        $fh = @fopen($sync_flag,"w");
-                        if ($fh) fwrite($fh,"$sync_script>$sync_logfile");
-                        @fclose($fh);
-                        
-                        $content = $user->login($username, $password);
-                        
+                        $redis->rpush("service-runner","$sync_script>$sync_logfile");
+
+                        $content = $user->login($username, $password, false);
+
                         $content = array("success"=>true);
-                        
+
                     } else {
                         $content = array("success"=>false, "message"=>"error creating account");
                     }
