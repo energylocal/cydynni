@@ -9,7 +9,7 @@ var updater;
 
 function device_load()
 {
-    $.ajax({ url: emoncmspath+"device/template/listshort.json", dataType: 'json', async: true, success: function(data) { 
+    $.ajax({ url: emoncmspath+"device/template/listshort.json?apikey="+session['apikey_read'], dataType: 'json', async: true, success: function(data) { 
         device_templates = data; 
         update();
     }});
@@ -30,38 +30,42 @@ function updaterStart(func, interval){
 function update(){
 
     // Join and include device data
-    $.ajax({ url: emoncmspath+"device/list.json", dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"device/list.json?apikey="+session['apikey_read'], dataType: 'json', async: true, success: function(data) {
         
-        // Associative array of devices by nodeid
-        devices = {};
-        for (var z in data) devices[data[z].nodeid] = data[z];
+        if (data.success==undefined) { 
         
-        var requestTime = (new Date()).getTime();
-        $.ajax({ url: emoncmspath+"input/list.json", dataType: 'json', async: true, success: function(data, textStatus, xhr) {
-            table.timeServerLocalOffset = requestTime-(new Date(xhr.getResponseHeader('Date'))).getTime(); // Offset in ms from local to server time
+            // Associative array of devices by nodeid
+            devices = {};
+            for (var z in data) devices[data[z].nodeid] = data[z];
             
-            // Associative array of inputs by id
-            inputs = {};
-            for (var z in data) inputs[data[z].id] = data[z];
-            
-            // Assign inputs to devices
-            for (var z in inputs) {
-                // Device does not exist which means this is likely a new system or that the device was deleted
-                // There needs to be a corresponding device for every node and so the system needs to recreate the device here
-                if (devices[inputs[z].nodeid]==undefined) {
-                    devices[inputs[z].nodeid] = {description:""};
-                    // Device creation
-                    $.ajax({ url: emoncmspath+"device/create.json?nodeid="+inputs[z].nodeid, dataType: 'json', async: true, success: function(data) {
-                        if (!data) alert("There was an error creating device: "+inputs[z].nodeid); 
-                    }});
+            var requestTime = (new Date()).getTime();
+            $.ajax({ url: emoncmspath+"input/list.json?apikey="+session['apikey_write'], dataType: 'json', async: true, success: function(data, textStatus, xhr) {
+                table.timeServerLocalOffset = requestTime-(new Date(xhr.getResponseHeader('Date'))).getTime(); // Offset in ms from local to server time
+                
+                // Associative array of inputs by id
+                inputs = {};
+                for (var z in data) inputs[data[z].id] = data[z];
+                
+                // Assign inputs to devices
+                for (var z in inputs) {
+                    // Device does not exist which means this is likely a new system or that the device was deleted
+                    // There needs to be a corresponding device for every node and so the system needs to recreate the device here
+                    if (devices[inputs[z].nodeid]==undefined) {
+                        devices[inputs[z].nodeid] = {description:""};
+                        // Device creation
+                        $.ajax({ url: emoncmspath+"device/create.json?nodeid="+inputs[z].nodeid+"&apikey="+session['apikey_write'], dataType: 'json', async: true, success: function(data) {
+                            if (!data) alert("There was an error creating device: "+inputs[z].nodeid); 
+                        }});
+                    }
+                    if (nodes_display[inputs[z].nodeid]==undefined) nodes_display[inputs[z].nodeid] = false;
+                    if (devices[inputs[z].nodeid].inputs==undefined) devices[inputs[z].nodeid].inputs = [];
+                    devices[inputs[z].nodeid].inputs.push(inputs[z]);
                 }
-                if (nodes_display[inputs[z].nodeid]==undefined) nodes_display[inputs[z].nodeid] = false;
-                if (devices[inputs[z].nodeid].inputs==undefined) devices[inputs[z].nodeid].inputs = [];
-                devices[inputs[z].nodeid].inputs.push(inputs[z]);
-            }
-            
-            draw_devices();
-        }});
+                
+                draw_devices();
+            }});
+        
+        }
     }});
 }
 
@@ -252,7 +256,7 @@ $(".device-delete-modal-delete").click(function(){
     console.log("DELETE: "+node+" deviceid:"+deviceid);
     
     // Delete schedule
-    $.ajax({ url: emoncmspath+"demandshaper/delete.json", data: "device="+node, dataType: 'json', async: true, success: function(result) {
+    $.ajax({ url: emoncmspath+"demandshaper/delete.json", data: "device="+node+"&apikey="+session['apikey_write'], dataType: 'json', async: true, success: function(result) {
         console.log("demandshaper/delete:");
         console.log(result);
 
@@ -262,7 +266,7 @@ $(".device-delete-modal-delete").click(function(){
                 inputIds.push(parseInt(devices[node].inputs[i].id));
             }
             
-            $.ajax({ url: emoncmspath+"input/delete.json", data: "inputids="+JSON.stringify(inputIds), async: false, success: function(result){
+            $.ajax({ url: emoncmspath+"input/delete.json", data: "inputids="+JSON.stringify(inputIds)+"&apikey="+session['apikey_write'], async: false, success: function(result){
                  console.log("input/delete:");
                  console.log(result);
             }});
@@ -270,7 +274,7 @@ $(".device-delete-modal-delete").click(function(){
         
         if (deviceid) {
             // Delete device
-            $.ajax({ url: emoncmspath+"device/delete.json", data: "id="+deviceid, dataType: 'json', async: false, success: function(result) {
+            $.ajax({ url: emoncmspath+"device/delete.json", data: "id="+deviceid+"&apikey="+session['apikey_write'], dataType: 'json', async: false, success: function(result) {
                 console.log("device/delete:");
                 console.log(result);
             }});
@@ -360,7 +364,7 @@ $("#save-processlist").click(function (){
 
 function auth_check(){
     $.ajax({ 
-        url: emoncmspath+"device/auth/check.json", 
+        url: emoncmspath+"device/auth/check.json?apikey="+session['apikey_read'], 
         dataType: 'json', 
         async: true,
         timeout: 3000
@@ -412,7 +416,7 @@ function auth_check(){
 
 $("#auth-check").on("click",".auth-check-allow",function(){
     var ip = $("#auth-check-ip").html();
-    $.ajax({ url: emoncmspath+"device/auth/allow.json?ip="+ip, dataType: 'json', async: true, success: function(data) {
+    $.ajax({ url: emoncmspath+"device/auth/allow.json?ip="+ip+"&apikey="+session['apikey_write'], dataType: 'json', async: true, success: function(data) {
         $("#auth-check").hide();
     }});
 });

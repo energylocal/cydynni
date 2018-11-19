@@ -103,10 +103,11 @@ if ($session['read']) {
         $row = $result->fetch_object();
         if (isset($row->token)) $session["token"] = $row->token;
     }   
-    $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
+    $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
     $row = $result->fetch_object();
     $session["email"] = $row->email;
     $session["apikey_read"] = $row->apikey_read;
+    $session["apikey_write"] = $row->apikey_write;
 }
 
 if (IS_HUB) {
