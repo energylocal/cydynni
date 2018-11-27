@@ -54,11 +54,13 @@ $("#table").on("click",".scheduler-save",function(event) {
     
     for (var property in controls) {
         if (controls[property].type=="text") 
-        tosave[property] = $("input[name='"+property+"']").val();
+            tosave[property] = $("input[name='"+property+"']").val();
         if (controls[property].type=="checkbox") 
-        tosave[property] = $(".scheduler-checkbox[name='"+property+"']").attr("state")*1;
+            tosave[property] = $(".scheduler-checkbox[name='"+property+"']").attr("state")*1;
         if (controls[property].type=="time")
-        tosave[property] = (1*$("input[name='"+property+"-hour']").val()) + ($("input[name='"+property+"-minute']").val()/60);
+            tosave[property] = (1*$("input[name='"+property+"-hour']").val()) + ($("input[name='"+property+"-minute']").val()/60);
+        if (controls[property].type=="select") 
+            tosave[property] = $("select[name='"+property+"']").val();
         if (controls[property].type=="weekly-scheduler") {
             tosave[property] = [];
             for (var i=0; i<7; i++) {
@@ -103,6 +105,10 @@ function scheduler_update_ui() {
     for (var property in controls) {
         if (controls[property].type=="checkbox") {
             $(".scheduler-checkbox[name='"+property+"']").attr("state",controls[property].value);
+        }
+        
+        if (controls[property].type=="select") {
+            $("select[name='"+property+"']").val(controls[property].value);
         }
         
         if (controls[property].type=="time") {

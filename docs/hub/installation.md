@@ -51,7 +51,7 @@ Install the cydynni repository:
     
 Create a symbolic link of the public_html_hub directory to /var/www
 
-    ln -s /home/pi/cydynni/hweb /var/www/cydynni
+    ln -s /home/pi/cydynni/web /var/www/cydynni
     sudo ln -s /var/www/cydynni /var/www/html/cydynni
 
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:

@@ -192,7 +192,14 @@ $tariffs = array(
         </div>
         <?php echo t('Higher bar height equals more power available') ?>
         
-      </div> <!-- schedule-output-box -->      
+      </div> <!-- schedule-output-box -->   
+      <br>
+      <span class="">Demand shaper signal: </span>
+      <select name="signal" class="input scheduler-select" style="margin-top:10px">
+          <option value="carbonintensity">UK Grid Carbon Intensity</option>
+          <option value="cydynni">Energy Local: Bethesda</option>
+          <option value="economy7">Economy 7</option>
+      </select>   
     </div> <!-- schedule-inner2 -->
   </div> <!-- schedule-inner -->
 </div>
@@ -234,12 +241,13 @@ var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emonc
 var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
+var session = <?php echo json_encode($session); ?>;
 
 // Device 
 <?php if (IS_HUB): ?>
 auth_check();
 <?php endif; ?>
-var session = <?php echo json_encode($session); ?>;
+
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
