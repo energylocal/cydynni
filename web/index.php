@@ -58,6 +58,9 @@ if (!defined('IS_HUB')) define('IS_HUB',true);
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
+require_once "Modules/feed/feed_model.php";
+$feed = new Feed($mysqli,$redis,$feed_settings);
+
 $base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
 $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
 
@@ -89,6 +92,12 @@ if ($apikey) {
     else {
          $session = $_SESSION;
          if (!isset($session['admin'])) $session['admin'] = 0;
+         
+         $tmp = $feed->get_user_feeds($session['userid']);
+         $session["feeds"] = array();
+         foreach ($tmp as $f) {
+             $session["feeds"][$f["name"]] = (int) $f["id"];
+         }
     }
 }
 
@@ -664,8 +673,12 @@ switch ($q)
         $limitinterval = (int) get("limitinterval");
         
         $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
-
-        $result = file_get_contents($emoncms_url."feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
+        
+        if (isset($_GET['mode']) && $_GET['mode']=="daily") {
+            $result = file_get_contents($emoncms_url."feed/data.json?id=$id&start=$start&end=$end&mode=daily&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
+        } else {
+            $result = file_get_contents($emoncms_url."feed/data.json?id=$id&start=$start&end=$end&interval=$interval&skipmissing=$skipmissing&limitinterval=$limitinterval".$apikeystr);
+        }
         
         $content = json_decode($result);
         if ($content==null) $content = $result;
@@ -684,6 +697,20 @@ switch ($q)
         $params = http_build_query(array("id"=>$id, "start"=>$start, "end"=>$end, "interval"=>$interval));
         //apikey not valid in web mode..?
         $result = @file_get_contents($emoncms_url.'feed/average.json?'.$params.$apikeystr);
+
+        $content = json_decode($result);
+        if ($content==null) $content = $result;
+        
+        break;
+        
+    case "feed/timevalue.json":
+        $format = "json";
+        // Params
+        $id = (int) get("id");
+      
+        
+        $apikeystr = ""; if (isset($_GET['apikey'])) $apikeystr = "&apikey=".$_GET['apikey'];
+        $result = @file_get_contents($emoncms_url.'feed/timevalue.json?id='.$id.$apikeystr);
 
         $content = json_decode($result);
         if ($content==null) $content = $result;

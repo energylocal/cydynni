@@ -10,9 +10,9 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
 
-chdir("/var/www/dev");
-require "EmonLogger.php";
-require "PHPFina.php";
+chdir("/var/www/cydynni");
+require "lib/EmonLogger.php";
+require "lib/PHPFina.php";
 
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 

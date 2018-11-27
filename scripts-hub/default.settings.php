@@ -15,6 +15,6 @@ $redis_server = array(
   'prefix' => ''
 );
 
-$cert = "/home/pi/cydynni/scripts-hub/ca.crt";
+$cert = "/home/cydynni/cydynni/scripts-hub/ca.crt";
 $meter_topic = "";
 $meter_id = "";

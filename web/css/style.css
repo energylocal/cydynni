@@ -466,6 +466,18 @@ a:visited {
   background-color:rgba(255,255,255,0.2);
 }
 
+.visnav-household {
+  display:inline-block;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding:10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.visnav-household:hover {
+  background-color:rgba(255,255,255,0.2);
+}
+
 
 @media (max-width: 600px) {
     .tips-appliance img {

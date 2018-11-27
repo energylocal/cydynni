@@ -7,12 +7,13 @@
                     
                         <div style="font-weight:bold; font-size:32px"><?php echo t("Log in"); ?></div>
                         <?php echo t("Please login to view account"); ?><br><br>
-                    
-                        <input id="email" type="text" placeholder="Username or email..."><br><br>
-                        <input id="password" type="password" placeholder="Password..."><br>
-                        
-                        <br>
+                
+                        <form id="loginform">
+                        <input id="email" type="text" placeholder="Username or email..." name="username"><br><br>
+                        <input id="password" type="password" placeholder="Password..." name="password"><br><br>
                         <button id="login" class="btn"><?php echo t("Login");?></button><br><br>
+                        </form>
+                        
                         <div id="passwordreset-start" style="display:inline-block; cursor:pointer;"><?php echo t("Forgotten your password?");?></div>
                         <br><br>
                         <div id="alert"></div>
@@ -60,10 +61,9 @@
               
                 <p class="household_status"></p>
                 
-                <div class="bg-household" style="height:100px">
+                <div class="bg-household" style="height:50px">
                   <div style="padding:5px">
-                    <p><?php echo t("You used"); ?> <span class="household_totalkwh"></span> kWh. <?php echo t("It cost"); ?> £<span class="household_totalcost"></span></p>
-                    <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?>:</p>
+                    <p><?php echo t("You used"); ?> <span class="household_totalkwh"></span> kWh. <?php echo t("It cost"); ?>:</p>
                   </div>
                 </div>
                 
@@ -78,18 +78,28 @@
                 <br>
                 <div class="circle bg-household">
                     <div class="circle-inner" style="padding-top:52px">
-                        <div style="font-size:36px" class="household_costsaving">£0.00</div>
+                        <div style="font-size:36px" class="household_totalcost">£0.00</div>
                     </div>
                 </div>
-                <br>
+                <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?> <span class="household_costsaving"></span></p>
                 
+                <br>
               </div>
             </div>
             
             <div class="block household-block">
                 <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                
                 <div class="block-content">
                 
+                    <div class="bg-household2">
+                        <div class="visnav-block-household">
+                          <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week"><?php echo t("WEEK");?></div><div class="visnav-household household-left"><</div><div class="visnav-household household-right">></div><div class="visnav-household household-daily"><?php echo t("DAILY");?></div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                
+                    <!--
                     <div class="bg-household2">
                       <div class="bound"><?php echo t("Here's what your electricity use looked like on"); ?><br><b><span class="household_date"></span> 2017</b></div>
                     </div>
@@ -101,12 +111,15 @@
                         </div>
                       </div>
                     </div>
+                    -->
                 
                     <div style="padding:10px">
                         <div id="household_bargraph_bound" style="width:100%; height:405px;">
                             <div id="household_bargraph_placeholder" style="height:405px"></div>
                         </div>
                     </div>
+                    
+                    <p style="font-size:12px" id="household-daily-note"><?php echo t("Click on a day to see half hourly consumption"); ?></p><br>
                 </div>
             </div>
             

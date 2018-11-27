@@ -1,7 +1,7 @@
 <?php
 
 // Load MQTT server settings
-require "/home/pi/cydynni/scripts-hub/settings.php";
+require "/home/cydynni/cydynni/scripts-hub/settings.php";
 
 $redis = new Redis();
 if (!$redis->connect($redis_server['host'], $redis_server['port'])) die;
@@ -32,7 +32,7 @@ $mqtt_client->onMessage('message');
         $last_retry = time();
         try {
             $mqtt_client->setCredentials($mqtt_server['user'],$mqtt_server['password']);
-            $mqtt_client->setTlsCertificates($cert);
+            $mqtt_client->setTlsCertificates($mqtt_server['cert']);
             $mqtt_client->setTlsOptions(Mosquitto\Client::SSL_VERIFY_PEER, "tlsv1.1", NULL);
             // $mqtt_client->setTlsInsecure(true);
             
