@@ -551,6 +551,24 @@ switch ($q)
                 else $content = array("success"=>false, "message"=>"User not found");
             }
         }
+        
+        $session = $_SESSION;
+        if (!isset($session['admin'])) $session['admin'] = 0;
+        $userid = $session['userid'];
+        
+        $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
+        $row = $result->fetch_object();
+        $session["email"] = $row->email;
+        $session["apikey_read"] = $row->apikey_read;      
+         
+        $tmp = $feed->get_user_feeds($userid);
+        $session["feeds"] = array();
+        foreach ($tmp as $f) {
+            $session["feeds"][$f["name"]] = (int) $f["id"];
+        }
+        
+        $content["session"] = $session;
+        
         break;
 
     case "register":

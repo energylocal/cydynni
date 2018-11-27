@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 20;
+$v = 23;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -282,13 +282,18 @@ if (!session.write) {
 //show tab related to the page name shown after the ? (or show first tab)
 var url_string = location.href
 var url = new URL(url_string);
-var entries = url.searchParams.entries();
+
+console.log(session);
+
 var page = "";
-for(let entry of entries){
-    if(entry[0]!=="lang"){
-        page = entry[0];
-    }
+
+if (url.searchParams!=undefined) {
+    var entries = url.searchParams.entries();
+    for(var entry of entries) { if(entry[0]!=="lang") page = entry[0]; }
+} else {
+    page = url.search.replace("?","");
 }
+
 if (page!=""){
     show_page(page);
 }else{

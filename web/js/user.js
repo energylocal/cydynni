@@ -12,8 +12,7 @@ $("#loginform").on("submit",function(event){
         success: function(result) {
             if (result.success!=undefined) {
                 if (result.success) {
-                    // session = result;
-                    // $("#user-email").html(session.email);
+                    session = result.session;
                     
                     $("#login-block").hide();
                     $("#logout").show();

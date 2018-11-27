@@ -172,7 +172,7 @@ function household_bargraph_load() {
         $("#household-daily-note").show();
         url = path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+household_start+"&end="+household_end+"&mode=daily&apikey="+session['apikey_read'];
         
-        $.ajax({url: path+"feed/timevalue.json?id="+session.feeds["use_kwh"]+"&apikey="+session['apikey_read'], dataType: 'json', async: true, success: function(result) {
+        $.ajax({url: path+"feed/timevalue.json?id="+session.feeds["use_kwh"]+"&apikey="+session['apikey_read'], dataType: 'json', async: false, success: function(result) {
              timevalue = result;
         }});
         
@@ -243,9 +243,12 @@ function household_bargraph_load() {
                     total += use;
                 }
                 
-                var delta = timevalue.value - household_data[lastvalid+1][1];
-                var time = household_data[lastvalid+1][0];
-                household_daily_data.push([time,delta]);
+                var now = +new Date;
+                if (mode=="daily" &&  (now-household_end)<3600) {
+                    var delta = timevalue.value - household_data[lastvalid+1][1];
+                    var time = household_data[lastvalid+1][0];
+                    household_daily_data.push([time,delta]);
+                }
                 
                 console.log("Total kWh in window: "+total.toFixed(2));  
                 
