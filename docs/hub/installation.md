@@ -58,6 +58,14 @@ Create a symbolic link of the public_html_hub directory to /var/www
 
     ln -s /home/pi/cydynni/web /var/www/cydynni
     sudo ln -s /var/www/cydynni /var/www/html/cydynni
+    
+Define CydYnni UI as hub:
+
+    sudo nano /var/www/emoncms/settings.php
+    
+Add
+
+    define("IS_HUB",1);
 
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
 
@@ -97,6 +105,10 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
     sudo nano /etc/hosts
     sudo nano /etc/hostname
     sudo nano /var/www/html/index.php
+    
+### Disable SSH
+
+Remove ssh from /boot
 
 ### Testing
 
