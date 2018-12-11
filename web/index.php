@@ -155,11 +155,10 @@ if (isset($club_settings[$club])) {
 
 
 chdir("/var/www/cydynni");
-
+require "meter_data_api.php";
 if (!IS_HUB) {
     require("lib/cydynni_emails.php");
-    $cydynni_emails = new CydynniEmails($mysqli);    
-    require "meter_data_api.php";
+    $cydynni_emails = new CydynniEmails($mysqli);
 }
 
 $translation = new stdClass();
@@ -561,7 +560,10 @@ switch ($q)
         $session["email"] = $row->email;
         $session["apikey_read"] = $row->apikey_read;      
          
+        chdir("/var/www/emoncms");
         $tmp = $feed->get_user_feeds($userid);
+        chdir("/var/www/cydynni");
+        
         $session["feeds"] = array();
         foreach ($tmp as $f) {
             $session["feeds"][$f["name"]] = (int) $f["id"];

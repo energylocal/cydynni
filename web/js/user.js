@@ -41,6 +41,8 @@ $("#logout").click(function(event) {
         url: club_path+"logout",
         dataType: 'text',
         success: function(result) {
+            window.location = "/";
+            /*
             $("#login-block").show();
             $("#logout").hide();
             $("#account").hide();
@@ -48,7 +50,7 @@ $("#logout").click(function(event) {
             $("#alert").html("");
             $(".household-block").hide();
             session = false;
-            //window.location = "";
+            */
         }
     });
 });
