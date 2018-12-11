@@ -24,6 +24,8 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
 
+$path = get_application_path();
+
 // Connect to MYSQL
 $mysqli = @new mysqli($server,$username,$password,$database,$port);
 if ( $mysqli->connect_error ) {
@@ -64,17 +66,6 @@ $feed = new Feed($mysqli,$redis,$feed_settings);
 $base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
 $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
 
-chdir("/var/www/cydynni");
-
-if (!IS_HUB) require("lib/cydynni_emails.php");
-if (!IS_HUB) $cydynni_emails = new CydynniEmails($mysqli);
-
-require "meter_data_api.php";
-$path = get_application_path();
-
-require "lib/PHPFina.php";
-$path_to_fina = IS_HUB ? "/home/pi/data/phpfina/" : "/var/lib/phpfina/";
-$phpfina = new PHPFina(array("datadir" => $path_to_fina));
 $use_local_cache = true;
 
 $apikey = false;
@@ -160,6 +151,15 @@ if (isset($club_settings[$club])) {
     $lang = $club_settings[$club]["languages"][0];
 } else {
     $club = "bethesda";
+}
+
+
+chdir("/var/www/cydynni");
+
+if (!IS_HUB) {
+    require("lib/cydynni_emails.php");
+    $cydynni_emails = new CydynniEmails($mysqli);    
+    require "meter_data_api.php";
 }
 
 $translation = new stdClass();
@@ -307,7 +307,7 @@ switch ($q)
             $start = (int) $_GET['start'];
             $end = (int) $_GET['end'];
             if ($use_local_cache) {
-                $content = $phpfina->get_data($club_settings[$club]["generation_feed"],$start,$end,1800,1,0);
+                $content = $feed->get_data($club_settings[$club]["generation_feed"],$start,$end,1800,1,0);
             } else {
                 $content = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],28,$start,$end);
             }
@@ -361,7 +361,7 @@ switch ($q)
             $end = (int) $_GET['end'];
             
             if ($use_local_cache) {
-                $content = $phpfina->get_data(2,$start,$end,1800,1,0);
+                $content = $feed->get_data(2,$start,$end,1800,1,0);
             } else {
                 $content = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],29,$start,$end);
             }
@@ -418,11 +418,11 @@ switch ($q)
             $start = $estimatestart;
         }
         
-        $feed = 166913;
-        if ($club=="towerpower") $feed = 179247;
+        $feedid = 166913;
+        if ($club=="towerpower") $feedid = 179247;
         
         $url = "https://emoncms.org/feed/average.json?";
-        $url .= http_build_query(array("id"=>$feed,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+        $url .= http_build_query(array("id"=>$feedid,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
         $result = @file_get_contents($url);
 
         if ($result) {
