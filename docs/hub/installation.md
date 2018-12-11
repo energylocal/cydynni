@@ -34,10 +34,15 @@ Link the 'demandshaper-module' into the emoncms Modules folder:
 
     ln -s /home/pi/demandshaper/demandshaper-module /var/www/emoncms/Modules/demandshaper
 
-Add demand shaper background process to crontab & add UDP Broadcast for hub detection at the same time:
+Add demand shaper service
+
+    sudo ln -s /home/pi/demandshaper/demandshaper.service /lib/systemd/system
+    sudo systemctl enable demandshaper.service
+    sudo systemctl start demandshaper
+
+Add UDP Broadcast for hub detection at the same time:
 
     crontab -e
-    * * * * * php /home/pi/demandshaper/run.php 2>&1
     * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
 
 ### CydYnni App front-end
