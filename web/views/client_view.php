@@ -20,7 +20,7 @@ $tariffs = array(
     )
 );
 
-$emoncms_path = str_replace("/cydynni","/emoncms",$path);
+$emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
 
 ?>
 
