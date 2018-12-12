@@ -9,7 +9,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-rpi-rw
+#rpi-rw
 
 echo "deleting phpfina and phptimeseries data"
 sudo rm -rf /home/pi/data/phpfina
@@ -28,4 +28,4 @@ mysql -u root -e "create database emoncms" -pemonpimysql2016
 
 redis-cli "flushall"
 
-rpi-ro
+#rpi-ro
