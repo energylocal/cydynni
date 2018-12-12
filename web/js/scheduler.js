@@ -12,6 +12,8 @@ function draw_scheduler(devicein)
 {   
     device = devicein;
     $("#devicename").html(jsUcfirst(device));
+    //$(".node-scheduler-title").html(device);
+    //$(".node-scheduler").attr("node",device);
     
     // 1. Load device template to get the control definition
     $.ajax({ url: emoncmspath+"device/template/get.json?type="+devices[device].type, dataType: 'json', async: true, success: function(template) { 
@@ -36,7 +38,7 @@ function draw_scheduler(devicein)
             
             scheduler_update_ui();
             draw_schedule_output(schedule);
-            
+
         }});
     }});
 }
@@ -106,11 +108,11 @@ function scheduler_update_ui() {
         if (controls[property].type=="checkbox") {
             $(".scheduler-checkbox[name='"+property+"']").attr("state",controls[property].value);
         }
-        
+
         if (controls[property].type=="select") {
             $("select[name='"+property+"']").val(controls[property].value);
         }
-        
+                
         if (controls[property].type=="time") {
             var time = controls[property].value;
             var hour = Math.floor(time);
@@ -126,7 +128,7 @@ function scheduler_update_ui() {
                 $(".weekly-scheduler[name='"+property+"'][day="+i+"]").attr("val",controls[property].value[i]);
             }
         }
-    }
+    } 
     
     var runonce = true;
     for (var i=0; i<7; i++) {
@@ -137,7 +139,7 @@ function scheduler_update_ui() {
         $(".scheduler-checkbox[name='runonce']").attr("state",1);
     } else {
         $(".scheduler-checkbox[name='runonce']").attr("state",0);
-    } 
+    }   
 }
 
 
@@ -202,13 +204,13 @@ function draw_schedule_output(schedule)
     if (schedule.periods && schedule.periods.length) {
         var now = new Date();
         var now_hours = (now.getHours() + (now.getMinutes()/60));
-        var period_start = (schedule.periods[0].start);
+        var period_start = (schedule.periods[0].start[1]);
         
         var startsin = 0;
         if (now_hours>period_start) {
-            startsin = (24 - now_hours) + period_start
+           startsin = (24 - now_hours) + period_start
         } else {
-            startsin = period_start - now_hours
+           startsin = period_start - now_hours
         }
         
         var hour = Math.floor(startsin);
@@ -220,47 +222,57 @@ function draw_schedule_output(schedule)
         $(".startsin").html(text);
     } 
     
-    
+
     var periods = [];
     for (var z in schedule.periods) {
-        
-        var start = 1*schedule.periods[z].start;
-        if (start==0) start = "Midnight";
-        else if (start==12) start = "Noon";
-        else if (start>12) {
-            start = (start - 12)+"pm";
-        } else if (start<12) {
-            start = start+"am";
+
+        var start = 1*schedule.periods[z].start[1];
+        var sh = Math.floor(start);
+        var sm = (start - sh) * 60;
+        if (sm<10) sm = "0"+sm;
+        var start_str = sh+":"+sm;
+        if (start==0) start_str = "Midnight";
+        else if (start==12) start_str = "Noon";
+        else if (sh>12) {
+            sh = sh - 12;
+            start_str = sh+":"+sm+" pm";
+        } else if (sh<12) {
+            start_str += "am";
         }
         
-        var end = 1*schedule.periods[z].end;
-        if (end==0) end = "Midnight";
-        if (end==12) end = "Noon";
-        else if (end>12) {
-            end = (end - 12)+"pm";
-        } else if (end<12) {
-            end = end+"am";
+        var end = 1*schedule.periods[z].end[1];
+        var eh = Math.floor(end);
+        var em = (end - eh) * 60;
+        if (em<10) em = "0"+em;
+        var end_str = eh+":"+em;
+        if (end==0) end_str = "Midnight";
+        else if (end==12) end_str = "Noon";
+        else if (eh>12) {
+            eh = eh - 12;
+            end_str = eh+":"+em+" pm";
+        } else if (eh<12) {
+            end_str += "am";
         }
-        periods.push(start+" to "+end+" ");
+        periods.push(start_str+" to "+end_str);
     }
-    
+
     out += "<b>"+periods.join(", ")+"</b>";
-    
+
     $("#schedule-output").html(out);
-    
+
     if (schedule.probability!=undefined) {
         var probability = schedule.probability;
-        
+
         var hh = 0;
         for (var z in probability) {
             if (1*probability[z][2]==schedule.end) hh = z;
         }
-        
+
         var markings = [];
         // { color: "#000", lineWidth: 2, xaxis: { from: probability[hh][0], to: probability[hh][0] } },
         if (hh>0) markings.push({ color: "rgba(0,0,0,0.1)", xaxis: { from: probability[hh][0] } });
-        
-        
+
+
         options = {
             bars: { show: true, barWidth:1800*1000*0.75 },// align: 'center'
             xaxis: { mode: "time", timezone: "browser" },
@@ -269,14 +281,14 @@ function draw_schedule_output(schedule)
             selection: { mode: "x" },
             touch: { pan: "x", scale: "x" }
         }
-        
+
         available = [];
         unavailable = [];
         for (var z in probability) {
             if (probability[z][4]) available.push([probability[z][0],probability[z][1]]);
             if (!probability[z][4]) unavailable.push([probability[z][0],probability[z][1]]);
         }
-        
+
         var width = $("#placeholder_bound").width();
         if (width>0) {
             $("#placeholder").width(width);
@@ -352,9 +364,9 @@ $("#table").on("click",".scheduler-checkbox",function(){
 
 $("#table").on("click",".weekly-scheduler-repeat",function(){
     if ($(this)[0].checked) {
-        
+
     } else {
-        
+    
     }
 });
 
@@ -363,7 +375,7 @@ $('#placeholder').bind("plothover", function (event, pos, item)
     if (item) {
         if (previousPoint != item.datapoint) {
             previousPoint = item.datapoint;
-            
+
             $("#tooltip").remove();
             var itemTime = item.datapoint[0];
             var itemVal = item.datapoint[1];
