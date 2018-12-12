@@ -20,6 +20,8 @@ $tariffs = array(
     )
 );
 
+$emoncms_path = str_replace("/cydynni","/emoncms",$path);
+
 ?>
 
 <!DOCTYPE html>
@@ -230,7 +232,7 @@ var is_hub = <?php echo IS_HUB ? 'true':'false'; ?>;
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <?php if(IS_HUB): ?>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/scheduler.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $emoncms_path; ?>Modules/demandshaper/scheduler.js?v=<?php echo $v; ?>"></script>
 <?php endif; ?>
 <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/jquery.history.js"></script>
 
