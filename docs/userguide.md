@@ -36,7 +36,12 @@ or:
 
     http://cydynni/
     
-You will now be greeted with the CydYnni hub login page. Enter your CydYnni username and password.
+You will now be greeted with the CydYnni hub login page. 
+
+**If this does not work:** Use our hub and smartplug finder tool which can be found here: http://emoncms.org/find
+<br>This tool will find the IP address of the hub or smartplug on your network.
+
+Enter your CydYnni username and password.
 
 ![setup5.png](images/setup5.png)
 
@@ -86,7 +91,7 @@ Connect back to you home network and navigate to the devices page, after a coupl
 
 ![setup13.png](images/setup13.png)
 
-Click allow and wait another minute for the smartplug device to appear. 
+Click allow. Refresh the device interface until the smartplug device appears.
 
 Clicking on the smartplug device will bring up the scheduler interface:
 
