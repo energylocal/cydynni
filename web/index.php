@@ -212,7 +212,7 @@ switch ($q)
         break;
         
     case "account":
-        $format = "html";
+        $format = "theme";
         if ($session["read"]) {
             if (!IS_HUB) unset($session["token"]);
             if (!IS_HUB) unset($club_settings[$club]["root_token"]);
@@ -222,7 +222,31 @@ switch ($q)
             $content = "session not valid";
         }
         break;
-                
+
+    case "find":
+        $format = "theme";
+        if ($session["read"]) {
+            if (!IS_HUB) unset($session["token"]);
+            if (!IS_HUB) unset($club_settings[$club]["root_token"]);
+            
+            $content = view("Modules/find/Views/intro.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+        } else {
+            $content = "session not valid";
+        }
+        break;
+        
+    case "find/ok":
+        $format = "theme";
+        if ($session["read"]) {
+            if (!IS_HUB) unset($session["token"]);
+            if (!IS_HUB) unset($club_settings[$club]["root_token"]);
+            
+            $content = view("Modules/find/Views/find.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+        } else {
+            $content = "session not valid";
+        }
+        break;
+                        
     // ------------------------------------------------------------------------
     // Household 
     // ------------------------------------------------------------------------         
@@ -859,6 +883,10 @@ switch ($q)
 
 switch ($format) 
 {
+    case "theme":
+        header('Content-Type: text/html');
+        print view("Theme/cydynni/theme.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club],'content'=>$content));
+        break;
     case "html":
         header('Content-Type: text/html');
         print $content;
