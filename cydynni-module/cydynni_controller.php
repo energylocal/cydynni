@@ -19,7 +19,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 
 function cydynni_controller()
 {
-    global $mysqli, $redis, $session, $route, $homedir, $user;
+    global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
     $result = false;
     
     $route->format = "json";
@@ -28,12 +28,53 @@ function cydynni_controller()
 
     $cydynni = new Cydynni($mysqli,$redis);
 
+	  $club = "bethesda";
+	  $club_settings = array();
+	  $club_settings[$club] = array(
+	      "name"=>"Bethesda",
+	      "generator"=>"hydro",
+	      "languages"=>array("cy","en"),
+	      "generation_feed"=>1,
+	      "consumption_feed"=>2
+	  );
+	  
+	  global $translation;
+	  $translation = new stdClass();
+    $translation->cy = json_decode(file_get_contents("Modules/cydynni/app/locale/cy"));
+
+    $base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
+    $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
     // -----------------------------------------------------------------------------------------
     
     switch ($route->action)
     {
+        case "":
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+                
+                require_once "Modules/feed/feed_model.php";
+                $feed = new Feed($mysqli,$redis,$feed_settings);
+                
+                $tmp = $feed->get_user_feeds($userid);
+                
+                $session["feeds"] = array();
+                foreach ($tmp as $f) {
+                    $session["feeds"][$f["name"]] = (int) $f["id"];
+                }
+                
+                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
+                $row = $result->fetch_object();
+                $session["email"] = $row->email;
+                $session["apikey_read"] = $row->apikey_read;
+                $session["apikey_write"] = $row->apikey_write;
+            }
+        
+            $route->format = "html";
+            return view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            break;
+    
         // -----------------------------------------------------------------------------------------
         // OTA: Record local hub OTA version and log
         // -----------------------------------------------------------------------------------------
@@ -100,10 +141,14 @@ function cydynni_controller()
         // -----------------------------------------------------------------------------------------
         case "live":
             $route->format = "json";
-            
-            if ($redis->exists("live")) {
-                $live = json_decode($redis->get("live"));
-                
+            $result = $redis->get("$club:live");
+            if (IS_HUB) {
+                if (!$result) {
+                    $result = file_get_contents("${base_url}live");
+                    if ($result) $redis->set("live",$result);
+                }
+            }
+            if ($live = json_decode($result)) {
                 $date = new DateTime();
                 $date->setTimezone(new DateTimeZone("Europe/London"));
                 $date->setTimestamp(time());
@@ -115,22 +160,71 @@ function cydynni_controller()
                 if ($hour>=11 && $hour<16) $tariff = "midday";
                 if ($hour>=16 && $hour<20) $tariff = "evening";
                 if ($hour>=20) $tariff = "overnight";
-                if ($live->hydro>=$live->community) $tariff = "hydro";
+                if ($live->generation>=$live->club) $tariff = "generation";
                 
                 $live->tariff = $tariff;
-                $result = $live;
+                
+                return $live;
             } else {
-                $result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/cydynni/live"));
+                return array('success'=>false,'message'=>'Feed not available');
             }
             break;
+
+        case "household-summary-day":
+            $route->format = "json";
+            if ($session["read"]) {
+                $userid = $session["userid"];
+                $content = json_decode($redis->get("user:summary:lastday:$userid"));
             
-        case "hydro-estimate":
+                $date = new DateTime();
+                $date->setTimezone(new DateTimeZone("Europe/London"));
+                $date->setTimestamp(time());
+                $date->modify("midnight");
+                $time = $date->getTimestamp();
+                if ($content){
+                    $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+                } else {
+                    return "Invalid data";
+                }
+            } else {
+                return "session not valid";
+            }
+
+            return json_decode(json_encode($content));
+            break;
+
+        case "club-summary-day":
+            $route->format = "json";
+
+            if (!$result = $redis->get("$club:club:summary:day")) {
+                if( IS_HUB ) {
+                    $result = file_get_contents("$base_url/club/summary/day");
+                    if ($result) $redis->set("community:summary:day",$result);
+                }
+            }
+            $content = json_decode($result);
+            
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $date->setTimestamp(time());
+            $date->modify("midnight");
+            $time = $date->getTimestamp();
+            if ($content){
+                $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+            } else {
+                return "Invalid data";
+            }
+            
+            return $content;
+            break;
+                    
+        case "generation-estimate":
             $route->format = "json";
 
             $interval = (int) $_GET['interval'];
             if (isset($_GET['lasttime'])) $estimatestart = $_GET['lasttime'];
             if (isset($_GET['lastvalue'])) $lastvalue = $_GET['lastvalue'];
-            
+                    
             if (isset($_GET['start']) && isset($_GET['end'])) {
                 $end = $_GET['end'];
                 $start = $_GET['start'];
@@ -140,39 +234,54 @@ function cydynni_controller()
                 $start = $estimatestart;
             }
             
-            $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$estimatestart&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+            $feedid = 166913;
+            if ($club=="towerpower") $feedid = 179247;
             
-            $scale = 1.1;
+            $url = "https://emoncms.org/feed/average.json?";
+            $url .= http_build_query(array("id"=>$feedid,"start"=>$estimatestart,"end"=>$end,"interval"=>$interval,"skipmissing"=>0,"limitinterval"=>1));
+            $result = @file_get_contents($url);
+
+            if ($result) {
+                $data = json_decode($result);
+                if ($data!=null && is_array($data)) {
             
-            //$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=1800&skipmissing=0&limitinterval=1"));
+                    $scale = 1.1;  
+                    // Scale ynni padarn peris data and impose min/max limits
+                    for ($i=0; $i<count($data); $i++) {
+                        if ($data[$i][1]==null) $data[$i][1] = 0;
+                        if ($club=="bethesda") {
+                        
+                            $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                            if ($data[$i][1]<0) $data[$i][1] = 0;
+                            if ($data[$i][1]>49) $data[$i][1] = 49;
+                        } else if ($club=="towerpower") {
+                            $data[$i][1] = -1 * $data[$i][1] * 0.001;
+                        }
+                    }
             
-            // Scale ynni padarn peris data and impose min/max limits
-            for ($i=0; $i<count($data); $i++) {
-                if ($data[$i][1]==null) $data[$i][1] = 0;
-                $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                if ($data[$i][1]<0) $data[$i][1] = 0;
-                if ($data[$i][1]>49) $data[$i][1] = 49;
-            }
+                    // remove last half hour if null
+                    if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
             
-            // remove last half hour if null
-            if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            // if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
-            
-            
-            $result = $data;
+                    return $data;
+                } else {
+                    return $result;
+                }
+            } else {
+                return array();
+            }  
             
             break;
             
-        case "community-estimate":
+        case "club-estimate":
             $route->format = "json";
             
-            $end = (int) 1*$_GET['lasttime'];
+            $end = (int) $_GET['lasttime'];
             $interval = (int) $_GET['interval'];
             
             $start = $end - (3600*24.0*7*1000);
             
-            $data = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
-
+            $data = json_decode(file_get_contents($emoncms_url."feed/average.json?id=".$club_settings[$club]["consumption_feed"]."&start=$start&end=$end&interval=$interval"));
+        
             $divisions = round((24*3600) / $interval);
 
             $days = count($data)/$divisions;
@@ -194,9 +303,9 @@ function cydynni_controller()
                     $consumption_profile_tmp[$h] = $consumption_profile_tmp[$h] / $days;
                     $consumption_profile[] = number_format($consumption_profile_tmp[$h],2);
                 }
-                $result = $consumption_profile;
+                return $consumption_profile;
             } else {
-                $result = false;
+                return "session not valid";
             }
             
             break;
@@ -366,4 +475,52 @@ function cydynni_controller()
     }
     
     return array("content"=>$result);   
+}
+
+function t($s) {
+    global $translation,$lang;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        echo $translation->$lang->$s;
+    } else {
+        echo $s;
+    }
+}
+
+function translate($s,$lang) {
+    global $translation;
+    
+    if (isset($translation->$lang) && isset($translation->$lang->$s)) {
+        return $translation->$lang->$s;
+    } else { 
+        return $s;
+    }
+}
+
+// -------------------------------------------------------------
+// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
+// -------------------------------------------------------------
+function decode_date($datestr) {
+    $datestr = str_replace(",","",$datestr);
+    $date_parts = explode(" ",$datestr);
+    if (count($date_parts)!=4) return "invalid date string";
+    $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
+    
+    $day = $date_parts[1];
+    $month = $date_parts[0];
+    $year = $date_parts[2];
+    
+    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
+    
+    $date = new DateTime();
+    $date->setTimezone(new DateTimeZone("Europe/London"));
+    $date->setDate($year,$months[$month],$day);
+    $date->setTime(0,0,0);
+    
+    //$date->modify("midnight");
+    $time = $date->getTimestamp();
+    // November, 02 2016 00:00:00
+    // print $date2."\n";
+    // Mid night start of day
+    return $time; //strtotime($date2);
 }

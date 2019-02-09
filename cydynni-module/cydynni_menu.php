@@ -4,8 +4,8 @@
 
     $menu_left[] = array(
         'id'=>"cydynni_menu",
-        'name'=>"Cydynni",
-        'path'=>"cydynni/admin" , 
+        'name'=>"Dashboard",
+        'path'=>"cydynni" , 
         'session'=>"write", 
         'order' => 3,
         'icon'=>'icon-user icon-white',
