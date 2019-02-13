@@ -10,11 +10,9 @@ $club = "bethesda";
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
-
-chdir("/var/www/cydynni");
-require "meter_data_api.php";
-require "lib/EmonLogger.php";
-require "lib/PHPFina.php";
+require "Modules/cydynni/meter_data_api.php";
+require "Lib/EmonLogger.php";
+require "Modules/feed/engine/PHPFina.php";
 
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 

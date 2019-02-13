@@ -10,8 +10,8 @@ require "lib/accumulator.php";
 
 chdir("/var/www/emoncms");
 require "process_settings.php";
-require_once "Lib/EmonLogger.php";
-require "/var/www/cydynni/meter_data_api.php";
+require "Modules/cydynni/meter_data_api.php";
+require "Lib/EmonLogger.php";
 
 $mysqli = @new mysqli($server,$username,$password,$database,$port);
 $redis = new Redis();

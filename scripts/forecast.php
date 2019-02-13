@@ -1,7 +1,7 @@
 <?php
 
 // This forecast script is ran every 30 mins
-sleep(10);
+// sleep(10);
 
 
 define('EMONCMS_EXEC', 1);
@@ -9,10 +9,8 @@ define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
-
-chdir("/var/www/cydynni");
-require "lib/EmonLogger.php";
-require "lib/PHPFina.php";
+require "Lib/EmonLogger.php";
+require "Modules/feed/engine/PHPFina.php";
 
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 
@@ -32,6 +30,7 @@ $start = floor(($start*0.001)/$interval)*$interval*1000;
 $end = floor(($end*0.001)/$interval)*$interval*1000;
 
 // Request Ynni Padarn Peris data
+print "Fetching Ynni Padarn Peris data\n";
 $data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
 
 // Visually matched scale factor
@@ -59,7 +58,8 @@ $lasttime = $lastvalue["time"];
 $end = $lasttime*1000;
 
 $start = $end - (3600*24.0*7*1000);
-$result = json_decode(file_get_contents("https://emoncms.cydynni.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
+print "Fetching Community consumption data\n";
+$result = json_decode(file_get_contents("https://dashboard.energylocal.org.uk/feed/average.json?id=2&start=$start&end=$end&interval=$interval"));
 
 $divisions = round((24*3600) / $interval);
 
@@ -138,10 +138,10 @@ $redis = new Redis();
 $connected = $redis->connect("localhost");
 $redis->set("bethesda:live",json_encode($result));
 
-$base_url = "https://cydynni.org.uk";
-$result = http_request("GET","$base_url/demandshaper",array());
-if ($result) {
-    $redis->set("demandshaper",$result);
-    print "-- demandshaper\n";
-}
+//$base_url = "https://cydynni.org.uk";
+//$result = http_request("GET","$base_url/demandshaper",array());
+//if ($result) {
+//    $redis->set("demandshaper",$result);
+//    print "-- demandshaper\n";
+//}
 
