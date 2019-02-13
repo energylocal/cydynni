@@ -24,7 +24,10 @@ $emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
 
 $app_path = $path."Modules/cydynni/app/";
 
+$lang = "cy";
+
 ?>
+<style>body { line-height:unset !important; }</style>
 
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
     <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>

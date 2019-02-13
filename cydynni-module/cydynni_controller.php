@@ -20,30 +20,35 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 function cydynni_controller()
 {
     global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
+    global $meter_data_api_baseurl,$club_settings;
+    
     $result = false;
     
     $route->format = "json";
     $result = false;
     require "Modules/cydynni/cydynni_model.php";
+    require "Modules/cydynni/meter_data_api.php";
 
     $cydynni = new Cydynni($mysqli,$redis);
 
-	  $club = "bethesda";
-	  $club_settings = array();
-	  $club_settings[$club] = array(
-	      "name"=>"Bethesda",
-	      "generator"=>"hydro",
-	      "languages"=>array("cy","en"),
-	      "generation_feed"=>1,
-	      "consumption_feed"=>2
-	  );
+    $club = "bethesda";
+    if (IS_HUB) {
+	      $club_settings = array();
+	      $club_settings[$club] = array(
+	          "name"=>"Bethesda",
+	          "generator"=>"hydro",
+	          "languages"=>array("cy","en"),
+	          "generation_feed"=>1,
+	          "consumption_feed"=>2
+	      );
+	  }
 	  
 	  global $translation;
 	  $translation = new stdClass();
     $translation->cy = json_decode(file_get_contents("Modules/cydynni/app/locale/cy"));
 
-    $base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
-    $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
+    $base_url = IS_HUB ? "http://dashboard.energylocal.org.uk/bethesda/" : "http://localhost/cydynni/";
+    $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
     // -----------------------------------------------------------------------------------------
@@ -74,7 +79,22 @@ function cydynni_controller()
             $route->format = "html";
             return view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             break;
-    
+
+        case "report":
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+                
+                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
+                $row = $result->fetch_object();
+                $session["email"] = $row->email;
+                $session["apikey_read"] = $row->apikey_read;
+                $session["apikey_write"] = $row->apikey_write;
+                
+                $route->format = "html";
+                return view("Modules/cydynni/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            }
+            break;
+                
         // -----------------------------------------------------------------------------------------
         // OTA: Record local hub OTA version and log
         // -----------------------------------------------------------------------------------------
@@ -193,6 +213,26 @@ function cydynni_controller()
             return json_decode(json_encode($content));
             break;
 
+        case "household-summary-monthly":
+            $format = "json";
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+            
+                $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
+                $row = $result->fetch_object();
+                if (isset($row->token)) $session["token"] = $row->token;
+            
+                $month = get("month");
+                if (IS_HUB) {
+                    return file_get_contents("$base_url/household-summary-monthly?month=$month");
+                }else{
+                    return get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$session['token']);
+                }
+            } else {
+                return "session not valid";
+            }
+            break;
+            
         case "club-summary-day":
             $route->format = "json";
 
@@ -216,6 +256,17 @@ function cydynni_controller()
             }
             
             return $content;
+            break;
+
+        case "club-summary-monthly":
+            $format = "json";
+            $month = get("month");
+
+            if (IS_HUB) {
+                return file_get_contents("$base_url/community/summary/monthly?month=$month");
+            }else{
+                return get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+            }
             break;
                     
         case "generation-estimate":
@@ -309,7 +360,38 @@ function cydynni_controller()
             }
             
             break;
-
+            
+        case "update":
+            $route->format = "text";
+	          $content  = "";
+            if (IS_HUB) {
+                // Hydro
+                $redis->set("live",file_get_contents("$base_url/live"));
+                $redis->set("hydro:data",file_get_contents("$base_url/hydro"));
+                $redis->set("community:data",file_get_contents("$base_url/community/data"));
+                $redis->set("community:summary:day",file_get_contents("$base_url/community/summary/day"));
+                // Store Updated
+                $content = "store updated";
+            } else {
+                // generation
+                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],4);
+                if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
+                // Club half-hour
+                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],11);
+                if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
+                // Club totals
+                $content .= "$club:summary:day: ";
+                $result = get_club_consumption($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+                if ($result!="invalid data") {
+                    $redis->set("$club:club:summary:day",json_encode($result));
+                    $content .= json_encode($result)."\n";
+                } else {
+                    $content .= "invalid\n";
+                }
+            }
+            return $content;
+            break;
+            
         case "admin":
             if($session["admin"]){
                 //get single user
@@ -495,32 +577,4 @@ function translate($s,$lang) {
     } else { 
         return $s;
     }
-}
-
-// -------------------------------------------------------------
-// Convert date of form: November, 02 2016 00:00:00 to unix timestamp
-// -------------------------------------------------------------
-function decode_date($datestr) {
-    $datestr = str_replace(",","",$datestr);
-    $date_parts = explode(" ",$datestr);
-    if (count($date_parts)!=4) return "invalid date string";
-    $date2 = $date_parts[1]." ".$date_parts[0]." ".$date_parts[2];
-    
-    $day = $date_parts[1];
-    $month = $date_parts[0];
-    $year = $date_parts[2];
-    
-    $months = array("January"=>1,"February"=>2,"March"=>3,"April"=>4,"May"=>5,"June"=>6,"July"=>7,"August"=>8,"September"=>9,"October"=>10,"November"=>11,"December"=>12);
-    
-    $date = new DateTime();
-    $date->setTimezone(new DateTimeZone("Europe/London"));
-    $date->setDate($year,$months[$month],$day);
-    $date->setTime(0,0,0);
-    
-    //$date->modify("midnight");
-    $time = $date->getTimestamp();
-    // November, 02 2016 00:00:00
-    // print $date2."\n";
-    // Mid night start of day
-    return $time; //strtotime($date2);
 }

@@ -1,37 +1,56 @@
 $("#loginform").on("submit",function(event){
     event.preventDefault();
 
-    var email = $("#email").val();
+    var username = $("#username").val();
     var password = $("#password").val();
+    var rememberme = 0;
 
+    var result = {};
     $.ajax({
-        type: 'POST',                                    
-        url: club_path+"login",                         
-        data: "email="+email+"&password="+password,
-        dataType: 'json',
-        success: function(result) {
-            if (result.success!=undefined) {
-                if (result.success) {
-                    session = result.session;
-                    
-                    $("#login-block").hide();
-                    $("#logout").show();
-                    $("#account").show();
-                    $("#reports").show();
-                    $(".household-block").show();
-                    $("#alert").html("");
+      type: "POST",
+      url: path+"user/login.json",
+      data: "&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&rememberme="+encodeURIComponent(rememberme),
+      dataType: "text",
+      async: false,
+      success: function(data_in)
+      {
+          try {
+              result = JSON.parse(data_in);
+              if (result.success==undefined) result = data_in;
+          } catch (e) {
+              result = data_in;
+          }
+         
+          if (result.success) {
+              window.location.href = "cydynni/?household";
+          } else {
+              $("#alert").html(result.message);
+          }
+          
+          /*
+          session = result.session;
 
-                    household_summary_load();
-                    household_bargraph_load();
-                    household_pie_draw();
-                    household_bargraph_resize();
-                } else {
-                    $("#alert").html(result.message);
-                }
-            } else {
-                $("#alert").html(result);
-            }
+          $("#login-block").hide();
+          $("#logout").show();
+          $("#account").show();
+          $("#reports").show();
+          $(".household-block").show();
+          $("#alert").html("");
+
+          household_summary_load();
+          household_bargraph_load();
+          household_pie_draw();
+          household_bargraph_resize();
+          */
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        if(xhr.status==404) {
+            result = "404 Not Found: Is modrewrite configured on your system?"
+        } else {
+            result = xhr.status+" "+thrownError;
         }
+        $("#alert").html(result);
+      }
     });
 });
 

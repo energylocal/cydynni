@@ -22,12 +22,11 @@
                   <img id="club_star4" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
                   <img id="club_star5" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
                 
-                  <br><br>
-                  <div class="bound" id="club_statusmsg"></div><br>
+                  <br><br><div class="bound" id="club_statusmsg"></div><br>
                   
                 <div style="background-color:#ffb401; color:#fff; height:50px">
-                  <div style="padding:5px">
-                    <p><?php echo t("Together we've kept"); ?></p>
+                  <div style="padding-top:20px">
+                    <?php echo t("Together we've kept"); ?>
                   </div>
                 </div>
                 

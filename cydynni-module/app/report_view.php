@@ -1,100 +1,79 @@
 <?php global $path, $translation, $lang; 
 $v=1;
+$app_path = $path."Modules/cydynni/app/";
+$lang = "cy";
 ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/report.css" />
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
+<link rel="stylesheet" href="<?php echo $path; ?>Lib/misc/sidebar.css?v=<?php echo $v; ?>">
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>CydYnni Report</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/style.css" />
-    <link rel="stylesheet" type="text/css" href="<?php echo $path; ?>css/report.css" />
-  </head>
-
-  <script language="javascript" type="text/javascript" src="<?php echo $path; ?>lib/jquery-1.11.3.min.js"></script>
-  <script language="javascript" type="text/javascript" src="<?php echo $path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
-
-  <body>
-
-    <div class="oembluebar">
-        <div class="oembluebar-inner">
-            <div id="sidenav-icon" class="oembluebar-item active"><img src="<?php echo $path; ?>images/icon-list.png" ></div>
-            <div id="reports" class="oembluebar-item active"><?php echo t("Reports"); ?></div>
-            <div id="dashboard" class="oembluebar-item"><?php echo t("Dashboard"); ?></div>
-
-            <div id="logout" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/logout.png" height="18px"/></div>
-            <div id="account" class="oembluebar-item" style="float:right"><img src="<?php echo $path; ?>images/el-person-icon.png" height="18px"/></div>
-            <div id="togglelang" class="oembluebar-item" style="float:right"></div>
-        </div>
+<div id="wrapper">
+  <div class="sidenav">
+    <div class="sidenav-inner">
+      <ul class="sidenav-menu">
+      </ul>
     </div>
+  </div>
+
+  <div style="height:10px"></div>
   
-    <div class="sidenav">
-      <div class="sidenav_inner">
-        <div style="padding:10px; color:#fff"><b><?php echo t("My Reports"); ?></b></div>
-        <ul class="appmenu"></ul>
-      </div>
-    </div>
-  
-    <div style="height:60px"></div>
-  
-    <div id="wrapper">
-    <div class="page">
-      <div style="background-color:#d2279c; height:15px"></div>
-      <div class="inner">
-        <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
-        <div id="estimated_days" style="color:#666"></div>
-        <br><br>
-        
-        <div style="text-align:center">
-          <div class="box3">
-            <h2><?php echo t("ELECTRICITY"); ?></h2>
-            <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
-                <canvas id="household_piegraph1_placeholder"></canvas>
-            </div>
-            <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
-                <canvas id="household_hrbar1_placeholder"></canvas>
-            </div>
-            <br>
-          </div>
+  <div class="page">
+    <div style="background-color:#d2279c; height:15px"></div>
+    <div class="inner">
+      <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
+      <div id="estimated_days" style="color:#666"></div>
+      <br><br>
       
-          <div class="box3">
-            <h2><?php echo t("COST"); ?></h2>
-            <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
-                <canvas id="household_piegraph2_placeholder"></canvas>
-            </div>
-            <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
-                <canvas id="household_hrbar2_placeholder"></canvas>
-            </div>
-            <br>
+      <div style="text-align:center">
+        <div class="box3">
+          <h2><?php echo t("ELECTRICITY"); ?></h2>
+          <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+              <canvas id="household_piegraph1_placeholder"></canvas>
           </div>
-          
-          <div class="box3">
-            <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-              <table class="keytable">
-                <tr>
-                  <td><div class="key" style="background-color:#29abe2"></div></td>
-                  <td><b><?php echo t("Hydro Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
-                </tr>
-                <tr>
-                  <td><div class="key" style="background-color:#ffdc00"></div></td>
-                  <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
-                </tr>
-                <tr>
-                  <td><div class="key" style="background-color:#4abd3e"></div></td>
-                  <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
-                </tr>
-                <tr>
-                  <td><div class="key" style="background-color:#c92760"></div></td>
-                  <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
-                </tr>
-                <tr>
-                  <td><div class="key" style="background-color:#274e3f"></div></td>
-                  <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
-                </tr>
-              </table>
-            </div>
+          <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
+              <canvas id="household_hrbar1_placeholder"></canvas>
           </div>
+          <br>
+        </div>
+    
+        <div class="box3">
+          <h2><?php echo t("COST"); ?></h2>
+          <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+              <canvas id="household_piegraph2_placeholder"></canvas>
+          </div>
+          <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
+              <canvas id="household_hrbar2_placeholder"></canvas>
+          </div>
+          <br>
+        </div>
+        
+        <div class="box3">
+          <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
+            <table class="keytable">
+              <tr>
+                <td><div class="key" style="background-color:#29abe2"></div></td>
+                <td><b><?php echo t("Hydro Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
+              </tr>
+              <tr>
+                <td><div class="key" style="background-color:#ffdc00"></div></td>
+                <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
+              </tr>
+              <tr>
+                <td><div class="key" style="background-color:#4abd3e"></div></td>
+                <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
+              </tr>
+              <tr>
+                <td><div class="key" style="background-color:#c92760"></div></td>
+                <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
+              </tr>
+              <tr>
+                <td><div class="key" style="background-color:#274e3f"></div></td>
+                <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
         <div style="clear:both"></div>
         <!-- =================================== -->
         <br><br>
@@ -112,61 +91,58 @@ $v=1;
           </tr>
           </table>
         </div>
-
-        </div>
-
       </div>
     </div>
+  </div>
+
+  <div class="page">
+    <div style="background-color:#d2279c; height:15px"></div>
+    <div class="inner">
     
-    <div class="page">
-      <div style="background-color:#d2279c; height:15px"></div>
-      <div class="inner">
+      <div class="column box2" style="text-align:center;">
+      <h2><?php echo t("Your energy use");?></h2>
+      <p><b><?php echo t("Over the month you scored");?> <span class="score"></span>/100</b><br><span class="message"></span></p>
+
+      <img src="<?php echo $app_path; ?>images/bluebadge.png" style="width:45px">
+      <img id="star1" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+      <img id="star2" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+      <img id="star3" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+      <img id="star4" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+      <img id="star5" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+      <br><br>
       
-        <div class="column box2" style="text-align:center;">
-        <h2><?php echo t("Your energy use");?></h2>
-        <p><b><?php echo t("Over the month you scored");?> <span class="score"></span>/100</b><br><span class="message"></span></p>
-
-        <img src="<?php echo $path; ?>images/bluebadge.png" style="width:45px">
-        <img id="star1" src="<?php echo $path; ?>images/star20blue.png" style="width:45px">
-        <img id="star2" src="<?php echo $path; ?>images/star20blue.png" style="width:45px">
-        <img id="star3" src="<?php echo $path; ?>images/star20blue.png" style="width:45px">
-        <img id="star4" src="<?php echo $path; ?>images/star20blue.png" style="width:45px">
-        <img id="star5" src="<?php echo $path; ?>images/star20blue.png" style="width:45px">
-        <br><br>
-        
-        </div>
-        <div class="column box2" style="text-align:center;">
-        <h2><?php echo t("Our club power"); ?></h2>
-        <p><b><?php echo t("Over the month we scored"); ?> <span class="club_score"></span>/100</b><br><span class="club_message"></span></p>
-
-        <img src="<?php echo $path; ?>images/yellowbadge.png" style="width:45px;">
-        <img id="club_star1" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-        <img id="club_star2" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-        <img id="club_star3" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-        <img id="club_star4" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-        <img id="club_star5" src="<?php echo $path; ?>images/star20yellow.png" style="width:45px">
-        
-        </div>
-        
-        <div style="clear:both"></div>
-        
       </div>
-    </div>
-    </div>
-  </body>
+      <div class="column box2" style="text-align:center;">
+      <h2><?php echo t("Our club power"); ?></h2>
+      <p><b><?php echo t("Over the month we scored"); ?> <span class="club_score"></span>/100</b><br><span class="club_message"></span></p>
 
-</html>
+      <img src="<?php echo $app_path; ?>images/yellowbadge.png" style="width:45px;">
+      <img id="club_star1" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+      <img id="club_star2" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+      <img id="club_star3" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+      <img id="club_star4" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+      <img id="club_star5" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+      
+      </div>
+      
+      <div style="clear:both"></div>
+      
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $version; ?>"></script>
 
 <script>
+init_sidebar({menu_element:"#cydynni_report_menu"});
+
 var path = "<?php echo $path; ?>";
+var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var lang = "<?php echo $lang; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var session = <?php echo json_encode($session); ?>;
 
 var max_wrapper_width = 960;
-var sidebar_enabled = true;
-var sidebar_visible = true;
 
 var household = {};
 var clubdata = {};
@@ -192,10 +168,8 @@ if (!session.write) {
   $("#account").show();
 }
 
-sidebar_resize();
-
 $.ajax({                                      
-    url: path+club+"/household/summary/monthly?apikey="+session.apikey_read,
+    url: path+"cydynni/household-summary-monthly?apikey="+session.apikey_read,
     dataType: 'json',      
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact cydynni@energylocal.co.uk or try again later.");
@@ -206,10 +180,10 @@ $.ajax({
             for (var i=0; i<result.length; i++) {
                 out += "<li><a href='#"+i+"'>"+t(months[result[i].month-1])+" "+result[i].year+"</a></li>";
             }
-            $(".appmenu").html(out);
+            $(".sidenav-menu").html(out);
         
             $.ajax({                                      
-                url: path+club+"/club/summary/monthly?apikey="+session.apikey_read,
+                url: path+"cydynni/club-summary-monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
                     clubdata = result;
@@ -319,12 +293,12 @@ function load()
     var score = Math.round(100*((month.import.overnight + month.import.midday + month.generation.total) / month.demand.total));
     $(".score").html(score);
 
-    for (var i=1; i<6; i++) $("#star"+i).attr("src",path+"images/star20blue.png"); // reset stars
-    if (score>=20) $("#star1").attr("src",path+"images/starblue.png");
-    if (score>=40) setTimeout(function() { $("#star2").attr("src",path+"images/starblue.png"); }, 100);
-    if (score>=60) setTimeout(function() { $("#star3").attr("src",path+"images/starblue.png"); }, 200);
-    if (score>=80) setTimeout(function() { $("#star4").attr("src",path+"images/starblue.png"); }, 300);
-    if (score>=90) setTimeout(function() { $("#star5").attr("src",path+"images/starblue.png"); }, 400);
+    for (var i=1; i<6; i++) $("#star"+i).attr("src",app_path+"images/star20blue.png"); // reset stars
+    if (score>=20) $("#star1").attr("src",app_path+"images/starblue.png");
+    if (score>=40) setTimeout(function() { $("#star2").attr("src",app_path+"images/starblue.png"); }, 100);
+    if (score>=60) setTimeout(function() { $("#star3").attr("src",app_path+"images/starblue.png"); }, 200);
+    if (score>=80) setTimeout(function() { $("#star4").attr("src",app_path+"images/starblue.png"); }, 300);
+    if (score>=90) setTimeout(function() { $("#star5").attr("src",app_path+"images/starblue.png"); }, 400);
 
     if (score<30) {
         $(".message").html(t("You are using power in a very expensive way"));
@@ -343,12 +317,12 @@ function load()
     $(".club_score").html(score_club);
     var prc_club = score_club;
     
-    for (var i=1; i<6; i++) $("#club_star"+i).attr("src",path+"images/star20yellow.png"); // reset stars
-    if (prc_club>=20) $("#club_star1").attr("src",path+"images/staryellow.png");
-    if (prc_club>=40) setTimeout(function() { $("#club_star2").attr("src",path+"images/staryellow.png"); }, 100);
-    if (prc_club>=60) setTimeout(function() { $("#club_star3").attr("src",path+"images/staryellow.png"); }, 200);
-    if (prc_club>=80) setTimeout(function() { $("#club_star4").attr("src",path+"images/staryellow.png"); }, 300);
-    if (prc_club>=90) setTimeout(function() { $("#club_star5").attr("src",path+"images/staryellow.png"); }, 400);
+    for (var i=1; i<6; i++) $("#club_star"+i).attr("src",app_path+"images/star20yellow.png"); // reset stars
+    if (prc_club>=20) $("#club_star1").attr("src",app_path+"images/staryellow.png");
+    if (prc_club>=40) setTimeout(function() { $("#club_star2").attr("src",app_path+"images/staryellow.png"); }, 100);
+    if (prc_club>=60) setTimeout(function() { $("#club_star3").attr("src",app_path+"images/staryellow.png"); }, 200);
+    if (prc_club>=80) setTimeout(function() { $("#club_star4").attr("src",app_path+"images/staryellow.png"); }, 300);
+    if (prc_club>=90) setTimeout(function() { $("#club_star5").attr("src",app_path+"images/staryellow.png"); }, 400);
     
     if (score_club<30) {
         $(".club_message").html(t("We are using power in a very expensive way"));
@@ -363,70 +337,13 @@ function load()
     household_pie_draw();
 }
 
-function sidebar_resize() {
-    
-    var width = $(window).width();
-    var height = $(window).height();
-    
-    var sidebar_width = 250;
-    var nav = 0; // $(".navbar").height();
-    
-    $(".sidenav").height(height-nav);
-    
-    if (width<max_wrapper_width) {
-        hide_sidebar()
-    } else {
-        if (sidebar_enabled) show_sidebar()
-    }
-}
-
-function show_sidebar() {
-    var width = $(window).width();
-    var sidebar_width = 250;
-    sidebar_visible = true;
-    $(".sidenav").css("left",sidebar_width);
-    
-    if (width<(max_wrapper_width+2*sidebar_width)) {
-        if (width>=max_wrapper_width) {
-            $("#wrapper").css("padding-left",sidebar_width);
-        }
-        $("#wrapper").css("margin","0");
-    } else {
-        $("#wrapper").css("padding-left","0px");
-        $("#wrapper").css("margin","0 auto");
-    }
-        
-    $("#sidenav-open").hide();
-    $("#sidenav-close").hide();
-}
-
-function hide_sidebar() {
-    sidebar_visible = false;
-    $(".sidenav").css("left","0");
-    $("#wrapper").css("padding-left","0");
-    $("#wrapper").css("margin","0 auto");
-    $("#sidenav-open").show();
-}
-
-$("#sidenav-icon").click(function(){
-    if (sidebar_visible) {
-        sidebar_visible = false;
-        hide_sidebar();
-    } else {
-        sidebar_visible = true;
-        show_sidebar();
-    }
-});
-
 $(window).resize(function(){
     draw();
-    sidebar_resize();
 });
 
 $(window).on('hashchange',function(){
    selected_month = parseInt(location.hash.slice(1));
    load();
-   sidebar_resize();
 });
 
 // Language selection
@@ -449,21 +366,5 @@ function t(s) {
         return s;
     }
 }
-
-$("#logout").click(function(event) {
-    event.stopPropagation();
-    $.ajax({                   
-        url: path+"logout",
-        dataType: 'text',
-        success: function(result) {
-            window.location = "/";
-        }
-    });
-});
-
-$("#dashboard").click(function(){ window.location = path+club+"?lang="+lang; });
-$("#reports").click(function(){ window.location = path+club+"/report?lang="+lang; });
-$("#account").click(function(){ window.location = path+club+"/account?lang="+lang; });
-
 </script>
 

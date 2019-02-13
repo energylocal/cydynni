@@ -83,8 +83,15 @@ function club_summary_load()
               $(".club_date").html(result.day+t(ext)+" "+t(result.month));
               
               // 2nd ssection showing total consumption and cost
-              $(".club_generation_value").html("£"+(generation_value).toFixed(2));
-              $("#club_value_summary").html("£"+(generation_value).toFixed(2)+" "+t("kept in the club"));
+              var generation_value_str = "";
+              if (generation_value>10) {
+                  generation_value_str = "£"+(generation_value).toFixed(0);
+              } else {
+                  generation_value_str = "£"+(generation_value).toFixed(2);
+              }
+              
+              $(".club_generation_value").html(generation_value_str);
+              $("#club_value_summary").html(generation_value_str+" "+t("kept in the club"));
               
               club_pie_data_cost = [];
               club_pie_data_energy = [];

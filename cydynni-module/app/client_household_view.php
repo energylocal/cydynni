@@ -9,7 +9,7 @@
                         <?php echo t("Please login to view account"); ?><br><br>
                 
                         <form id="loginform">
-                        <input id="email" type="text" placeholder="Username or email..." name="username"><br><br>
+                        <input id="username" type="text" placeholder="Username or email..." name="username"><br><br>
                         <input id="password" type="password" placeholder="Password..." name="password"><br><br>
                         <button id="login" class="btn"><?php echo t("Login");?></button><br><br>
                         </form>
@@ -59,10 +59,10 @@
                 <img id="household_star4" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <img id="household_star5" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
               
-                <p class="household_status"></p>
+                <br><br><div class="household_status"></div><br>
                 
                 <div class="bg-household" style="height:50px">
-                  <div style="padding:5px">
+                  <div style="padding-top:20px">
                     <p><?php echo t("You used"); ?> <span class="household_totalkwh"></span> kWh. <?php echo t("It cost"); ?>:</p>
                   </div>
                 </div>
@@ -81,8 +81,9 @@
                         <div style="font-size:36px" class="household_totalcost">£0.00</div>
                     </div>
                 </div>
-                <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?> <span class="household_costsaving"></span></p>
                 
+                <br>
+                <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?> <span class="household_costsaving"></span></p>
                 <br>
               </div>
             </div>
