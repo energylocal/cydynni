@@ -60,6 +60,8 @@ $user = new User($mysqli,$redis);
 
 require_once "Modules/feed/feed_model.php";
 $feed = new Feed($mysqli,$redis,$feed_settings);
+$feed->EngineClass(Engine::PHPFINA);
+$feed->EngineClass(Engine::PHPTIMESERIES);
 
 $base_url = IS_HUB ? "http://cydynni.org.uk/bethesda/" : "http://localhost/cydynni/";
 $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://emoncms.cydynni.org.uk/';
@@ -72,7 +74,7 @@ if (!IS_HUB) $cydynni_emails = new CydynniEmails($mysqli);
 require "meter_data_api.php";
 $path = get_application_path();
 
-require "lib/PHPFina.php";
+// require "lib/PHPFina.php";
 $path_to_fina = IS_HUB ? "/home/pi/data/phpfina/" : "/var/lib/phpfina/";
 $phpfina = new PHPFina(array("datadir" => $path_to_fina));
 $use_local_cache = true;
@@ -229,7 +231,7 @@ switch ($q)
     // ------------------------------------------------------------------------         
     case "household/summary/day":
         $format = "json";
-        if ($session["read"]) {
+        if (isset($session["read"]) && $session["read"]) {
             $userid = $session["userid"];
             $content = json_decode($redis->get("user:summary:lastday:$userid"));
         
@@ -554,6 +556,7 @@ switch ($q)
         
         $session = $_SESSION;
         if (!isset($session['admin'])) $session['admin'] = 0;
+        if (isset($session['userid'])) {
         $userid = $session['userid'];
         
         $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
@@ -568,7 +571,7 @@ switch ($q)
         }
         
         $content["session"] = $session;
-        
+        }
         break;
 
     case "register":
@@ -852,6 +855,11 @@ switch ($q)
                 $content = $cydynni_emails->send_report_email(get('userid'));
             }
         }
+        break;
+        
+    case "setupguide":
+        header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
+        die;
         break;
 } // end switch
 
