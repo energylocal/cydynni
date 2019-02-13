@@ -332,6 +332,7 @@
 "Re - Login": "Ail - Mewngofnodi",
 "Error Connecting to Hub": "Problem cysylltu hefo'r Hwb",
 "Session Timed out.": "Sesiwn wedi'i golli.",
-"Please login": "Ail mewngofnodwch"
-
+"Please login": "Ail mewngofnodwch",
+"Realtime Power Data":"Defnydd Pwer Rwan",
+"Electricity use in window":"Defnydd trydan yn y ffenestr"
 }
