@@ -1,0 +1,249 @@
+{
+    "name": "EDMI Advanced Meter",
+    "category": "Datalogger",
+    "group": "EDMI",
+    "description": "",
+    "inputs": [
+        {
+            "name": "imkWh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "imkWh" }
+                }
+            ]
+        },
+        {
+            "name": "exkWh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "exkWh" }
+                }
+            ]
+        },
+        {
+            "name": "imkvarh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "imkvarh" }
+                }
+            ]
+        },
+        {
+            "name": "exkvarh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "exkvarh" }
+                }
+            ]
+        },
+        {
+            "name": "imkVAh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "imkVAh" }
+                }
+            ]
+        },
+        {
+            "name": "exkVAh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "exkVAh" }
+                }
+            ]
+        },
+        {
+            "name": "Hz",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "Hz" }
+                }
+            ]
+        },
+        {
+            "name": "V",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "V" }
+                }
+            ]
+        },
+        {
+            "name": "kW",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "kW" }
+                }
+            ]
+        },
+        {
+            "name": "pf",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "pf" }
+                }
+            ]
+        },
+        {
+            "name": "TodaykWh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "TodaykWh" }
+                }
+            ]
+        },
+        {
+            "name": "MonthkWh",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "MonthkWh" }
+                }
+            ]
+        },
+        {
+            "name": "TodayCost",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "TodayCost" }
+                }
+            ]
+        },
+        {
+            "name": "MonthCost",
+            "description": "",
+            "processList": [
+                {
+                    "process": "log_to_feed",
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "MonthCost" }
+                }
+            ]
+        }
+    ],
+
+    "feeds": [
+        {
+            "name": "imkWh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kWh"
+        },
+        {
+            "name": "exkWh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kWh"
+        },
+        {
+            "name": "imkvarh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kvarh"
+        },
+        {
+            "name": "exkvarh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kvarh"
+        },
+        {
+            "name": "imkVAh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kVAh"
+        },
+        {
+            "name": "exkVAh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kVAh"
+        },
+        {
+            "name": "Hz",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "Hz"
+        },
+        {
+            "name": "V",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "V"
+        },
+        {
+            "name": "kW",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kW"
+        },
+        {
+            "name": "pf",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "pf"
+        },
+        {
+            "name": "TodaykWh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kWh"
+        },
+        {
+            "name": "MonthkWh",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": "kWh"
+        },
+        {
+            "name": "TodayCost",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": ""
+        },
+        {
+            "name": "MonthCost",
+            "type": "DataType::REALTIME",
+            "engine": "Engine::PHPFINA",
+            "interval": "10",
+            "unit": ""
+        }
+    ]
+}

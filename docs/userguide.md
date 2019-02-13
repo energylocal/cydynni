@@ -36,7 +36,12 @@ or:
 
     http://cydynni/
     
-You will now be greeted with the CydYnni hub login page. Enter your CydYnni username and password.
+You will now be greeted with the CydYnni hub login page. 
+
+**If this does not work:** Use our hub and smartplug finder tool which can be found here: http://emoncms.org/find
+<br>This tool will find the IP address of the hub or smartplug on your network.
+
+Enter your CydYnni username and password.
 
 ![setup5.png](images/setup5.png)
 
@@ -58,21 +63,25 @@ The 4rth tab shows a list of devices.
 
 ![setup10.png](images/setup10.png)
 
-### 5. WIFI Smart Plug Setup
+### 5. Setting up your WiFi Smart Plug
 
-Plug in smart plug. The light on the plug will show green for 3 seconds followed by a short off period and then two very short flashes. This indicates that the plug is working and has created a WIFI Access Point.
+The Smart Plug will allow you to schedule whatever is plugged into it to come on and go off for periods of time that you set and is connected to the Forecast facility. This allows you to automatically use electricity at the best times.
 
-The WIFI Access Point should appear in your laptop or phones available WIFI networks, the SSID will contain the name smartplug followed by a number e.g: 'smartplug1'.<br>Connect to this network, open an internet browser and enter the following address:
+1\. Plug your smart plug into an electrical socket. The light on the plug will show green for 3 seconds followed by a short off period and then a couple of very short flashes. This indicates that the plug is working and has created a WIFI Access Point.
 
-    http://192.168.4.1
+2\. The WIFI Access Point should appear in your laptop or phones available WIFI networks, the SSID will contain the name smartplug followed by a number e.g: 'smartplug1'.
+
+3\. Connect to this network, open an internet browser and enter the following address:
+
+**[http://192.168.4.1](http://192.168.4.1)**
     
 ![setup11.png](images/setup11.png)
 
-Select the WIFI network you wish to connect to, enter the passkey and click connect. 
+4\. Select the WIFI network you wish to connect to, enter the passkey and click connect. 
 
-The green light on the smartplug will now turn on again. If the connection is successful you will see 10 very fast  consecutive flashes. 
+The green light on the smartplug will now turn on again. If the connection is successful you will see 10 very fast consecutive flashes. 
 
-The web interface will also show that the module has connected and its IP address:
+5\. The web interface will also show that the module has connected and its IP address:
 
 ![setup12.png](images/setup12.png)
 
@@ -82,12 +91,12 @@ If the smartplug fails to connect to the selected WIFI network the green LED wil
 
 ---
 
-Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
+6\. Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
 
 ![setup13.png](images/setup13.png)
 
-Click allow and wait another minute for the smartplug device to appear. 
+7\. Click allow. Refresh the device interface until the smartplug device appears.
 
-Clicking on the smartplug device will bring up the scheduler interface:
+8\. Clicking on the smartplug device will bring up the scheduler interface:
 
 ![setup14.png](images/setup14.png)

@@ -67,6 +67,13 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
     $local_feeds[$feedname] = $result['feedid'];
 }
 
+$feedname = "use_kwh";
+if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
+    $result = $feed->create($userid,"cydynni",$feedname,1,5,json_decode('{"interval":1800}'));
+    if (!$result['success']) { echo "could not create feed\n"; die; }
+    $local_feeds[$feedname] = $result['feedid'];
+}
+
 // -----------------------------------------------------
 // 6. Fetch remote account feeds
 // -----------------------------------------------------
@@ -97,6 +104,12 @@ if ($result) {
         foreach ($tmp as $f) $remote_feeds[$f->name] = $f->id;
 
         $feedname = "halfhour_consumption";
+        print "$feedname\n";
+        $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
+        if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+        print "--lastvalue: ".json_encode($lastvalue)."\n";
+        
+        $feedname = "use_kwh";
         print "$feedname\n";
         $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
         if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
