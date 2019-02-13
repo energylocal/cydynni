@@ -56,12 +56,12 @@ while ($row = $result_users->fetch_object())
     // Print user
     print $row->id." ".$row->username." ".$row->email." ";
     $userid = $row->id;
-    
+
     $result_cydynni = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
     $cydynni = $result_cydynni->fetch_object();
-    
+
     print $cydynni->reportdate;
-    
+
     if ($cydynni->mpan && array_search($cydynni->mpan,$skip)===false) {
         $report = get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$cydynni->token);
         if ($report!="Invalid data") {
@@ -69,10 +69,10 @@ while ($row = $result_users->fetch_object())
             // print $user->send_report_email($userid);
 	          if (count($report)) {
                 print " [".$report[0]["estimate"]."] ".$report[0]["demand"]["total"]." ";
-                
+
                 if (($report[0]["estimate"]*1)<15) {
                     //print "sending";
-                    if ($cydynni->reportdate!="16-10-2018") {
+                    if ($cydynni->reportdate!="13-02-2019") {
                         print $cydynni_emails->send_report_email($userid);
                     }
                 }
