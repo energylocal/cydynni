@@ -64,8 +64,7 @@ $lang = "cy";
                     <li name="devices"><div><img src="<?php echo $app_path; ?>images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
                     <?php endif; ?>
                 </ul>
-                
-                
+
         <div class="page" name="forecast">
             <?php include("Modules/cydynni/app/client_forecast_view.php") ?>
         </div>
@@ -90,6 +89,15 @@ $lang = "cy";
 
     </div></div>
 </div>
+<!--
+<div class="app"><div class="app-inner">
+    <div class="footer">
+        <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
+        
+        <div>Energy Local</div>
+    </div>
+</div></div>
+-->
 
 <div class="scheduler-template hide">
   <div class="scheduler-inner">
@@ -290,6 +298,7 @@ function show_page(page) {
     if (page=="household") {
         household_pie_draw();
         household_bargraph_resize();
+        household_powergraph_draw();
     }
 }
 
@@ -306,6 +315,7 @@ function resize() {
     
     household_pie_draw();
     household_bargraph_resize();
+    household_powergraph_draw();
 }
 
 // Flot
