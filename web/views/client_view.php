@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 23;
+$v = 26;
 
 $tariffs = array(
     "bethesda"=>array(
@@ -328,6 +328,7 @@ function show_page(page) {
     if (page=="household") {
         household_pie_draw();
         household_bargraph_resize();
+        household_powergraph_draw();
     }
 }
 
@@ -344,6 +345,7 @@ function resize() {
     
     household_pie_draw();
     household_bargraph_resize();
+    household_powergraph_draw();
 }
 
 // Flot
