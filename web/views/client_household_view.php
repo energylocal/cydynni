@@ -86,7 +86,35 @@
                 <br>
               </div>
             </div>
-            
+
+            <div id="realtime-power" class="block" style="display:none">
+                <div class="block-title bg-household2"><?php echo t("Realtime Power Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                
+                <div class="block-content">
+
+                    <div class="bg-household2" style="border-top: 1px solid #e94648; border-bottom: 1px solid #e94648; padding:20px">
+                        <span id="power_value" style="font-size:32px"></span><span style="font-size:22px">W</span>
+                    </div>
+                                    
+                    <div class="bg-household2">
+                        <div class="visnav-block-household">
+                        <div class="visnav-household household-power-left"><</div><div class="visnav-household household-power-right">></div><div class="visnav-household household-power-day"><?php echo t("DAY");?></div><div class="visnav-household household-power-week"><?php echo t("WEEK");?></div><div class="visnav-household household-power-month"><?php echo t("MONTH");?></div>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                
+                    <div style="padding:10px">
+                        <div id="household_powergraph_bound" style="width:100%; height:405px;">
+                            <div id="household_powergraph_placeholder" style="height:405px"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="padding:10px; background-color:#eee; color: #666; font-size:14px">
+                        <?php echo t("Electricity use in window");?>: <b><span id="kwh_in_window">2.1</span> kWh</b>
+                    </div>
+                </div>
+            </div>
+                        
             <div class="block household-block">
                 <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 
@@ -98,20 +126,6 @@
                         </div>
                         <div style="clear:both"></div>
                     </div>
-                
-                    <!--
-                    <div class="bg-household2">
-                      <div class="bound"><?php echo t("Here's what your electricity use looked like on"); ?><br><b><span class="household_date"></span> 2017</b></div>
-                    </div>
-                    
-                    <div class="no-padding">
-                      <div class="triangle-wrapper">
-                        <div class="triangle-down">
-                          <div class="triangle-down-content triangle-household2-bg"></div>
-                        </div>
-                      </div>
-                    </div>
-                    -->
                 
                     <div style="padding:10px">
                         <div id="household_bargraph_bound" style="width:100%; height:405px;">
