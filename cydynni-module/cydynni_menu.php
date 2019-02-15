@@ -1,25 +1,9 @@
 <?php
 
-    $domain = "messages";
-
-    $menu_left[] = array(
+    $menu['category'][] = array(
         'id'=>"cydynni_menu",
-        'name'=>"Dashboard",
-        'path'=>"cydynni" , 
-        'session'=>"write", 
-        'order' => 3,
-        'icon'=>'icon-th-large icon-white',
-        'hideinactive'=>0
+        'text'=>"Cydynni",
+        'path'=>"cydynni/admin" , 
+        'sort' => 8,
+        'icon'=>'cydynni'
     );
-    
-    $menu_left[] = array(
-        'id'=>"cydynni_report_menu",
-        'name'=>"Reports",
-        'path'=>"cydynni/report" , 
-        'session'=>"write", 
-        'order' => 3,
-        'icon'=>'icon-book icon-white',
-        'hideinactive'=>0
-    );
-    
-
