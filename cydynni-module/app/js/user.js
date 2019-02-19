@@ -22,7 +22,7 @@ $("#loginform").on("submit",function(event){
           }
          
           if (result.success) {
-              window.location.href = "cydynni/?household";
+              window.location.href = path+"cydynni/?household";
           } else {
               $("#alert").html(result.message);
           }

@@ -20,8 +20,6 @@ $tariffs = array(
     )
 );
 
-$emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
-
 $app_path = $path."Modules/cydynni/app/";
 
 $lang = "cy";
