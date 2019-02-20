@@ -19,7 +19,7 @@
         'name'=>"Reports",
         'path'=>"cydynni/report" , 
         'session'=>"write", 
-        'order' => 3,
+        'order' => 4,
         'icon'=>'icon-book icon-white',
         'hideinactive'=>0
     );
