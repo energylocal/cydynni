@@ -50,8 +50,18 @@ function cydynni_controller()
 	  $translation = new stdClass();
     $translation->cy_GB = json_decode(file_get_contents("Modules/cydynni/app/locale/cy_GB"));
 
-    $base_url = IS_HUB ? "http://dashboard.energylocal.org.uk/bethesda/" : "http://localhost/cydynni/";
+    $base_url = IS_HUB ? "https://dashboard.energylocal.org.uk/cydynni/" : "http://localhost/cydynni/";
     $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
+
+    if ($session["read"]) {
+        $userid = (int) $session["userid"];
+                
+        $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
+        $row = $result->fetch_object();
+        $session["email"] = $row->email;
+        $session["apikey_read"] = $row->apikey_read;
+    }
+    
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
     // -----------------------------------------------------------------------------------------
@@ -71,12 +81,6 @@ function cydynni_controller()
                 foreach ($tmp as $f) {
                     $session["feeds"][$f["name"]] = (int) $f["id"];
                 }
-                
-                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
-                $row = $result->fetch_object();
-                $session["email"] = $row->email;
-                $session["apikey_read"] = $row->apikey_read;
-                $session["apikey_write"] = $row->apikey_write;
             }
         
             $route->format = "html";
@@ -86,12 +90,6 @@ function cydynni_controller()
         case "report":
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
-                
-                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
-                $row = $result->fetch_object();
-                $session["email"] = $row->email;
-                $session["apikey_read"] = $row->apikey_read;
-                $session["apikey_write"] = $row->apikey_write;
                 
                 $route->format = "html";
                 return view("Modules/cydynni/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
@@ -224,10 +222,10 @@ function cydynni_controller()
                 $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
                 $row = $result->fetch_object();
                 if (isset($row->token)) $session["token"] = $row->token; else $session["token"] = "";
-            
+
                 $month = get("month");
                 if (IS_HUB) {
-                    return file_get_contents("$base_url/household-summary-monthly?month=$month");
+                    return json_decode(file_get_contents("$base_url/household-summary-monthly?month=$month&apikey=".$session["apikey_read"]));
                 }else{
                     if ($result = $redis->get("household:summary:monthly:$userid")) {
                         return json_decode($result);
@@ -268,7 +266,7 @@ function cydynni_controller()
             $month = get("month");
 
             if (IS_HUB) {
-                return file_get_contents("$base_url/community/summary/monthly?month=$month");
+                return json_decode(file_get_contents("$base_url/club-summary-monthly?month=$month"));
             }else{
                 if ($result = $redis->get("$club:club:summary:monthly")) {
                     return json_decode($result);

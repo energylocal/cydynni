@@ -20,8 +20,6 @@ $tariffs = array(
     )
 );
 
-$emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
-
 $app_path = $path."Modules/cydynni/app/";
 
 
@@ -58,11 +56,7 @@ $app_path = $path."Modules/cydynni/app/";
                     <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <?php if(!IS_HUB):?>
                     <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
-                    <?php else : ?>
-                    <li name="devices"><div><img src="<?php echo $app_path; ?>images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
-                    <?php endif; ?>
                 </ul>
 
         <div class="page" name="forecast">
@@ -76,15 +70,11 @@ $app_path = $path."Modules/cydynni/app/";
         <div class="page" name="club">
             <?php include("Modules/cydynni/app/client_club_view.php") ?>
         </div>
-        <?php if (!IS_HUB): ?>
+        
         <div class="page" name="tips">
             <?php include("Modules/cydynni/app/client_tips_view.php") ?>
         </div>
-        <?php else : ?>
-        <div class="page" name="devices">
-            <?php include("Modules/cydynni/app/client_devices_view.php") ?>
-        </div>    
-        <?php endif; ?>
+        
         <div style="clear:both; height:85px"></div>
 
     </div></div>
@@ -173,18 +163,6 @@ $app_path = $path."Modules/cydynni/app/";
   </div> <!-- schedule-inner -->
 </div>
 
-<!-- The Modal -->
-<div id="DeviceDeleteModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="device-delete-modal-cancel modal-close">&times;</span>
-    <h3>Delete Device</h3>
-    <p>Are you sure you want to delete device <span id="device-delete-modal-name"></span>?</p>
-    <button class="device-delete-modal-cancel btn">Cancel</button> <button class="device-delete-modal-delete btn">Delete</button>
-  </div>
-</div>
-
-
 <script>
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
@@ -198,10 +176,6 @@ var is_hub = <?php echo IS_HUB ? 'true':'false'; ?>;
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
-<?php if(IS_HUB): ?>
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $emoncms_path; ?>Modules/demandshaper/scheduler.js?v=<?php echo $v; ?>"></script>
-<?php endif; ?>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 
 <script>
@@ -212,11 +186,6 @@ var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
-
-// Device 
-<?php if (IS_HUB): ?>
-//auth_check();
-<?php endif; ?>
 
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
@@ -330,9 +299,6 @@ club_bargraph_load();
 if (session.write) {
     household_summary_load();
     household_bargraph_load();
-<?php if (IS_HUB): ?>
-    device_load();
-<?php endif; ?>
 }
 
 resize();
