@@ -13,7 +13,7 @@
                 </div>
             </div>
         
-            <div class="block">
+            <div id="local_electricity_forecast" class="block">
                 <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity Forecast"); ?>
                 
                 <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>

@@ -379,6 +379,59 @@ function cydynni_controller()
                 return "store updated";
             }
             break;
+
+        case "login":
+            if (!$session['read']) {
+            
+                if ($user->get_number_of_users()>0) {
+                    return $user->login(post('username'),post('password'),post('rememberme'));
+                    
+                } else if (IS_HUB) {
+                    $username = $_POST['username'];
+                    $password = $_POST['password'];
+                    
+                    // Send request
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL,"https://dashboard.energylocal.org.uk/user/auth.json");
+                    curl_setopt($ch,CURLOPT_POST,1);
+                    curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
+                    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+
+                    $result = json_decode($result);
+                    if ($result!=null && isset($result->success) && $result->success) {
+
+                        // Fetch full account details from remote emoncms
+                        $u = json_decode(file_get_contents("https://dashboard.energylocal.org.uk/user/get.json?apikey=".$result->apikey_write));
+
+                        // Register account locally
+                        $result = $user->register($username, $password, $u->email);
+
+                        // Save remote account apikey to local hub
+                        if ($result['success']==true) {
+                            $userid = $result['userid'];
+                            $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
+                            $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
+
+                            // Trigger download of user data
+                            $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
+                            $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                            $redis->rpush("service-runner","$sync_script>$sync_logfile");
+
+                            $content = $user->login($username, $password, false);
+
+                            return array("success"=>true);
+
+                        } else {
+                            return array("success"=>false, "message"=>"error creating account");
+                        }
+                    } else {
+                        return array("success"=>false, "message"=>"cydynni online account not found");
+                    }
+                }
+            }
+            break;
             
         case "admin":
             if($session["admin"]){
