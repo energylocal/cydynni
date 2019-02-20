@@ -8,7 +8,7 @@ $("#loginform").on("submit",function(event){
     var result = {};
     $.ajax({
       type: "POST",
-      url: path+"user/login.json",
+      url: path+"cydynni/login.json",
       data: "&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&rememberme="+encodeURIComponent(rememberme),
       dataType: "text",
       async: false,

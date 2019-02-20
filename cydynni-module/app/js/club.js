@@ -179,6 +179,8 @@ function club_bargraph_load() {
     var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
     var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
     
+    if (generation_data.success!=undefined) $("#local_electricity_forecast").hide();
+    
     // -------------------------------------------------------------------------
     // Colour code graph
     // -------------------------------------------------------------------------
