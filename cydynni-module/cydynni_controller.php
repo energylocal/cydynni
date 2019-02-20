@@ -22,9 +22,12 @@ function cydynni_controller()
     global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
     global $club_settings;
     global $lang;
-    
-    $lang = "cy_GB";
-    if (isset($session["lang"])) $lang = $session["lang"];
+
+    if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
+    if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $session['lang'] = "cy_GB";
+    if (isset($_GET['lang']) && $_GET['lang']=="en") $session['lang'] = "en_GB";
+    if (isset($_GET['iaith']) && $_GET['iaith']=="en") $session['lang'] = "en_GB";
+    $lang = $session["lang"];
     
     $result = false;
     
