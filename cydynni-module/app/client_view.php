@@ -24,7 +24,7 @@ $emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
 
 $app_path = $path."Modules/cydynni/app/";
 
-$lang = "cy";
+
 
 ?>
 <style>body { line-height:unset !important; }</style>
@@ -226,7 +226,7 @@ var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
 // Language selection top-right
 
 if (languages.length>1) {
-    if (lang=="cy") {
+    if (lang=="cy_GB") {
         $("#togglelang").html("English");
     } else {
         $("#togglelang").html("Cymraeg");
@@ -348,7 +348,7 @@ $("#togglelang").click(function(){
         window.location = "?lang=cy";
     } else {
         $(this).html("Cymraeg");
-        lang="cy";
+        lang="cy_GB";
         window.location = "?lang=en";
     }
 });

@@ -1,11 +1,13 @@
 <?php
 
+    global $lang;
+
     $domain = "messages";
 
     $menu_left[] = array(
         'id'=>"cydynni_menu",
         'name'=>"Dashboard",
-        'path'=>"cydynni" , 
+        'path'=>"" , 
         'session'=>"write", 
         'order' => 3,
         'icon'=>'icon-th-large icon-white',
@@ -21,5 +23,4 @@
         'icon'=>'icon-book icon-white',
         'hideinactive'=>0
     );
-    
 

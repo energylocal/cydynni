@@ -1,3 +1,7 @@
 hub_v2/settings.php
 scripts-hub/settings.php
 scripts-hub/ca.crt
+scripts-hub/cydynnimqtt.log
+scripts-hub/mosquitto-repo.gpg.key
+scripts-hub/mqtt.log
+

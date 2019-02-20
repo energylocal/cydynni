@@ -20,7 +20,11 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 function cydynni_controller()
 {
     global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
-    global $meter_data_api_baseurl,$club_settings;
+    global $club_settings;
+    global $lang;
+    
+    $lang = "cy_GB";
+    if (isset($session["lang"])) $lang = $session["lang"];
     
     $result = false;
     
@@ -28,7 +32,6 @@ function cydynni_controller()
     $result = false;
     require "Modules/cydynni/cydynni_model.php";
     require "Modules/cydynni/meter_data_api.php";
-
     $cydynni = new Cydynni($mysqli,$redis);
 
     $club = "bethesda";
@@ -45,7 +48,7 @@ function cydynni_controller()
 	  
 	  global $translation;
 	  $translation = new stdClass();
-    $translation->cy = json_decode(file_get_contents("Modules/cydynni/app/locale/cy"));
+    $translation->cy_GB = json_decode(file_get_contents("Modules/cydynni/app/locale/cy_GB"));
 
     $base_url = IS_HUB ? "http://dashboard.energylocal.org.uk/bethesda/" : "http://localhost/cydynni/";
     $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
@@ -220,13 +223,15 @@ function cydynni_controller()
             
                 $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
                 $row = $result->fetch_object();
-                if (isset($row->token)) $session["token"] = $row->token;
+                if (isset($row->token)) $session["token"] = $row->token; else $session["token"] = "";
             
                 $month = get("month");
                 if (IS_HUB) {
                     return file_get_contents("$base_url/household-summary-monthly?month=$month");
                 }else{
-                    return get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$session['token']);
+                    if ($result = $redis->get("household:summary:monthly:$userid")) {
+                        return json_decode($result);
+                    }
                 }
             } else {
                 return "session not valid";
@@ -265,7 +270,10 @@ function cydynni_controller()
             if (IS_HUB) {
                 return file_get_contents("$base_url/community/summary/monthly?month=$month");
             }else{
-                return get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+                if ($result = $redis->get("$club:club:summary:monthly")) {
+                    return json_decode($result);
+                }
+                return $result;
             }
             break;
                     
@@ -363,7 +371,6 @@ function cydynni_controller()
             
         case "update":
             $route->format = "text";
-	          $content  = "";
             if (IS_HUB) {
                 // Hydro
                 $redis->set("live",file_get_contents("$base_url/live"));
@@ -371,25 +378,8 @@ function cydynni_controller()
                 $redis->set("community:data",file_get_contents("$base_url/community/data"));
                 $redis->set("community:summary:day",file_get_contents("$base_url/community/summary/day"));
                 // Store Updated
-                $content = "store updated";
-            } else {
-                // generation
-                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],4);
-                if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
-                // Club half-hour
-                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],11);
-                if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
-                // Club totals
-                $content .= "$club:summary:day: ";
-                $result = get_club_consumption($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
-                if ($result!="invalid data") {
-                    $redis->set("$club:club:summary:day",json_encode($result));
-                    $content .= json_encode($result)."\n";
-                } else {
-                    $content .= "invalid\n";
-                }
+                return "store updated";
             }
-            return $content;
             break;
             
         case "admin":
