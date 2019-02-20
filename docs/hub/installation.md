@@ -86,6 +86,29 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
     sudo crontab -e
     */5 * * * * php /home/pi/cydynni/scripts-hub/sync.php 2>&1
 
+### Emoncms modifications
+
+Set default lang in user_model to cy_GB:
+
+    if (isset($_SESSION['lang'])) $session['lang'] = $_SESSION['lang']; else $session['lang'] = 'cy_GB';
+
+Clear default page in user_schema:
+
+    'startingpage' => array('type'=>'varchar(64)', 'default'=>''),
+
+Add togglelang to menu_view
+
+    ?>
+    <li><a id="togglelang" style="cursor:pointer"></a></li>
+    <?php
+
+Add advanced users check in menu_view for dropdown menus:
+
+    global $advanced_users;
+    if (($session["write"]) && in_array($session["userid"],$advanced_users)) {
+    
+Hide apps module menu item
+
 ### CydYnni setup module
 
     cd /var/www/emoncms/Modules/setup
