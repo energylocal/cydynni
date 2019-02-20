@@ -61,6 +61,17 @@ Define CydYnni UI as hub:
 Add
 
     define("IS_HUB",1);
+    
+Modify default routes:
+
+    // Default controller and action if none are specified and user is anonymous
+    $default_controller = "cydynni";
+    $default_action = "";
+
+    // Default controller and action if none are specified and user is logged in
+    $default_controller_auth = "cydynni";
+    $default_action_auth = "";
+
 
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
 
