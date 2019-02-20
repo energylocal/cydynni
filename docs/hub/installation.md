@@ -53,12 +53,7 @@ Install the cydynni repository:
 
     cd
     git clone https://github.com/trystanlea/cydynni.git
-    
-Create a symbolic link of the public_html_hub directory to /var/www
-
-    ln -s /home/pi/cydynni/web /var/www/cydynni
-    sudo ln -s /var/www/cydynni /var/www/html/cydynni
-    
+        
 Define CydYnni UI as hub:
 
     sudo nano /var/www/emoncms/settings.php
@@ -70,15 +65,6 @@ Add
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
 
     ln -s /home/pi/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
-    ln -s /home/pi/cydynni/cydynni-emoncms-app.php /var/www/emoncms/Modules/app/apps/cydynni.php
-
-Add entry to available_apps.php
-
-    "cydynni"=>array(
-        "status"=>"Development",
-        "title"=>"CydYnni",
-        "description"=>"Hydro and community consumption"
-    )
 
 Update emoncms database:
 
