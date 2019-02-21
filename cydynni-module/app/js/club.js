@@ -284,7 +284,7 @@ function club_bargraph_load() {
             generation_estimate = result;
             
             for (var z in generation_estimate) {
-                generation_estimate[z][1] = generation_estimate[z][1] * scale;
+                generation_estimate[z][1] = generation_estimate[z][1]; // * scale;
             }
         }});
         // ----------------------------------------------------------------------------
