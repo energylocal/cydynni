@@ -337,7 +337,7 @@ function load()
 }
 
 $(window).resize(function(){
-    draw();
+    // draw();
 });
 
 $(window).on('hashchange',function(){

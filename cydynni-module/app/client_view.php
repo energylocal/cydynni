@@ -187,6 +187,12 @@ var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 
+
+var apikeystr = "";
+if (session.read) {
+    apikeystr = "&apikey="+session.apikey_read;
+}
+
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
@@ -202,7 +208,7 @@ if (languages.length>1) {
     }
 }
 
-if (!session.write) {
+if (!session.read) {
   $("#login-block").show();
   $(".household-block").hide();
   
@@ -233,11 +239,11 @@ if (url.searchParams!=undefined) {
     page = url.search.replace("?","");
 }
 
-if (page!=""){
-    show_page(page);
-}else{
-    show_page("forecast");
-}
+if (page=="forecast") show_page("forecast");
+else if (page=="household") show_page("household");
+else if (page=="club") show_page("club");
+else if (page=="tips") show_page("tips");
+else show_page("forecast");
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
@@ -296,7 +302,7 @@ cydynnistatus_update();
 club_summary_load();
 club_bargraph_load();
 
-if (session.write) {
+if (session.read) {
     household_summary_load();
     household_bargraph_load();
 }
