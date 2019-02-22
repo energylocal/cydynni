@@ -313,9 +313,9 @@ function cydynni_controller()
                         if ($club=="bethesda") {
                         
                             //$data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                            $data[$i][1] = $data[$i][1];
-                            if ($data[$i][1]<0) $data[$i][1] = 0;
-                            if ($data[$i][1]>49) $data[$i][1] = 49;
+                            $data[$i][1] = $data[$i][1] * 0.001;
+                            //if ($data[$i][1]<0) $data[$i][1] = 0;
+                            //if ($data[$i][1]>49) $data[$i][1] = 49;
                         } else if ($club=="towerpower") {
                             $data[$i][1] = -1 * $data[$i][1] * 0.001;
                         }
