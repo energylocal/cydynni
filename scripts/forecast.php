@@ -40,15 +40,15 @@ $scale = 1.1;
 for ($i=0; $i<count($data); $i++) {
     if ($data[$i][1]==null) $data[$i][1] = 0;
     //$data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-    $data[$i][1] = $data[$i][1];
-    if ($data[$i][1]<0) $data[$i][1] = 0;
-    if ($data[$i][1]>49) $data[$i][1] = 49;
+    $data[$i][1] = $data[$i][1]*0.001;
+    //if ($data[$i][1]<0) $data[$i][1] = 0;
+    //if ($data[$i][1]>49) $data[$i][1] = 49;
 }
 
 // remove last half hour if null
 if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
 
-$generation_now = $data[count($data)-1][1] * 2;
+$generation_now = $data[count($data)-1][1];
 
 // -------------------------------------------------------------------------------------------
 // COMMUNITY FORECAST
