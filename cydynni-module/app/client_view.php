@@ -74,20 +74,15 @@ $app_path = $path."Modules/cydynni/app/";
         <div class="page" name="tips">
             <?php include("Modules/cydynni/app/client_tips_view.php") ?>
         </div>
+
+        <div class="footer">
+            <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div><div>Energy Local</div>
+        </div>
         
         <div style="clear:both; height:85px"></div>
 
     </div></div>
 </div>
-<!--
-<div class="app"><div class="app-inner">
-    <div class="footer">
-        <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
-        
-        <div>Energy Local</div>
-    </div>
-</div></div>
--->
 
 <div class="scheduler-template hide">
   <div class="scheduler-inner">
