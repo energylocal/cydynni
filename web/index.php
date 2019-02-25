@@ -452,7 +452,7 @@ switch ($q)
         }
         
         $feedid = 166913;
-        $feedid = 384377;
+        //$feedid = 384377;
         if ($club=="towerpower") $feedid = 179247;
         
         $url = "https://emoncms.org/feed/average.json?";
@@ -463,16 +463,16 @@ switch ($q)
             $data = json_decode($result);
             if ($data!=null && is_array($data)) {
         
-                // $scale = 1.1;  
+                $scale = 1.1;  
                 // Scale ynni padarn peris data and impose min/max limits
                 for ($i=0; $i<count($data); $i++) {
                     if ($data[$i][1]==null) $data[$i][1] = 0;
                     if ($club=="bethesda") {
                     
-                        //$data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
-                        $data[$i][1] = $data[$i][1]*0.001;
-                        //if ($data[$i][1]<0) $data[$i][1] = 0;
-                        //if ($data[$i][1]>49) $data[$i][1] = 49;
+                        $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                        //$data[$i][1] = $data[$i][1]*0.001;
+                        if ($data[$i][1]<0) $data[$i][1] = 0;
+                        if ($data[$i][1]>49) $data[$i][1] = 49;
                     } else if ($club=="towerpower") {
                         $data[$i][1] = -1 * $data[$i][1] * 0.001;
                     }
