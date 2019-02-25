@@ -1,5 +1,5 @@
 <?php global $path, $translation, $session; 
-$v=1;
+$v=2;
 $app_path = $path."Modules/cydynni/app/";
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
@@ -129,10 +129,10 @@ $app_path = $path."Modules/cydynni/app/";
     </div>
   </div>
 </div>
-<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $version; ?>"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $v; ?>"></script>
 
 <script>
-init_sidebar({menu_element:"#cydynni_report_menu"});
+if (window.init_sidebar!=undefined) init_sidebar({menu_element:"#cydynni_report_menu"});
 
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
