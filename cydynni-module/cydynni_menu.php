@@ -10,9 +10,9 @@ if (isset($_GET['lang'])) $apikeystr .= "&lang=".$_GET['lang'];
 
 $menu['tabs'][] = array(
     'icon'=>'cydynni',
-    'title'=> "Cydynni",
+    'text'=> "Cydynni",
     'path'=> 'app/view',
-    'order'=> 2,
+    'order'=> 6,
     'data'=> array('sidebar' => '#sidebar_cydynni')
 );
 
