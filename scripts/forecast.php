@@ -3,7 +3,6 @@
 // This forecast script is ran every 30 mins
 // sleep(10);
 
-
 define('EMONCMS_EXEC', 1);
 
 chdir("/var/www/emoncms");
@@ -31,15 +30,19 @@ $end = floor(($end*0.001)/$interval)*$interval*1000;
 
 // Request Ynni Padarn Peris data
 print "Fetching Ynni Padarn Peris data\n";
-$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=166913&start=$start&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
+$feedid = 166913;
+//$feedid = 384377;
+$data = json_decode(file_get_contents("https://emoncms.org/feed/average.json?id=$feedid&start=$start&end=$end&interval=$interval&skipmissing=0&limitinterval=1"));
 
 // Visually matched scale factor
+// $scale = 1.1;
 $scale = 1.1;
 
 // Scale ynni padarn peris data and impose min/max limits
 for ($i=0; $i<count($data); $i++) {
     if ($data[$i][1]==null) $data[$i][1] = 0;
     $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+    //$data[$i][1] = $data[$i][1]*0.001;
     if ($data[$i][1]<0) $data[$i][1] = 0;
     if ($data[$i][1]>49) $data[$i][1] = 49;
 }
@@ -47,14 +50,13 @@ for ($i=0; $i<count($data); $i++) {
 // remove last half hour if null
 if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
 
-$generation_now = $data[count($data)-1][1] * 2;
+$generation_now = $data[count($data)-1][1];
 
 // -------------------------------------------------------------------------------------------
 // COMMUNITY FORECAST
 // -------------------------------------------------------------------------------------------
-
+$consumption_profile = array();
 $lasttime = $lastvalue["time"];
-
 $end = $lasttime*1000;
 
 $start = $end - (3600*24.0*7*1000);
@@ -64,6 +66,7 @@ $result = json_decode(file_get_contents("https://dashboard.energylocal.org.uk/fe
 $divisions = round((24*3600) / $interval);
 
 $days = count($result)/$divisions;
+
 // Quick quality check
 if ($days==round($days)) {
 

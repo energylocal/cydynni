@@ -8,7 +8,7 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "core.php";
 require "Lib/EmonLogger.php";
-$base_url = "https://cydynni.org.uk/$club";
+$base_url = "https://dashboard.energylocal.org.uk";
 
 // 1. Load redis
 $redis = new Redis();
@@ -78,7 +78,7 @@ if (!$local_feeds[$feedname] = $feed->get_id($userid,$feedname)) {
 // 6. Fetch remote account feeds
 // -----------------------------------------------------
 $remote_feeds = array();
-$remote_host = "https://emoncms.cydynni.org.uk";
+$remote_host = $base_url;
 
 $feedname = "hydro";
 print "$feedname\n";
@@ -106,53 +106,47 @@ if ($result) {
         $feedname = "halfhour_consumption";
         print "$feedname\n";
         $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
-        if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+        if ($redis->exists("feed:$local_feeds[$feedname]") && $lastvalue) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
         print "--lastvalue: ".json_encode($lastvalue)."\n";
         
         $feedname = "use_kwh";
         print "$feedname\n";
         $lastvalue = import_phpfina($datadir,$local_feeds[$feedname],$remote_host,$remote_feeds[$feedname],$user->apikey_write); // Import PHPFina
-        if ($redis->exists("feed:$local_feeds[$feedname]")) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
+        if ($redis->exists("feed:$local_feeds[$feedname]") && $lastvalue) $redis->hMset("feed:$local_feeds[$feedname]", $lastvalue); // Update last value
         print "--lastvalue: ".json_encode($lastvalue)."\n";
     }
 }
 
 print "Loading cache:\n";
 
-$result = http_request("GET","$base_url/live",array());
+$result = http_request("GET","$base_url/cydynni/live",array());
 if ($result) {
     $redis->set("$club:live",$result);
     print "-- live\n";
 }
 
-$result = http_request("GET","$base_url/hydro",array());
+/*
+$result = http_request("GET","$base_url/cydynni/hydro",array());
 if ($result) {
     $redis->set("$club:generator:data",$result);
     print "-- hydro:data\n";
 }
 
-$result = http_request("GET","$base_url/club/data",array());
+$result = http_request("GET","$base_url/cydynni/club/data",array());
 if ($result) {
     $redis->set("$club:club:data",$result);
     print "-- community:data\n";
-}
+}*/
 
-$result = http_request("GET","$base_url/club/summary/day",array());
+$result = http_request("GET","$base_url/cydynni/club-summary-day",array());
 if ($result) {
     $redis->set("$club:club:summary:day",$result);
     print "-- community:summary:day\n";
 }
 
-$result = http_request("GET","$base_url/household/summary/day",array("apikey"=>$user->apikey_read));
+$result = http_request("GET","$base_url/cydynni/household-summary-day",array("apikey"=>$user->apikey_read));
 if ($result) {
     $redis->set("user:summary:lastday:$userid",$result);
     print "-- user:summary:lastday\n";
 }
-
-$result = http_request("GET","$base_url/demandshaper",array());
-if ($result) {
-    $redis->set("demandshaper",$result);
-    print "-- demandshaper\n";
-}
-
 

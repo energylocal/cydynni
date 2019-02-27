@@ -1,7 +1,6 @@
-<?php global $path, $translation, $lang; 
-$v=1;
+<?php global $path, $translation, $session; 
+$v=2;
 $app_path = $path."Modules/cydynni/app/";
-$lang = "cy";
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/report.css" />
@@ -130,17 +129,17 @@ $lang = "cy";
     </div>
   </div>
 </div>
-<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $version; ?>"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $v; ?>"></script>
 
 <script>
-init_sidebar({menu_element:"#cydynni_report_menu"});
+if (window.init_sidebar!=undefined) init_sidebar({menu_element:"#cydynni_report_menu"});
 
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
-var lang = "<?php echo $lang; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var session = <?php echo json_encode($session); ?>;
+var lang = session.lang;
 
 var max_wrapper_width = 960;
 
@@ -154,7 +153,7 @@ var selected_month = 0;
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 // Language selection top-right
-if (lang=="cy") {
+if (lang=="cy_GB") {
     $("#togglelang").html("English");
 } else {
     $("#togglelang").html("Cymraeg");
@@ -338,7 +337,7 @@ function load()
 }
 
 $(window).resize(function(){
-    draw();
+    // draw();
 });
 
 $(window).on('hashchange',function(){
@@ -354,7 +353,7 @@ $("#togglelang").click(function(){
         window.location = "?lang=cy";
     } else {
         $(this).html("Cymraeg");
-        lang="cy";
+        lang="cy_GB";
         window.location = "?lang=en";
     }
 });

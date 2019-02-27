@@ -12,6 +12,14 @@ Developed by OpenEnergyMonitor:
 http://openenergymonitor.org
 
 */
+/*
+$url = "https://dashboard.energylocal.org.uk/";
+
+if (isset($_GET['q']) && $_GET['q']!="bethesda") $url .= $_GET['q'];
+if (isset($_GET['apikey'])) $url .= "&apikey=".$_GET['apikey'];
+if (isset($_GET['lang'])) $url .= "&lang=".$_GET['lang'];
+
+header("Location: $url");*/
 
 date_default_timezone_set('Europe/London');
 
@@ -444,6 +452,7 @@ switch ($q)
         }
         
         $feedid = 166913;
+        //$feedid = 384377;
         if ($club=="towerpower") $feedid = 179247;
         
         $url = "https://emoncms.org/feed/average.json?";
@@ -461,6 +470,7 @@ switch ($q)
                     if ($club=="bethesda") {
                     
                         $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                        //$data[$i][1] = $data[$i][1]*0.001;
                         if ($data[$i][1]<0) $data[$i][1] = 0;
                         if ($data[$i][1]>49) $data[$i][1] = 49;
                     } else if ($club=="towerpower") {

@@ -20,11 +20,9 @@ $tariffs = array(
     )
 );
 
-$emoncms_path = str_replace("/cydynni/","/emoncms/",$path);
-
 $app_path = $path."Modules/cydynni/app/";
 
-$lang = "cy";
+
 
 ?>
 <style>body { line-height:unset !important; }</style>
@@ -58,11 +56,7 @@ $lang = "cy";
                     <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
                     <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
                     <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <?php if(!IS_HUB):?>
                     <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
-                    <?php else : ?>
-                    <li name="devices"><div><img src="<?php echo $app_path; ?>images/devices.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Devices"); ?></div></div></li>
-                    <?php endif; ?>
                 </ul>
 
         <div class="page" name="forecast">
@@ -76,28 +70,19 @@ $lang = "cy";
         <div class="page" name="club">
             <?php include("Modules/cydynni/app/client_club_view.php") ?>
         </div>
-        <?php if (!IS_HUB): ?>
+        
         <div class="page" name="tips">
             <?php include("Modules/cydynni/app/client_tips_view.php") ?>
         </div>
-        <?php else : ?>
-        <div class="page" name="devices">
-            <?php include("Modules/cydynni/app/client_devices_view.php") ?>
-        </div>    
-        <?php endif; ?>
+
+        <div class="footer">
+            <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div><div>Energy Local</div>
+        </div>
+        
         <div style="clear:both; height:85px"></div>
 
     </div></div>
 </div>
-<!--
-<div class="app"><div class="app-inner">
-    <div class="footer">
-        <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
-        
-        <div>Energy Local</div>
-    </div>
-</div></div>
--->
 
 <div class="scheduler-template hide">
   <div class="scheduler-inner">
@@ -173,18 +158,6 @@ $lang = "cy";
   </div> <!-- schedule-inner -->
 </div>
 
-<!-- The Modal -->
-<div id="DeviceDeleteModal" class="modal">
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="device-delete-modal-cancel modal-close">&times;</span>
-    <h3>Delete Device</h3>
-    <p>Are you sure you want to delete device <span id="device-delete-modal-name"></span>?</p>
-    <button class="device-delete-modal-cancel btn">Cancel</button> <button class="device-delete-modal-delete btn">Delete</button>
-  </div>
-</div>
-
-
 <script>
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
@@ -198,10 +171,6 @@ var is_hub = <?php echo IS_HUB ? 'true':'false'; ?>;
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
-<?php if(IS_HUB): ?>
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/devices.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $emoncms_path; ?>Modules/demandshaper/scheduler.js?v=<?php echo $v; ?>"></script>
-<?php endif; ?>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 
 <script>
@@ -213,10 +182,11 @@ var consumption_feed = club_settings.consumption_feed;
 var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 
-// Device 
-<?php if (IS_HUB): ?>
-//auth_check();
-<?php endif; ?>
+
+var apikeystr = "";
+if (session.read) {
+    apikeystr = "&apikey="+session.apikey_read;
+}
 
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
@@ -226,14 +196,14 @@ var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
 // Language selection top-right
 
 if (languages.length>1) {
-    if (lang=="cy") {
+    if (lang=="cy_GB") {
         $("#togglelang").html("English");
     } else {
         $("#togglelang").html("Cymraeg");
     }
 }
 
-if (!session.write) {
+if (!session.read) {
   $("#login-block").show();
   $(".household-block").hide();
   
@@ -264,11 +234,11 @@ if (url.searchParams!=undefined) {
     page = url.search.replace("?","");
 }
 
-if (page!=""){
-    show_page(page);
-}else{
-    show_page("forecast");
-}
+if (page=="forecast") show_page("forecast");
+else if (page=="household") show_page("household");
+else if (page=="club") show_page("club");
+else if (page=="tips") show_page("tips");
+else show_page("forecast");
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");
@@ -327,12 +297,9 @@ cydynnistatus_update();
 club_summary_load();
 club_bargraph_load();
 
-if (session.write) {
+if (session.read) {
     household_summary_load();
     household_bargraph_load();
-<?php if (IS_HUB): ?>
-    device_load();
-<?php endif; ?>
 }
 
 resize();
@@ -348,7 +315,7 @@ $("#togglelang").click(function(){
         window.location = "?lang=cy";
     } else {
         $(this).html("Cymraeg");
-        lang="cy";
+        lang="cy_GB";
         window.location = "?lang=en";
     }
 });

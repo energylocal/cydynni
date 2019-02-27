@@ -58,7 +58,7 @@ function household_summary_load()
   
 
   $.ajax({                                      
-      url: path+"cydynni/household-summary-day",
+      url: path+"cydynni/household-summary-day"+apikeystr,
       dataType: 'json',                  
       success: function(result) {
           if (!result) return;
@@ -544,7 +544,9 @@ function household_powergraph_draw() {
             timezone: "browser", 
             font: {size:flot_font_size, color:"#666"}, 
             // labelHeight:-5
-            reserveSpace:false
+            reserveSpace:false,
+            min: household_power_start,
+            max: household_power_end
         },
         yaxis: { 
             font: {size:flot_font_size, color:"#666"}, 

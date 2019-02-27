@@ -20,7 +20,14 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 function cydynni_controller()
 {
     global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
-    global $meter_data_api_baseurl,$club_settings;
+    global $club_settings;
+    global $lang;
+
+    if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
+    if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $session['lang'] = "cy_GB";
+    if (isset($_GET['lang']) && $_GET['lang']=="en") $session['lang'] = "en_GB";
+    if (isset($_GET['iaith']) && $_GET['iaith']=="en") $session['lang'] = "en_GB";
+    $lang = $session["lang"];
     
     $result = false;
     
@@ -28,7 +35,6 @@ function cydynni_controller()
     $result = false;
     require "Modules/cydynni/cydynni_model.php";
     require "Modules/cydynni/meter_data_api.php";
-
     $cydynni = new Cydynni($mysqli,$redis);
 
     $club = "bethesda";
@@ -45,10 +51,20 @@ function cydynni_controller()
 	  
 	  global $translation;
 	  $translation = new stdClass();
-    $translation->cy = json_decode(file_get_contents("Modules/cydynni/app/locale/cy"));
+    $translation->cy_GB = json_decode(file_get_contents("Modules/cydynni/app/locale/cy_GB"));
 
-    $base_url = IS_HUB ? "http://dashboard.energylocal.org.uk/bethesda/" : "http://localhost/cydynni/";
+    $base_url = IS_HUB ? "https://dashboard.energylocal.org.uk/cydynni/" : "http://localhost/cydynni/";
     $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
+
+    if ($session["read"]) {
+        $userid = (int) $session["userid"];
+                
+        $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
+        $row = $result->fetch_object();
+        $session["email"] = $row->email;
+        $session["apikey_read"] = $row->apikey_read;
+    }
+    
     // -----------------------------------------------------------------------------------------
     $ota_version = (int) $redis->get("otaversion");
     // -----------------------------------------------------------------------------------------
@@ -68,12 +84,6 @@ function cydynni_controller()
                 foreach ($tmp as $f) {
                     $session["feeds"][$f["name"]] = (int) $f["id"];
                 }
-                
-                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
-                $row = $result->fetch_object();
-                $session["email"] = $row->email;
-                $session["apikey_read"] = $row->apikey_read;
-                $session["apikey_write"] = $row->apikey_write;
             }
         
             $route->format = "html";
@@ -83,12 +93,6 @@ function cydynni_controller()
         case "report":
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
-                
-                $result = $mysqli->query("SELECT email,apikey_read,apikey_write FROM users WHERE `id`='$userid'");
-                $row = $result->fetch_object();
-                $session["email"] = $row->email;
-                $session["apikey_read"] = $row->apikey_read;
-                $session["apikey_write"] = $row->apikey_write;
                 
                 $route->format = "html";
                 return view("Modules/cydynni/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
@@ -220,13 +224,15 @@ function cydynni_controller()
             
                 $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
                 $row = $result->fetch_object();
-                if (isset($row->token)) $session["token"] = $row->token;
-            
+                if (isset($row->token)) $session["token"] = $row->token; else $session["token"] = "";
+
                 $month = get("month");
                 if (IS_HUB) {
-                    return file_get_contents("$base_url/household-summary-monthly?month=$month");
+                    return json_decode(file_get_contents("$base_url/household-summary-monthly?month=$month&apikey=".$session["apikey_read"]));
                 }else{
-                    return get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$session['token']);
+                    if ($result = $redis->get("household:summary:monthly:$userid")) {
+                        return json_decode($result);
+                    }
                 }
             } else {
                 return "session not valid";
@@ -263,9 +269,12 @@ function cydynni_controller()
             $month = get("month");
 
             if (IS_HUB) {
-                return file_get_contents("$base_url/community/summary/monthly?month=$month");
+                return json_decode(file_get_contents("$base_url/club-summary-monthly?month=$month"));
             }else{
-                return get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+                if ($result = $redis->get("$club:club:summary:monthly")) {
+                    return json_decode($result);
+                }
+                return $result;
             }
             break;
                     
@@ -286,6 +295,7 @@ function cydynni_controller()
             }
             
             $feedid = 166913;
+            //$feedid = 384377;
             if ($club=="towerpower") $feedid = 179247;
             
             $url = "https://emoncms.org/feed/average.json?";
@@ -303,6 +313,7 @@ function cydynni_controller()
                         if ($club=="bethesda") {
                         
                             $data[$i][1] = ((($data[$i][1] * 0.001)-4.5) * $scale);
+                            //$data[$i][1] = $data[$i][1] * 0.001;
                             if ($data[$i][1]<0) $data[$i][1] = 0;
                             if ($data[$i][1]>49) $data[$i][1] = 49;
                         } else if ($club=="towerpower") {
@@ -363,7 +374,6 @@ function cydynni_controller()
             
         case "update":
             $route->format = "text";
-	          $content  = "";
             if (IS_HUB) {
                 // Hydro
                 $redis->set("live",file_get_contents("$base_url/live"));
@@ -371,27 +381,184 @@ function cydynni_controller()
                 $redis->set("community:data",file_get_contents("$base_url/community/data"));
                 $redis->set("community:summary:day",file_get_contents("$base_url/community/summary/day"));
                 // Store Updated
-                $content = "store updated";
-            } else {
-                // generation
-                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],4);
-                if (count($result)>0) $redis->set("$club:generation:data",json_encode($result));
-                // Club half-hour
-                $result = get_meter_data($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],11);
-                if (count($result)>0) $redis->set("$club:club:data",json_encode($result));
-                // Club totals
-                $content .= "$club:summary:day: ";
-                $result = get_club_consumption($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
-                if ($result!="invalid data") {
-                    $redis->set("$club:club:summary:day",json_encode($result));
-                    $content .= json_encode($result)."\n";
-                } else {
-                    $content .= "invalid\n";
+                return "store updated";
+            }
+            break;
+
+        case "login":
+            if (!$session['read']) {
+            
+                if ($user->get_number_of_users()>0) {
+                    return $user->login(post('username'),post('password'),post('rememberme'));
+                    
+                } else if (IS_HUB) {
+                    $username = $_POST['username'];
+                    $password = $_POST['password'];
+                    
+                    // Send request
+                    $ch = curl_init();
+                    curl_setopt($ch,CURLOPT_URL,"https://dashboard.energylocal.org.uk/user/auth.json");
+                    curl_setopt($ch,CURLOPT_POST,1);
+                    curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
+                    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+                    $result = curl_exec($ch);
+                    curl_close($ch);
+
+                    $result = json_decode($result);
+                    if ($result!=null && isset($result->success) && $result->success) {
+
+                        // Fetch full account details from remote emoncms
+                        $u = json_decode(file_get_contents("https://dashboard.energylocal.org.uk/user/get.json?apikey=".$result->apikey_write));
+
+                        // Register account locally
+                        $result = $user->register($username, $password, $u->email);
+
+                        // Save remote account apikey to local hub
+                        if ($result['success']==true) {
+                            $userid = $result['userid'];
+                            $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
+                            $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
+
+                            // Trigger download of user data
+                            $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
+                            $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                            $redis->rpush("service-runner","$sync_script>$sync_logfile");
+
+                            $content = $user->login($username, $password, false);
+
+                            return array("success"=>true);
+
+                        } else {
+                            return array("success"=>false, "message"=>"error creating account");
+                        }
+                    } else {
+                        return array("success"=>false, "message"=>"cydynni online account not found");
+                    }
                 }
             }
-            return $content;
             break;
             
+            // ----------------------------------------------------------------------
+            // Administration functions 
+            // ----------------------------------------------------------------------
+            case "admin":
+                if (!IS_HUB) {
+                    $route->format = "html";
+                    unset($session["token"]);
+                    return view("Modules/cydynni/app/admin_view.php",array('session'=>$session));
+                }
+                break;
+                
+            case "admin-users":
+                if (!IS_HUB) {
+                    $route->format = "json";
+                    if ($session['admin']) {
+                        // Include data from cydynni table here too
+                        $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users ORDER BY id ASC");
+                        $users = array();
+                        while($row = $result->fetch_object()) {
+                            $userid = $row->id;
+                            // Include fields from cydynni table
+                            $user_result = $mysqli->query("SELECT mpan,token,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                            $user_row = $user_result->fetch_object();
+                            if ($user_row) {
+                                foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                            }
+                            $row->hits = $redis->get("userhits:$userid");
+                            $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
+                            $users[] = $row;
+                        }
+                        return $users;
+                    }
+                }
+                break;
+                
+            case "admin-users-csv":
+                if (!IS_HUB) {
+                    $route->format = "text";
+                    if ($session['admin']) {
+                        // Include data from cydynni table here too
+                        $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
+                        $users = array();
+                        while($row = $result->fetch_object()) {
+                            $userid = $row->id;
+                            // Include fields from cydynni table
+                            $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                            $user_row = $user_result->fetch_object();
+                            if ($user_row) {
+                                foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                            }
+                            $row->hits = $redis->get("userhits:$userid");
+                            $users[] = $row;
+                        }
+                        
+                        $content = "";
+                        foreach ($users as $user) {
+                            $tmp = array();
+                            foreach ($user as $key=>$val) {
+                                $tmp[] = $val;
+                            }
+                            $content .= implode(",",$tmp)."\n";
+                        }
+                        return $content;
+                    }
+                }
+                break;
+                
+            case "admin-registeremail":
+                if (!IS_HUB) {
+                    $route->format = "text";
+                    if ($session['admin']) {
+                        return $cydynni_emails->registeremail(get('userid'));
+                    }
+                }
+                break;
+                
+            case "admin-change-user-email":
+                if (!IS_HUB) {
+                    $route->format = "json";
+                    if ($session['admin']) {
+                        return $user->change_email(get("userid"),get("email"));
+                    }
+                }
+                break;
+
+            case "admin-change-user-username":
+                if (!IS_HUB) {
+                    $route->format = "json";
+                    if ($session['admin']) {
+                        return $user->change_username(get("userid"),get("username"));
+                    }
+                }
+                break;
+                        
+            case "admin-switchuser":
+                if (!IS_HUB) {
+                    $route->format = "text";
+                    if ($session['admin']) {
+                        $userid = (int) get("userid");
+                        $_SESSION["userid"] = $userid;
+                        return "User switched";
+                    }
+                    header('Location: '."http://cydynni.org.uk/#household");
+                }
+                break;
+
+            case "admin-sendreport":
+                if (!IS_HUB) {
+                    $route->format = "text";
+                    if ($session['admin']) {
+                        return $cydynni_emails->send_report_email(get('userid'));
+                    }
+                }
+                break;
+                
+            case "setupguide":
+                header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
+                die;
+                break;
+            
+        /*
         case "admin":
             if($session["admin"]){
                 //get single user
@@ -553,7 +720,7 @@ function cydynni_controller()
                 }
                 return false;
             }
-        break;
+        break;*/
     }
     
     return array("content"=>$result);   

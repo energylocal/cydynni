@@ -8,7 +8,7 @@ $("#loginform").on("submit",function(event){
     var result = {};
     $.ajax({
       type: "POST",
-      url: path+"user/login.json",
+      url: path+"cydynni/login.json",
       data: "&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&rememberme="+encodeURIComponent(rememberme),
       dataType: "text",
       async: false,
@@ -22,7 +22,7 @@ $("#loginform").on("submit",function(event){
           }
          
           if (result.success) {
-              window.location.href = "cydynni/?household";
+              window.location.href = path+"cydynni/?household";
           } else {
               $("#alert").html(result.message);
           }
