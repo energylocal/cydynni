@@ -277,6 +277,7 @@ $(function(){
                         //append copy of template with replaced values for each user
                         club = result[z].club[0];
                         user = result[z].user;
+                        if(!user) return;
                         cydynni_user = result[z];
                         
                         $(template.html()).appendTo('#userlist')
