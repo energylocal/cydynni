@@ -281,6 +281,7 @@
 "If you wait til 8pm, you'll be on the off peak tariff - that's 30% cheaper":"Os byddwch chi'n aros tan 8pm, byddwch ar y tariff brig i ffwrdd - mae hynny'n 30% yn rhatach",
 "Your local, clean energy":"Eich ynni lleol, glân",
 "HYDRO PRICE":"PRIS HYDRO",
+"Hydro Price":"Pris Hydro",
 
 "Current Tariff":"Tariff Presenol",
 "Tariff prices at other times:":"Prisiau tariff ar amseroedd arall",
@@ -332,6 +333,11 @@
 "Re - Login": "Ail - Mewngofnodi",
 "Error Connecting to Hub": "Problem cysylltu hefo'r Hwb",
 "Session Timed out.": "Sesiwn wedi'i golli.",
-"Please login": "Ail mewngofnodwch"
-
+"Please login": "Ail mewngofnodwch",
+"Realtime Power Data":"Data Pŵer Byw",
+"Electricity use in window":"Defnydd trydan yn y ffenestr",
+"This means that":"Mae hyn yn golygu bod",
+"of your electricity came from local or low-cost power":"o'ch trydan yn dod o bŵer lleol neu gost isel",
+"Click on a day to see half hourly consumption":"Cliciwch ar ddiwrnod i weld defnydd bob hanner awr",
+"In total you used":"Yn gyfanswm defnyddwyd"
 }

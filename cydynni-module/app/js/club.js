@@ -50,7 +50,7 @@ function club_summary_load()
                   }
               }
               
-              $("#club_score").html(score);
+              $(".club_score").html(score);
               if (score>20) $("#club_star1").attr("src",app_path+"images/staryellow.png");
               if (score>40) setTimeout(function() { $("#club_star2").attr("src",app_path+"images/staryellow.png"); }, 100);
               if (score>60) setTimeout(function() { $("#club_star3").attr("src",app_path+"images/staryellow.png"); }, 200);

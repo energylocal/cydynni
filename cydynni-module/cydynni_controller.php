@@ -84,8 +84,9 @@ function cydynni_controller()
                 foreach ($tmp as $f) {
                     $session["feeds"][$f["name"]] = (int) $f["id"];
                 }
+                if (!$session["admin"]) $redis->incr("userhits:$userid");
             }
-        
+
             $route->format = "html";
             return view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             break;
@@ -93,7 +94,7 @@ function cydynni_controller()
         case "report":
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
-                
+                if (!$session["admin"]) $redis->incr("userhits:$userid");
                 $route->format = "html";
                 return view("Modules/cydynni/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             }
@@ -215,6 +216,31 @@ function cydynni_controller()
             }
 
             return json_decode(json_encode($content));
+            break;
+
+        case "household-daily-summary":
+            $route->format = "json";
+            if ($session["read"]) {
+                $userid = $session["userid"];
+                
+                $data = json_decode($redis->get("household:daily:summary:$userid"));
+                
+                if (isset($_GET['start']) && isset($_GET['end'])) {
+                    $start = $_GET['start']*0.001;
+                    $end = $_GET['end']*0.001;
+                    $tmp = array();
+                    for ($i=0; $i<count($data); $i++) {
+                        if ($data[$i][0]>=$start && $data[$i][0]<=$end) {
+                            $tmp[] = $data[$i];
+                        }
+                    }
+                    $data = $tmp;
+                }
+                
+                return $data;
+            } else {
+                return "session not valid";
+            }
             break;
 
         case "household-summary-monthly":

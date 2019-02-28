@@ -5,7 +5,7 @@
                 
                   <div style="background-color:#ffb401; color:#fff">
                     <b><?php echo t("On the"); ?> <span class="club_date"></span> <?php echo t("we scored"); ?>:</b>
-                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span id="club_score">50</span>/100</div>
+                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score">50</span>/100</div>
                   </div>
                   
                   <div class="no-padding">
