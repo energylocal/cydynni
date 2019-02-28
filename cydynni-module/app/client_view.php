@@ -77,85 +77,12 @@ $app_path = $path."Modules/cydynni/app/";
 
         <div class="footer">
             <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div><div>Energy Local</div>
+            <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
         </div>
         
         <div style="clear:both; height:85px"></div>
 
     </div></div>
-</div>
-
-<div class="scheduler-template hide">
-  <div class="scheduler-inner">
-    <div class="scheduler-startsin"><span class='startsin'></span></div>
-    <div class="scheduler-title"><?php echo t("Schedule") ?></div>
-
-    <div class="scheduler-inner2">
-      <div class="scheduler-controls">
-      
-        <!---------------------------------------------------------------------------------------------------------------------------->
-        <!-- CONTROLS -->
-        <!---------------------------------------------------------------------------------------------------------------------------->
-        <div name="active" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label"><?php echo t("Active") ?></div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <div style="display:inline-block; width:120px;"><?php echo t("Run period") ?>:</div>
-          <input class="input timepicker-hour" data-lpignore="true" type="number" min="0" max="23" step="1" name="period-hour" style="width:65px" /> <?php echo t("hrs") ?>
-          <input class="input timepicker-minute" data-lpignore="true" type="number" min="0" max="59" step="30" name="period-minute" style="width:65px" /> <?php echo t("mins") ?>
-        <br><br>
-
-        <div style="display:inline-block; width:120px;"><?php echo t("Complete by") ?>:</div>
-          <input class="input timepicker-hour" data-lpignore="true" type="number" min="0" max="23" step="1" name="end-hour" style="width:65px" /> : 
-          <input class="input timepicker-minute" data-lpignore="true" type="number" min="0" max="59" step="30" name="end-minute" style="width:65px" />
-        <br>
-        <br>
-        <div name="interruptible" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label"><?php echo t("Ok to interrupt schedule") ?></div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <div name="runonce" state=0 class="input scheduler-checkbox"></div>
-          <div class="scheduler-checkbox-label"><?php echo t("Run once") ?></div>
-          <div style='clear:both'></div>
-        <br>
-        
-        <p>Repeat:</p>
-        <div class="weekly-scheduler-days">
-          <div name="repeat" day=0 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Mon</div></div>
-          <div name="repeat" day=1 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Tue</div></div>
-          <div name="repeat" day=2 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Wed</div></div>
-          <div name="repeat" day=3 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Thu</div></div>
-          <div name="repeat" day=4 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Fri</div></div>
-          <div name="repeat" day=5 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Sat</div></div>
-          <div name="repeat" day=6 val=0 class="input weekly-scheduler weekly-scheduler-day"><div style="padding-top:15px">Sun</div></div>
-        </div>
-        <br>
-        <!---------------------------------------------------------------------------------------------------------------------------->
-      </div>
-
-      <button class="scheduler-save btn">Save</button><button class="scheduler-clear btn" style="margin-left:10px"><?php echo t('Clear') ?></button>
-      <span id="scheduler-notification"></span>
-      <br><br>
-      <div class="schedule-output-heading"><div class="triangle-dropdown hide"></div><div class="triangle-pushup"></div><?php echo t('Schedule Output') ?></div>
-
-      <div class="schedule-output-box">
-        <div id="schedule-output"></div>
-        <div id="placeholder_bound" style="width:100%; height:300px">
-          <div id="placeholder" style="height:300px"></div>
-        </div>
-        <?php echo t('Higher bar height equals more power available') ?>
-        
-      </div> <!-- schedule-output-box -->   
-      <br>
-      <span class="">Demand shaper signal: </span>
-      <select name="signal" class="input scheduler-select" style="margin-top:10px">
-          <option value="carbonintensity">UK Grid Carbon Intensity</option>
-          <option value="cydynni">Energy Local: Bethesda</option>
-          <option value="economy7">Economy 7</option>
-      </select>   
-    </div> <!-- schedule-inner2 -->
-  </div> <!-- schedule-inner -->
 </div>
 
 <script>
