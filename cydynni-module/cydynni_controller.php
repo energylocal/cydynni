@@ -471,6 +471,7 @@ function cydynni_controller()
                                 fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
                                 fclose($fh);
                             }
+		            sleep(3);
                             $content = $user->login($username, $password, false);
 
                             return array("success"=>true);
