@@ -470,7 +470,17 @@ function cydynni_controller()
                 }
             }
             break;
-            
+
+        case "passwordreset":
+            if (!IS_HUB) {    
+                $format = "json";
+                $user->appname = "Cydynni";
+                $users = $user->get_usernames_by_email(get('email'));
+                if ($users && count($users)) return $user->passwordreset($users[0]["username"],get('email'));
+                else return array("success"=>false, "message"=>"User not found");
+            }   
+        	  break;
+        	    
             // ----------------------------------------------------------------------
             // Administration functions 
             // ----------------------------------------------------------------------

@@ -93,7 +93,7 @@ $("#passwordreset").click(function() {
     $("#passwordreset-alert").html("");
     $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
-        url: club_path+"passwordreset",                         
+        url: path+"cydynni/passwordreset",                         
         data: "email="+email,
         dataType: 'json',
         success: function(result) {
