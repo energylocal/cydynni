@@ -107,7 +107,11 @@ Add advanced users check in menu_view for dropdown menus:
     global $advanced_users;
     if (($session["write"]) && in_array($session["userid"],$advanced_users)) {
     
+Add $advanced_users to settings.php 
+    
 Hide apps module menu item
+
+
 
 ### CydYnni setup module
 
