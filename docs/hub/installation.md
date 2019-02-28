@@ -111,8 +111,12 @@ Add $advanced_users to settings.php
     
 Hide apps module menu item
 
+In index.php 
 
-
+    // If not authenticated and no ouput, asks for login
+    $route->controller = "cydynni";
+    $route->action = "";
+    
 ### CydYnni setup module
 
     cd /var/www/emoncms/Modules/setup
