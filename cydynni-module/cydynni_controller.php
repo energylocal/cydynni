@@ -397,7 +397,14 @@ function cydynni_controller()
             }
             
             break;
-            
+
+        case "demandshaper":
+            $format = "json";
+            if ($result = $redis->get("$club:club:demandshaper")) {
+                return json_decode($result);
+            }
+            break;
+                    
         case "update":
             $route->format = "text";
             if (IS_HUB) {

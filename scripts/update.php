@@ -45,3 +45,13 @@ if ($result!="Invalid data") {
     print " REDIS SET";
 }
 print "\n";
+
+// DemandShaper
+print "get_demand_shaper $club:club:demandshaper ";
+$result = get_demand_shaper($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+print json_encode($result);
+if ($result!="Invalid data") {
+    $redis->set("$club:club:demandshaper",json_encode($result));
+    print " REDIS SET";
+}
+print "\n";

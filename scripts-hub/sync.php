@@ -150,3 +150,8 @@ if ($result) {
     print "-- user:summary:lastday\n";
 }
 
+$result = http_request("GET","$base_url/cydynni/household-daily-summary",array("apikey"=>$user->apikey_read));
+if ($result) {
+    $redis->set("household:daily:summary:$userid",$result);
+    print "-- household:daily:summary\n";
+}
