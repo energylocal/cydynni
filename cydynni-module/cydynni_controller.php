@@ -457,6 +457,21 @@ function cydynni_controller()
                             $sync_logfile = "/home/pi/data/cydynni-sync.log";
                             $redis->rpush("service-runner","$sync_script>$sync_logfile");
 
+		            // Setup remote access
+                            $host = "dashboard.energylocal.org.uk";
+                            $config_file = $homedir."/remoteaccess-client/remoteaccess.json";
+                            $config = json_decode(file_get_contents($config_file));
+                            if ($config!=null) {
+                                $config->APIKEY_WRITE = $u->apikey_write;
+                                $config->APIKEY_READ = $u->apikey_read;
+                                $config->MQTT_HOST = $host;
+                                $config->MQTT_USERNAME = $username;
+                                $config->MQTT_PASSWORD = $password;
+                                $fh = fopen($homedir."/remoteaccess-client/remoteaccess.json","w");
+                                fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
+                                fclose($fh);
+                            }
+		            sleep(3);
                             $content = $user->login($username, $password, false);
 
                             return array("success"=>true);
