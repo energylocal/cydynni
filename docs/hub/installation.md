@@ -95,7 +95,10 @@ Switch to energylocal fork
     git pull
     git checkout energylocal-hub
 
-Hide apps module menu item
+**Mods**
+
+- Hide apps module menu item
+- Add $advanced_users = array();
     
 ### CydYnni setup module
 
