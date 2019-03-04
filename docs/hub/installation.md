@@ -52,7 +52,7 @@ The following steps detail how to install the CydYnni App frontend on the hub. T
 Install the cydynni repository:
 
     cd
-    git clone https://github.com/trystanlea/cydynni.git
+    git clone https://github.com/energylocal/cydynni.git
         
 Define CydYnni UI as hub:
 
