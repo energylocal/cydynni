@@ -90,7 +90,7 @@
                   <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
                   <div id="tariff-now-circle" class="circle bg-generation">
                       <div class="circle-inner">
-                          <div id="tariff-now-price" style="font-size:36px">7p</div>
+                          <div id="tariff-now-price" style="font-size:36px">11.5p</div>
                           <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                       </div>
                   </div>
@@ -110,7 +110,7 @@
 
                       <div class="circle bg-generation">
                           <div class="circle-inner">
-                              <div style="font-size:36px">7p</div>
+                              <div style="font-size:36px"><?php echo $tariffs[$club]["generation"]["cost"]*100;?>p</div>
                               <div style="font-size:22px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
@@ -122,11 +122,11 @@
                     
                   <div id="morning-tariff-box" class="box5" style="color:#ffb401">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
 
                       <div class="circle-small bg-morning">
                           <div class="circle-small-inner">
-                              <div style="font-size:32px">12p</div>
+                              <div style="font-size:32px"><?php echo $tariffs[$club]["morning"]["cost"]*100;?>p</div>
                               <div style="font-size:18px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
@@ -136,11 +136,11 @@
                   
                   <div id="midday-tariff-box" class="box5" style="color:#4dac34">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
 
                       <div class="circle-small bg-midday">
                           <div class="circle-small-inner">
-                              <div style="font-size:32px">10p</div>
+                              <div style="font-size:32px"><?php echo $tariffs[$club]["midday"]["cost"]*100;?>p</div>
                               <div style="font-size:18px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
@@ -150,10 +150,10 @@
                   
                   <div id="evening-tariff-box" class="box5" style="color:#e6602b">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>
+                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
                       <div class="circle-small bg-evening">
                           <div class="circle-small-inner">
-                              <div style="font-size:32px">14p</div>
+                              <div style="font-size:32px"><?php echo $tariffs[$club]["evening"]["cost"]*100;?>p</div>
                               <div style="font-size:18px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>
@@ -162,11 +162,11 @@
                   
                   <div id="overnight-tariff-box" class="box5" style="color:#014c2d">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours"); ?></div>
+                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
                       
                       <div class="circle-small bg-overnight">
                           <div class="circle-small-inner">
-                              <div style="font-size:32px">7.25p</div>
+                              <div style="font-size:32px"><?php echo $tariffs[$club]["overnight"]["cost"]*100;?>p</div>
                               <div style="font-size:18px"><?php echo t("per unit"); ?></div>
                           </div>
                       </div>

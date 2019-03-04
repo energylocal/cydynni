@@ -104,7 +104,7 @@
                           <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
                             <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh <span id="club_<?php echo $key; ?>_unitcost"></span><br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
                           </tr>
                           <?php } ?>
                         </table>

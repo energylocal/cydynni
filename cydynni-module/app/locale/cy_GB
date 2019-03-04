@@ -18,7 +18,7 @@
 "you used a total of":"defnyddwyd",
 "It cost":"Yn costio",
 "of electricity costing you":"o drydan yn costio",
-"Compared with 12p/kWh reference price, you saved":"Ai gymharu â phris 12c/kWh, fe wnaethoch chi arbed",
+"Compared with <a href='https://powercompare.co.uk/electricity-prices/' style='color:#c20000'>15.2p/kWh</a> reference price, you saved":"Ai gymharu â phris <a href='https://powercompare.co.uk/electricity-prices/' style='color:#c20000'>15.2c/kWh</a>, fe wnaethoch chi arbed",
 "till":"tan",
 "Your usage over time":"Eich defnydd trydan dros amser",
 "Your energy use":"Eich defnydd trydan",

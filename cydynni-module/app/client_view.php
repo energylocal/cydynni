@@ -1,28 +1,9 @@
 <?php
 
-global $path, $translation, $lang;
+global $path, $translation, $lang, $tariffs;
 $v = 23;
 
-$tariffs = array(
-    "bethesda"=>array(
-        "generation"=>array("name"=>"Hydro","cost"=>0.07,"color"=>"#29aae3"),
-        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
-        "midday"=>array("name"=>"Midday","cost"=>0.10,"color"=>"#4abd3e"),
-        "evening"=>array("name"=>"Evening","cost"=>0.14,"color"=>"#c92760"),
-        "overnight"=>array("name"=>"Overnight","cost"=>0.0725,"color"=>"#274e3f")
-    ),
-    "towerpower"=>array(
-        "generation"=>array("name"=>"Solar","cost"=>0.07,"color"=>"#29aae3"),
-        "morning"=>array("name"=>"Morning","cost"=>0.12,"color"=>"#ffdc00"),
-        "midday"=>array("name"=>"Midday","cost"=>0.12,"color"=>"#4abd3e"),
-        "evening"=>array("name"=>"Evening","cost"=>0.12,"color"=>"#c92760"),
-        "overnight"=>array("name"=>"Overnight","cost"=>0.12,"color"=>"#274e3f")
-    )
-);
-
 $app_path = $path."Modules/cydynni/app/";
-
-
 
 ?>
 <style>body { line-height:unset !important; }</style>

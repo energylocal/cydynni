@@ -121,13 +121,19 @@ function household_draw_summary(result) {
     $(".household_totalcost").html("£"+result.cost.total.toFixed(2));
 
     // Saving calculation
-    var totalcostflatrate = result.kwh.total * 0.12;
+    var totalcostflatrate = result.kwh.total * 0.152;
     var costsaving = totalcostflatrate - result.cost.total;
     $(".household_costsaving").html("£"+costsaving.toFixed(2));
 
     household_pie_data_cost = [];
     household_pie_data_energy = [];
-
+    
+    tariffs.generation.cost = 0.07;
+    tariffs.morning.cost = 0.12;
+    tariffs.midday.cost = 0.10;
+    tariffs.evening.cost = 0.14;
+    tariffs.overnight.cost = 0.0725;
+    
     for (var z in tariffs) {
         if (z!="generation") {
             household_pie_data_cost.push({
@@ -147,6 +153,10 @@ function household_draw_summary(result) {
 
         $("#household_"+z+"_kwh").html(result.kwh[z].toFixed(2));
         $("#household_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+        
+        var unitcoststr = "";
+        if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
+        $("#household_"+z+"_unitcost").html(unitcoststr);
     }
         
     household_generation_use = result.kwh.generation;

@@ -103,7 +103,7 @@
                 </div>
                 
                 <br>
-                <p><?php echo t("Compared with 12p/kWh reference price, you saved"); ?> <span class="household_costsaving"></span></p>
+                <p><?php echo t("Compared with <a href='https://powercompare.co.uk/electricity-prices/' style='color:#c20000'>15.2p/kWh</a> reference price, you saved"); ?> <span class="household_costsaving"></span></p>
                 <br>
               </div>
             </div>
@@ -168,7 +168,7 @@
                           <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
                           <tr>
                             <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh @ <?php echo $tariff['cost']*100; ?> p/kWh<br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
+                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh <span id="household_<?php echo $key; ?>_unitcost"></span><br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
                           </tr>
                           <?php } ?>
                         </table>

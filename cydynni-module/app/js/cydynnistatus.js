@@ -42,9 +42,9 @@ function cydynnistatus_update() {
       
       $("#status-until").html(t("until")+" <b>11<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? cheaper around midday"));
 
-      $("#tariff-now-title").html(t("MORNING<br>PRICE")).css("color","#ffb401");
-      $("#tariff-now-circle").css("background-color","#ffb401");
-      $("#tariff-now-price").html("12p");
+      $("#tariff-now-title").html(t("MORNING<br>PRICE")).css("color",tariffs.morning.color);
+      $("#tariff-now-circle").css("background-color",tariffs.morning.color);
+      $("#tariff-now-price").html((tariffs.morning.cost*100)+"p");
   }
 
   // If evening peak then wait until overnight tariff
@@ -56,9 +56,9 @@ function cydynnistatus_update() {
       var time_to_wait = (16 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? midday price currently available"));
       
-      $("#tariff-now-title").html(t("MIDDAY<br>PRICE")).css("color","#4dac34");
-      $("#tariff-now-circle").css("background-color","#4dac34");
-      $("#tariff-now-price").html("10p");
+      $("#tariff-now-title").html(t("MIDDAY<br>PRICE")).css("color",tariffs.midday.color);
+      $("#tariff-now-circle").css("background-color",tariffs.midday.color);
+      $("#tariff-now-price").html((tariffs.midday.cost*100)+"p");
   }
 
   // If evening peak then wait until overnight tariff
@@ -70,9 +70,9 @@ function cydynnistatus_update() {
       var time_to_wait = (20 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? overnight price coming up"));
 
-      $("#tariff-now-title").html(t("EVENING<br>PRICE")).css("color","#e6602b");
-      $("#tariff-now-circle").css("background-color","#e6602b");
-      $("#tariff-now-price").html("14p");
+      $("#tariff-now-title").html(t("EVENING<br>PRICE")).css("color",tariffs.evening.color);
+      $("#tariff-now-circle").css("background-color",tariffs.evening.color);
+      $("#tariff-now-price").html((tariffs.evening.cost*100)+"p");
   }
 
   // If evening peak then wait until overnight tariff
@@ -89,9 +89,9 @@ function cydynnistatus_update() {
       }
       $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
 
-      $("#tariff-now-title").html(t("OVERNIGHT<br>PRICE")).css("color","#014c2d");      
-      $("#tariff-now-circle").css("background-color","#014c2d");
-      $("#tariff-now-price").html("7.25p");
+      $("#tariff-now-title").html(t("OVERNIGHT<br>PRICE")).css("color",tariffs.overnight.color);      
+      $("#tariff-now-circle").css("background-color",tariffs.overnight.color);
+      $("#tariff-now-price").html((tariffs.overnight.cost*100)+"p");
   }
   
   // If evening peak then wait until overnight tariff
@@ -101,9 +101,9 @@ function cydynnistatus_update() {
       $("#tariff_summary").html(t("Now")+": "+t(ucfirst(club_settings.generator)+" Price"));
       $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available"));
       
-      $("#tariff-now-title").html(t(club_settings.generator.toUpperCase()+"<br>PRICE")).css("color","#29aae3");
-      $("#tariff-now-circle").css("background-color","#29aae3");
-      $("#tariff-now-price").html("7p");
+      $("#tariff-now-title").html(t(club_settings.generator.toUpperCase()+"<br>PRICE")).css("color",tariffs.generation.color);
+      $("#tariff-now-circle").css("background-color",tariffs.generation.color);
+      $("#tariff-now-price").html((tariffs.generation.cost*100)+"p");
   }
   
   //$("#"+tariff+"-tariff-box").hide();

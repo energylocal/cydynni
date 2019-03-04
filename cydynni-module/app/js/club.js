@@ -70,6 +70,13 @@ function club_summary_load()
                   //club_resize();
               }, 400);
               
+              
+              tariffs.generation.cost = 0.07;
+              tariffs.morning.cost = 0.12;
+              tariffs.midday.cost = 0.10;
+              tariffs.evening.cost = 0.14;
+              tariffs.overnight.cost = 0.0725;
+              
               // generation value retained in the club
               var generation_value = result.kwh.generation * tariffs.generation.cost;
 
@@ -89,7 +96,7 @@ function club_summary_load()
               } else {
                   generation_value_str = "£"+(generation_value).toFixed(2);
               }
-              
+
               $(".club_generation_value").html(generation_value_str);
               $("#club_value_summary").html(generation_value_str+" "+t("kept in the club"));
               
@@ -113,8 +120,12 @@ function club_summary_load()
                       });
                   }
               
-                  $("#club_"+z+"_kwh").html(result.kwh[z]);
+                  $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
                   $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+
+                  var unitcoststr = "";
+                  if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
+                  $("#club_"+z+"_unitcost").html(unitcoststr);
               }
                                          
               club_generation_use = result.kwh.generation
