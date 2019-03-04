@@ -99,6 +99,7 @@ Switch to energylocal fork
 
 - Hide apps module menu item
 - Add $advanced_users = array();
+- Modify demand shaper menu, show and change name to devices
     
 ### CydYnni setup module
 
