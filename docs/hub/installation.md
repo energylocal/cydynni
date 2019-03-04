@@ -101,6 +101,15 @@ Switch to energylocal fork
 - Add $advanced_users = array();
 - Modify demand shaper menu, show and change name to devices
 
+### Emonpi energylocal fork
+
+Switch to energylocal fork
+
+    cd /home/pi/emonpi
+    git remote set-url origin https://github.com/energylocal/emonpi.git
+    git pull
+
+
 ### RemoteAccess Client Installation
 
 Create remoteaccess.env settings file with emoncms.org username and password.
