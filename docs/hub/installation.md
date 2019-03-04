@@ -88,34 +88,14 @@ Add CydYnni syncronisation script (period download of hydro, community and smart
 
 ### Emoncms modifications
 
-Set default lang in user_model to cy_GB:
+Switch to energylocal fork
 
-    if (isset($_SESSION['lang'])) $session['lang'] = $_SESSION['lang']; else $session['lang'] = 'cy_GB';
+    cd /var/www/emoncms
+    git remote set-url origin https://github.com/energylocal/emoncms.git
+    git pull
+    git checkout energylocal-hub
 
-Clear default page in user_schema:
-
-    'startingpage' => array('type'=>'varchar(64)', 'default'=>''),
-
-Add togglelang to menu_view
-
-    ?>
-    <li><a id="togglelang" style="cursor:pointer"></a></li>
-    <?php
-
-Add advanced users check in menu_view for dropdown menus:
-
-    global $advanced_users;
-    if (($session["write"]) && in_array($session["userid"],$advanced_users)) {
-    
-Add $advanced_users to settings.php 
-    
 Hide apps module menu item
-
-In index.php 
-
-    // If not authenticated and no ouput, asks for login
-    $route->controller = "cydynni";
-    $route->action = "";
     
 ### CydYnni setup module
 
