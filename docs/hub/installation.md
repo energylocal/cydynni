@@ -100,7 +100,26 @@ Switch to energylocal fork
 - Hide apps module menu item
 - Add $advanced_users = array();
 - Modify demand shaper menu, show and change name to devices
-    
+
+### RemoteAccess Client Installation
+
+Create remoteaccess.env settings file with emoncms.org username and password.
+
+    cd ~/ 
+    git clone https://github.com/emoncms/remoteaccess-client
+    cd remoteaccess-client
+    cp remoteaccess.json.example remoteaccess.json
+    sudo chmod 666 remoteaccess.json
+
+Install and start remoteaccess service:
+
+    sudo ln -s /home/pi/remoteaccess-client/remoteaccess.service /lib/systemd/system
+    sudo systemctl enable remoteaccess.service
+    sudo systemctl start remoteaccess
+
+    ln -s /home/pi/remoteaccess-client/remoteaccess /var/www/emoncms/Modules/remoteaccess
+
+
 ### CydYnni setup module
 
     cd /var/www/emoncms/Modules/setup
