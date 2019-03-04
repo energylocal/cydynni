@@ -50,7 +50,7 @@ for ($i=0; $i<count($data); $i++) {
 // remove last half hour if null
 if ($data[count($data)-1][1]==null) unset($data[count($data)-1]);
 
-$generation_now = $data[count($data)-1][1];
+$generation_now = $data[count($data)-1][1]*2;
 
 // -------------------------------------------------------------------------------------------
 // COMMUNITY FORECAST
