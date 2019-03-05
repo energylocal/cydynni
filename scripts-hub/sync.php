@@ -125,29 +125,10 @@ if ($result) {
     print "-- live\n";
 }
 
-/*
-$result = http_request("GET","$base_url/cydynni/hydro",array());
-if ($result) {
-    $redis->set("$club:generator:data",$result);
-    print "-- hydro:data\n";
-}
-
-$result = http_request("GET","$base_url/cydynni/club/data",array());
-if ($result) {
-    $redis->set("$club:club:data",$result);
-    print "-- community:data\n";
-}*/
-
 $result = http_request("GET","$base_url/cydynni/club-summary-day",array());
 if ($result) {
     $redis->set("$club:club:summary:day",$result);
     print "-- community:summary:day\n";
-}
-
-$result = http_request("GET","$base_url/cydynni/household-summary-day",array("apikey"=>$user->apikey_read));
-if ($result) {
-    $redis->set("user:summary:lastday:$userid",$result);
-    print "-- user:summary:lastday\n";
 }
 
 $result = http_request("GET","$base_url/cydynni/household-daily-summary",array("apikey"=>$user->apikey_read));

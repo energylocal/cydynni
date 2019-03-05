@@ -44,6 +44,10 @@ Add UDP Broadcast for hub detection at the same time:
 
     crontab -e
     * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
+    
+Add enable_UDP_broadcast setting to emoncms/settings.php to enable automatic WIFI device setup:
+
+    $enable_UDP_broadcast = true;
 
 ### CydYnni App front-end
 
