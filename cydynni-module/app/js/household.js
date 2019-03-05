@@ -129,10 +129,6 @@ function household_draw_summary(day) {
     if (result.day==3) ext = "rd";
     if (result.day>3) ext = "th";
     if (lang=="cy_GB") ext = "";
-    
-    if (result.time>=1551398400) {
-        result.cost.total *= 0.01;
-    }
 
     $(".household_date").html(result.day+ext+" "+t(result.month));
     $(".household_score").html(score);
