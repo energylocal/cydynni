@@ -32,6 +32,8 @@ var household_view = "piechart";
 var meterdataenable = false;
 var mode = "daily";
 
+var household_firstload = true;
+
 function household_summary_load()
 {    
 
@@ -56,29 +58,42 @@ function household_summary_load()
   } else {
       $("#realtime-power").hide(); 
   }
-  
-
-  $.ajax({                                      
-      url: path+"cydynni/household-summary-day"+apikeystr,
-      dataType: 'json',                  
-      success: function(result) {
-          if (!result) return;
-          if (result=="Invalid data") return;
-          household_draw_summary(result)
-      } 
-  });
-  
-  if (meterdataenable) {
-      $("#meterdatablock").show();
-      household_update_live();
-      setInterval(household_update_live,5000);
-  } else {
-      $("#meterdatablock").hide();
-  }
-  
 }
 
-function household_draw_summary(result) {
+function household_draw_summary(day) {
+
+    var time = day[0];
+                        
+    var d = new Date(time*1000);
+    var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    
+    var result = {
+        time: time,
+        day: d.getDate(),
+        month: months_long[d.getMonth()],
+        kwh:{
+            morning: day[2][0],
+            midday: day[2][1],
+            evening: day[2][2],
+            overnight: day[2][3],
+            generation: day[1][4]-day[2][4],
+            total: day[1][4]
+        },
+        generation:{
+            morning: day[1][0] - day[2][0],
+            midday: day[1][1] - day[2][1],
+            evening: day[1][2] - day[2][2],
+            overnight: day[1][3] - day[2][3]
+        },
+        cost:{
+            morning: day[3][0],
+            midday: day[3][1],
+            evening: day[3][2],
+            overnight: day[3][3],
+            total: day[3][4]
+        }
+    };
+
     // 1. Determine score
     // Calculated as amount of power consumed at times off peak times and from generation
     var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
@@ -176,19 +191,6 @@ function household_draw_summary(result) {
     household_pie_draw();
 }
 
-function household_update_live() {
-/*
-  $.ajax({                                      
-      url: path+"meter/live",
-      dataType: 'json',                  
-      success: function(result) {
-      
-          $(".meterdata-power").html((result.power*1000)+"W");
-          $(".meterdata-kwh").html((result.kwh)+" kWh");
-      }
-  });*/
-}
-
 function household_pie_draw() {
 
     width = 300;
@@ -258,6 +260,11 @@ function household_bargraph_load() {
                     console.log("ERROR","invalid response: "+result);
                 } else {
                     household_result = result;
+                    
+                    if (household_firstload) {
+                        household_firstload = false;
+                        household_draw_summary(household_result[household_result.length-1]);
+                    }
                 
                     var len = result.length;
                     var lastvalid = 0;
@@ -453,32 +460,6 @@ function household_bargraph_resize() {
     household_bargraph_draw();
 }
 
-// View change: show bar graph
-$("#view-household-bargraph").click(function(){
-    $("#view-household-bargraph").hide();
-    $("#view-household-piechart").show();
-    
-    $("#household_piegraph").hide();
-    $("#household_bargraph").show();
-    household_view = "bargraph";
-    household_bargraph_load();
-});
-
-// View change: show pie graph
-$("#view-household-piechart").click(function(){
-    $("#view-household-bargraph").show();
-    $("#view-household-piechart").hide();
-    
-    $("#household_piegraph").show();
-    $("#household_bargraph").hide();
-    household_view = "piechart";
-    household_pie_load(); 
-});
-
-$(".reports").click(function() {
-    window.location = path+"report";
-});
-
 $(".household-left").click(function(event) {
     event.stopPropagation();
     var time_window = household_end - household_start;
@@ -542,7 +523,6 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
             var d = new Date(itemTime);
             var days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
             var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-            var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
             var mins = d.getMinutes();
             if (mins==0) mins = "00";
             if (mode=="daily") {
@@ -558,33 +538,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                     out += "</table>";                                       
                     
                     tooltip(item.pageX, item.pageY, out, "#fff");
-                    
-                    household_draw_summary({
-                        time: itemTime*0.001,
-                        day: d.getDate(),
-                        month: months_long[d.getMonth()],
-                        kwh:{
-                            morning: household_result[z][2][0],
-                            midday: household_result[z][2][1],
-                            evening: household_result[z][2][2],
-                            overnight: household_result[z][2][3],
-                            generation: household_result[z][1][4]-household_result[z][2][4],
-                            total: household_result[z][1][4]
-                        },
-                        generation:{
-                            morning: household_result[z][1][0] - household_result[z][2][0],
-                            midday: household_result[z][1][1] - household_result[z][2][1],
-                            evening: household_result[z][1][2] - household_result[z][2][2],
-                            overnight: household_result[z][1][3] - household_result[z][2][3]
-                        },
-                        cost:{
-                            morning: household_result[z][3][0],
-                            midday: household_result[z][3][1],
-                            evening: household_result[z][3][2],
-                            overnight: household_result[z][3][3],
-                            total: household_result[z][3][4]
-                        }
-                    });
+                    household_draw_summary(household_result[z]);
                 }
             } else {
                 var date = d.getHours()+":"+mins+" "+days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate();
