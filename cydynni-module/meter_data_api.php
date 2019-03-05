@@ -116,7 +116,11 @@ function get_household_consumption($baseurl,$club_api_prefix,$token) {
     // Check that dates of latest day match
     if ($date1!=$date2) return "Date mismatch";
     if ($date1!=$date3) return "Date mismatch";
-    
+
+    foreach ($gross as $v) if ($v===null) return "Invalid data";
+    foreach ($imported as $v) if ($v===null) return "Invalid data";
+    foreach ($cost as $v) if ($v===null) return "Invalid data";
+        
     // Build import + generation consumption object
     // 1. start with imported data
     $kwh = $imported;
@@ -154,6 +158,10 @@ function get_club_consumption($baseurl,$club_api_prefix,$token) {
     // Check that dates of latest day match
     if ($date1!=$date2) return "Invalid data";
     if ($date1!=$date3) return "Invalid data";
+        
+    foreach ($gross as $v) if ($v===null) return "Invalid data";
+    foreach ($imported as $v) if ($v===null) return "Invalid data";
+    foreach ($cost as $v) if ($v===null) return "Invalid data";
     
     // Build import + generation consumption object
     // 1. start with imported data
