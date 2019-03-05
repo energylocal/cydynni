@@ -52,8 +52,8 @@ function cydynni_controller()
         $tariffs = array(
           "bethesda"=>array(
               "generation"=>array("name"=>"Hydro","cost"=>0.115,"color"=>"#29aae3"),
-              "morning"=>array("name"=>"Morning","cost"=>0.166,"color"=>"#ffdc00"),
-              "midday"=>array("name"=>"Midday","cost"=>0.182,"color"=>"#4abd3e"),
+              "morning"=>array("name"=>"Morning","cost"=>0.182,"color"=>"#ffdc00"),
+              "midday"=>array("name"=>"Midday","cost"=>0.166,"color"=>"#4abd3e"),
               "evening"=>array("name"=>"Evening","cost"=>0.202,"color"=>"#c92760"),
               "overnight"=>array("name"=>"Overnight","cost"=>0.1305,"color"=>"#274e3f")
           )
@@ -226,6 +226,7 @@ function cydynni_controller()
                 return "session not valid";
             }
 
+            $content->time = decode_date($content->date);
             return json_decode(json_encode($content));
             break;
 

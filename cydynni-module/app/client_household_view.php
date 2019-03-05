@@ -171,6 +171,10 @@
                             <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="household_<?php echo $key; ?>_kwh"></span> kWh <span id="household_<?php echo $key; ?>_unitcost"></span><br><?php echo t("Costing");?> £<span id="household_<?php echo $key; ?>_cost"></span></td>
                           </tr>
                           <?php } ?>
+                          <tr>
+                            <td></td>
+                            <td><b>Total cost:</b> <span class="household_totalcost"></span><br><b>Average unit cost:</b><br><span class="household_averageunitprice"></span></td>
+                          </tr>
                         </table>
                       </div>
                     </div>

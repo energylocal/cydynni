@@ -114,11 +114,16 @@ function household_draw_summary(result) {
     if (result.day==3) ext = "rd";
     if (result.day>3) ext = "th";
     if (lang=="cy_GB") ext = "";
+    
+    if (result.time>=1551398400) {
+        result.cost.total *= 0.01;
+    }
 
     $(".household_date").html(result.day+ext+" "+t(result.month));
     $(".household_score").html(score);
     $(".household_totalkwh").html(result.kwh.total.toFixed(1));
     $(".household_totalcost").html("£"+result.cost.total.toFixed(2));
+    $(".household_averageunitprice").html((100*result.cost.total/result.kwh.total).toFixed(2)+" p/kWh");
 
     // Saving calculation
     var totalcostflatrate = result.kwh.total * 0.152;
@@ -128,11 +133,19 @@ function household_draw_summary(result) {
     household_pie_data_cost = [];
     household_pie_data_energy = [];
     
-    tariffs.generation.cost = 0.07;
-    tariffs.morning.cost = 0.12;
-    tariffs.midday.cost = 0.10;
-    tariffs.evening.cost = 0.14;
-    tariffs.overnight.cost = 0.0725;
+    if (result.time>=1551398400) {
+        tariffs.generation.cost = 0.115;
+        tariffs.morning.cost = 0.182;
+        tariffs.midday.cost = 0.166;
+        tariffs.evening.cost = 0.202;
+        tariffs.overnight.cost = 0.1305;
+    } else {
+        tariffs.generation.cost = 0.07;
+        tariffs.morning.cost = 0.12;
+        tariffs.midday.cost = 0.10;
+        tariffs.evening.cost = 0.14;
+        tariffs.overnight.cost = 0.0725;
+    }
     
     for (var z in tariffs) {
         if (z!="generation") {
@@ -547,6 +560,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                     tooltip(item.pageX, item.pageY, out, "#fff");
                     
                     household_draw_summary({
+                        time: itemTime*0.001,
                         day: d.getDate(),
                         month: months_long[d.getMonth()],
                         kwh:{
