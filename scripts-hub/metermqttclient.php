@@ -1,5 +1,9 @@
 <?php
 
+// Script lock
+$fp = fopen("metermqttclient-lock", "w");
+if (! flock($fp, LOCK_EX | LOCK_NB)) { echo "Already running\n"; die; }
+
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
