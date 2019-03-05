@@ -57,8 +57,11 @@ $app_path = $path."Modules/cydynni/app/";
         </div>
 
         <div class="footer">
-            <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div><div>Energy Local</div>
+            <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
+            <div>Energy Local</div>
             <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
+            <div style="font-weight:normal; font-size:14px; padding-top:25px"><a href="<?php echo $path; ?>find"><i class="icon-search icon-white"></i> <?php echo t("Find Devices"); ?></a></div>
+
         </div>
         
         <div style="clear:both; height:85px"></div>
