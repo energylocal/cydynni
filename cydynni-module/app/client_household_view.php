@@ -173,7 +173,7 @@
                           <?php } ?>
                           <tr>
                             <td></td>
-                            <td><b>Total cost:</b> <span class="household_totalcost"></span><br><b>Average unit cost:</b><br><span class="household_averageunitprice"></span></td>
+                            <td><b><?php echo t("Total cost"); ?>:</b> <span class="household_totalcost"></span><br><b><?php echo t("Average unit cost"); ?>:</b><br><span class="household_averageunitprice"></span></td>
                           </tr>
                         </table>
                       </div>

@@ -299,6 +299,7 @@ function cydynni_controller()
                 return "Invalid data";
             }
             
+            $content->time = decode_date($content->date);
             return $content;
             break;
 

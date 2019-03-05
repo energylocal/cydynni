@@ -71,11 +71,19 @@ function club_summary_load()
               }, 400);
               
               
-              tariffs.generation.cost = 0.07;
-              tariffs.morning.cost = 0.12;
-              tariffs.midday.cost = 0.10;
-              tariffs.evening.cost = 0.14;
-              tariffs.overnight.cost = 0.0725;
+              if (result.time>=1551398400) {
+                  tariffs.generation.cost = 0.115;
+                  tariffs.morning.cost = 0.182;
+                  tariffs.midday.cost = 0.166;
+                  tariffs.evening.cost = 0.202;
+                  tariffs.overnight.cost = 0.1305;
+              } else {
+                  tariffs.generation.cost = 0.07;
+                  tariffs.morning.cost = 0.12;
+                  tariffs.midday.cost = 0.10;
+                  tariffs.evening.cost = 0.14;
+                  tariffs.overnight.cost = 0.0725;
+              }
               
               // generation value retained in the club
               var generation_value = result.kwh.generation * tariffs.generation.cost;
@@ -120,12 +128,14 @@ function club_summary_load()
                       });
                   }
               
-                  $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
-                  $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+                  if (result.kwh[z]!=null) {
+                      $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
+                      $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
 
-                  var unitcoststr = "";
-                  if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
-                  $("#club_"+z+"_unitcost").html(unitcoststr);
+                      var unitcoststr = "";
+                      if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
+                      $("#club_"+z+"_unitcost").html(unitcoststr);
+                  }
               }
                                          
               club_generation_use = result.kwh.generation

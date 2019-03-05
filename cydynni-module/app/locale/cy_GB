@@ -339,5 +339,7 @@
 "This means that":"Mae hyn yn golygu bod",
 "of your electricity came from local or low-cost power":"o'ch trydan yn dod o bŵer lleol neu gost isel",
 "Click on a day to see half hourly consumption":"Cliciwch ar ddiwrnod i weld defnydd bob hanner awr",
-"In total you used":"Yn gyfanswm defnyddwyd"
+"In total you used":"Yn gyfanswm defnyddwyd",
+"Total cost":"Cyfanswm",
+"Average unit cost":"Cyfartaledd cost uned"
 }
