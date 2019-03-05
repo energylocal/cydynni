@@ -205,31 +205,7 @@ function cydynni_controller()
                 return array('success'=>false,'message'=>'Feed not available');
             }
             break;
-
-        case "household-summary-day":
-            $route->format = "json";
-            if ($session["read"]) {
-                $userid = $session["userid"];
-                $content = json_decode($redis->get("user:summary:lastday:$userid"));
-            
-                $date = new DateTime();
-                $date->setTimezone(new DateTimeZone("Europe/London"));
-                $date->setTimestamp(time());
-                $date->modify("midnight");
-                $time = $date->getTimestamp();
-                if ($content){
-                    $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
-                } else {
-                    return "Invalid data";
-                }
-            } else {
-                return "session not valid";
-            }
-
-            $content->time = decode_date($content->date);
-            return json_decode(json_encode($content));
-            break;
-
+        
         case "household-daily-summary":
             $route->format = "json";
             if ($session["read"]) {
@@ -417,19 +393,6 @@ function cydynni_controller()
                 return json_decode($result);
             }
             break;
-                    
-        case "update":
-            $route->format = "text";
-            if (IS_HUB) {
-                // Hydro
-                $redis->set("live",file_get_contents("$base_url/live"));
-                $redis->set("hydro:data",file_get_contents("$base_url/hydro"));
-                $redis->set("community:data",file_get_contents("$base_url/community/data"));
-                $redis->set("community:summary:day",file_get_contents("$base_url/community/summary/day"));
-                // Store Updated
-                return "store updated";
-            }
-            break;
 
         case "login":
             if (!$session['read']) {
@@ -508,127 +471,127 @@ function cydynni_controller()
                 else return array("success"=>false, "message"=>"User not found");
             }   
         	  break;
-        	    
-            // ----------------------------------------------------------------------
-            // Administration functions 
-            // ----------------------------------------------------------------------
-            case "admin":
-                if (!IS_HUB) {
-                    $route->format = "html";
-                    unset($session["token"]);
-                    return view("Modules/cydynni/app/admin_view.php",array('session'=>$session));
-                }
-                break;
-                
-            case "admin-users":
-                if (!IS_HUB) {
-                    $route->format = "json";
-                    if ($session['admin']) {
-                        // Include data from cydynni table here too
-                        $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users ORDER BY id ASC");
-                        $users = array();
-                        while($row = $result->fetch_object()) {
-                            $userid = $row->id;
-                            // Include fields from cydynni table
-                            $user_result = $mysqli->query("SELECT mpan,token,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
-                            $user_row = $user_result->fetch_object();
-                            if ($user_row) {
-                                foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
-                            }
-                            $row->hits = $redis->get("userhits:$userid");
-                            $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
-                            $users[] = $row;
-                        }
-                        return $users;
-                    }
-                }
-                break;
-                
-            case "admin-users-csv":
-                if (!IS_HUB) {
-                    $route->format = "text";
-                    if ($session['admin']) {
-                        // Include data from cydynni table here too
-                        $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
-                        $users = array();
-                        while($row = $result->fetch_object()) {
-                            $userid = $row->id;
-                            // Include fields from cydynni table
-                            $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
-                            $user_row = $user_result->fetch_object();
-                            if ($user_row) {
-                                foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
-                            }
-                            $row->hits = $redis->get("userhits:$userid");
-                            $users[] = $row;
-                        }
-                        
-                        $content = "";
-                        foreach ($users as $user) {
-                            $tmp = array();
-                            foreach ($user as $key=>$val) {
-                                $tmp[] = $val;
-                            }
-                            $content .= implode(",",$tmp)."\n";
-                        }
-                        return $content;
-                    }
-                }
-                break;
-                
-            case "admin-registeremail":
-                if (!IS_HUB) {
-                    $route->format = "text";
-                    if ($session['admin']) {
-                        return $cydynni_emails->registeremail(get('userid'));
-                    }
-                }
-                break;
-                
-            case "admin-change-user-email":
-                if (!IS_HUB) {
-                    $route->format = "json";
-                    if ($session['admin']) {
-                        return $user->change_email(get("userid"),get("email"));
-                    }
-                }
-                break;
-
-            case "admin-change-user-username":
-                if (!IS_HUB) {
-                    $route->format = "json";
-                    if ($session['admin']) {
-                        return $user->change_username(get("userid"),get("username"));
-                    }
-                }
-                break;
-                        
-            case "admin-switchuser":
-                if (!IS_HUB) {
-                    $route->format = "text";
-                    if ($session['admin']) {
-                        $userid = (int) get("userid");
-                        $_SESSION["userid"] = $userid;
-                        return "User switched";
-                    }
-                    header('Location: '."http://cydynni.org.uk/#household");
-                }
-                break;
-
-            case "admin-sendreport":
-                if (!IS_HUB) {
-                    $route->format = "text";
-                    if ($session['admin']) {
-                        return $cydynni_emails->send_report_email(get('userid'));
-                    }
-                }
-                break;
-                
-            case "setupguide":
-                header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
-                die;
-                break;
+    	    
+        // ----------------------------------------------------------------------
+        // Administration functions 
+        // ----------------------------------------------------------------------
+        case "admin":
+            if (!IS_HUB) {
+                $route->format = "html";
+                unset($session["token"]);
+                return view("Modules/cydynni/app/admin_view.php",array('session'=>$session));
+            }
+            break;
             
+        case "admin-users":
+            if (!IS_HUB) {
+                $route->format = "json";
+                if ($session['admin']) {
+                    // Include data from cydynni table here too
+                    $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users ORDER BY id ASC");
+                    $users = array();
+                    while($row = $result->fetch_object()) {
+                        $userid = $row->id;
+                        // Include fields from cydynni table
+                        $user_result = $mysqli->query("SELECT mpan,token,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                        $user_row = $user_result->fetch_object();
+                        if ($user_row) {
+                            foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                        }
+                        $row->hits = $redis->get("userhits:$userid");
+                        $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
+                        $users[] = $row;
+                    }
+                    return $users;
+                }
+            }
+            break;
+            
+        case "admin-users-csv":
+            if (!IS_HUB) {
+                $route->format = "text";
+                if ($session['admin']) {
+                    // Include data from cydynni table here too
+                    $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
+                    $users = array();
+                    while($row = $result->fetch_object()) {
+                        $userid = $row->id;
+                        // Include fields from cydynni table
+                        $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                        $user_row = $user_result->fetch_object();
+                        if ($user_row) {
+                            foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                        }
+                        $row->hits = $redis->get("userhits:$userid");
+                        $users[] = $row;
+                    }
+                    
+                    $content = "";
+                    foreach ($users as $user) {
+                        $tmp = array();
+                        foreach ($user as $key=>$val) {
+                            $tmp[] = $val;
+                        }
+                        $content .= implode(",",$tmp)."\n";
+                    }
+                    return $content;
+                }
+            }
+            break;
+            
+        case "admin-registeremail":
+            if (!IS_HUB) {
+                $route->format = "text";
+                if ($session['admin']) {
+                    return $cydynni_emails->registeremail(get('userid'));
+                }
+            }
+            break;
+            
+        case "admin-change-user-email":
+            if (!IS_HUB) {
+                $route->format = "json";
+                if ($session['admin']) {
+                    return $user->change_email(get("userid"),get("email"));
+                }
+            }
+            break;
+
+        case "admin-change-user-username":
+            if (!IS_HUB) {
+                $route->format = "json";
+                if ($session['admin']) {
+                    return $user->change_username(get("userid"),get("username"));
+                }
+            }
+            break;
+                    
+        case "admin-switchuser":
+            if (!IS_HUB) {
+                $route->format = "text";
+                if ($session['admin']) {
+                    $userid = (int) get("userid");
+                    $_SESSION["userid"] = $userid;
+                    return "User switched";
+                }
+                header('Location: '."http://cydynni.org.uk/#household");
+            }
+            break;
+
+        case "admin-sendreport":
+            if (!IS_HUB) {
+                $route->format = "text";
+                if ($session['admin']) {
+                    return $cydynni_emails->send_report_email(get('userid'));
+                }
+            }
+            break;
+            
+        case "setupguide":
+            header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
+            die;
+            break;
+        
         /*
         case "admin":
             if($session["admin"]){
