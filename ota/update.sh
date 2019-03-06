@@ -14,7 +14,7 @@ if [ "$remote_ota_version" -ne "$local_ota_version" ]
 then
   echo "Remote:"$remote_ota_version" Local:"$local_ota_version
   echo "Update available, starting update process.."
-  # rpi-rw
+  # rpi-rwlocal_ota_version="$(cat cydynni/ota/version)"
   cd /home/pi/cydynni
   git pull
   cd /home/pi/cydynni/ota
@@ -26,6 +26,7 @@ then
   url="https://dashboard.energylocal.org.uk/cydynni/ota-log-set?apikey=$apikey"
   curl -s -X POST -d "$log" $url
 
-  url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apike$
-  remote_ota_version="$(curl -s $url)"
+  local_ota_version="$(cat cydynni/ota/version)"
+  url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
+  curl -s $url
 fi
