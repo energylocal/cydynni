@@ -76,10 +76,6 @@ function cydynni_controller()
         $session["apikey_read"] = $row->apikey_read;
     }
     
-    // -----------------------------------------------------------------------------------------
-    $ota_version = (int) $redis->get("otaversion");
-    // -----------------------------------------------------------------------------------------
-    
     switch ($route->action)
     {
         case "":
@@ -110,68 +106,7 @@ function cydynni_controller()
                 return view("Modules/cydynni/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             }
             break;
-                
-        // -----------------------------------------------------------------------------------------
-        // OTA: Record local hub OTA version and log
-        // -----------------------------------------------------------------------------------------
-        case "ota":
-            if ($session["write"]) {
-                 $route->format = "html";
-                 $userid = $session["userid"];
-                 
-                 $result = "<br>";
-                 $result .= "<h3>OTA Status</h3>";
-
-                 $r = json_decode($redis->get("cydynni:ota:version:$userid"));
-                 $result .= "<p>Hub version <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p><pre>".$r->hub."</pre>";                 
-                 
-                 $r = json_decode($redis->get("cydynni:ota:log:$userid"));
-                 $result .= "<p>Log output: <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p>";
-                 $result .= "<pre>".$r->log."</pre>";
-            }
-            break;
-        
-        case "ota-version":
-             // Record local hub ota version
-             if (isset($_GET['hub']) && $session["write"]) {
-                 $userid = $session["userid"];
-                 $redis->set("cydynni:ota:version:$userid",json_encode(array(
-                     "time"=>time(),
-                     "hub"=> (int) $_GET['hub'],
-                     "master"=>$ota_version
-                 )));
-             }
-             
-             $route->format = "text";
-             $result = $ota_version;
-             break;
-
-        case "ota-version-get":
-            if ($session["write"]) {
-                 $route->format = "json";
-                 $userid = $session["userid"];
-                 $result = json_decode($redis->get("cydynni:ota:version:$userid"));
-            }
-            break;
-             
-        case "ota-log-set":
-            if ($session["write"]) {
-                 $userid = $session["userid"];
-                 $redis->set("cydynni:ota:log:$userid",json_encode(array(
-                     "time"=>time(),
-                     "log"=>file_get_contents('php://input')
-                 )));
-            }
-            break;
             
-        case "ota-log-get":
-            if ($session["write"]) {
-                 $route->format = "json";
-                 $userid = $session["userid"];
-                 $result = json_decode($redis->get("cydynni:ota:log:$userid"));
-            }
-            break;
-
         // -----------------------------------------------------------------------------------------
         // Live
         // -----------------------------------------------------------------------------------------
@@ -591,7 +526,73 @@ function cydynni_controller()
             header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
             die;
             break;
+
+        // -----------------------------------------------------------------------------------------
+        // OTA: Record local hub OTA version and log
+        // -----------------------------------------------------------------------------------------
+        case "ota":
+            if ($session["write"]) {
+                 $route->format = "html";
+                 $userid = $session["userid"];
+                 
+                 $result = "<br>";
+                 $result .= "<h3>OTA Status</h3>";
+
+                 $r = json_decode($redis->get("cydynni:ota:version:$userid"));
+                 if (isset($r->time) && isset($r->hub)) { 
+                     $result .= "<p>Hub version <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p><pre>".$r->hub."</pre>";  
+                 }                
+                 
+                 $r = json_decode($redis->get("cydynni:ota:log:$userid"));
+                 if (isset($r->time) && isset($r->log)) { 
+                    $result .= "<p>Log output: <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p>";
+                    $result .= "<pre>".$r->log."</pre>";
+                 }
+            }
+            break;
         
+        case "ota-version":
+             $ota_version = (int) $redis->get("otaversion");
+             
+             // Record local hub ota version
+             if (isset($_GET['hub']) && $session["write"]) {
+                 $userid = $session["userid"];
+                 $redis->set("cydynni:ota:version:$userid",json_encode(array(
+                     "time"=>time(),
+                     "hub"=> (int) $_GET['hub'],
+                     "master"=>$ota_version
+                 )));
+             }
+             
+             $route->format = "text";
+             $result = $ota_version;
+             break;
+
+        case "ota-version-get":
+            if ($session["write"]) {
+                 $route->format = "json";
+                 $userid = $session["userid"];
+                 $result = json_decode($redis->get("cydynni:ota:version:$userid"));
+            }
+            break;
+             
+        case "ota-log-set":
+            if ($session["write"]) {
+                 $userid = $session["userid"];
+                 $redis->set("cydynni:ota:log:$userid",json_encode(array(
+                     "time"=>time(),
+                     "log"=>file_get_contents('php://input')
+                 )));
+            }
+            break;
+            
+        case "ota-log-get":
+            if ($session["write"]) {
+                 $route->format = "json";
+                 $userid = $session["userid"];
+                 $result = json_decode($redis->get("cydynni:ota:log:$userid"));
+            }
+            break;        
         /*
         case "admin":
             if($session["admin"]){
