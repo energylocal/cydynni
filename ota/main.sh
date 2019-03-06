@@ -3,51 +3,50 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
 echo "-----------------------------------------"
-cd 
-cd cydynni
+
+cd /home/pi/cydynni
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "cydynni:"$branch":"$commit
-cd
 
-cd demandshaper
+cd /home/pi/demandshaper
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "demandshaper:"$branch":"$commit
-cd
 
 cd /var/www/emoncms
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "emoncms:"$branch":"$commit
-cd
 
 cd /var/www/emoncms/Modules/device
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
-echo "emoncms-mod-device:"$branch":"$commit
-cd
+echo "emoncms:device:"$branch":"$commit
+
 echo "-----------------------------------------"
 
-
-cd demandshaper
+cd /home/pi/demandshaper
 git pull
-cd 
+cd
 
 cd /var/www/emoncms
 git pull
-cd 
-
-cd /var/www/emoncms/Modules/device
-
-git fetch origin device-integration
-git reset --hard FETCH_HEAD
-git clean -df
 cd
 
+cd /var/www/emoncms/Modules/device
+git pull
+cd
+
+cd /home/pi/remoteaccess-client
+git pull
+cd
+
+echo "emoncms db update: "
 php /home/pi/emonpi/emoncmsdbupdate.php
 
-if [ -f /home/pi/data/demandshaper.pid ]; then
-  pid="$(cat /home/pi/data/demandshaper.pid)"
-  kill $pid
-fi
+echo "restarting services: "
+sudo systemctl restart emoncms_mqtt.service
+sudo systemctl restart demandshaper.service
+sudo systemctl restart feedwriter.service
+sudo systemctl restart remoteaccess.service
