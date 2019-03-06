@@ -1,12 +1,20 @@
 ## Setup Guide
 
-### 1. Power up the CydYnni hub
+### Ethernet Setup
+
+If you have the option to connect your hub directly via Ethernet this is usually easier and more reliable than using WIFI, alternatively if you wish to setup using the WIFI hotspot, skip this section and continue to WIFI Setup below.
+
+Power up the hub by connecting the micro USB cable and USB power supply. Plug in an Ethernet cable to link your hub to your internet router.
+
+### WIFI Setup
+
+#### 1. Power up the CydYnni hub
 
 After a short while a WIFI Access Point should appear called 'EmonPi'.<br>Connect to this network, open an internet browser and enter the following address:
 
     http://192.168.42.1
 
-### 2. Connect to WIFI network
+#### 2. Connect to WIFI network
 
 Once the page at the address above loads it will give the following options, or if the hub is connected with an ethernet cable there will also be the option to connect over ethernet.
 
@@ -26,20 +34,35 @@ After clicking connect the following message is shown. Your hub is now rebooting
 
 ![setup4.png](images/setup4.png)
 
-### 3. Login with CydYnni Account
+### Navigate to the 'Find Devices' tool on the EnergyLocal App:
 
-After a couple of minutes, connect back to your home WIFI network and navigate to cydynni hub address:
+#### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
 
-    http://cydynni.local/
+![scan.png](images/scan.png)
+
+Click SCAN to find your hub:
+
+![scan2.png](images/scan2.png)
+
+Click on the hub (listed as emonbase) to open it in your browser.
+
+You will now be greeted with the EnergyLocal Hub dashboard page.
+
+**Troubleshooting**
+
+If the hub does not appear the first time, try refreshing the page a couple of times.
+
+If this does not work try navigating to your hub directly with the following links
+
+[http://emonpi.local](http://emonpi.local)
     
 or:
 
-    http://cydynni/
-    
-You will now be greeted with the CydYnni hub login page. 
+[http://emonpi](http://emonpi)
+ 
+Or alternatively check your routers device list or use a mobile app called 'fing' to scan your network to find the hub.
 
-**If this does not work:** Use our hub and smartplug finder tool which can be found here: http://emoncms.org/find
-<br>This tool will find the IP address of the hub or smartplug on your network.
+---
 
 Enter your CydYnni username and password.
 
