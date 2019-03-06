@@ -12,8 +12,8 @@ if (!empty($redis_server['auth']) && !$redis->auth($redis_server['auth'])) {
     echo "Can't connect to redis, autentication failed"; die;
 }
 
-$version = (int) file_get_contents("https://raw.githubusercontent.com/energylocal/cydynni/master/ota/version");
-print $version;
+$version = (int) file_get_contents("https://raw.githubusercontent.com/energylocal/cydynni/master/ota/version?v=".time());
+// print $version;
 
 $redis->set("otaversion",$version);
 
