@@ -24,5 +24,8 @@ then
 
   echo $"$log"
   url="https://dashboard.energylocal.org.uk/cydynni/ota-log-set?apikey=$apikey"
-  $(curl -s -X POST -d "$log" $url)
+  curl -s -X POST -d "$log" $url
+
+  url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apike$
+  remote_ota_version="$(curl -s $url)"
 fi
