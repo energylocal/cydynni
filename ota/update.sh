@@ -17,7 +17,8 @@ then
   # rpi-rw
   cd /home/pi/cydynni
   git pull
-  log=$(./home/pi/cydynni/ota/main.sh)
+  cd /home/pi/cydynni/ota
+  log=$(./main.sh)
   cd 
   # rpi-ro
 
