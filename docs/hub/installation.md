@@ -28,7 +28,7 @@ The demand shaper module uses a day ahead power availability forecast and user s
 Download or git clone the demandshaper repository in the home folder:
 
     cd
-    git clone https://github.com/emoncms/demandshaper.git
+    git clone https://github.com/energylocal/demandshaper.git
     
 Link the 'demandshaper-module' into the emoncms Modules folder:
 
@@ -44,10 +44,6 @@ Add UDP Broadcast for hub detection at the same time:
 
     crontab -e
     * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
-    
-Add enable_UDP_broadcast setting to emoncms/settings.php to enable automatic WIFI device setup:
-
-    $enable_UDP_broadcast = true;
 
 ### CydYnni App front-end
 
@@ -58,13 +54,15 @@ Install the cydynni repository:
     cd
     git clone https://github.com/energylocal/cydynni.git
         
-Define CydYnni UI as hub:
+Define CydYnni UI as hub, add other energylocal specific settings:
 
     sudo nano /var/www/emoncms/settings.php
     
 Add
 
     define("IS_HUB",1);
+    $advanced_users = array();
+    $enable_UDP_broadcast = true;
     
 Modify default routes:
 
@@ -102,8 +100,6 @@ Switch to energylocal fork
 **Mods**
 
 - Hide apps module menu item
-- Add $advanced_users = array();
-- Modify demand shaper menu, show and change name to devices
 
 ### Emonpi energylocal fork
 
@@ -131,13 +127,6 @@ Install and start remoteaccess service:
     sudo systemctl start remoteaccess
 
     ln -s /home/pi/remoteaccess-client/remoteaccess /var/www/emoncms/Modules/remoteaccess
-
-
-### CydYnni setup module
-
-    cd /var/www/emoncms/Modules/setup
-    git pull
-    git checkout cydynni
     
 ### OTA Update
 
@@ -158,12 +147,6 @@ Remove ssh from /boot
 
 Thats it for now! Login to the hub with your cydynni account at:
 
-    http://emonpi.local/cydynni
+    http://emonpi.local
     
 The hub will now link to the remote cydynni.org.uk account and download a local copy of the cydynni hydro and community data as well as any historic smart meter data.
-
-To test the demand shaper and schedule appliances, login to emoncms on the hub:
-
-    http://emonpi.local/emoncms
-    
-Navigate to Setup > Inputs 

@@ -19,7 +19,7 @@ Cyd Ynni : Ynni Lleol is a community project linking up households with local co
 - [Web App: Software Installation Guide](docs/web/installation.md)
 - [Web App: API Documentation](docs/web/api.md)
 
-## CydYnni App [http://cydynni.org.uk](http://cydynni.org.uk)
+## CydYnni App [https://dashboard.energylocal.org.uk](https://dashboard.energylocal.org.uk)
 
 The CydYnni app is a mobile friendly web app also packaged as an android and iOS app that shows when it is a good time to use electricity in the CydYnni project.
 
