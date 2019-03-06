@@ -583,6 +583,7 @@ function cydynni_controller()
                      "time"=>time(),
                      "log"=>file_get_contents('php://input')
                  )));
+                 return "ok";
             }
             break;
             
