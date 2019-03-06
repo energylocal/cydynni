@@ -28,7 +28,7 @@ The demand shaper module uses a day ahead power availability forecast and user s
 Download or git clone the demandshaper repository in the home folder:
 
     cd
-    git clone https://github.com/emoncms/demandshaper.git
+    git clone https://github.com/energylocal/demandshaper.git
     
 Link the 'demandshaper-module' into the emoncms Modules folder:
 
