@@ -112,15 +112,19 @@ If the smartplug fails to connect to the selected WIFI network the green LED wil
 
 ---
 
-6\. Connect back to you home network and navigate to the devices page.
+### Device pairing on the hub
+
+With the smartplug WIFI settings configured connect back to you home network and navigate to the devices page on the hub:
 
 ![pairing1.png](images/pairing1.png)
 
-7\. After a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
+After a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
 
 ![pairing2.png](images/pairing2.png)
 
-7\. Click allow and wait a couple of minutes for the device to appear.
+Click allow and wait a couple of minutes for the device to appear.
+
+### Scheduling the Smart Plug
 
 Try adjusting the schedule using the run period, complete by and ok to interrupt settings:
 
@@ -130,4 +134,4 @@ or/and turn the smartplug on and off directly by clicking on the on/off buttons:
 
 ![demandshaper1.png](images/demandshaper1.png) 
 
-The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
+**Tip:** The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
