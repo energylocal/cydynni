@@ -1,4 +1,6 @@
-## Setup Guide
+![EnergyLocalEnglish.png](images/EnergyLocalEnglish.png)
+
+## CydYnni Hub & Smart Plug Setup Guide
 
 ### Ethernet Setup
 
