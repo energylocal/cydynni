@@ -82,9 +82,7 @@ The 3rd page shows the club score and overview.
 
 ![setup9.png](images/setup9.png)
 
-The 4rth tab shows a list of devices.
-
-![setup10.png](images/setup10.png)
+The 4rth tab shows tips on energy saving and moving power to lower cost times.
 
 ### 5. Setting up your WiFi Smart Plug
 
@@ -98,7 +96,7 @@ The Smart Plug will allow you to schedule whatever is plugged into it to come on
 
 **[http://192.168.4.1](http://192.168.4.1)**
     
-![setup11.png](images/setup11.png)
+![EmonESP1.png](images/EmonESP1.png)
 
 4\. Select the WIFI network you wish to connect to, enter the passkey and click connect. 
 
@@ -106,7 +104,7 @@ The green light on the smartplug will now turn on again. If the connection is su
 
 5\. The web interface will also show that the module has connected and its IP address:
 
-![setup12.png](images/setup12.png)
+![EmonESP2.png](images/EmonESP2.png)
 
 **Failed Connection**
 
@@ -114,12 +112,22 @@ If the smartplug fails to connect to the selected WIFI network the green LED wil
 
 ---
 
-6\. Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
+6\. Connect back to you home network and navigate to the devices page.
 
-![setup13.png](images/setup13.png)
+![pairing1.png](images/pairing1.png)
 
-7\. Click allow. Refresh the device interface until the smartplug device appears.
+7\. After a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
 
-8\. Clicking on the smartplug device will bring up the scheduler interface:
+![pairing2.png](images/pairing2.png)
 
-![setup14.png](images/setup14.png)
+7\. Click allow and wait a couple of minutes for the device to appear.
+
+Try adjusting the schedule using the run period, complete by and ok to interrupt settings:
+
+![pairing4.png](images/pairing4.png)
+
+or/and turn the smartplug on and off directly by clicking on the on/off buttons:
+
+![demandshaper1.png](images/demandshaper1.png) 
+
+The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
