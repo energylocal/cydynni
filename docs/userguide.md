@@ -46,6 +46,10 @@ Click SCAN to find your hub:
 
 Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
 
+![setup5.png](images/setup5.png)
+
+---
+
 **Troubleshooting**
 
 If the hub does not appear the first time, try refreshing the page a couple of times. If this does not work try navigating to your hub directly with the following links
@@ -56,21 +60,25 @@ Or alternatively check your routers device list or use a mobile app called 'fing
 
 ---
 
-Enter your CydYnni username and password.
+### Login with your EnergyLocal online account
 
-![setup5.png](images/setup5.png)
+Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
-### 4. Explore your hub dashboard
+![setup6.png](images/setup6.png)
 
-The first page presents the CydYnni forecast showing when it's a good time to use electricity or not and the recent history of club consumption and generator output.
+### Explore your hub dashboard
+
+The first page that you see when you login shows your household electricity consumption overview.
+
+**Tip:** Hover over a bar in the bargraph to see the cost and consumption breakdown in the pie chart below the bar graph.
 
 ![setup7.png](images/setup7.png)
 
-The second page shows your score, which relates to how well you're managing to match your use to local electricity and cheap times for extra electricity.
+The CydYnni forecast page shows when it's a good time to use electricity or not and the recent history of club consumption and generator output.
 
 ![setup8.png](images/setup8.png)
 
-The 3rd page shows the club score and overview.
+The Club page shows the club score and overview.
 
 ![setup9.png](images/setup9.png)
 
