@@ -1,4 +1,6 @@
-## Setup Guide
+![EnergyLocalEnglish.png](images/EnergyLocalEnglish.png)
+
+## CydYnni Hub & Smart Plug Setup Guide
 
 ### Ethernet Setup
 
@@ -44,47 +46,45 @@ Click SCAN to find your hub:
 
 ![scan2.png](images/scan2.png)
 
-Click on the hub (listed as emonbase) to open it in your browser.
+Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
 
-You will now be greeted with the EnergyLocal Hub dashboard page.
+![setup5.png](images/setup5.png)
+
+---
 
 **Troubleshooting**
 
-If the hub does not appear the first time, try refreshing the page a couple of times.
+If the hub does not appear the first time, try refreshing the page a couple of times. If this does not work try navigating to your hub directly with the following links
 
-If this does not work try navigating to your hub directly with the following links
-
-[http://emonpi.local](http://emonpi.local)
-    
-or:
-
-[http://emonpi](http://emonpi)
+[http://emonpi.local](http://emonpi.local) or: [http://emonpi](http://emonpi)
  
 Or alternatively check your routers device list or use a mobile app called 'fing' to scan your network to find the hub.
 
 ---
 
-Enter your CydYnni username and password.
+### Login with your EnergyLocal online account
 
-![setup5.png](images/setup5.png)
+Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
-### 4. Explore your hub dashboard
+![setup6.png](images/setup6.png)
 
-The first page presents the CydYnni forecast showing when it's a good time to use electricity or not and the recent history of club consumption and generator output.
+### Explore your hub dashboard
+
+The first page that you see when you login shows your household electricity consumption overview.
+
+**Tip:** Hover over a bar in the bargraph to see the cost and consumption breakdown in the pie chart below the bar graph.
 
 ![setup7.png](images/setup7.png)
 
-The second page shows your score, which relates to how well you're managing to match your use to local electricity and cheap times for extra electricity.
+The CydYnni forecast page shows when it's a good time to use electricity or not and the recent history of club consumption and generator output.
 
 ![setup8.png](images/setup8.png)
 
-The 3rd page shows the club score and overview.
+The Club page shows the club score and overview.
 
 ![setup9.png](images/setup9.png)
 
-The 4rth tab shows a list of devices.
-
-![setup10.png](images/setup10.png)
+The 4rth tab shows tips on energy saving and moving power to lower cost times.
 
 ### 5. Setting up your WiFi Smart Plug
 
@@ -98,7 +98,7 @@ The Smart Plug will allow you to schedule whatever is plugged into it to come on
 
 **[http://192.168.4.1](http://192.168.4.1)**
     
-![setup11.png](images/setup11.png)
+![EmonESP1.png](images/EmonESP1.png)
 
 4\. Select the WIFI network you wish to connect to, enter the passkey and click connect. 
 
@@ -106,7 +106,7 @@ The green light on the smartplug will now turn on again. If the connection is su
 
 5\. The web interface will also show that the module has connected and its IP address:
 
-![setup12.png](images/setup12.png)
+![EmonESP2.png](images/EmonESP2.png)
 
 **Failed Connection**
 
@@ -114,12 +114,26 @@ If the smartplug fails to connect to the selected WIFI network the green LED wil
 
 ---
 
-6\. Connect back to you home network and navigate to the devices page, after a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
+### Device pairing on the hub
 
-![setup13.png](images/setup13.png)
+With the smartplug WIFI settings configured connect back to you home network and navigate to the devices page on the hub:
 
-7\. Click allow. Refresh the device interface until the smartplug device appears.
+![pairing1.png](images/pairing1.png)
 
-8\. Clicking on the smartplug device will bring up the scheduler interface:
+After a couple of minutes a notice will appear asking whether to allow device at the given ip address to connect:
 
-![setup14.png](images/setup14.png)
+![pairing2.png](images/pairing2.png)
+
+Click allow and wait a couple of minutes for the device to appear.
+
+### Scheduling the Smart Plug
+
+Try adjusting the schedule using the run period, complete by and ok to interrupt settings:
+
+![pairing4.png](images/pairing4.png)
+
+or/and turn the smartplug on and off directly by clicking on the on/off buttons:
+
+![demandshaper1.png](images/demandshaper1.png) 
+
+**Tip:** The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
