@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang, $tariffs;
-$v = 25;
+$v = 26;
 
 $app_path = $path."Modules/cydynni/app/";
 

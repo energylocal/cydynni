@@ -10,7 +10,8 @@
                 
                         <form id="loginform">
                         <input id="username" type="text" placeholder="Username or email..." name="username"><br><br>
-                        <input id="password" type="password" placeholder="Password..." name="password"><br><br>
+                        <input id="password" type="password" placeholder="Password..." name="password"><br>
+                        <?php echo t("Remember me"); ?>: <input id="rememberme" type="checkbox"><br><br>
                         <button id="login" class="btn"><?php echo t("Login");?></button><br><br>
                         </form>
                         

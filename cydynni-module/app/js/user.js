@@ -3,13 +3,14 @@ $("#loginform").on("submit",function(event){
 
     var username = $("#username").val();
     var password = $("#password").val();
-    var rememberme = 0;
+    var rememberme = $("#rememberme")[0].checked;
+    if (rememberme) rememberme = 1; else rememberme = 0;
 
     var result = {};
     $.ajax({
       type: "POST",
       url: path+"cydynni/login.json",
-      data: "&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&rememberme="+encodeURIComponent(rememberme),
+      data: "&username="+encodeURIComponent(username)+"&password="+encodeURIComponent(password)+"&rememberme="+rememberme,
       dataType: "text",
       async: false,
       success: function(data_in)

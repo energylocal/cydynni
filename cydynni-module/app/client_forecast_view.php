@@ -18,8 +18,11 @@
                 
                 <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                 <div class="visnav-block">
+                  <!--<div class="visnav-club club-zoomin">+</div>-->
+                  <!--<div class="visnav-club club-zoomout">-</div>-->
                   <div class="visnav-club club-left"><</div>
                   <div class="visnav-club club-right">></div>
+                  <div class="visnav-club club-year"><?php echo t("YEAR");?></div>
                   <div class="visnav-club club-month"><?php echo t("MONTH");?></div>
                   <div class="visnav-club club-week"><?php echo t("WEEK");?></div>
                   <div class="visnav-club club-day"><?php echo t("DAY");?></div>

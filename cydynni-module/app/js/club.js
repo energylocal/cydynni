@@ -458,11 +458,35 @@ function round_interval(interval) {
     return outinterval;
 }
 
+/*
+$(".club-zoomout").click(function(event) {
+    event.stopPropagation();
+    var time_window = view.end - view.start;
+    var middle = view.start + time_window / 2;
+    time_window = time_window * 2;
+    view.start = middle - (time_window/2);
+    view.end = middle + (time_window/2);
+    club_bargraph_load();
+    club_bargraph_draw();
+});
+
+$(".club-zoomin").click(function(event) {
+    event.stopPropagation();
+    var time_window = view.end - view.start;
+    var middle = view.start + time_window / 2;
+    time_window = time_window * 0.5;
+    view.start = middle - (time_window/2);
+    view.end = middle + (time_window/2);
+    club_bargraph_load();
+    club_bargraph_draw();
+});
+*/
+
 $(".club-left").click(function(event) {
     event.stopPropagation();
     var time_window = view.end - view.start;
-    view.end -= time_window * 0.5;
-    view.start -= time_window * 0.5;
+    view.end -= time_window * 0.2;
+    view.start -= time_window * 0.2;
     club_bargraph_load();
     club_bargraph_draw();
 });
@@ -470,8 +494,8 @@ $(".club-left").click(function(event) {
 $(".club-right").click(function(event) {
     event.stopPropagation();
     var time_window = view.end - view.start;
-    view.end += time_window * 0.5;
-    view.start += time_window * 0.5;
+    view.end += time_window * 0.2;
+    view.start += time_window * 0.2;
     club_bargraph_load();
     club_bargraph_draw();
 });
