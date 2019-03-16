@@ -350,21 +350,29 @@ function get_household_consumption_monthly($baseurl,$club_api_prefix,$token) {
     
     $data = array();
     
+    $dates = array();
+    
     foreach ($result->DATA as $m) {
     
-        $month = array();
-        $month["month"] = $m[16];
-        $month["monthdesc"] = $m[17];
-        $month["year"] = $m[18];
-        $month["days"] = $m[19];
-        $month["estimate"] = $m[20];
+        $date = $m[16].":".$m[18];
         
-        $month["demand"] = array("morning"=>$m[0],"midday"=>$m[1],"evening"=>$m[2],"overnight"=>$m[3],"total"=>$m[4]);
-        $month["generation"] = array("morning"=>$m[0]-$m[6],"midday"=>$m[1]-$m[7],"evening"=>$m[2]-$m[8],"overnight"=>$m[3]-$m[9],"total"=>$m[5]);
-        $month["import"] = array("morning"=>$m[6],"midday"=>$m[7],"evening"=>$m[8],"overnight"=>$m[9],"total"=>$m[10]);
-        $month["cost"] = array("morning"=>$m[11],"midday"=>$m[12],"evening"=>$m[13],"overnight"=>$m[14],"total"=>$m[15]);
-    
-        $data[] = $month;
+        if (!isset($dates[$date])) {
+            $dates[$date] = $date;
+            
+            $month = array();
+            $month["month"] = $m[16];
+            $month["monthdesc"] = $m[17];
+            $month["year"] = $m[18];
+            $month["days"] = $m[19];
+            $month["estimate"] = $m[20];
+            
+            $month["demand"] = array("morning"=>$m[0],"midday"=>$m[1],"evening"=>$m[2],"overnight"=>$m[3],"total"=>$m[4]);
+            $month["generation"] = array("morning"=>$m[0]-$m[6],"midday"=>$m[1]-$m[7],"evening"=>$m[2]-$m[8],"overnight"=>$m[3]-$m[9],"total"=>$m[5]);
+            $month["import"] = array("morning"=>$m[6],"midday"=>$m[7],"evening"=>$m[8],"overnight"=>$m[9],"total"=>$m[10]);
+            $month["cost"] = array("morning"=>$m[11],"midday"=>$m[12],"evening"=>$m[13],"overnight"=>$m[14],"total"=>$m[15]);
+        
+            $data[] = $month;
+        }
     }
     
     // $test = get_household_consumption_monthly_old($baseurl,$club_api_prefix,$token);
