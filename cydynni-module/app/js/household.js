@@ -248,7 +248,7 @@ function household_bargraph_load() {
         
         $.ajax({                                      
             //url: path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+household_start+"&end="+household_end+"&mode=daily&apikey="+session['apikey_read'],
-            url: path+"cydynni/household-daily-summary?start="+household_start+"&end="+household_end,
+            url: path+"cydynni/household-daily-summary?start="+household_start+"&end="+household_end+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {

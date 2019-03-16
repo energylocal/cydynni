@@ -478,6 +478,9 @@ function cydynni_controller()
             if (!IS_HUB) {
                 $route->format = "text";
                 if ($session['admin']) {
+                    require("Lib/email.php");
+                    require("Modules/cydynni/cydynni_emails.php");
+                    $cydynni_emails = new CydynniEmails($mysqli);
                     return $cydynni_emails->registeremail(get('userid'));
                 }
             }
@@ -517,6 +520,9 @@ function cydynni_controller()
             if (!IS_HUB) {
                 $route->format = "text";
                 if ($session['admin']) {
+                    require("Lib/email.php");
+                    require("Modules/cydynni/cydynni_emails.php");
+                    $cydynni_emails = new CydynniEmails($mysqli);
                     return $cydynni_emails->send_report_email(get('userid'));
                 }
             }
