@@ -66,6 +66,7 @@ class CydynniEmails
         if (!$row = $result->fetch_array()) return "user not found";
         
         $email = $row['email'];
+        $username = $row['username'];
         
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
@@ -75,14 +76,21 @@ class CydynniEmails
         $month_en = $date->format("F");
         $month_cy = translate($month_en,"cy_GB");
         
-        $subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
-        
+        //$subject = "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. | Your CydYnni report for $month_en is ready";  
+        $subject = "Adroddiad $month_cy, tudalen sgor newydd a cyfeiriad we | $month_en report, new score page and dashboard address!";  
+                
         $c = "";
-        $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan the dilyn y ddolen isod:<br>";
+        $c .= "Mae eich adroddiad CydYnni ar gyfer $month_cy yn barod. Mewngofnodwch i weld eich adroddiad gan dilyn y ddolen isod:<br>";
         $c .= "<i>Your CydYnni report for $month_en is now ready. Please login to view your report by following the link below:</i><br><br>";
         $c .= "<a href='https://dashboard.energylocal.org.uk/cydynni/report?apikey=".$row["apikey_read"]."&lang=cy'>Adroddiad CydYnni (Cymraeg)</a><br>";
         $c .= "<a href='https://dashboard.energylocal.org.uk/cydynni/report?apikey=".$row["apikey_read"]."&lang=en'>CydYnni Report (English)</a><br><br>";
 
+        $c .= "Mae yna hefyd welliannau i dudalen 'Eich Sgôr' ar y dangosfwrdd. Archwiliwch eich sgôr, eich defnydd a'ch costau dros amser.<br>";
+        $c .= "<i>There are also improvements to the 'Your Score' page of the dashboard. Explore your score, consumption and cost breakdown over time.</i><br><br>";
+
+        $c .= "Mae cyfeiriad gwe y dangosfwrdd hefyd wedi newid i: <a href='https://dashboard.energylocal.org.uk'>https://dashboard.energylocal.org.uk</a><br>";
+        $c .= "<i>The dashboard web address has also changed to: <a href='https://dashboard.energylocal.org.uk'>https://dashboard.energylocal.org.uk</a></i><br><br>";
+        
         $c .= "Diolch/Thankyou<br><br>CydYnni<br><br>";
         
         //$c .= "<i style='font-size:12px'>Nodwch: Ar hyn o bryd mae cyfran y hydro sydd yn gysylltiedig â'ch cyfrif yn amcangyfrif.</i><br>";
