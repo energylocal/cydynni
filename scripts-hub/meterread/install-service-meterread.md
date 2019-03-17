@@ -14,3 +14,7 @@ systemctl status meterread.service
 
 View the log with:
 `journalctl -f -u meterread`
+
+Install device template:
+
+    ln /home/pi/cydynni/edmi-am.json /var/www/emoncms/Modules/device/data
