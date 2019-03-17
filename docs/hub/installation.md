@@ -139,6 +139,14 @@ Install and start remoteaccess service:
     sudo nano /etc/hostname
     sudo nano /var/www/html/index.php
     
+### NMAP and meterread
+
+    sudo apt-get install nmap
+    
+https://github.com/energylocal/cydynni/blob/master/scripts-hub/meterread/install-service-meterread.md
+
+Change base ip address to relevant..
+
 ### Disable SSH
 
 Remove ssh from /boot
