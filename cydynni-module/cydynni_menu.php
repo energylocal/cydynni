@@ -19,7 +19,7 @@ $menu['tabs'][] = array(
 $menu['sidebar']['cydynni'][] = array(
     'id'=>"cydynni_menu",
     'text' => $_t["Dashboard"],
-    'path' => "".$apikeystr
+    'path' => "cydynni".$apikeystr
 );
 $menu['sidebar']['cydynni'][] = array(
     'id'=>"cydynni_report_menu",
