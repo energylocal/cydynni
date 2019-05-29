@@ -25,8 +25,21 @@ foreach ($remote_feeds as $f) {
     $remote_feeds_byname[$f->name] = $f;
 }
 
+$upload_array = array();
 foreach ($local_feeds as $name=>$feed) {
     if (isset($remote_feeds_byname[$name])) {
         print $name."\n";
+
+        $upload_array[] = array(
+            "action"=>"upload",
+            "local_id"=>$feed->id,
+            "remote_server"=>$remote_server,
+            "remote_id"=>$remote_feeds_byname[$name]->id,
+            "engine"=>$feed->engine,
+            "datatype"=>null,
+            "remote_apikey"=>$remote_apikey_read 
+        );
+        
+        print json_encode($upload_array)."\n";
     }
 }
