@@ -9,8 +9,25 @@ define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
 
+// -----------------------------------------------------------------
+
+// Mysql
 $mysqli = @new mysqli($server,$username,$password,$database,$port);
 if ($mysqli->connect_error) { echo "Can't connect to database:".$mysqli->connect_error; die; }
+
+// Redis
+$redis = new Redis();
+if (!$redis->connect($redis_server['host'], $redis_server['port'])) { 
+    $log->error("Could not connect to redis at ".$redis_server['host'].":".$redis_server['port']);  die('Check log\n'); 
+}
+if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
+if (!empty($redis_server['auth'])) {
+    if (!$redis->auth($redis_server['auth'])) { 
+        $log->error("Could not connect to redis at ".$redis_server['host'].", autentication failed"); die('Check log\n');
+    }
+}
+
+// -----------------------------------------------------------------
 
 // 1. Fetch local feeds by name
 $local_feeds = array();
@@ -26,21 +43,25 @@ foreach ($remote_feeds as $f) {
     $remote_feeds_byname[$f->name] = $f;
 }
 
-$upload_array = array();
-foreach ($local_feeds as $name=>$feed) {
-    if (isset($remote_feeds_byname[$name])) {
-        print $name."\n";
+// -----------------------------------------------------------------
 
-        $upload_array[] = array(
-            "action"=>"upload",
-            "local_id"=>$feed->id,
-            "remote_server"=>$remote_server,
-            "remote_id"=>$remote_feeds_byname[$name]->id,
-            "engine"=>$feed->engine,
-            "datatype"=>null,
-            "remote_apikey"=>$remote_apikey_read 
-        );
-        
-        print json_encode($upload_array)."\n";
+foreach ($local_feeds as $name=>$feed) {
+    if ($name!="halfhour_consumption" && $name!="use_kwh" && $name!="hydro" && $name!="community") {
+        if (isset($remote_feeds_byname[$name])) {
+            print $name."\n";
+
+            $params = array(
+                "action"=>"upload",
+                "local_id"=>$feed->id,
+                "remote_server"=>$remote_server,
+                "remote_id"=>$remote_feeds_byname[$name]->id,
+                "engine"=>$feed->engine,
+                "datatype"=>$feed->datatype,
+                "remote_apikey"=>$remote_apikey_read 
+            );
+            $redis->lpush("sync-queue",json_encode($params));
+        }
     }
 }
+
+// -----------------------------------------------------------------
