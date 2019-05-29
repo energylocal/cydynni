@@ -3,6 +3,7 @@
 $userid = 1;
 $remote_server = "https://dashboard.energylocal.org.uk";
 $remote_apikey_read = "";
+require "settings.php";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
