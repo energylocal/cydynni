@@ -44,7 +44,7 @@ foreach ($remote_feeds as $f) {
 }
 
 // -----------------------------------------------------------------
-
+$i=0;
 foreach ($local_feeds as $name=>$feed) {
     if ($name!="halfhour_consumption" && $name!="use_kwh" && $name!="hydro" && $name!="community") {
         if (isset($remote_feeds_byname[$name])) {
@@ -60,8 +60,14 @@ foreach ($local_feeds as $name=>$feed) {
                 "remote_apikey"=>$remote_apikey_read 
             );
             $redis->lpush("sync-queue",json_encode($params));
+            $i++;
         }
     }
 }
 
+if ($i>0) {
+    $update_script = "/home/pi/sync/emoncms-sync.sh";
+    $update_logfile = "/home/pi/data/emoncms-sync.log";
+    $redis->rpush("service-runner","$update_script>$update_logfile");
+}
 // -----------------------------------------------------------------
