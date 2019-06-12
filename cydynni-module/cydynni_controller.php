@@ -186,6 +186,19 @@ function cydynni_controller()
             } else {
                 return "session not valid";
             }
+
+/*
+        case "household-summary-monthly":
+            $format = "json";
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+                return $cydynni->getHouseholdSummaryMonthly($userid,get("month"),$session["apikey_read"]);
+            } else {
+                return "session not valid";
+            }
+            break;
+*/
+
             break;
             
         case "club-summary-day":
