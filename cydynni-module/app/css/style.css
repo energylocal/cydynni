@@ -5,6 +5,8 @@ html, body {
 body {
     margin:0;
     padding:0;
+}
+.content-container {
     font-family: Montserrat, Veranda, sans-serif;
     background-color:WhiteSmoke;
 }
@@ -61,11 +63,11 @@ a:visited {
 }
 
 .active {
-    background-color:#209ed3;
+    /* background-color:#209ed3; */
 }
 
 .active:hover {
-    background-color:#209ed3;
+    /* background-color:#209ed3; */
 }
 
 .title-wrapper {
@@ -550,14 +552,14 @@ textarea {
     height: 38px;
     padding:6px 10px;
     color:#fff;
-    background: rgb(41,171,226);
+    /* background: rgb(41,171,226); */
     border: 0;
     font-weight:bold;
     font-size: 18px;
 }
 
 .btn:hover {
-    background: rgb(61,191,246);
+    /* background: rgb(61,191,246); */
     cursor:pointer;
 }
 

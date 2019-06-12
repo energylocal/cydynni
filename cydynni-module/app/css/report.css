@@ -1,12 +1,13 @@
 body {
-    background-color:#eee;
     text-align:left;
-    font-family: Montserrat, Veranda, sans-serif;
     padding:0;
     margin:0;
     height:100%;
 }
-
+.content-container {
+    font-family: Montserrat, Veranda, sans-serif;
+    background-color:WhiteSmoke;
+}
 .top-nav {
     background-color:#29abe2; 
     color: #fff; 
