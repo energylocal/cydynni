@@ -8,14 +8,6 @@ $app_path = $path."Modules/cydynni/app/";
 <link rel="stylesheet" href="<?php echo $path; ?>Lib/misc/sidebar.css?v=<?php echo $v; ?>">
 
 <div id="wrapper">
-  <div class="sidenav">
-    <div class="sidenav-inner">
-      <ul class="sidenav-menu">
-      </ul>
-    </div>
-  </div>
-
-  <div style="height:10px"></div>
   
   <div class="page">
     <div style="background-color:#d2279c; height:15px"></div>
