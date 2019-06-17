@@ -7,7 +7,7 @@ $app_path = $path."Modules/cydynni/app/";
 
 ?>
 <style>body { line-height:unset !important; }</style>
-
+    <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
     <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>
     <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.time.min.js"></script>
@@ -17,7 +17,7 @@ $app_path = $path."Modules/cydynni/app/";
     <script type="text/javascript" src="<?php echo $app_path; ?>js/vis.helper.js"></script>
     <script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
     
-    <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
+
     
         <div class="wrap">
             <div class="app">
