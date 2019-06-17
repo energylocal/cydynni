@@ -10,7 +10,7 @@ $app_path = $path."Modules/cydynni/app/";
 <div id="wrapper">
   
   <div class="page">
-    <div style="background-color:#d2279c; height:15px"></div>
+    <div style="background-color:#d2279c; height:15px;margin-top:13px"></div>
     <div class="inner">
       <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
       <div id="estimated_days" style="color:#666"></div>
@@ -165,15 +165,9 @@ $.ajax({
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact cydynni@energylocal.co.uk or try again later.");
         else {
-            household = result;
-            
-            var out = "";
-            for (var i=0; i<result.length; i++) {
-                out += "<li><a href='#"+i+"'>"+t(months[result[i].month-1])+" "+result[i].year+"</a></li>";
-            }
-            $(".sidenav-menu").html(out);
-        
-            $.ajax({                                      
+            $container = $('#sidebar_cydynni');
+            buildMenuItems($container, result);
+            $.ajax({
                 url: path+"cydynni/club-summary-monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
@@ -183,8 +177,38 @@ $.ajax({
             });
         }
     }
-});
+})
 
+function buildMenuItems($container,list){
+    $container.append($('\
+    <section class="collapse in include-container" id="cydynni-sidebar-include">\
+    <ul class="nav sidebar-menu sub-nav"></ul>\
+    </section>'));
+
+    $menu = $("#cydynni-sidebar-include ul");
+    out = $menu.html();
+    // add to existing menu
+    list.forEach(function(item,i) {
+        name = t(months[item.month-1])+" "+item.year;
+        out += '<li class="collapse in"><a href="#'+i+'">' + name + '</a></li>'
+    })
+    $menu.html(out);
+
+    // open/close 2nd&3rd level menu items
+    $parentMenu = $('#menu-cydynni')
+    $parentMenu.find('li.collapse').removeClass('in');
+    $menuTrigger = $parentMenu.find('li.active').addClass('in');
+
+    $menuTrigger.find('a').click(function(event){
+        $this = $(this)
+        $this.find('.third-level-indicator').toggle()
+        $parentMenu.find('li.collapse').filter(':not(.active)').toggleClass('in');
+        $menu.toggle();
+        event.preventDefault();
+    })
+    .append('<span class="pull-right third-level-indicator"> <svg class="icon"><use xlink:href="#icon-arrow_back"></use></svg></span>')
+    
+}
 function household_pie_draw() {
 
     width = 300;
