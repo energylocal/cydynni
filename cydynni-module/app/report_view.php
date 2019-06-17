@@ -165,6 +165,7 @@ $.ajax({
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact cydynni@energylocal.co.uk or try again later.");
         else {
+            household = result;
             $container = $('#sidebar_cydynni');
             buildMenuItems($container, result);
             $.ajax({
