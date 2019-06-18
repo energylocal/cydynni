@@ -5,7 +5,6 @@ $app_path = $path."Modules/cydynni/app/";
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/report.css" />
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
-<link rel="stylesheet" href="<?php echo $path; ?>Lib/misc/sidebar.css?v=<?php echo $v; ?>">
 
 <div id="wrapper">
   
@@ -121,7 +120,6 @@ $app_path = $path."Modules/cydynni/app/";
     </div>
   </div>
 </div>
-<script type="text/javascript" src="<?php echo $path; ?>Lib/misc/sidebar.js?v=<?php echo $v; ?>"></script>
 
 <script>
 if (window.init_sidebar!=undefined) init_sidebar({menu_element:"#cydynni_report_menu"});
