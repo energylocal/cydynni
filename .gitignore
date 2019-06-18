@@ -4,4 +4,5 @@ scripts-hub/ca.crt
 scripts-hub/cydynnimqtt.log
 scripts-hub/mosquitto-repo.gpg.key
 scripts-hub/mqtt.log
+scripts-hub/provisionkey.php
 *.log
