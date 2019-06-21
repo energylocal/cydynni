@@ -26,7 +26,7 @@ echo "emoncms:device:"$branch":"$commit
 
 echo "-----------------------------------------"
 
-/home/pi/emonpi/service-runner-update.sh > /dev/null 2>&1
+/home/pi/emonpi/service-runner-update.sh > /home/pi/data/emonpiupdate.log
 
 cd /home/pi/demandshaper
 git pull
