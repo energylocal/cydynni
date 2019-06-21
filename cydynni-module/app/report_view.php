@@ -1,5 +1,5 @@
 <?php global $path, $translation, $session; 
-$v=2;
+$v=3;
 $app_path = $path."Modules/cydynni/app/";
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
