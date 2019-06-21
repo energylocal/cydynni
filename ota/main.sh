@@ -4,10 +4,6 @@ cd $DIR
 
 echo "-----------------------------------------"
 
-/home/pi/emonpi/service-runner-update.sh
-
-echo "-----------------------------------------"
-
 cd /home/pi/cydynni
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
@@ -30,15 +26,13 @@ echo "emoncms:device:"$branch":"$commit
 
 echo "-----------------------------------------"
 
+/home/pi/emonpi/service-runner-update.sh > /dev/null 2>&1
+
+cd /home/pi/cydynni
+git pull
+cd
+
 cd /home/pi/demandshaper
-git pull
-cd
-
-cd /var/www/emoncms
-git pull
-cd
-
-cd /var/www/emoncms/Modules/device
 git pull
 cd
 
