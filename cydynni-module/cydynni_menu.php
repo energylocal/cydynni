@@ -1,5 +1,5 @@
 <?php
-    // global $mysql, $redis, $session;
+    global $session;
     // $userid = (int) $session["userid"];
     $apikeystr = "";
     if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
