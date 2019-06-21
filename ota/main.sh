@@ -28,10 +28,6 @@ echo "-----------------------------------------"
 
 /home/pi/emonpi/service-runner-update.sh > /dev/null 2>&1
 
-cd /home/pi/cydynni
-git pull
-cd
-
 cd /home/pi/demandshaper
 git pull
 cd
