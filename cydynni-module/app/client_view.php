@@ -145,6 +145,8 @@ if (url.searchParams!=undefined) {
     page = url.search.replace("?","");
 }
 
+if (page=="") page = "forecast";
+
 if (page=="forecast") show_page("forecast");
 else if (page=="household") show_page("household");
 else if (page=="club") show_page("club");
