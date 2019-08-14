@@ -8,7 +8,7 @@
     // navbar link
     $menu['tabs'][] = array(
         'icon'=>'cydynni',
-        'title'=> dgettext("dashboard_messages","Dashboards"),
+        'text'=> dgettext("dashboard_messages","Dashboards"),
         'path'=> "cydynni".$apikeystr,
         'order' => 4,
         'data'=> array('sidebar' => '#sidebar_cydynni')
