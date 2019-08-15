@@ -1,6 +1,8 @@
-.content-container {
-    font-family: Montserrat, Veranda, sans-serif;
+body.cydynni #wrap {
     background-color:WhiteSmoke;
+}
+body.cydynni .content-container {
+    font-family: Montserrat, Veranda, sans-serif;
 }
 
 a {
@@ -28,7 +30,7 @@ a:visited {
 
 .app {
     /*margin: 0 auto;*/
-    max-width: 1100px;
+    /* max-width: 1100px; */
 }
 
 .navigation {
@@ -39,13 +41,19 @@ a:visited {
 }
 
 .navigation li {
-    display:inline-block;
     width:25%;
     color:#fff;
     float:left;
     font-weight:bold;
     cursor:pointer;
 }
+
+/* style override when $fullwidth setting is true */
+body.cydynni #wrap .content-container .content{
+    flex-grow: unset!important; /* set to a fixed width */
+    width: 1100px!important; /* set to a specific width */
+}
+/* end of style override */
 
 .navigation li[name=forecast] div { background-color: var(--forecast-bg-color); }
 .navigation li[name=household] div { background-color: var(--household-bg-color); }
