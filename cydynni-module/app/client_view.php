@@ -7,66 +7,48 @@ $app_path = $path."Modules/cydynni/app/";
 
 ?>
 <style>body { line-height:unset !important; }</style>
-    <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
-    <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
-    <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.time.min.js"></script>
-    <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
-    <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
-    <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
-    <script type="text/javascript" src="<?php echo $app_path; ?>js/vis.helper.js"></script>
-    <script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
+<!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.time.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
+<script type="text/javascript" src="<?php echo $app_path; ?>js/vis.helper.js"></script>
+<script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
+
+<div class="app">
+    <br>
+    <ul class="navigation">
+        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
+        <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+        <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
+        <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
+    </ul>
+
+    <div class="page" name="forecast">
+        <?php include("Modules/cydynni/app/client_forecast_view.php") ?>
+    </div>
+
+    <div class="page" name="household">
+        <?php include("Modules/cydynni/app/client_household_view.php") ?>
+    </div>
+   
+    <div class="page" name="club">
+        <?php include("Modules/cydynni/app/client_club_view.php") ?>
+    </div>
     
+    <div class="page" name="tips">
+        <?php include("Modules/cydynni/app/client_tips_view.php") ?>
+    </div>
 
-    
-        <div class="wrap">
-            <div class="app">
-                <!--
-                <div class="app-inner">
-                    <div class="title-wrapper">
-                        <img class="logo-full" src='<?php echo $app_path; ?>images/<?php echo t("EnergyLocalEnglish.png"); ?>'>
-                        <img class="logo-mobile" src='<?php echo $app_path; ?>images/logo.png'>
-                        <div class="app-title">
-                        <div class="app-title-content"><?php echo t("Energy<br>Dashboard"); ?>
-                        </div>
-                    </div>
-                </div>
-                -->
-                <br>
-                <ul class="navigation">
-                    <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
-                    <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
-                    <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
-                    <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
-                </ul>
+    <div class="footer">
+        <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
+        <div>Energy Local</div>
+        <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
+        <div style="font-weight:normal; font-size:14px; padding-top:25px"><a href="<?php echo $path; ?>find"><i class="icon-search icon-white"></i> <?php echo t("Find Devices"); ?></a></div>
 
-        <div class="page" name="forecast">
-            <?php include("Modules/cydynni/app/client_forecast_view.php") ?>
-        </div>
-
-        <div class="page" name="household">
-            <?php include("Modules/cydynni/app/client_household_view.php") ?>
-        </div>
-       
-        <div class="page" name="club">
-            <?php include("Modules/cydynni/app/client_club_view.php") ?>
-        </div>
-        
-        <div class="page" name="tips">
-            <?php include("Modules/cydynni/app/client_tips_view.php") ?>
-        </div>
-
-        <div class="footer">
-            <div style="float:right; font-weight:bold"><a href="mailto:mary@energylocal.co.uk"><?php echo t("Contact Us");?></a> | <a href="http://www.energylocal.co.uk/faqs/"><?php echo t("FAQ");?></a></div>
-            <div>Energy Local</div>
-            <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
-            <div style="font-weight:normal; font-size:14px; padding-top:25px"><a href="<?php echo $path; ?>find"><i class="icon-search icon-white"></i> <?php echo t("Find Devices"); ?></a></div>
-
-        </div>
-        
-        <div style="clear:both; height:85px"></div>
-
-    </div></div>
+    </div>
 </div>
 
 <script>

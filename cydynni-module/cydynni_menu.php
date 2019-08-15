@@ -8,7 +8,7 @@
     // navbar link
     $menu['tabs'][] = array(
         'icon'=>'cydynni',
-        'text'=> dgettext("dashboard_messages","Dashboards"),
+        'text'=> dgettext("dashboard_messages","Dashboard"),
         'path'=> "cydynni".$apikeystr,
         'order' => 4,
         'data'=> array('sidebar' => '#sidebar_cydynni')
@@ -17,12 +17,14 @@
     $menu['sidebar']['cydynni'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Dashfwrdd" : "Dashboard",
         'path'=> "cydynni".$apikeystr, 
-        'order' => 1
+        'order' => 1,
+        'icon'=>'dashboard'
     );
     $menu['sidebar']['cydynni'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Adroddiad" : "Report",
         'path'=> "cydynni/report".$apikeystr, 
-        'order' => 2
+        'order' => 2,
+        'icon'=>'folder-plus'
     );
 
     // $cydynni = new Cydynni($mysqli,$redis);

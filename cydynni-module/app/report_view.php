@@ -6,118 +6,116 @@ $app_path = $path."Modules/cydynni/app/";
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/report.css" />
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
 
-<div id="wrapper">
   
-  <div class="page">
-    <div style="background-color:#d2279c; height:15px;margin-top:13px"></div>
-    <div class="inner">
-      <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
-      <div id="estimated_days" style="color:#666"></div>
-      <br><br>
-      
-      <div style="text-align:center">
-        <div class="box3">
-          <h2><?php echo t("ELECTRICITY"); ?></h2>
-          <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
-              <canvas id="household_piegraph1_placeholder"></canvas>
-          </div>
-          <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
-              <canvas id="household_hrbar1_placeholder"></canvas>
-          </div>
-          <br>
-        </div>
+<div class="page">
+  <div style="background-color:#d2279c; height:15px;margin-top:20px"></div>
+  <div class="inner">
+    <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
+    <div id="estimated_days" style="color:#666"></div>
+    <br><br>
     
-        <div class="box3">
-          <h2><?php echo t("COST"); ?></h2>
-          <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
-              <canvas id="household_piegraph2_placeholder"></canvas>
-          </div>
-          <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
-              <canvas id="household_hrbar2_placeholder"></canvas>
-          </div>
-          <br>
+    <div style="text-align:center">
+      <div class="box3">
+        <h2><?php echo t("ELECTRICITY"); ?></h2>
+        <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+            <canvas id="household_piegraph1_placeholder"></canvas>
         </div>
-        
-        <div class="box3">
-          <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-            <table class="keytable">
-              <tr>
-                <td><div class="key" style="background-color:#29abe2"></div></td>
-                <td><b><?php echo t("Hydro Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
-              </tr>
-              <tr>
-                <td><div class="key" style="background-color:#ffdc00"></div></td>
-                <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
-              </tr>
-              <tr>
-                <td><div class="key" style="background-color:#4abd3e"></div></td>
-                <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
-              </tr>
-              <tr>
-                <td><div class="key" style="background-color:#c92760"></div></td>
-                <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
-              </tr>
-              <tr>
-                <td><div class="key" style="background-color:#274e3f"></div></td>
-                <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
-              </tr>
-            </table>
-          </div>
+        <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
+            <canvas id="household_hrbar1_placeholder"></canvas>
         </div>
-        <div style="clear:both"></div>
-        <!-- =================================== -->
-        <br><br>
-
-        <div style="text-align:left; padding-left:20px">
-          <h3><?php echo t("Cost breakdown: ");?><span class="m1-name"></span></h3>
-          <table style="width:100%">
-          <tr>
-            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="total_kwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span id="days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
-            <td style="background-color:#eee; border:2px #fff solid; padding:10px">£<span id="elec_cost"></span><br>£<span id="standing_charge"></span><br>£<span id="vat"></span></td>
-          </tr>
-          <tr>
-            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b><?php echo t("Total cost of electricity supply");?></b><td>
-            <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b>£<span id="total_cost"></span></b></td>
-          </tr>
+        <br>
+      </div>
+  
+      <div class="box3">
+        <h2><?php echo t("COST"); ?></h2>
+        <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+            <canvas id="household_piegraph2_placeholder"></canvas>
+        </div>
+        <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
+            <canvas id="household_hrbar2_placeholder"></canvas>
+        </div>
+        <br>
+      </div>
+      
+      <div class="box3">
+        <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
+          <table class="keytable">
+            <tr>
+              <td><div class="key" style="background-color:#29abe2"></div></td>
+              <td><b><?php echo t("Hydro Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
+            </tr>
+            <tr>
+              <td><div class="key" style="background-color:#ffdc00"></div></td>
+              <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
+            </tr>
+            <tr>
+              <td><div class="key" style="background-color:#4abd3e"></div></td>
+              <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
+            </tr>
+            <tr>
+              <td><div class="key" style="background-color:#c92760"></div></td>
+              <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
+            </tr>
+            <tr>
+              <td><div class="key" style="background-color:#274e3f"></div></td>
+              <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
+            </tr>
           </table>
         </div>
       </div>
+      <div style="clear:both"></div>
+      <!-- =================================== -->
+      <br><br>
+
+      <div style="text-align:left; padding-left:20px">
+        <h3><?php echo t("Cost breakdown: ");?><span class="m1-name"></span></h3>
+        <table style="width:100%">
+        <tr>
+          <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="total_kwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span id="days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
+          <td style="background-color:#eee; border:2px #fff solid; padding:10px">£<span id="elec_cost"></span><br>£<span id="standing_charge"></span><br>£<span id="vat"></span></td>
+        </tr>
+        <tr>
+          <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b><?php echo t("Total cost of electricity supply");?></b><td>
+          <td style="background-color:#eee; border:2px #fff solid; padding:10px"><b>£<span id="total_cost"></span></b></td>
+        </tr>
+        </table>
+      </div>
     </div>
   </div>
+</div>
 
-  <div class="page">
-    <div style="background-color:#d2279c; height:15px"></div>
-    <div class="inner">
+<div class="page">
+  <div style="background-color:#d2279c; height:15px"></div>
+  <div class="inner">
+  
+    <div class="column box2" style="text-align:center;">
+    <h2><?php echo t("Your energy use");?></h2>
+    <p><b><?php echo t("Over the month you scored");?> <span class="score"></span>/100</b><br><span class="message"></span></p>
+
+    <img src="<?php echo $app_path; ?>images/bluebadge.png" style="width:45px">
+    <img id="star1" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+    <img id="star2" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+    <img id="star3" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+    <img id="star4" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+    <img id="star5" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
+    <br><br>
     
-      <div class="column box2" style="text-align:center;">
-      <h2><?php echo t("Your energy use");?></h2>
-      <p><b><?php echo t("Over the month you scored");?> <span class="score"></span>/100</b><br><span class="message"></span></p>
-
-      <img src="<?php echo $app_path; ?>images/bluebadge.png" style="width:45px">
-      <img id="star1" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
-      <img id="star2" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
-      <img id="star3" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
-      <img id="star4" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
-      <img id="star5" src="<?php echo $app_path; ?>images/star20blue.png" style="width:45px">
-      <br><br>
-      
-      </div>
-      <div class="column box2" style="text-align:center;">
-      <h2><?php echo t("Our club power"); ?></h2>
-      <p><b><?php echo t("Over the month we scored"); ?> <span class="club_score"></span>/100</b><br><span class="club_message"></span></p>
-
-      <img src="<?php echo $app_path; ?>images/yellowbadge.png" style="width:45px;">
-      <img id="club_star1" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
-      <img id="club_star2" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
-      <img id="club_star3" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
-      <img id="club_star4" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
-      <img id="club_star5" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
-      
-      </div>
-      
-      <div style="clear:both"></div>
-      
     </div>
+    <div class="column box2" style="text-align:center;">
+    <h2><?php echo t("Our club power"); ?></h2>
+    <p><b><?php echo t("Over the month we scored"); ?> <span class="club_score"></span>/100</b><br><span class="club_message"></span></p>
+
+    <img src="<?php echo $app_path; ?>images/yellowbadge.png" style="width:45px;">
+    <img id="club_star1" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+    <img id="club_star2" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+    <img id="club_star3" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+    <img id="club_star4" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+    <img id="club_star5" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
+    
+    </div>
+    
+    <div style="clear:both"></div>
+    
   </div>
 </div>
 
