@@ -37,7 +37,7 @@ git pull
 cd
 
 echo "emoncms db update: "
-php /home/pi/emonpi/emoncmsdbupdate.php
+php /home/pi/emonpi/update/emoncmsdbupdate.php
 
 echo "restarting services: "
 sudo systemctl restart emoncms_mqtt.service
