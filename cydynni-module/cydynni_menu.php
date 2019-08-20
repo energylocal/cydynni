@@ -53,14 +53,16 @@
             
             $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
             
+            $i = 0;
             foreach ($result as $item) {
                 $name = $months[$item['month'] - 1];
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
-                    'path' => 'cydynni/report'.$apikeystr,
+                    'path' => 'cydynni/report#'.$i.$apikeystr,
                     'text' => sprintf("%s %s",$name,$year)
                 );
+                $i++;
             }
         }
     }
