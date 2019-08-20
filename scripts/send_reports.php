@@ -39,44 +39,46 @@ require "Lib/email.php";
 require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 
-chdir("/var/www/cydynni");
-
-require("lib/cydynni_emails.php");
+require("Modules/cydynni/cydynni_emails.php");
 $cydynni_emails = new CydynniEmails($mysqli);
 
-require "meter_data_api.php";
+require "Modules/cydynni/meter_data_api.php";
 $path = get_application_path();
 
+global $translation;
 $translation = new stdClass();
-$translation->cy = json_decode(file_get_contents("locale/cy"));
+$translation->cy_GB = json_decode(file_get_contents("Modules/cydynni/app/locale/cy_GB"));
 
 $result_users = $mysqli->query("SELECT * FROM users");
 while ($row = $result_users->fetch_object())
 {
     // Print user
-    print $row->id." ".$row->username." ".$row->email." ";
-    $userid = $row->id;
+    if ($row->email!="noaccess@email.com") {
+    
+        print $row->id." ".$row->username." ".$row->email." ";
+        $userid = $row->id;
 
-    $result_cydynni = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
-    $cydynni = $result_cydynni->fetch_object();
+        $result_cydynni = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
+        $cydynni = $result_cydynni->fetch_object();
 
-    print $cydynni->reportdate;
+        print $cydynni->reportdate;
 
-    if ($cydynni->mpan && array_search($cydynni->mpan,$skip)===false) {
-        $report = get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$cydynni->token);
-        if ($report!="Invalid data") {
-            // print "Report: ".json_encode($report);
-            // print $user->send_report_email($userid);
-	          if (count($report)) {
-                print " [".$report[0]["estimate"]."] ".$report[0]["demand"]["total"]." ";
+        if ($cydynni->mpan && array_search($cydynni->mpan,$skip)===false) {
+            $report = get_household_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$cydynni->token);
+            if ($report!="Invalid data") {
+                // print "Report: ".json_encode($report);
+                // print $user->send_report_email($userid);
+	              if (count($report)) {
+                    print " [".$report[0]["estimate"]."] ".$report[0]["demand"]["total"]." ";
 
-                if (($report[0]["estimate"]*1)<15) {
-                    //print "sending";
-                    if ($cydynni->reportdate!="13-02-2019") {
-                        print $cydynni_emails->send_report_email($userid);
+                    if (($report[0]["estimate"]*1)<15) {
+                        //print "sending";
+                        if ($cydynni->reportdate!="17-07-2019") {
+                            print $cydynni_emails->send_report_email($userid);
+                        }
                     }
+                    
                 }
-                
             }
         }
     }

@@ -534,7 +534,7 @@ function cydynni_controller()
             break;
             
         case "setupguide":
-            header("Location: https://github.com/TrystanLea/cydynni/blob/master/docs/userguide.md");
+            header("Location: https://github.com/energylocal/cydynni/blob/master/docs/userguide.md");
             die;
             break;
 

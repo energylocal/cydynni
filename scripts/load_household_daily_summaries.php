@@ -23,6 +23,14 @@ while ($row = $result_users->fetch_object())
     if ($key!="") 
     {
         $data = array();
+        
+        $household_summaries = array();
+        
+        //$redis->set("household:daily:summary:$userid",json_encode(array()));
+        $tmp = json_decode($redis->get("household:daily:summary:$userid"));
+        for ($i=0; $i<count($tmp); $i++) {
+            $household_summaries[$tmp[$i][0]] = $tmp[$i];
+        }
 
         // Demand
         $str = file_get_contents("https://www.nfpas-auctions.co.uk/rest/crudService/1-$key-6");
@@ -60,11 +68,37 @@ while ($row = $result_users->fetch_object())
       
             // remove keys
             $tmp = array(); 
-            foreach ($data as $time=>$day) $tmp[] = $day;
+            foreach ($data as $time=>$day) {
+                $valid = true; 
+                for ($i=0; $i<count($day[1]); $i++) if ($day[1][$i]===null) $valid = false;
+                for ($i=0; $i<count($day[2]); $i++) if ($day[2][$i]===null) $valid = false;
+                for ($i=0; $i<count($day[3]); $i++) if ($day[3][$i]===null) $valid = false;
+                                                      
+                if ($valid) {
+                    $tmp[] = $day;
+                } else {
+                    print $time." ".json_encode($day)."\n";
+                }
+            }
             $data = $tmp;
 
-            $redis->set("household:daily:summary:$userid",json_encode($data));
-            print json_encode($data)."\n\n";
+            if (count($data)>0) {
+            
+                // transpose to associative array
+                for ($i=0; $i<count($data); $i++) {
+                    $household_summaries[$data[$i][0]] = $data[$i];
+                }
+
+                $data = array();
+                foreach ($household_summaries as $summary) {
+                    $data[]=$summary;
+                }
+            
+                $redis->set("household:daily:summary:$userid",json_encode($data));
+                print json_encode($data)."\n\n";
+            } else {
+                print "error no data\n";
+            }
             //foreach ($data as $day) {
             //    print json_encode($day)."\n";
             //}

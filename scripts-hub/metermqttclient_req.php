@@ -12,6 +12,8 @@ require "Lib/EmonLogger.php";
 // Load MQTT server settings
 require "/home/cydynni/cydynni/scripts-hub/settings.php";
 
+$usernames = array();
+
 // -----------------------------------------------------------------
 // Parse mpans
 // -----------------------------------------------------------------
@@ -39,6 +41,9 @@ if ( $mysqli->connect_error ) {
 }
 // Set charset to utf8
 $mysqli->set_charset("utf8");
+
+$result = $mysqli->query("SELECT * FROM users");
+while($row = $result->fetch_object()) $usernames[$row->id] = $row->username;
 
 // -----------------------------------------------------------------
 // Redis
@@ -203,7 +208,7 @@ function disconnect() {
 
 function message($message)
 {
-    global $redis, $reply_rx, $reply_time, $meter_userid, $meter_feedid, $feed;
+    global $redis, $reply_rx, $reply_time, $meter_userid, $meter_feedid, $feed, $usernames;
     $topic = $message->topic;
     $value = $message->payload;
     
@@ -218,7 +223,7 @@ function message($message)
                 $reply_rx[$meter] = true;
                 $req_time = number_format(microtime(true) - $reply_time[$meter],3);
                 if ($req_time<5.0) {
-                    print $userid."\t".$feedid."\t".$meter."\t".round($data->value*1000)."W\t$req_time\n";
+                    print $userid."\t".str_pad($usernames[$userid],20)."\t".$feedid."\t".$meter."\t".round($data->value*1000)."W\t$req_time\n";
                     if ($feedid) $feed->insert_data($feedid,time(),time(),round($data->value*1000));
                 }
             }
