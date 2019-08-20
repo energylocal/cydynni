@@ -30,7 +30,7 @@
     if ($session["read"]) {
         $userid = (int) $session["userid"];
         if ($result = $redis->get("household:summary:monthly:$userid")) {
-            $result = json_decode($result);
+            $result = json_decode($result,true);
             
             foreach ($result as $item) {
                 $name = $item['month'] - 1;
