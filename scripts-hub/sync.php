@@ -136,3 +136,9 @@ if ($result) {
     $redis->set("household:daily:summary:$userid",$result);
     print "-- household:daily:summary\n";
 }
+
+$result = http_request("GET","$base_url/cydynni/household-summary-monthly",array("apikey"=>$user->apikey_read));
+if ($result) {
+    $redis->set("household:summary:monthly:$userid",$result);
+    print "-- household:summary:monthly\n";
+}

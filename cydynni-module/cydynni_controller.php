@@ -170,18 +170,8 @@ function cydynni_controller()
             $format = "json";
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
-            
-                $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
-                $row = $result->fetch_object();
-                if (isset($row->token)) $session["token"] = $row->token; else $session["token"] = "";
-
-                $month = get("month");
-                if (IS_HUB) {
-                    return json_decode(file_get_contents("$base_url/household-summary-monthly?month=$month&apikey=".$session["apikey_read"]));
-                }else{
-                    if ($result = $redis->get("household:summary:monthly:$userid")) {
-                        return json_decode($result);
-                    }
+                if ($result = $redis->get("household:summary:monthly:$userid")) {
+                    return json_decode($result);
                 }
             } else {
                 return "session not valid";
