@@ -27,8 +27,12 @@ a:visited {
 }
 
 .app {
-    /*margin: 0 auto;*/
-    max-width: 1100px;
+    /*margin: 0 auto;
+    max-width: 1100px;*/
+}
+
+body.cydynni .content-container {
+    max-width:1100px;
 }
 
 .navigation {
