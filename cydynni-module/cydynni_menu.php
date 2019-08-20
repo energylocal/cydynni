@@ -8,7 +8,7 @@
     // navbar link
     $menu['tabs'][] = array(
         'icon'=>'cydynni',
-        'text'=> dgettext("dashboard_messages","Dashboard"),
+        'text'=> $session["lang"]=="cy_GB" ? "Dangosfwrdd" : "Dashboard",
         'path'=> "cydynni".$apikeystr,
         'order' => 2,
         'data'=> array('is-link' => true)
