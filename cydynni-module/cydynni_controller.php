@@ -95,7 +95,9 @@ function cydynni_controller()
             }
 
             $route->format = "html";
-            return view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+
+            $content = view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            return array('content'=>$content,'page_classes'=>array('collapsed'));
             break;
 
         case "report":
