@@ -550,6 +550,12 @@ $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, ite
         household_end = household_start + (3600*24*1000);
         mode = "halfhourly";
         household_bargraph_load();
+        
+        if (session.feeds.meter_power!=undefined) {
+            household_power_start = household_start
+            household_power_end = household_end
+            household_powergraph_load()
+        }
     }
 });
 
@@ -581,15 +587,13 @@ function household_realtime() {
 function household_powergraph_load() {
 
   var npoints = 1200;
-  interval = ((household_power_end - household_power_start) * 0.001) / npoints;
-  //interval = round_interval(interval);
-  
-  interval = Math.round(interval/10)*10;
-  if (interval<10) interval = 10;
+  var household_power_interval = ((household_power_end - household_power_start) * 0.001) / npoints;  
+  household_power_interval = Math.round(household_power_interval/10)*10;
+  if (household_power_interval<10) household_power_interval = 10;
     
   $.ajax({                  
     url: path+'feed/average.json',             
-    data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
+    data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+household_power_interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
     dataType: 'json',               
     async: true,
     success: function(data) {  
