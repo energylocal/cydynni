@@ -1,21 +1,25 @@
-.content-container {
-    font-family: Montserrat, Veranda, sans-serif;
+body {
     background-color:WhiteSmoke;
 }
 
+.content-container {
+    font-family: Montserrat, Veranda, sans-serif;
+    max-width:1100px;
+}
+
 a {
-   text-decoration:none;
-   color:#fff;
+    text-decoration:none;
+    color:#fff;
 }
 
 a:hover {
-   text-decoration:none;
-   color:#fff;
+    text-decoration:none;
+    color:#fff;
 }
 
 a:visited {
-   text-decoration:none;
-   color:#fff;
+    text-decoration:none;
+    color:#fff;
 }
 
 :root {
@@ -24,15 +28,6 @@ a:visited {
     --club-bg-color: #ffb401;
     --tips-bg-color: #014656;
     --devices-bg-color: #ea510e;
-}
-
-.app {
-    /*margin: 0 auto;
-    max-width: 1100px;*/
-}
-
-body.cydynni .content-container {
-    max-width:1100px;
 }
 
 .navigation {
