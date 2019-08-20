@@ -1,6 +1,6 @@
 <?php
-    global $session;
-    // $userid = (int) $session["userid"];
+    global $session, $redis;
+
     $apikeystr = "";
     if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
     if (isset($_GET['lang'])) $apikeystr .= "&lang=".$_GET['lang'];
@@ -26,6 +26,23 @@
         'order' => 2,
         'icon'=>'folder-plus'
     );
+    
+    if ($session["read"]) {
+        $userid = (int) $session["userid"];
+        if ($result = $redis->get("household:summary:monthly:$userid")) {
+            $result = json_decode($result);
+            
+            foreach ($result as $item) {
+                $name = $item['month'] - 1;
+                $year = $item['year'];
+
+                $menu['sidebar']['cydynni'][] = array(
+                    'path' => 'cydynni/report'.$apikeystr,
+                    'text' => sprintf("%s %s",$name,$year)
+                );
+            }
+        }
+    }
 
     // $cydynni = new Cydynni($mysqli,$redis);
     // foreach($cydynni->getHouseholdSummaryMonthly($userid) as $key=>$value) {
