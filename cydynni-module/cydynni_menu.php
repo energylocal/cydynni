@@ -1,5 +1,5 @@
 <?php
-    global $session, $redis;
+    global $session, $redis, $path;
 
     $apikeystr = "";
     if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
@@ -39,7 +39,7 @@
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
-                    'href' => '/cydynni/report#'.$index.$apikeystr,
+                    'href' => $path.'cydynni/report#'.$index.$apikeystr,
                     'text' => sprintf("%s %s",$name,$year)
                 );
             }
