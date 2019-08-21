@@ -26,10 +26,21 @@
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
+        $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
         if ($result = $redis->get("household:summary:monthly:$userid")) {
             $result = json_decode($result,true);
-
-            $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
+            /**
+             * get the last "Path Part" in the emoncms `$path` variable
+             * eg. "http://localhost/emoncms/cydynni" would be "cydynni"
+             * eg. "http://localhost/cydynni" would be "cydynni"
+             */
+            $firstPathPart = array_values(array_filter(explode('/',parse_url($path, PHP_URL_PATH))))[0];
+            // if not on a cydynni system add the cydynni "path part"
+            if($firstPathPart !== 'cydynni') {
+                $cydynniPath = $path.'cydynni/';
+            } else {
+                $cydynniPath = $path;
+            }
 
             $menu['sidebar']['reports'][] = array(
                 'active' => 'cydynni/report'
@@ -39,7 +50,7 @@
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
-                    'href' => $path.'cydynni/report#'.$index.$apikeystr,
+                    'href' => $cydynniPath.'report#'.$index.$apikeystr,
                     'text' => sprintf("%s %s",$name,$year)
                 );
             }
