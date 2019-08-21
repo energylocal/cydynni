@@ -30,7 +30,7 @@
         if ($result = $redis->get("household:summary:monthly:$userid")) {
             $result = json_decode($result,true);
             /**
-             * get the last "Path Part" in the emoncms `$path` variable
+             * get the first "Path Part" in the emoncms `$path` variable
              * eg. "http://localhost/emoncms/cydynni" would be "cydynni"
              * eg. "http://localhost/cydynni" would be "cydynni"
              */
