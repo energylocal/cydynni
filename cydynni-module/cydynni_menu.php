@@ -41,10 +41,11 @@
             } else {
                 $cydynniPath = $path;
             }
-
             $menu['sidebar']['reports'][] = array(
-                'active' => 'cydynni/report'
+                'path' => 'cydynni/report',
+                'li_class' => 'd-none'
             );
+            
             foreach ($result as $index=>$item) {
                 $name = $months[$item['month'] - 1];
                 $year = $item['year'];
