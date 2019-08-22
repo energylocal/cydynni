@@ -11,7 +11,7 @@ $app_path = $path."Modules/cydynni/app/";
   <div style="background-color:#d2279c; height:15px;margin-top:20px"></div>
   <div class="inner">
     <div class="title"><b><span class="m1-name"></span>:</b> <?php echo t("Where your electricity came from this month"); ?></div>
-    <div id="estimated_days" style="color:#666"></div>
+    <div id="estimated_days" style="color:#666;position:absolute"></div>
     <br><br>
     
     <div style="text-align:center">
