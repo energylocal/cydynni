@@ -45,13 +45,14 @@
                 'path' => 'cydynni/report',
                 'li_class' => 'd-none'
             );
-            
+
             foreach ($result as $index=>$item) {
                 $name = $months[$item['month'] - 1];
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
                     'href' => $cydynniPath.'report#'.$index.$apikeystr,
+                    'active' => $cydynniPath.'report#'.$index.$apikeystr,
                     'text' => sprintf("%s %s",$name,$year)
                 );
             }
