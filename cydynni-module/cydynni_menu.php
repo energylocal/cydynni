@@ -26,22 +26,24 @@
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
+        $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
         if ($result = $redis->get("household:summary:monthly:$userid")) {
             $result = json_decode($result,true);
 
-            $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
-
             $menu['sidebar']['reports'][] = array(
-                'active' => 'cydynni/report',
+                'path' => 'cydynni/report',
                 'li_class' => 'd-none'
             );
+
             foreach ($result as $index=>$item) {
                 $name = $months[$item['month'] - 1];
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
                     'href' => $path.'cydynni/report#'.$index.$apikeystr,
-                    'text' => sprintf("%s %s",$name,$year)
+                    'active' => $path.'cydynni/report#'.$index.$apikeystr,
+                    'text' => sprintf("%s %s",$name,$year),
+                    'order' => $index
                 );
             }
         }
