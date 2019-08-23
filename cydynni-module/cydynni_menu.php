@@ -32,7 +32,8 @@
             $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
 
             $menu['sidebar']['reports'][] = array(
-                'active' => 'cydynni/report'
+                'active' => 'cydynni/report',
+                'li_class' => 'd-none'
             );
             foreach ($result as $index=>$item) {
                 $name = $months[$item['month'] - 1];
