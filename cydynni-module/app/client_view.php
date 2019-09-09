@@ -52,7 +52,6 @@ $app_path = $path."Modules/cydynni/app/";
 </div>
 
 <script>
-var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
