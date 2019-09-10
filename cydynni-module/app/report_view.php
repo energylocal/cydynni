@@ -122,7 +122,6 @@ $app_path = $path."Modules/cydynni/app/";
 <script>
 if (window.init_sidebar!=undefined) init_sidebar({menu_element:"#cydynni_report_menu"});
 
-var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;

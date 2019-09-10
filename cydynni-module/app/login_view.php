@@ -61,7 +61,6 @@ $v=1;
 </html>
 
 <script>
-var path = "<?php echo $path; ?>";
 var session = <?php echo json_encode($session); ?>;
 var register = <?php echo $register*1; ?>;
 

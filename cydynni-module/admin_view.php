@@ -505,7 +505,6 @@ button:focus {
 
 <!-- JAVASCRIPT -->
 <script>
-    var path = "<?php echo $path; ?>";
     var session = <?php echo json_encode($session); ?>;
 </script>
 <script src="<?php echo $path; ?>Lib/misc/sidebar.js"></script>

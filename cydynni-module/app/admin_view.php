@@ -29,7 +29,6 @@ input {
 </table>
 
 <script>
-var path = "<?php echo $path; ?>";
 var session = <?php echo json_encode($session); ?>;
 
 var users = [];
