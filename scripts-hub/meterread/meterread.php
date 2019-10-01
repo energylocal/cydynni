@@ -67,7 +67,7 @@ while(true) {
 function ip_scan()
 {
     print "Scanning for smartmeter\n";
-    exec("nmap -sP 192.168.0.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
+    exec("nmap -n -sP 192.168.1.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
     print "Found ".count($output)." devices\n";
     $meter_ip = false;
     foreach ($output as $ip) {
