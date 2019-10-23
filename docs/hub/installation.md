@@ -131,6 +131,14 @@ Install and start remoteaccess service:
     
 Change base ip address to relevant..
 
+### Provision Key
+
+    cd /opt/emoncms/modules/cydynni/scripts-hub
+    echo '<?php $key="changeme";' > provisionkey.php
+    crontab -e
+    
+    */5 * * * * php /opt/emoncms/modules/cydynni/scripts-hub/provision.php 2>&1
+   
 ### Disable SSH
 
 Remove ssh from /boot
