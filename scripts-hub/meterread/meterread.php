@@ -8,7 +8,13 @@ require "core.php";
 // ----------------------------------------------------------
 // 2. Fetch apikey write from emoncms mysql database
 // ----------------------------------------------------------
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) {
     echo "Error connecting to mysql database ".$mysqli->connect_error."\n";
     die;
