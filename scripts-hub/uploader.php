@@ -12,18 +12,24 @@ require "process_settings.php";
 // -----------------------------------------------------------------
 
 // Mysql
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ($mysqli->connect_error) { echo "Can't connect to database:".$mysqli->connect_error; die; }
 
 // Redis
 $redis = new Redis();
-if (!$redis->connect($redis_server['host'], $redis_server['port'])) { 
-    $log->error("Could not connect to redis at ".$redis_server['host'].":".$redis_server['port']);  die('Check log\n'); 
+if (!$redis->connect($settings['redis']['host'], $settings['redis']['port'])) { 
+    $log->error("Could not connect to redis at ".$settings['redis']['host'].":".$settings['redis']['port']);  die('Check log\n'); 
 }
-if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
-if (!empty($redis_server['auth'])) {
-    if (!$redis->auth($redis_server['auth'])) { 
-        $log->error("Could not connect to redis at ".$redis_server['host'].", autentication failed"); die('Check log\n');
+if (!empty($settings['redis']['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $settings['redis']['prefix']);
+if (!empty($settings['redis']['auth'])) {
+    if (!$redis->auth($settings['redis']['auth'])) { 
+        $log->error("Could not connect to redis at ".$settings['redis']['host'].", autentication failed"); die('Check log\n');
     }
 }
 
@@ -66,8 +72,8 @@ foreach ($local_feeds as $name=>$feed) {
 }
 
 if ($i>0) {
-    $update_script = "/home/pi/sync/emoncms-sync.sh";
-    $update_logfile = "/home/pi/data/emoncms-sync.log";
+    $update_script = "/opt/emoncms/modules/sync/emoncms-sync.sh";
+    $update_logfile = "/var/log/emoncms/emoncms-sync.log";
     $redis->rpush("service-runner","$update_script>$update_logfile");
 }
 // -----------------------------------------------------------------

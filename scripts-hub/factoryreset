@@ -12,14 +12,14 @@ fi
 #rpi-rw
 
 echo "deleting phpfina and phptimeseries data"
-sudo rm -rf /home/pi/data/phpfina
-sudo rm -rf /home/pi/data/phptimeseries
+sudo rm -rf /var/opt/emoncms/phpfina
+sudo rm -rf /var/opt/emoncms/phptimeseries
 
 echo "creating new phpfina and phptimeseries folders"
-sudo mkdir /home/pi/data/phpfina
-sudo mkdir /home/pi/data/phptimeseries
-sudo chown www-data:root /home/pi/data/phpfina
-sudo chown www-data:root /home/pi/data/phptimeseries
+sudo mkdir /var/opt/emoncms/phpfina
+sudo mkdir /var/opt/emoncms/phptimeseries
+sudo chown www-data:root /var/opt/emoncms/phpfina
+sudo chown www-data:root /var/opt/emoncms/phptimeseries
 
 echo "deleting mysql emoncms database"
 mysql -u root -e "drop database emoncms" -pemonpimysql2016

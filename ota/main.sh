@@ -4,12 +4,12 @@ cd $DIR
 
 echo "-----------------------------------------"
 
-cd /home/pi/cydynni
+cd /opt/emoncms/modules/cydynni
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "cydynni:"$branch":"$commit
 
-cd /home/pi/demandshaper
+cd /opt/emoncms/modules/demandshaper
 branch="$(git rev-parse --abbrev-ref HEAD)"
 commit="$(git rev-parse HEAD)"
 echo "demandshaper:"$branch":"$commit
@@ -26,18 +26,18 @@ echo "emoncms:device:"$branch":"$commit
 
 echo "-----------------------------------------"
 
-/home/pi/emonpi/service-runner-update.sh > /home/pi/data/emonpiupdate.log
+/opt/emoncms/modules/emonpi/service-runner-update.sh > /var/log/emoncms/emonpiupdate.log
 
-cd /home/pi/demandshaper
+cd /opt/emoncms/modules/demandshaper
 git pull
 cd
 
-cd /home/pi/remoteaccess-client
+cd /opt/emoncms/modules/remoteaccess-client
 git pull
 cd
 
 echo "emoncms db update: "
-php /home/pi/emonpi/update/emoncmsdbupdate.php
+php /opt/emoncms/modules/emonpi/update/emoncmsdbupdate.php
 
 echo "restarting services: "
 sudo systemctl restart emoncms_mqtt.service

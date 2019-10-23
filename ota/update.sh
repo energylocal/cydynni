@@ -4,7 +4,7 @@
 # cd $DIR
 cd
 
-apikey="$(php /home/pi/cydynni/ota/getapikey.php)"
+apikey="$(php /opt/emoncms/modules/cydynni/ota/getapikey.php)"
 local_ota_version="$(cat cydynni/ota/version)"
 
 url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
@@ -15,9 +15,9 @@ then
   echo "Remote:"$remote_ota_version" Local:"$local_ota_version
   echo "Update available, starting update process.."
   # rpi-rwlocal_ota_version="$(cat cydynni/ota/version)"
-  cd /home/pi/cydynni
+  cd /opt/emoncms/modules/cydynni
   git pull
-  cd /home/pi/cydynni/ota
+  cd /opt/emoncms/modules/cydynni/ota
   log=$(./main.sh)
   cd 
   # rpi-ro

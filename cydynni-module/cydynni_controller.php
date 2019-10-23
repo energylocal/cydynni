@@ -369,13 +369,13 @@ function cydynni_controller()
                             $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
 
                             // Trigger download of user data
-                            $sync_script = "/home/pi/cydynni/scripts-hub/cydynni-sync.sh";
-                            $sync_logfile = "/home/pi/data/cydynni-sync.log";
+                            $sync_script = "/opt/emoncms/modules/cydynni/scripts-hub/cydynni-sync.sh";
+                            $sync_logfile = "/var/log/emoncms/cydynni-sync.log";
                             $redis->rpush("service-runner","$sync_script>$sync_logfile");
 
 		            // Setup remote access
                             $host = "dashboard.energylocal.org.uk";
-                            $config_file = $settings['emoncms_dir']."/remoteaccess-client/remoteaccess.json";
+                            $config_file = $settings['emoncms_dir']."/modules/remoteaccess-client/remoteaccess.json";
                             $config = json_decode(file_get_contents($config_file));
                             if ($config!=null) {
                                 $config->APIKEY_WRITE = $u->apikey_write;
@@ -383,7 +383,7 @@ function cydynni_controller()
                                 $config->MQTT_HOST = $host;
                                 $config->MQTT_USERNAME = $username;
                                 $config->MQTT_PASSWORD = $password;
-                                $fh = fopen($settings['emoncms_dir']."/remoteaccess-client/remoteaccess.json","w");
+                                $fh = fopen($settings['emoncms_dir']."/modules/remoteaccess-client/remoteaccess.json","w");
                                 fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
                                 fclose($fh);
                             }

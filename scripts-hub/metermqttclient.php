@@ -30,7 +30,13 @@ foreach ($lines as $line) {
 // -----------------------------------------------------------------
 // Mysqli
 // -----------------------------------------------------------------
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) {
     echo "Can't connect to database, please verify credentials/configuration in settings.php<br />";
     if ( $display_errors ) {
@@ -44,18 +50,28 @@ $mysqli->set_charset("utf8");
 // -----------------------------------------------------------------
 // Redis
 // -----------------------------------------------------------------
-$redis = new Redis();
-if (!$redis->connect($redis_server['host'], $redis_server['port'])) die;
-if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
-if (!empty($redis_server['auth'])) {
-    if (!$redis->auth($redis_server['auth'])) die;
+if ($settings['redis']['enabled']) {
+    $redis = new Redis();
+    $connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
+    if (!$connected) { echo "Can't connect to redis at ".$settings['redis']['host'].":".$settings['redis']['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
+    if (!empty($settings['redis']['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $settings['redis']['prefix']);
+    if (!empty($settings['redis']['auth'])) {
+        if (!$redis->auth($settings['redis']['auth'])) {
+            echo "Can't connect to redis at ".$settings['redis']['host'].", autentication failed"; die;
+        }
+    }
+    if (!empty($settings['redis']['dbnum'])) {
+        $redis->select($settings['redis']['dbnum']);
+    }
+} else {
+    $redis = false;
 }
 
 // -----------------------------------------------------------------
 // Feed model
 // -----------------------------------------------------------------
 require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis, $feed_settings);
+$feed = new Feed($mysqli,$redis, $settings['feed']);
 
 // -----------------------------------------------------------------
 $mqtt_client = new Mosquitto\Client();
@@ -79,19 +95,19 @@ $mqtt_client->onMessage('message');
     if (!$connected && (time()-$last_retry)>5.0) {
         $last_retry = time();
         try {
-            $mqtt_client->setCredentials($mqtt_server['user'],$mqtt_server['password']);
-            $mqtt_client->setTlsCertificates($mqtt_server['cert']);
+            $mqtt_client->setCredentials($settings['mqtt']['user'],$settings['mqtt']['password']);
+            $mqtt_client->setTlsCertificates($settings['mqtt']['cert']);
             $mqtt_client->setTlsOptions(Mosquitto\Client::SSL_VERIFY_PEER, "tlsv1.1", NULL);
             // $mqtt_client->setTlsInsecure(true);
             
             try {
-                $mqtt_client->connect($mqtt_server['host'], $mqtt_server['port'], 5);
+                $mqtt_client->connect($settings['mqtt']['host'], $settings['mqtt']['port'], 5);
             } catch (Exception $e) {
                 print "$e\n";
             }
             
             
-            $topic = $mqtt_server['basetopic'];
+            $topic = $settings['mqtt']['basetopic'];
             
             print "Subscribing to: $topic\n";
             $mqtt_client->subscribe($topic,2);

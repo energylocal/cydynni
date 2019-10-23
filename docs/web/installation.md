@@ -14,8 +14,8 @@ Install advanced history view: symlink to /var/www, e.g:
 
 Install Cydynni app for emoncms apps module:
 
-    ln -s /home/pi/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
-    ln -s /home/pi/cydynni/cydynni-emoncms-app.php /var/www/emoncms/Modules/app/apps/cydynni.php
+    ln -s /opt/emoncms/modules/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
+    ln -s /opt/emoncms/modules/cydynni/cydynni-emoncms-app.php /var/www/emoncms/Modules/app/apps/cydynni.php
     
 Add entry to available_apps.php
 

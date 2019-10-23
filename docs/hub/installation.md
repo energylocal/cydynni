@@ -111,7 +111,7 @@ Install and start remoteaccess service:
 ### OTA Update
 
     crontab -e
-    */10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /home/pi/data/ota.log 2>&1
+    */10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /var/log/emoncms/ota.log 2>&1
 
 ### Hostname
 
