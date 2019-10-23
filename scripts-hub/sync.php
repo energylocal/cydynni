@@ -11,19 +11,35 @@ require "Lib/EmonLogger.php";
 $base_url = "https://dashboard.energylocal.org.uk";
 
 // 1. Load redis
-$redis = new Redis();
-if (!$redis->connect($redis_server['host'], $redis_server['port'])) { echo "Can't connect to redis"; die; }
-
-if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
-if (!empty($redis_server['auth']) && !$redis->auth($redis_server['auth'])) {
-    echo "Can't connect to redis, autentication failed"; die;
+if ($settings['redis']['enabled']) {
+    $redis = new Redis();
+    $connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
+    if (!$connected) { echo "Can't connect to redis at ".$settings['redis']['host'].":".$settings['redis']['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
+    if (!empty($settings['redis']['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $settings['redis']['prefix']);
+    if (!empty($settings['redis']['auth'])) {
+        if (!$redis->auth($settings['redis']['auth'])) {
+            echo "Can't connect to redis at ".$settings['redis']['host'].", autentication failed"; die;
+        }
+    }
+    if (!empty($settings['redis']['dbnum'])) {
+        $redis->select($settings['redis']['dbnum']);
+    }
+} else {
+    $redis = false;
 }
 
 // 2. Load mysql
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
+
 // 3. Load feed model
 require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$feed_settings);
+$feed = new Feed($mysqli,$redis,$settings["feed"]);
 
 // 4. Load user (as created via account link register)
 $userid = 1;
@@ -31,7 +47,7 @@ $result = $mysqli->query("SELECT * FROM users WHERE `id`='$userid'");
 $user = $result->fetch_object();
 if (!$user) die;
 
-$datadir = $feed_settings['phpfina']['datadir'];
+$datadir = $settings['feed']['phpfina']['datadir'];
 
 // -----------------------------------------------------
 // 5. Create local feeds
