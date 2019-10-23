@@ -5,11 +5,13 @@ The CydYnni hub software stack builds on top of the OpenEnergyMonitor emonSD sof
 **You will need:**
 
 - RaspberryPi 3 + power supply and case
-- 8GB Micro SD Card with emonSD image
+- 16GB Micro SD Card with emonSD image
 
 To download and install emonSD image see:
 
-[emonSD pre built SD card Download](https://github.com/openenergymonitor/emonpi/wiki/emonSD-pre-built-SD-card-Download-&-Change-Log#emonsd-07nov16)
+[emonSD pre built SD card Download: emonSD-17Oct19](https://github.com/openenergymonitor/emonpi/wiki/emonSD-pre-built-SD-card-Download-&-Change-Log)
+
+Mount SD card on computer, add file called 'ssh' to boot partition to enable ssh.
 
 Insert the SD card and power up the RaspberryPi for the first time with Ethernet connected, wait 5 minutes for the emonSD image to perform an initial over the air update.
 
@@ -20,30 +22,11 @@ Connect to the Hub via SSH:
 Default emonSD password: emonpi2016
 
 ## Hub Emoncms requirements
-     
-**1. Install emoncms Demand Shaper module**
-
-The demand shaper module uses a day ahead power availability forecast and user set schedules to determine the best time to run household loads.
-
-Download or git clone the demandshaper repository in the home folder:
-
-    cd
-    git clone https://github.com/energylocal/demandshaper.git
-    
-Link the 'demandshaper-module' into the emoncms Modules folder:
-
-    ln -s /home/pi/demandshaper/demandshaper-module /var/www/emoncms/Modules/demandshaper
-
-Add demand shaper service
-
-    sudo ln -s /home/pi/demandshaper/demandshaper.service /lib/systemd/system
-    sudo systemctl enable demandshaper.service
-    sudo systemctl start demandshaper
 
 Add UDP Broadcast for hub detection at the same time:
 
     crontab -e
-    * * * * * php /home/pi/emonpi/UDPBroadcast/broadcast.php 2>&1
+    * * * * * php /opt/openenergymonitor/emonpi/UDPBroadcast/broadcast.php 2>&1
 
 ### CydYnni App front-end
 
@@ -51,7 +34,7 @@ The following steps detail how to install the CydYnni App frontend on the hub. T
 
 Install the cydynni repository:
 
-    cd
+    cd /opt/emoncms/modules
     git clone https://github.com/energylocal/cydynni.git
         
 Define CydYnni UI as hub, add other energylocal specific settings:
@@ -60,33 +43,30 @@ Define CydYnni UI as hub, add other energylocal specific settings:
     
 Add
 
-    define("IS_HUB",1);
-    $advanced_users = array();
-    $enable_UDP_broadcast = true;
-    
+    [cydynni]
+    is_hub = true
+    advanced_users = []
+    enable_UDP_broadcast = true
+
 Modify default routes:
 
-    // Default controller and action if none are specified and user is anonymous
-    $default_controller = "cydynni";
-    $default_action = "";
-
-    // Default controller and action if none are specified and user is logged in
-    $default_controller_auth = "cydynni";
-    $default_action_auth = "";
-
+    default_controller = "cydynni"
+    default_action = ""
+    default_controller_auth = "cydynni"
+    default_action_auth = ""
 
 Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
 
-    ln -s /home/pi/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
+    ln -s /opt/emoncms/modules/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
 
 Update emoncms database:
 
-    php /home/pi/emonpi/emoncmsdbupdate.php
+    php /opt/openenergymonitor/EmonScripts/common/emoncmsdbupdate.php
 
 Add CydYnni syncronisation script (period download of hydro, community and smart meter data) to crontab:
 
     sudo crontab -e
-    */5 * * * * php /home/pi/cydynni/scripts-hub/sync.php 2>&1
+    */5 * * * * php /opt/emoncms/modules/cydynni/scripts-hub/sync.php 2>&1
 
 ### Emoncms modifications
 
@@ -101,20 +81,20 @@ Switch to energylocal fork
 
 - Hide apps module menu item
 
-### Emonpi energylocal fork
+### Emoncms setup module energylocal fork
 
 Switch to energylocal fork
 
-    cd /home/pi/emonpi
-    git remote set-url origin https://github.com/energylocal/emonpi.git
+    cd /var/www/emoncms/Modules/setup
+    git remote set-url origin https://github.com/energylocal/setup.git
     git pull
-
+    git checkout master
 
 ### RemoteAccess Client Installation
 
 Create remoteaccess.env settings file with emoncms.org username and password.
 
-    cd ~/ 
+    cd /opt/emoncms/modules
     git clone https://github.com/emoncms/remoteaccess-client
     cd remoteaccess-client
     cp remoteaccess.json.example remoteaccess.json
@@ -122,29 +102,33 @@ Create remoteaccess.env settings file with emoncms.org username and password.
 
 Install and start remoteaccess service:
 
-    sudo ln -s /home/pi/remoteaccess-client/remoteaccess.service /lib/systemd/system
+    sudo ln -s /opt/emoncms/modules/remoteaccess-client/remoteaccess.service /lib/systemd/system
     sudo systemctl enable remoteaccess.service
     sudo systemctl start remoteaccess
 
-    ln -s /home/pi/remoteaccess-client/remoteaccess /var/www/emoncms/Modules/remoteaccess
+    ln -s /opt/emoncms/modules/remoteaccess-client/remoteaccess /var/www/emoncms/Modules/remoteaccess
     
 ### OTA Update
 
     crontab -e
-    */10 * * * * /home/pi/cydynni/ota/update.sh >> /home/pi/data/ota.log 2>&1
+    */10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /home/pi/data/ota.log 2>&1
 
 ### Hostname
 
     sudo nano /etc/hosts
     sudo nano /etc/hostname
-    sudo nano /var/www/html/index.php
     
 ### NMAP and meterread
 
     sudo apt-get install nmap
     
-https://github.com/energylocal/cydynni/blob/master/scripts-hub/meterread/install-service-meterread.md
+    sudo ln -s /opt/emoncms/modules/cydynni/scripts-hub/meterread/meterread.service /lib/systemd/system
+    sudo systemctl enable meterread.service
+    sudo systemctl start meterread.service
+    systemctl status meterread.service
 
+    ln /opt/emoncms/modules/cydynni/edmi-am.json /var/www/emoncms/Modules/device/data
+    
 Change base ip address to relevant..
 
 ### Disable SSH
