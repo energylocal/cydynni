@@ -26,7 +26,7 @@ echo "emoncms:device:"$branch":"$commit
 
 echo "-----------------------------------------"
 
-/opt/emoncms/modules/emonpi/service-runner-update.sh > /var/log/emoncms/emonpiupdate.log
+/opt/openenergymonitor/EmonScripts/update/service-runner-update.sh > /var/log/emoncms/emonpiupdate.log
 
 cd /opt/emoncms/modules/demandshaper
 git pull
@@ -37,7 +37,7 @@ git pull
 cd
 
 echo "emoncms db update: "
-php /opt/emoncms/modules/emonpi/update/emoncmsdbupdate.php
+php /opt/openenergymonitor/EmonScripts/common/emoncmsdbupdate.php
 
 echo "restarting services: "
 sudo systemctl restart emoncms_mqtt.service
