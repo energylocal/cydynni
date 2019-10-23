@@ -19,10 +19,9 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 
 function cydynni_controller()
 {
-    global $mysqli, $redis, $session, $route, $homedir, $user, $feed_settings;
-    global $club_settings;
+    global $mysqli, $redis, $session, $route, $user, $settings;
+    global $tariffs, $club_settings;
     global $lang;
-    global $tariffs;
 
     if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
     if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $session['lang'] = "cy_GB";
@@ -39,7 +38,8 @@ function cydynni_controller()
     $cydynni = new Cydynni($mysqli,$redis);
 
     $club = "bethesda";
-    if (IS_HUB) {
+    
+    if ($settings["cydynni"]["is_hub"]) {
 	      $club_settings = array();
 	      $club_settings[$club] = array(
 	          "name"=>"Bethesda",
@@ -64,8 +64,8 @@ function cydynni_controller()
 	  $translation = new stdClass();
     $translation->cy_GB = json_decode(file_get_contents("Modules/cydynni/app/locale/cy_GB"));
 
-    $base_url = IS_HUB ? "https://dashboard.energylocal.org.uk/cydynni/" : "http://localhost/cydynni/";
-    $emoncms_url = IS_HUB ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
+    $base_url = $settings["cydynni"]["is_hub"] ? "https://dashboard.energylocal.org.uk/cydynni/" : "http://localhost/cydynni/";
+    $emoncms_url = $settings["cydynni"]["is_hub"] ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
@@ -83,7 +83,7 @@ function cydynni_controller()
                 $userid = (int) $session["userid"];
                 
                 require_once "Modules/feed/feed_model.php";
-                $feed = new Feed($mysqli,$redis,$feed_settings);
+                $feed = new Feed($mysqli,$redis,$settings["feed"]);
                 
                 $tmp = $feed->get_user_feeds($userid);
                 
@@ -96,7 +96,7 @@ function cydynni_controller()
 
             $route->format = "html";
 
-            $content = view("Modules/cydynni/app/client_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            $content = view("Modules/cydynni/app/client_view.php",array('is_hub'=>$settings["cydynni"]["is_hub"], 'session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
             break;
 
@@ -115,7 +115,7 @@ function cydynni_controller()
         case "live":
             $route->format = "json";
             $result = $redis->get("$club:live");
-            if (IS_HUB) {
+            if ($settings["cydynni"]["is_hub"]) {
                 if (!$result) {
                     $result = file_get_contents("${base_url}live");
                     if ($result) $redis->set("live",$result);
@@ -197,7 +197,7 @@ function cydynni_controller()
             $route->format = "json";
 
             if (!$result = $redis->get("$club:club:summary:day")) {
-                if( IS_HUB ) {
+                if($settings["cydynni"]["is_hub"]) {
                     $result = file_get_contents("$base_url/club/summary/day");
                     if ($result) $redis->set("community:summary:day",$result);
                 }
@@ -223,7 +223,7 @@ function cydynni_controller()
             $format = "json";
             $month = get("month");
 
-            if (IS_HUB) {
+            if ($settings["cydynni"]["is_hub"]) {
                 return json_decode(file_get_contents("$base_url/club-summary-monthly?month=$month"));
             }else{
                 if ($result = $redis->get("$club:club:summary:monthly")) {
@@ -340,7 +340,7 @@ function cydynni_controller()
                 if ($user->get_number_of_users()>0) {
                     return $user->login(post('username'),post('password'),post('rememberme'));
                     
-                } else if (IS_HUB) {
+                } else if ($settings["cydynni"]["is_hub"]) {
                     $username = $_POST['username'];
                     $password = $_POST['password'];
                     
@@ -375,7 +375,7 @@ function cydynni_controller()
 
 		            // Setup remote access
                             $host = "dashboard.energylocal.org.uk";
-                            $config_file = $homedir."/remoteaccess-client/remoteaccess.json";
+                            $config_file = $settings['emoncms_dir']."/remoteaccess-client/remoteaccess.json";
                             $config = json_decode(file_get_contents($config_file));
                             if ($config!=null) {
                                 $config->APIKEY_WRITE = $u->apikey_write;
@@ -383,7 +383,7 @@ function cydynni_controller()
                                 $config->MQTT_HOST = $host;
                                 $config->MQTT_USERNAME = $username;
                                 $config->MQTT_PASSWORD = $password;
-                                $fh = fopen($homedir."/remoteaccess-client/remoteaccess.json","w");
+                                $fh = fopen($settings['emoncms_dir']."/remoteaccess-client/remoteaccess.json","w");
                                 fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
                                 fclose($fh);
                             }
@@ -403,7 +403,7 @@ function cydynni_controller()
             break;
 
         case "passwordreset":
-            if (!IS_HUB) {    
+            if (!$settings["cydynni"]["is_hub"]) {    
                 $format = "json";
                 $user->appname = "Cydynni";
                 $users = $user->get_usernames_by_email(get('email'));
@@ -416,7 +416,7 @@ function cydynni_controller()
         // Administration functions 
         // ----------------------------------------------------------------------
         case "admin":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "html";
                 unset($session["token"]);
                 return view("Modules/cydynni/app/admin_view.php",array('session'=>$session));
@@ -424,7 +424,7 @@ function cydynni_controller()
             break;
             
         case "admin-users":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "json";
                 if ($session['admin']) {
                     // Include data from cydynni table here too
@@ -448,7 +448,7 @@ function cydynni_controller()
             break;
             
         case "admin-users-csv":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "text";
                 if ($session['admin']) {
                     // Include data from cydynni table here too
@@ -480,7 +480,7 @@ function cydynni_controller()
             break;
             
         case "admin-registeremail":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "text";
                 if ($session['admin']) {
                     require("Lib/email.php");
@@ -492,7 +492,7 @@ function cydynni_controller()
             break;
             
         case "admin-change-user-email":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "json";
                 if ($session['admin']) {
                     return $user->change_email(get("userid"),get("email"));
@@ -501,7 +501,7 @@ function cydynni_controller()
             break;
 
         case "admin-change-user-username":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "json";
                 if ($session['admin']) {
                     return $user->change_username(get("userid"),get("username"));
@@ -510,7 +510,7 @@ function cydynni_controller()
             break;
                     
         case "admin-switchuser":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "text";
                 if ($session['admin']) {
                     $userid = (int) get("userid");
@@ -522,7 +522,7 @@ function cydynni_controller()
             break;
 
         case "admin-sendreport":
-            if (!IS_HUB) {
+            if (!$settings["cydynni"]["is_hub"]) {
                 $route->format = "text";
                 if ($session['admin']) {
                     require("Lib/email.php");

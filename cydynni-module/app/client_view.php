@@ -56,7 +56,7 @@ var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
-var is_hub = <?php echo IS_HUB ? 'true':'false'; ?>;
+var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/cydynnistatus.js?v=<?php echo $v; ?>"></script>
