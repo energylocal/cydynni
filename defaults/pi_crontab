@@ -1,5 +1,5 @@
 # Emoncms cron items
-* * * * * pi php /opt/openenergymonitor/emonpi/UDPBroadcast/broadcast.php 2>&1
-*/10 * * * * pi /opt/emoncms/modules/cydynni/ota/update.sh >> /home/pi/data/ota.l$
-0 0 * * * pi php /opt/pi/emoncms/modules/scripts-hub/uploader.php 2>&1
-*/5 * * * * pi php /opt/pi/emoncms/modules/scripts-hub/provision.php 2>&1
+* * * * * php /opt/openenergymonitor/emonpi/UDPBroadcast/broadcast.php 2>&1
+*/10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /home/pi/data/ota.l$
+0 0 * * * php /opt/pi/emoncms/modules/scripts-hub/uploader.php 2>&1
+*/5 * * * * php /opt/pi/emoncms/modules/scripts-hub/provision.php 2>&1
