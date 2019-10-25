@@ -2,7 +2,6 @@
 
 $userid = 1;
 $remote_server = "https://dashboard.energylocal.org.uk";
-$remote_apikey_read = "";
 require "settings.php";
 
 define('EMONCMS_EXEC', 1);
@@ -20,6 +19,10 @@ $mysqli = @new mysqli(
     $settings["sql"]["port"]
 );
 if ($mysqli->connect_error) { echo "Can't connect to database:".$mysqli->connect_error; die; }
+
+$result = $mysqli->query("SELECT apikey_read FROM users WHERE id=$userid");
+$row = $result->fetch_object();
+$remote_apikey_read = $row->apikey_read;
 
 // Redis
 $redis = new Redis();
