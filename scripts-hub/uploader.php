@@ -22,9 +22,10 @@ $mysqli = @new mysqli(
 );
 if ($mysqli->connect_error) { echo "Can't connect to database:".$mysqli->connect_error; die; }
 
-$result = $mysqli->query("SELECT apikey_read FROM users WHERE id=$userid");
+$result = $mysqli->query("SELECT apikey_read,apikey_write FROM users WHERE id=$userid");
 $row = $result->fetch_object();
 $remote_apikey_read = $row->apikey_read;
+$remote_apikey_write = $row->apikey_write;
 
 // Redis
 $redis = new Redis();
@@ -58,6 +59,14 @@ foreach ($remote_feeds as $f) {
 $i=0;
 foreach ($local_feeds as $name=>$feed) {
     if ($name!="halfhour_consumption" && $name!="use_kwh" && $name!="hydro" && $name!="community") {
+    
+        if (!isset($remote_feeds_byname[$name])) {
+            $result = json_decode(file_get_contents($remote_server.'/feed/create.json?apikey='.$remote_apikey_write.'&tag=smartmeter&name='.$name.'&datatype=1&engine=5&options={"interval":10}'));
+            $remote_feeds_byname[$name] = new stdClass();
+            $remote_feeds_byname[$name]->id = $result->feedid;
+            print "feed created $name ".$result->feedid;
+        }
+    
         if (isset($remote_feeds_byname[$name])) {
             print $name."\n";
 
