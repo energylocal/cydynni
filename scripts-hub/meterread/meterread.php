@@ -1,5 +1,14 @@
 <?php
 
+// Fetch local ip address
+$dir = dirname(__FILE__);
+$dir = str_replace("/meterread","",$dir);
+exec("$dir/getip.sh",$result);
+$ipaddress = explode(".",$result[0]);
+if (count($ipaddress)!=4) die;
+unset($ipaddress[3]);
+$ipaddress = implode(".",$ipaddress);
+
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
@@ -73,7 +82,7 @@ while(true) {
 function ip_scan()
 {
     print "Scanning for smartmeter\n";
-    exec("nmap -n -sP 192.168.1.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
+    exec("nmap -n -sP $ipaddress.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
     print "Found ".count($output)." devices\n";
     $meter_ip = false;
     foreach ($output as $ip) {
