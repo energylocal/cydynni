@@ -3,8 +3,8 @@
 $userid = 1;
 $remote_server = "https://dashboard.energylocal.org.uk";
 
-if (!file_exists("settings.php")) die;
-require "settings.php";
+//if (!file_exists("settings.php")) die;
+//require "settings.php";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
@@ -77,7 +77,7 @@ foreach ($local_feeds as $name=>$feed) {
                 "remote_id"=>$remote_feeds_byname[$name]->id,
                 "engine"=>$feed->engine,
                 "datatype"=>$feed->datatype,
-                "remote_apikey"=>$remote_apikey_read 
+                "remote_apikey"=>$remote_apikey_write
             );
             $redis->lpush("sync-queue",json_encode($params));
             $i++;
