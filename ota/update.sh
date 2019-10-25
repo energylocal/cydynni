@@ -5,7 +5,7 @@
 cd
 
 apikey="$(php /opt/emoncms/modules/cydynni/ota/getapikey.php)"
-local_ota_version="$(cat cydynni/ota/version)"
+local_ota_version="$(cat /opt/emoncms/modules/cydynni/ota/version)"
 
 url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
 remote_ota_version="$(curl -s $url)"
@@ -26,7 +26,7 @@ then
   url="https://dashboard.energylocal.org.uk/cydynni/ota-log-set?apikey=$apikey"
   curl -s -X POST -d "$log" $url
 
-  local_ota_version="$(cat cydynni/ota/version)"
+  local_ota_version="$(cat /opt/emoncms/modules/cydynni/ota/version)"
   url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
   curl -s $url
 fi
