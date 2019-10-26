@@ -148,7 +148,7 @@
             "unit": "V"
         },
         {
-            "name": "power",
+            "name": "W",
             "type": "DataType::REALTIME",
             "engine": "Engine::PHPFINA",
             "interval": "10",
