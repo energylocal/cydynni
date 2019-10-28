@@ -78,7 +78,7 @@
                 },
                 {
                     "process": "log_to_feed",
-                    "arguments": {"type": "ProcessArg::FEEDID", "value": "power" }
+                    "arguments": {"type": "ProcessArg::FEEDID", "value": "W" }
                 }
             ]
         },
