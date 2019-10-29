@@ -369,7 +369,7 @@ function cydynni_controller()
                             $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
 
                             // Trigger download of user data
-                            $sync_script = "/opt/emoncms/modules/cydynni/scripts-hub/cydynni-sync.sh";
+                            $sync_script = $settings['emoncms_dir']."/modules/cydynni/scripts-hub/cydynni-sync.sh";
                             $sync_logfile = "/var/log/emoncms/cydynni-sync.log";
                             $redis->rpush("service-runner","$sync_script>$sync_logfile");
 
@@ -382,7 +382,7 @@ function cydynni_controller()
                                 $config->APIKEY_READ = $u->apikey_read;
                                 $config->MQTT_HOST = $host;
                                 $config->MQTT_USERNAME = $username;
-                                $config->MQTT_PASSWORD = $password;
+                                $config->MQTT_PASSWORD = $u->apikey_write;
                                 $fh = fopen($settings['emoncms_dir']."/modules/remoteaccess-client/remoteaccess.json","w");
                                 fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
                                 fclose($fh);
