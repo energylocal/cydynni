@@ -4,41 +4,45 @@ emoncms_dir=/opt/emoncms
 openenergymonitor_dir=/opt/openenergymonitor
 emoncms_www=/var/www/emoncms
 
-# --------------------------------------------------------------------------------
-# 1. Install cydynni
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Install cydynni"
+echo "--------------------------------------------------------------------------------"
 cd $emoncms_dir/modules
 git clone https://github.com/energylocal/cydynni.git
 ln -s $emoncms_dir/modules/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
 cp $emoncms_dir/modules/cydynni/defaults/settings.ini $emoncms_www
+cd
 
-# --------------------------------------------------------------------------------
-# 2. Emoncms: Switch to energylocal fork
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Emoncms: Switch to energylocal fork"
+echo "--------------------------------------------------------------------------------"
 cd /var/www/emoncms
 git remote set-url origin https://github.com/energylocal/emoncms.git
 git pull
 git checkout energylocal-hub
+cd
 
-# --------------------------------------------------------------------------------
-# 3. Setup module: Switch to energylocal fork
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Setup module: Switch to energylocal fork"
+echo "--------------------------------------------------------------------------------"
 cd $emoncms_dir/modules/demandshaper
 git remote set-url origin https://github.com/energylocal/demandshaper.git
 git pull
 git checkout master
+cd
 
-# --------------------------------------------------------------------------------
-# 4. Setup module: Switch to energylocal fork
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Setup module: Switch to energylocal fork"
+echo "--------------------------------------------------------------------------------"
 cd /var/www/emoncms/Modules/setup
 git remote set-url origin https://github.com/energylocal/setup.git
 git pull
 git checkout master
+cd
 
-# --------------------------------------------------------------------------------
-# 5. Setup module: Switch to energylocal fork
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Setup module: Switch to energylocal fork"
+echo "--------------------------------------------------------------------------------"
 cd $emoncms_dir/modules
 git clone https://github.com/emoncms/remoteaccess-client
 cd remoteaccess-client
@@ -53,9 +57,10 @@ sudo systemctl start remoteaccess
 
 php $openenergymonitor_dir/EmonScripts/common/emoncmsdbupdate.php
 
-# --------------------------------------------------------------------------------
-# 6. Meter read service
-# --------------------------------------------------------------------------------
+cd
+echo "--------------------------------------------------------------------------------"
+echo "Meter read service"
+echo "--------------------------------------------------------------------------------"
 sudo apt-get install nmap -y
 
 ln $emoncms_dir/modules/cydynni/edmi-am.json /var/www/emoncms/Modules/device/data
@@ -64,26 +69,28 @@ sudo systemctl enable meterread.service
 sudo systemctl start meterread.service
 systemctl status meterread.service
 
-# --------------------------------------------------------------------------------
-# 7. Meter read service
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Meter read service"
+echo "--------------------------------------------------------------------------------"
 cd $emoncms_dir/modules/cydynni/scripts-hub
-echo '<?php $key="changeme";' > provisionkey.php
+provisionkey=$(date +%s | sha256sum | base64 | head -c 8)
+echo '<?php $key="'$provisionkey'";' > provisionkey.php
+cd
 
-# --------------------------------------------------------------------------------
-# Install new crontab configuration
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Install new crontab configuration"
+echo "--------------------------------------------------------------------------------"
 sudo crontab $emoncms_dir/modules/cydynni/defaults/root_crontab
 crontab $emoncms_dir/modules/cydynni/defaults/pi_crontab
 
-# --------------------------------------------------------------------------------
-# 8. Modify hostname
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Modify hostname"
+echo "--------------------------------------------------------------------------------"
 # sudo nano /etc/hosts
 # sudo nano /etc/hostname
 
-# --------------------------------------------------------------------------------
-# 9. Disable SSH
-# --------------------------------------------------------------------------------
+echo "--------------------------------------------------------------------------------"
+echo "Disable SSH"
+echo "--------------------------------------------------------------------------------"
 
 
