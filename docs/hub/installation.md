@@ -21,82 +21,8 @@ Connect to the Hub via SSH:
     
 Default emonSD password: emonpi2016
 
-
 wget https://raw.githubusercontent.com/energylocal/cydynni/master/scripts-hub/install.sh
 chmod +x install.sh && ./install.sh
-
-## Hub Emoncms requirements
-
-Add UDP Broadcast for hub detection at the same time:
-
-    crontab -e
-    * * * * * php /opt/openenergymonitor/emonpi/UDPBroadcast/broadcast.php 2>&1
-
-### CydYnni App front-end
-
-The following steps detail how to install the CydYnni App frontend on the hub. The CydYnni front-end sits as a user interface layer on top of the emonSD + emoncms stack as installed above.
-
-Install the cydynni repository:
-
-    cd /opt/emoncms/modules
-    git clone https://github.com/energylocal/cydynni.git
-        
-Define CydYnni UI as hub, add other energylocal specific settings:
-
-    sudo nano /var/www/emoncms/settings.php
-    
-Add
-
-    [cydynni]
-    is_hub = true
-    advanced_users = []
-    enable_UDP_broadcast = true
-
-Modify default routes:
-
-    default_controller = "cydynni"
-    default_action = ""
-    default_controller_auth = "cydynni"
-    default_action_auth = ""
-
-Create a symbolic link of the emoncms cydynni module into the emoncms Modules folder:
-
-    ln -s /opt/emoncms/modules/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
-
-Update emoncms database:
-
-    php /opt/openenergymonitor/EmonScripts/common/emoncmsdbupdate.php
-
-Add CydYnni syncronisation script (period download of hydro, community and smart meter data) to crontab:
-
-    sudo crontab -e
-    */5 * * * * php /opt/emoncms/modules/cydynni/scripts-hub/sync.php 2>&1
-
-### Emoncms modifications
-
-Switch to energylocal fork
-
-    cd /var/www/emoncms
-    git remote set-url origin https://github.com/energylocal/emoncms.git
-    git pull
-    git checkout energylocal-hub
-
-**Mods**
-
-- Hide apps module menu item
-
-### Emoncms setup module energylocal fork
-
-Switch to energylocal fork
-
-    cd /var/www/emoncms/Modules/setup
-    git remote set-url origin https://github.com/energylocal/setup.git
-    git pull
-    git checkout master
-
-### RemoteAccess Client Installation
-
-Create remoteaccess.env settings file with emoncms.org username and password.
 
 ### Testing
 
