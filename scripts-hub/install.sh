@@ -22,6 +22,10 @@ git pull
 git checkout energylocal-hub
 cd
 
+# hide menu for app and dashboard module
+rm /var/www/emoncms/Modules/app/app_menu.php
+rm /var/www/emoncms/Modules/dashboard/dashboard_menu.php
+
 echo "--------------------------------------------------------------------------------"
 echo "Setup module: Switch to energylocal fork"
 echo "--------------------------------------------------------------------------------"
@@ -93,4 +97,6 @@ echo "--------------------------------------------------------------------------
 echo "Disable SSH"
 echo "--------------------------------------------------------------------------------"
 
+cd
+rm install.sh
 
