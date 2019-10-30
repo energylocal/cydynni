@@ -26,6 +26,8 @@ cd
 rm /var/www/emoncms/Modules/app/app_menu.php
 rm /var/www/emoncms/Modules/dashboard/dashboard_menu.php
 
+git -C /var/www/emoncms/Modules/device pull
+
 echo "--------------------------------------------------------------------------------"
 echo "Setup module: Switch to energylocal fork"
 echo "--------------------------------------------------------------------------------"
