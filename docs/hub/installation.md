@@ -21,6 +21,10 @@ Connect to the Hub via SSH:
     
 Default emonSD password: emonpi2016
 
+
+wget https://raw.githubusercontent.com/energylocal/cydynni/master/scripts-hub/install.sh
+chmod +x install.sh && ./install.sh
+
 ## Hub Emoncms requirements
 
 Add UDP Broadcast for hub detection at the same time:
@@ -93,55 +97,6 @@ Switch to energylocal fork
 ### RemoteAccess Client Installation
 
 Create remoteaccess.env settings file with emoncms.org username and password.
-
-    cd /opt/emoncms/modules
-    git clone https://github.com/emoncms/remoteaccess-client
-    cd remoteaccess-client
-    cp remoteaccess.json.example remoteaccess.json
-    sudo chmod 666 remoteaccess.json
-
-Install and start remoteaccess service:
-
-    sudo ln -s /opt/emoncms/modules/remoteaccess-client/remoteaccess.service /lib/systemd/system
-    sudo systemctl enable remoteaccess.service
-    sudo systemctl start remoteaccess
-
-    ln -s /opt/emoncms/modules/remoteaccess-client/remoteaccess /var/www/emoncms/Modules/remoteaccess
-    
-### OTA Update
-
-    crontab -e
-    */10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /var/log/emoncms/ota.log 2>&1
-
-### Hostname
-
-    sudo nano /etc/hosts
-    sudo nano /etc/hostname
-    
-### NMAP and meterread
-
-    sudo apt-get install nmap
-    
-    sudo ln -s /opt/emoncms/modules/cydynni/scripts-hub/meterread/meterread.service /lib/systemd/system
-    sudo systemctl enable meterread.service
-    sudo systemctl start meterread.service
-    systemctl status meterread.service
-
-    ln /opt/emoncms/modules/cydynni/edmi-am.json /var/www/emoncms/Modules/device/data
-    
-Change base ip address to relevant..
-
-### Provision Key
-
-    cd /opt/emoncms/modules/cydynni/scripts-hub
-    echo '<?php $key="changeme";' > provisionkey.php
-    crontab -e
-    
-    */5 * * * * php /opt/emoncms/modules/cydynni/scripts-hub/provision.php 2>&1
-   
-### Disable SSH
-
-Remove ssh from /boot
 
 ### Testing
 
