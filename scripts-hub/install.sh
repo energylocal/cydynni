@@ -2,6 +2,7 @@
 
 emoncms_dir=/opt/emoncms
 openenergymonitor_dir=/opt/openenergymonitor
+emoncms_www=/var/www/emoncms
 
 # --------------------------------------------------------------------------------
 # 1. Install cydynni
@@ -9,6 +10,7 @@ openenergymonitor_dir=/opt/openenergymonitor
 cd $emoncms_dir/modules
 git clone https://github.com/energylocal/cydynni.git
 ln -s $emoncms_dir/modules/cydynni/cydynni-module /var/www/emoncms/Modules/cydynni
+cp $emoncms_dir/modules/cydynni/defaults/settings.ini $emoncms_www
 
 # --------------------------------------------------------------------------------
 # 2. Emoncms: Switch to energylocal fork
@@ -54,7 +56,7 @@ php $openenergymonitor_dir/EmonScripts/common/emoncmsdbupdate.php
 # --------------------------------------------------------------------------------
 # 6. Meter read service
 # --------------------------------------------------------------------------------
-sudo apt-get install nmap
+sudo apt-get install nmap -y
 
 ln $emoncms_dir/modules/cydynni/edmi-am.json /var/www/emoncms/Modules/device/data
 sudo ln -s $emoncms_dir/modules/cydynni/scripts-hub/meterread/meterread.service /lib/systemd/system
@@ -67,6 +69,12 @@ systemctl status meterread.service
 # --------------------------------------------------------------------------------
 cd $emoncms_dir/modules/cydynni/scripts-hub
 echo '<?php $key="changeme";' > provisionkey.php
+
+# --------------------------------------------------------------------------------
+# Install new crontab configuration
+# --------------------------------------------------------------------------------
+sudo crontab $emoncms_dir/modules/cydynni/defaults/root_crontab
+crontab $emoncms_dir/modules/cydynni/defaults/pi_crontab
 
 # --------------------------------------------------------------------------------
 # 8. Modify hostname
