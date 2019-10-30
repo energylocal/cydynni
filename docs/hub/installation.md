@@ -21,8 +21,8 @@ Connect to the Hub via SSH:
     
 Default emonSD password: emonpi2016
 
-wget https://raw.githubusercontent.com/energylocal/cydynni/master/scripts-hub/install.sh
-chmod +x install.sh && ./install.sh
+    wget https://raw.githubusercontent.com/energylocal/cydynni/master/scripts-hub/install.sh
+    chmod +x install.sh && ./install.sh
 
 ### Testing
 
