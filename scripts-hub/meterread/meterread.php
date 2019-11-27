@@ -53,7 +53,7 @@ while(true) {
     if (($now-$last)>=$interval) {
         $last = $now;
         
-        if (!$ip_found || (time()-$last_valid)>3600) {
+        if (!$ip_found && (time()-$last_valid)>3600) {
             $ip_scan_result = ip_scan();
             if ($ip_scan_result!=false) {
                 $ip_found = true;
