@@ -72,7 +72,7 @@ while(true) {
                     if (is_numeric($val)) $json->$key = 1*$val;
                 }
                 if (isset($json->time)) unset($json->time);
-                print http_request("POST","http://localhost/emoncms/input/post",array("node"=>"smartmeter","fulljson"=>json_encode($json),"apikey"=>$apikey))."\n";
+                http_request("POST","http://localhost/emoncms/input/post",array("node"=>"smartmeter","fulljson"=>json_encode($json),"apikey"=>$apikey))."\n";
             } else {
                 print "no response\n";
             }
