@@ -68,7 +68,9 @@ while(true) {
 
             if ($json!=null) {
                 $last_valid = time();
-                foreach ($json as $key=>$val) $json->$key = 1*$val;
+                foreach ($json as $key=>$val) {
+                    if (is_numeric($val)) $json->$key = 1*$val;
+                }
                 if (isset($json->time)) unset($json->time);
                 print http_request("POST","http://localhost/emoncms/input/post",array("node"=>"smartmeter","fulljson"=>json_encode($json),"apikey"=>$apikey))."\n";
             } else {
