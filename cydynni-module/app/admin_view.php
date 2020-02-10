@@ -17,6 +17,7 @@ input {
     <th style="width:80px">User</th>
     <th style="width:250px">Username</th>
     <th style="width:260px">Email <span style="font-size:12px">(Click to edit)</span></th>
+    <th style="width:130px">Feeds</th>
     <th style="width:130px">MPAN</th>
     <th style="max-width:350px">Token</th>
     <th style="max-width:100px">Report Key</th>
@@ -59,6 +60,7 @@ function load() {
                   out += "<button class='btn edit-save hide' key='email' userid='"+result[z].id+"'>Save</button></div>";
                 out += "</td>";
                 // text-wrap:normal;word-wrap:break-word
+                out += "<td><div style=''>"+result[z].feeds+"</div></td>";
                 out += "<td><div style=''>"+result[z].mpan+"</div></td>";
                 out += "<td><div style='overflow:hidden'>"+result[z].token+"</div></td>";
                 out += "<td><div style='overflow:hidden'>"+result[z].apikey_read+"</div></td>";

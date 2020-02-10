@@ -71,7 +71,7 @@
               
                 <div class="bg-household">
                   <b><?php echo t("On the");?> <span class="household_date"></span> <?php echo t("you scored");?>:</b>
-                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score"></span>/100</div>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100</div>
                   <!--<div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score"></span>/100</div>-->
                 </div>
                 

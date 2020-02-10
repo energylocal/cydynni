@@ -48,13 +48,13 @@
                   <div style="padding:10px">
                     <div style="padding-top:5px; padding-bottom:5px">
                       <div class="legend-label-box" style="background-color:#ffb401"></div>
-                      <span class="legend-label"><?php echo t("Morning");?></span>
+                      <span class="legend-label"><?php echo t("Day");?></span>
                       <div class="legend-label-box" style="background-color:#4dac34"></div>
-                      <span class="legend-label"><?php echo t("Midday");?></span>
-                      <div class="legend-label-box" style="background-color:#e6602b"></div>
+                      <!--<span class="legend-label"><?php echo t("Midday");?></span>
+                      <div class="legend-label-box" style="background-color:#e6602b"></div>-->
                       <span class="legend-label"><?php echo t("Evening");?></span>
                       <div class="legend-label-box" style="background-color:#014c2d"></div>
-                      <span class="legend-label"><?php echo t("Overnight");?></span>
+                      <span class="legend-label"><?php echo t("Night");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
                     </div>
@@ -71,7 +71,7 @@
 
                 </div>
             </div>
-
+            <!--
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Current Tariff"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content hide">
@@ -100,7 +100,30 @@
                   <br>
                 </div>
             </div>
-                                    
+            -->
+
+            <div class="block">
+                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
+                <div class="block-content hide">
+                  <div style="background-color:#29aae3; padding:10px; color:#fff; margin:10px">
+                      <div style="font-size:18px; color:#fff; font-weight:bold; padding:5px">Hydro</div>
+                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Night 8pm - 7am: 5.8 p/kWh</div>
+                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Day 7am - 4pm: 10.4 p/kWh</div>
+                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Evening 4pm - 8pm: 12.7 p/kWh</div>
+                  </div>
+
+                  <div style="background-color:#e6602b; padding:10px; color:#fff; margin:10px">
+                      <div style="font-size:18px; color:#fff; font-weight:bold; padding:5px">Import</div>
+                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Night 8pm - 7am: 10.5 p/kWh</div>
+                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Day 7am - 4pm: 18.9 p/kWh</div>
+                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Evening 4pm - 8pm: 23.1 p/kWh</div>
+                  </div>
+                  <div style="height:1px; clear:both"></div>
+                  
+                </div>
+            </div>
+
+            <!--                      
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content hide">
@@ -125,7 +148,6 @@
                     
                   <div id="morning-tariff-box" class="box5" style="color:#ffb401">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
-                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
 
                       <div class="circle-small bg-morning">
                           <div class="circle-small-inner">
@@ -139,7 +161,6 @@
                   
                   <div id="midday-tariff-box" class="box5" style="color:#4dac34">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
-                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
 
                       <div class="circle-small bg-midday">
                           <div class="circle-small-inner">
@@ -153,7 +174,6 @@
                   
                   <div id="evening-tariff-box" class="box5" style="color:#e6602b">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
-                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
                       <div class="circle-small bg-evening">
                           <div class="circle-small-inner">
                               <div style="font-size:32px"><?php echo $tariffs[$club]["evening"]["cost"]*100;?>p</div>
@@ -165,7 +185,6 @@
                   
                   <div id="overnight-tariff-box" class="box5" style="color:#014c2d">
                       <div style="font-size:22px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
-                      <!--<div style="font-size:14px; padding:5px"><?php echo t("Starts in X hours");?></div>-->
                       
                       <div class="circle-small bg-overnight">
                           <div class="circle-small-inner">
@@ -190,3 +209,4 @@
                   
                 </div>
             </div>
+            -->

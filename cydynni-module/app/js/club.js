@@ -73,13 +73,13 @@ function club_summary_load()
               
               if (result.time>=1551398400) {
                   tariffs.generation.cost = 0.115;
-                  tariffs.morning.cost = 0.182;
+                  // tariffs.morning.cost = 0.182;
                   tariffs.midday.cost = 0.166;
                   tariffs.evening.cost = 0.202;
                   tariffs.overnight.cost = 0.1305;
               } else {
                   tariffs.generation.cost = 0.07;
-                  tariffs.morning.cost = 0.12;
+                  // tariffs.morning.cost = 0.12;
                   tariffs.midday.cost = 0.10;
                   tariffs.evening.cost = 0.14;
                   tariffs.overnight.cost = 0.0725;
@@ -228,11 +228,12 @@ function club_bargraph_load() {
         var d = new Date(time);
         var hour = d.getHours();
         
-        var generation = generation_data[z][1] * scale;
+        var generation = 0;
+        if (generation_data[z]!=undefined) generation = generation_data[z][1] * scale;
         var consumption = club_data[z][1] * scale;
         
         var overnight = 0;
-        var morning = 0;
+        // var morning = 0;
         var midday = 0;
         var evening = 0;
         var exported_generation = 0;
@@ -252,15 +253,15 @@ function club_bargraph_load() {
             // Grid import
             var grid_import = consumption - generation;
             // Import times
-            if (hour<6) overnight = grid_import;
-            if (hour>=6 && hour<11) morning = grid_import;
-            if (hour>=11 && hour<16) midday = grid_import;
+            if (hour<7) overnight = grid_import;
+            // if (hour>=6 && hour<11) morning = grid_import;
+            if (hour>=7 && hour<16) midday = grid_import;
             if (hour>=16 && hour<20) evening = grid_import;
             if (hour>=20) overnight = grid_import;
         }
 
         overnight_data[z] = [time,overnight];
-        morning_data[z] = [time,morning];
+        // morning_data[z] = [time,morning];
         midday_data[z] = [time,midday];
         evening_data[z] = [time,evening];
         exported_generation_data[z] = [time,exported_generation];
@@ -355,12 +356,12 @@ function club_bargraph_load() {
         stack: true, data: overnight_data, color: "#014c2d", label: t("Overnight Tariff"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
+    //clubseries.push({
+    //    stack: true, data: morning_data, color: "#ffb401", label: t("Morning Tariff"),
+    //    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+    //});
     clubseries.push({
-        stack: true, data: morning_data, color: "#ffb401", label: t("Morning Tariff"),
-        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-    });
-    clubseries.push({
-        stack: true, data: midday_data, color: "#4dac34", label: t("Midday Tariff"),
+        stack: true, data: midday_data, color: "#ffb401", label: t("Midday Tariff"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
@@ -580,8 +581,8 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             
             } else {
                 // Print estimate amounts
+                out += clubseries[5].label+ ": "+(clubseries[5].data[z][1]*1).toFixed(1)+units+"<br>";
                 out += clubseries[6].label+ ": "+(clubseries[6].data[z][1]*1).toFixed(1)+units+"<br>";
-                out += clubseries[7].label+ ": "+(clubseries[7].data[z][1]*1).toFixed(1)+units+"<br>";
             }
             tooltip(item.pageX,item.pageY,out,"#fff");
         }

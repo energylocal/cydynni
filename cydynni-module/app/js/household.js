@@ -38,7 +38,7 @@ function household_summary_load()
 {    
 
   if (session.feeds.hub_use!=undefined) {
-      $("#realtime-power").show();
+
       household_power_feedid = session.feeds.hub_use
       household_powergraph_load();
       
@@ -47,7 +47,7 @@ function household_summary_load()
       household_updater = setInterval(household_realtime,5000);
       
   } else if (session.feeds.meter_power!=undefined) {
-      $("#realtime-power").show();
+      
       household_power_feedid = session.feeds.meter_power
       household_powergraph_load();
       
@@ -62,6 +62,7 @@ function household_summary_load()
 
 function household_draw_summary(day) {
 
+    if (day==undefined) return false;
     var time = day[0];
                         
     var d = new Date(time*1000);
@@ -596,9 +597,7 @@ function household_powergraph_load() {
     data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+household_power_interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
     dataType: 'json',               
     async: true,
-    success: function(data) {  
-        householdpowerseries = data;
-        
+    success: function(data) {
         householdpowerseries = [];
         var t = 0;
         var kwh_in_window = 0.0;
@@ -607,6 +606,7 @@ function household_powergraph_load() {
             kwh_in_window += (data[z][1] * t) / 3600000.0;
             if (data[z][1]!=null) householdpowerseries.push(data[z])
         }
+        if (householdpowerseries.length>0) $("#realtime-power").show();
         $("#kwh_in_window").html(kwh_in_window.toFixed(2));
         household_powergraph_draw();
     }
