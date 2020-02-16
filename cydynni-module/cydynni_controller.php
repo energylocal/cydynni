@@ -118,7 +118,7 @@ function cydynni_controller()
             $live = new stdClass();
 
             require_once "Modules/feed/feed_model.php";
-            $feed = new Feed($mysqli,$redis,$feed_settings);
+            $feed = new Feed($mysqli,$redis,$settings["feed"]);
             $live->generation = number_format($feed->get_value(1),3)*2.0;
             $live->club = number_format($feed->get_value(2),3)*2.0;
             
