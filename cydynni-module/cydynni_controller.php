@@ -114,33 +114,48 @@ function cydynni_controller()
         // -----------------------------------------------------------------------------------------
         case "live":
             $route->format = "json";
-            $result = $redis->get("$club:live");
-            if ($settings["cydynni"]["is_hub"]) {
-                if (!$result) {
-                    $result = file_get_contents("${base_url}live");
-                    if ($result) $redis->set("live",$result);
-                }
-            }
-            if ($live = json_decode($result)) {
-                $date = new DateTime();
-                $date->setTimezone(new DateTimeZone("Europe/London"));
-                $date->setTimestamp(time());
-                $hour = $date->format("H");
+            
+            $live = new stdClass();
 
-                $tariff = "";
-                if ($hour<6) $tariff = "overnight";
-                if ($hour>=6 && $hour<11) $tariff = "morning";
-                if ($hour>=11 && $hour<16) $tariff = "midday";
-                if ($hour>=16 && $hour<20) $tariff = "evening";
-                if ($hour>=20) $tariff = "overnight";
-                if ($live->generation>=$live->club) $tariff = "generation";
+            require_once "Modules/feed/feed_model.php";
+            $feed = new Feed($mysqli,$redis,$feed_settings);
+            $live->generation = number_format($feed->get_value(1),3)*2.0;
+            $live->club = number_format($feed->get_value(2),3)*2.0;
+            
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $date->setTimestamp(time());
+            $hour = $date->format("H");
+
+            $tariff = "";
+            if ($hour<7) $tariff = "overnight";
+            if ($hour>=7 && $hour<16) $tariff = "daytime";
+            if ($hour>=16 && $hour<20) $tariff = "evening";
+            if ($hour>=20) $tariff = "overnight";
+            if ($live->generation>=$live->club) $tariff = "generation";
                 
-                $live->tariff = $tariff;
-                
-                return $live;
-            } else {
-                return array('success'=>false,'message'=>'Feed not available');
-            }
+            $live->tariff = $tariff;
+
+            $imprt = 0.0;
+            if ($live->generation<=$live->club) $imprt = $live->club - $live->generation;
+            $selfuse = $live->club - $imprt;
+            
+            $hydro_price = 0.0;
+            $import_price = 0.0;
+            // hydro price
+            if ($hour>=20.0 || $hour<7.0) $hydro_price = 5.8;
+            if ($hour>=7.0 && $hour<16.0) $hydro_price = 10.4;
+            if ($hour>=16.0 && $hour<20.0) $hydro_price = 12.7;
+            $hydro_cost = $selfuse * $hydro_price;
+            // import price
+            if ($hour>=20.0 || $hour<7.0) $import_price = 10.5;
+            if ($hour>=7.0 && $hour<16.0) $import_price = 18.9;
+            if ($hour>=16.0 && $hour<20.0) $import_price = 23.1;
+            $import_cost = $imprt * $import_price;
+            // unit price
+            $live->unit_price = ($import_cost + $hydro_cost) / $live->club;
+
+            return $live;
             break;
         
         case "household-daily-summary":

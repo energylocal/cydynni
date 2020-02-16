@@ -218,6 +218,8 @@ function club_bargraph_load() {
     exported_generation_data = [];
     used_generation_data = [];
     
+    var price_data = []
+    
     var total_generation = 0;
     var total_used_generation = 0;
     var total_club = 0;
@@ -277,6 +279,33 @@ function club_bargraph_load() {
             total_used_generation += used_generation;
         }
         total_time += interval;
+        
+        // ---------------------------------------------------
+        // Price signal
+        // ---------------------------------------------------
+        var imprt = 0.0
+        if (generation<=consumption) imprt = consumption-generation
+        var selfuse = consumption - imprt
+        
+        var hydro_price = 0.0;
+        var import_price = 0.0;
+        // hydro price
+        if (hour>=20.0 || hour<7.0) hydro_price = 5.8;
+        if (hour>=7.0 && hour<16.0) hydro_price = 10.4;
+        if (hour>=16.0 && hour<20.0) hydro_price = 12.7;
+        hydro_cost = selfuse * hydro_price
+        // import price
+        if (hour>=20.0 || hour<7.0) import_price = 10.5;
+        if (hour>=7.0 && hour<16.0) import_price = 18.9;
+        if (hour>=16.0 && hour<20.0) import_price = 23.1;
+        import_cost = imprt * import_price
+        // unit price
+        unit_price = (import_cost + hydro_cost) / consumption
+        
+        // total_cost += import_cost + hydro_cost
+        // total_kwh += club
+        
+        price_data.push([time,unit_price]);
     }    
     
     // ----------------------------------------------------------------------------
@@ -294,6 +323,7 @@ function club_bargraph_load() {
         } 
     }
     
+    /*
     if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
         // generation estimate USING YNNI PADARN PERIS DATA
@@ -339,7 +369,7 @@ function club_bargraph_load() {
                 }
         }});
        
-    }
+    }*/
     // ----------------------------------------------------------------------------
     
     clubseries = [];
@@ -372,8 +402,14 @@ function club_bargraph_load() {
         stack: true, data: exported_generation_data, color: "#a5e7ff", label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
+    
+    clubseries.push({
+        data: price_data, color: "#fb1a80", label: t("Price"), yaxis:2,
+        lines: { show: true }
+    });
 
     // estimate
+    /*
     clubseries.push({
         data: generation_estimate, color: "#dadada", label: t(ucfirst(club_settings.generator)+" estimate"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
@@ -381,7 +417,7 @@ function club_bargraph_load() {
     clubseries.push({
         data: club_estimate, color: "#aaa", label: t("Club estimate"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 0.4, lineWidth:0}
-    });
+    });*/
     
     // club_bargraph_draw();
 }
@@ -416,12 +452,10 @@ function club_bargraph_draw() {
             min: view.start,
             max: view.end
         },
-        yaxis: { 
-            font: {size:flot_font_size, color:"#666"}, 
-            // labelWidth:-5
-            reserveSpace:false,
-            min:0
-        },
+        yaxes: [
+            {font: {size:flot_font_size, color:"#666"},reserveSpace:false,show:false,min:0},
+            {font: {size:flot_font_size, color:"#666"},reserveSpace:false,show:false,min:0}
+        ],
         selection: { mode: "x" },
         grid: {
             show:true, 
@@ -432,7 +466,7 @@ function club_bargraph_draw() {
         }
     }
     
-    if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
+    // if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
     
     if ($("#club_bargraph_placeholder").width()>0) {
         $.plot("#club_bargraph_placeholder",clubseries, options);
@@ -572,7 +606,11 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                     // Only show tooltip item if defined and more than zero
                     if (series.data[z]!=undefined && series.data[z][1]>0) {
                         if (series.label!=t(ucfirst(club_settings.generator)+" estimate") && series.label!=t("Club estimate")) {
-                            out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+units+"<br>";
+                            if (series.label!=t("Price")) {
+                                out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+units+"<br>";
+                            } else {
+                                out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+" p/kWh<br>";
+                            } 
                             if (series.label!=t("Exported "+ucfirst(club_settings.generator))) total_consumption += series.data[z][1]*1;
                         }
                     }

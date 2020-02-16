@@ -7,7 +7,7 @@
                     <div id="status-pre" style="padding:10px;"></div>
                     <img id="status-img" src="<?php echo $app_path; ?>images/new-tick.png"/>
                     <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
-                    <div id="status-until" style="height:16px; padding:10px;"></div><br><br>
+                    <div id="status-until" style="height:16px; padding:10px;"></div><br>
                     
                   </div>
                 </div>
@@ -20,12 +20,7 @@
                 <div class="visnav-block">
                   <!--<div class="visnav-club club-zoomin">+</div>-->
                   <!--<div class="visnav-club club-zoomout">-</div>-->
-                  <div class="visnav-club club-left"><</div>
-                  <div class="visnav-club club-right">></div>
-                  <div class="visnav-club club-year"><?php echo t("YEAR");?></div>
-                  <div class="visnav-club club-month"><?php echo t("MONTH");?></div>
-                  <div class="visnav-club club-week"><?php echo t("WEEK");?></div>
-                  <div class="visnav-club club-day"><?php echo t("DAY");?></div>
+                  <div class="visnav-club club-left"><</div><div class="visnav-club club-right">></div><div class="visnav-club club-year"><?php echo t("YEAR");?></div><div class="visnav-club club-month"><?php echo t("MONTH");?></div><div class="visnav-club club-week"><?php echo t("WEEK");?></div><div class="visnav-club club-day" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("DAY");?></div>
                 </div>
                 
                 
@@ -34,7 +29,7 @@
 
                   <div style="background-color:#088400; color:#fff">
                     <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
-                    <?php echo t("Forecasting"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
+                    <?php echo t("Generating"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
                   </div>
                   
                   <div class="no-padding">
@@ -57,6 +52,8 @@
                       <span class="legend-label"><?php echo t("Night");?></span>
                       <div class="legend-label-box" style="background-color:#29aae3"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
+                      <div class="legend-label-box" style="background-color:#fb1a80"></div>
+                      <span class="legend-label" ><?php echo t("Price");?></span>
                     </div>
                     
                     <div id="club_bargraph_bound" style="width:100%; height:405px;">
@@ -66,7 +63,7 @@
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
                   <div id="status-summary"><?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?></div>
-                  <span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>
+                  <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>-->
                   </div>
 
                 </div>

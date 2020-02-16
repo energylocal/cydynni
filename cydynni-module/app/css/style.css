@@ -5,6 +5,11 @@ body {
 .content-container {
     font-family: Montserrat, Veranda, sans-serif;
     max-width:1100px;
+    padding-top:10px;
+}
+
+.app {
+    
 }
 
 a {
@@ -70,7 +75,7 @@ a:visited {
 
 .block-title {
     padding:10px;
-    height: 20px;
+    /*height: 20px;*/
     font-weight:bold;
     text-align:left;
     color:#fff;
@@ -368,7 +373,7 @@ a:visited {
   padding:10px;
   cursor:pointer;
   font-size:14px;
-  float:left;
+
 }
 
 .visnav-club:hover {
@@ -472,18 +477,48 @@ textarea {
 
 @media (max-width: 650px) {
   .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
+  
+  .content-container {
+      padding:8px 5px 5px 5px;
+  }
 }
 
 @media (max-width: 750px) {
   .nav-text {
       display:none;
   }
+
+  .navigation .active { padding-bottom:10px }
+  
+  .block {
+      margin-bottom:5px;
+  }
   
   .navigation li > div {
       text-align:center;
+      margin-right:5px;
   }
   
   .navigation li > div > img {
       float:none;
   }
+  
+  .content-container {
+      padding:8px 5px 5px 5px;
+  }
+
+.visnav-block {
+  float:none;
+  margin-top:10px;
+  margin-right:0px;
+  text-align:center;
+}
+
+.visnav-club {
+  padding-left:5.5%;
+  padding-right:5.5%;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  margin:0px;
+}
 }
