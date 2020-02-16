@@ -139,8 +139,7 @@ var generation = 0;
 
 var selected_month = 0;
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
-selected_month = parseInt(location.hash.slice(1));
+if (location.hash) selected_month = parseInt(location.hash.slice(1));
 
 // Language selection top-right
 if (lang=="cy_GB") {

@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang, $tariffs;
-$v = 27;
+$v = 30;
 
 $app_path = $path."Modules/cydynni/app/";
 
@@ -18,7 +18,6 @@ $app_path = $path."Modules/cydynni/app/";
 <script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
 
 <div class="app">
-    <br>
     <ul class="navigation">
         <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>

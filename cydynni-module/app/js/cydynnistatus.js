@@ -27,12 +27,14 @@ function cydynnistatus_update() {
   
   if (tariff=="morning") $("#status-img").attr("src",app_path+"images/waiting-icon.png");
   if (tariff=="midday") $("#status-img").attr("src",app_path+"images/new-tick.png");
+  if (tariff=="daytime") $("#status-img").attr("src",app_path+"images/new-tick.png");
   if (tariff=="evening") $("#status-img").attr("src",app_path+"images/waiting-icon.png");
   if (tariff=="overnight") $("#status-img").attr("src",app_path+"images/new-tick.png");
   if (tariff=="generation") $("#status-img").attr("src",app_path+"images/new-tick.png");
   
   
   // If morning peak then wait until midday tariff
+  /*
   if (tariff=="morning") {
       $("#status-pre").html(t("If possible"));
       $("#status-title").html(t("WAIT"));
@@ -59,6 +61,20 @@ function cydynnistatus_update() {
       $("#tariff-now-title").html(t("MIDDAY<br>PRICE")).css("color",tariffs.midday.color);
       $("#tariff-now-circle").css("background-color",tariffs.midday.color);
       $("#tariff-now-price").html((tariffs.midday.cost*100)+"p");
+  }*/
+
+  // If evening peak then wait until overnight tariff
+  if (tariff=="daytime") {
+      $("#status-pre").html(t("Now is a good time to use electricity"));
+      $("#status-title").html(t("GO!"));
+      $("#tariff_summary").html(t("Now")+": "+t("Day Time Price"));
+
+      var time_to_wait = (16 - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? day time price currently available"));
+      
+      $("#tariff-now-title").html(t("DAY <br>PRICE")).css("color",tariffs.midday.color);
+      $("#tariff-now-circle").css("background-color",tariffs.midday.color);
+      $("#tariff-now-price").html((tariffs.midday.cost*100)+"p");
   }
 
   // If evening peak then wait until overnight tariff
@@ -82,10 +98,10 @@ function cydynnistatus_update() {
 
       $("#tariff_summary").html(t("Now")+": "+t("Overnight Price"));
 
-      if (hour>6) {
-          var time_to_wait = (24-(hour+1)+6)+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      if (hour>7) {
+          var time_to_wait = (24-(hour+1)+7)+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       } else {
-          var time_to_wait = (6-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+          var time_to_wait = (7-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       }
       $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
 
@@ -99,7 +115,7 @@ function cydynnistatus_update() {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
       $("#tariff_summary").html(t("Now")+": "+t(ucfirst(club_settings.generator)+" Price"));
-      $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available"));
+      $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available")); // +"<br>"+t("Estimated unit cost: ")+live.unit_price+" p/kWh"
       
       $("#tariff-now-title").html(t(club_settings.generator.toUpperCase()+"<br>PRICE")).css("color",tariffs.generation.color);
       $("#tariff-now-circle").css("background-color",tariffs.generation.color);

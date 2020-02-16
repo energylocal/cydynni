@@ -176,6 +176,8 @@
 "Midday":"Canol Dydd",
 "Evening":"Gyda'r nos",
 "Overnight":"Dros Nos",
+"Day":"Dydd",
+"Night":"Nos",
 
 "WEEK":"W",
 "DAY":"D",
@@ -342,5 +344,6 @@
 "In total you used":"Yn gyfanswm defnyddwyd",
 "Total cost":"Cyfanswm",
 "Average unit cost":"Cyfartaledd cost uned",
-"Find Devices":"Darganfod Dyfais"
+"Find Devices":"Darganfod Dyfais",
+"Price":"Pris"
 }
