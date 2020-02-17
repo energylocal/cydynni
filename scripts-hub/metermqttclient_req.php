@@ -171,7 +171,7 @@ $reply_time = array();
         
         foreach ($metermpans as $meter=>$mpan) {    
             $reply_rx[$meter] = false;
-            print "pub $meter\n";
+            // print "pub $meter\n";
             // total_kW, total_im_kWh
             $reply_time[$meter] = microtime(true);
             $mqtt_client->publish("cfg/e/$meter","meter.total_kW?",0);

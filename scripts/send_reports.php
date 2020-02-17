@@ -73,22 +73,22 @@ while ($row = $result_users->fetch_object())
 
                     if (($report[0]["estimate"]*1)<15) {
                         //print "sending";
-                        if ($cydynni->reportdate!="17-07-2019") {
+                        if ($cydynni->reportdate!="19-11-2019") {
                             print $cydynni_emails->send_report_email($userid);
                         }
                     }
-                    
+
                 }
             }
         }
     }
-    
+
     print "\n";
 }
 
 function translate($s,$lang) {
     global $translation;
-    
+
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         return $translation->$lang->$s;
     } else { 

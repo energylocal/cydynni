@@ -40,8 +40,8 @@
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
-                    'href' => $path.'cydynni/report#'.$index.$apikeystr,
-                    'active' => $path.'cydynni/report#'.$index.$apikeystr,
+                    'href' => $path.'cydynni/report'.$apikeystr.'#'.$index,
+                    'active' => $path.'cydynni/report'.$apikeystr.'#'.$index,
                     'text' => sprintf("%s %s",$name,$year),
                     'order' => $index
                 );
