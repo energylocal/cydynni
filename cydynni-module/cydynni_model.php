@@ -13,23 +13,6 @@ class Cydynni{
         $this->redis = $redis;
     }
     
-    // HOUSEHOLD FUNCTIONS
-    // @todo: not respondin as expeced!?
-    /*
-    public function getHouseholdSummaryMonthly($userid,$month=false,$apikey=null){
-        if(empty($userid)) return;
-        if (IS_HUB) {
-            $result = $this->mysqli->query("SELECT * FROM cydynni WHERE `userid`='$userid'");
-            $row = $result->fetch_object();
-            if (isset($row->token)) $session["token"] = $row->token; else $session["token"] = "";
-        } else {
-            if ($result = $redis->get("household:summary:monthly:$userid")) {
-                $row = $result;
-            }
-        }
-        return $row;
-    }
-    */
     //CLUB FUNCTIONS
     public function getClubs($club_id = "") {
         $clubs = array();

@@ -9,7 +9,13 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 
 // Connect to MYSQL
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) {
     echo "Can't connect to database, please verify credentials/configuration in settings.php<br />";
     if ( $display_errors ) {

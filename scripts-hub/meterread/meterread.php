@@ -1,5 +1,14 @@
 <?php
 
+// Fetch local ip address
+$dir = dirname(__FILE__);
+$dir = str_replace("/meterread","",$dir);
+exec("$dir/getip.sh",$result);
+$ipaddress = explode(".",$result[0]);
+if (count($ipaddress)!=4) die;
+unset($ipaddress[3]);
+$ipaddress = implode(".",$ipaddress);
+
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
 require "process_settings.php";
@@ -8,7 +17,13 @@ require "core.php";
 // ----------------------------------------------------------
 // 2. Fetch apikey write from emoncms mysql database
 // ----------------------------------------------------------
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) {
     echo "Error connecting to mysql database ".$mysqli->connect_error."\n";
     die;
@@ -38,7 +53,7 @@ while(true) {
     if (($now-$last)>=$interval) {
         $last = $now;
         
-        if (!$ip_found || (time()-$last_valid)>60) {
+        if (!$ip_found && (time()-$last_valid)>3600) {
             $ip_scan_result = ip_scan();
             if ($ip_scan_result!=false) {
                 $ip_found = true;
@@ -53,9 +68,11 @@ while(true) {
 
             if ($json!=null) {
                 $last_valid = time();
-                foreach ($json as $key=>$val) $json->$key = 1*$val;
+                foreach ($json as $key=>$val) {
+                    if (is_numeric($val)) $json->$key = 1*$val;
+                }
                 if (isset($json->time)) unset($json->time);
-                print http_request("POST","http://localhost/emoncms/input/post",array("node"=>"smartmeter","fulljson"=>json_encode($json),"apikey"=>$apikey))."\n";
+                http_request("POST","http://localhost/emoncms/input/post",array("node"=>"smartmeter","fulljson"=>json_encode($json),"apikey"=>$apikey))."\n";
             } else {
                 print "no response\n";
             }
@@ -66,8 +83,9 @@ while(true) {
 
 function ip_scan()
 {
+    global $ipaddress;
     print "Scanning for smartmeter\n";
-    exec("nmap -sP 192.168.0.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
+    exec("nmap -n -sP $ipaddress.1/24 | grep 'Nmap scan report for' | cut -d' ' -f5",$output);
     print "Found ".count($output)." devices\n";
     $meter_ip = false;
     foreach ($output as $ip) {

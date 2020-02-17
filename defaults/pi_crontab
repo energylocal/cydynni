@@ -1,0 +1,5 @@
+# Emoncms cron items
+* * * * * php /opt/openenergymonitor/emonpi/UDPBroadcast/broadcast.php 2>&1
+*/10 * * * * /opt/emoncms/modules/cydynni/ota/update.sh >> /var/log/emoncms/cydynni-update.log
+0 0 * * * php /opt/emoncms/modules/cydynni/scripts-hub/uploader.php 2>&1
+*/5 * * * * php /opt/emoncms/modules/cydynni/scripts-hub/provision.php 2>&1

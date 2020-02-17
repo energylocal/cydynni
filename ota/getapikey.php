@@ -7,7 +7,13 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "Lib/EmonLogger.php";
 
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+        $settings["sql"]["server"],
+        $settings["sql"]["username"],
+        $settings["sql"]["password"],
+        $settings["sql"]["database"],
+        $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) die;
 
 $result = $mysqli->query("SELECT `apikey_write` FROM users WHERE `id`='$userid'");

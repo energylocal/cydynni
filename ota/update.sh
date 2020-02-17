@@ -4,8 +4,8 @@
 # cd $DIR
 cd
 
-apikey="$(php /home/pi/cydynni/ota/getapikey.php)"
-local_ota_version="$(cat cydynni/ota/version)"
+apikey="$(php /opt/emoncms/modules/cydynni/ota/getapikey.php)"
+local_ota_version="$(cat /opt/emoncms/modules/cydynni/ota/version)"
 
 url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
 remote_ota_version="$(curl -s $url)"
@@ -15,9 +15,9 @@ then
   echo "Remote:"$remote_ota_version" Local:"$local_ota_version
   echo "Update available, starting update process.."
   # rpi-rwlocal_ota_version="$(cat cydynni/ota/version)"
-  cd /home/pi/cydynni
+  cd /opt/emoncms/modules/cydynni
   git pull
-  cd /home/pi/cydynni/ota
+  cd /opt/emoncms/modules/cydynni/ota
   log=$(./main.sh)
   cd 
   # rpi-ro
@@ -26,7 +26,7 @@ then
   url="https://dashboard.energylocal.org.uk/cydynni/ota-log-set?apikey=$apikey"
   curl -s -X POST -d "$log" $url
 
-  local_ota_version="$(cat cydynni/ota/version)"
+  local_ota_version="$(cat /opt/emoncms/modules/cydynni/ota/version)"
   url="https://dashboard.energylocal.org.uk/cydynni/ota-version?hub=$local_ota_version&apikey=$apikey"
   curl -s $url
 fi

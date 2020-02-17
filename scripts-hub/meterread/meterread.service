@@ -2,7 +2,7 @@
 
 # INSTALL:
 
-# sudo ln -s /home/pi/cydynni/scripts-hub/meterread/meterread.service /lib/systemd/system
+# sudo ln -s /opt/emoncms/modules/cydynni/scripts-hub/meterread/meterread.service /lib/systemd/system
 
 # RUN AT STARTUP
 # sudo systemctl daemon-reload
@@ -46,7 +46,7 @@ Documentation=https://github.com/trystanlea/cydynni
 
 [Service]
 Type=idle
-ExecStart=/usr/bin/php /home/pi/cydynni/scripts-hub/meterread/meterread.php
+ExecStart=/usr/bin/php /opt/emoncms/modules/cydynni/scripts-hub/meterread/meterread.php
 
 # Restart script if stopped on a failure. Will not restart if not configured correctly
 Restart=on-failure

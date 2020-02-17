@@ -2,8 +2,9 @@
 
 $userid = 1;
 $remote_server = "https://dashboard.energylocal.org.uk";
-$remote_apikey_read = "";
-require "settings.php";
+
+//if (!file_exists("settings.php")) die;
+//require "settings.php";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
@@ -12,18 +13,29 @@ require "process_settings.php";
 // -----------------------------------------------------------------
 
 // Mysql
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ($mysqli->connect_error) { echo "Can't connect to database:".$mysqli->connect_error; die; }
+
+$result = $mysqli->query("SELECT apikey_read,apikey_write FROM users WHERE id=$userid");
+$row = $result->fetch_object();
+$remote_apikey_read = $row->apikey_read;
+$remote_apikey_write = $row->apikey_write;
 
 // Redis
 $redis = new Redis();
-if (!$redis->connect($redis_server['host'], $redis_server['port'])) { 
-    $log->error("Could not connect to redis at ".$redis_server['host'].":".$redis_server['port']);  die('Check log\n'); 
+if (!$redis->connect($settings['redis']['host'], $settings['redis']['port'])) { 
+    $log->error("Could not connect to redis at ".$settings['redis']['host'].":".$settings['redis']['port']);  die('Check log\n'); 
 }
-if (!empty($redis_server['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $redis_server['prefix']);
-if (!empty($redis_server['auth'])) {
-    if (!$redis->auth($redis_server['auth'])) { 
-        $log->error("Could not connect to redis at ".$redis_server['host'].", autentication failed"); die('Check log\n');
+if (!empty($settings['redis']['prefix'])) $redis->setOption(Redis::OPT_PREFIX, $settings['redis']['prefix']);
+if (!empty($settings['redis']['auth'])) {
+    if (!$redis->auth($settings['redis']['auth'])) { 
+        $log->error("Could not connect to redis at ".$settings['redis']['host'].", autentication failed"); die('Check log\n');
     }
 }
 
@@ -47,6 +59,14 @@ foreach ($remote_feeds as $f) {
 $i=0;
 foreach ($local_feeds as $name=>$feed) {
     if ($name!="halfhour_consumption" && $name!="use_kwh" && $name!="hydro" && $name!="community") {
+    
+        if (!isset($remote_feeds_byname[$name])) {
+            $result = json_decode(file_get_contents($remote_server.'/feed/create.json?apikey='.$remote_apikey_write.'&tag=smartmeter&name='.$name.'&datatype=1&engine=5&options={"interval":10}'));
+            $remote_feeds_byname[$name] = new stdClass();
+            $remote_feeds_byname[$name]->id = $result->feedid;
+            print "feed created $name ".$result->feedid;
+        }
+    
         if (isset($remote_feeds_byname[$name])) {
             print $name."\n";
 
@@ -57,7 +77,7 @@ foreach ($local_feeds as $name=>$feed) {
                 "remote_id"=>$remote_feeds_byname[$name]->id,
                 "engine"=>$feed->engine,
                 "datatype"=>$feed->datatype,
-                "remote_apikey"=>$remote_apikey_read 
+                "remote_apikey"=>$remote_apikey_write
             );
             $redis->lpush("sync-queue",json_encode($params));
             $i++;
@@ -66,8 +86,8 @@ foreach ($local_feeds as $name=>$feed) {
 }
 
 if ($i>0) {
-    $update_script = "/home/pi/sync/emoncms-sync.sh";
-    $update_logfile = "/home/pi/data/emoncms-sync.log";
+    $update_script = "/opt/emoncms/modules/sync/emoncms-sync.sh";
+    $update_logfile = "/var/log/emoncms/emoncms-sync.log";
     $redis->rpush("service-runner","$update_script>$update_logfile");
 }
 // -----------------------------------------------------------------
