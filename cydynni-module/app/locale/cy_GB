@@ -350,5 +350,13 @@
 
 "Missing household data": "Data ddim ar gael",
 "The household consumption data is currently unavailable.": "Tydi'r data ar eich defnydd trydan ddim ar gael.",
-"It will appear here as it becomes available.": "Fydd yn dangos yma pan fydd ar gael eto."
+"It will appear here as it becomes available.": "Fydd yn dangos yma pan fydd ar gael eto.",
+
+
+"Show club price": "Dangos prïs y clwb",
+"Overlay the average club price offset by the available hydro": "Dangos y prïs ar gyfartaleb wrth wneud defnydd o'r egni adnewyddadwy",
+"pm": "yh",
+"am": "yb",
+"Import": "I Mewn",
+"p": "c"
 }

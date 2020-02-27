@@ -66,7 +66,7 @@
                   <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>-->
                     
                   <!-- show/hide club price series on chart -->
-                    <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2">
+                    <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
                         <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput">
                         <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Show club price"); ?></strong></label>
                     </div>
@@ -104,7 +104,7 @@
                 </div>
             </div>
             -->
-
+<!--
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content hide">
@@ -125,8 +125,53 @@
                   
                 </div>
             </div>
-
-            <!--                      
+-->
+            <div class="block">
+                <table class="tariff table table-sm my-3">
+                    <colgroup>
+                        <col>
+                        <col class="bg-info">
+                        <col class="bg-danger">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                        <th></th>
+                        <th scope="col">Hydro</th>
+                        <th scope="col"><?php echo t("Import") ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <th scope="row">
+                            <span class="text-overnight d-sm-inline d-lg-none"><?php echo t("Overnight") ?></span>
+                            <span class="text-overnight d-none d-md-inline d-lg-inline"> <?php echo t("Overnight Price") ?></span> 
+                            <br class="d-sm-none">
+                            <span class="font-weight-light text-smaller-sm">8<?php echo t("pm") ?> - 7<?php echo t("am") ?></span></th>
+                            <td>5.8<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
+                            <td>10.5<?php echo t("p") ?></td>
+                        </tr>
+                        <tr>
+                        <th scope="row">
+                            <span class="text-day d-sm-inline d-lg-none"><?php echo t("Day") ?></span>
+                            <span class="text-day d-none d-md-inline d-lg-inline"> <?php echo t("Evening Price") ?></span> 
+                            <br class="d-sm-none">
+                            <span class="font-weight-light text-smaller-sm">7<?php echo t("am") ?> - 4<?php echo t("pm") ?></span></th>
+                            <td>10.4<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
+                            <td>18.9<?php echo t("p") ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">
+                            <span class="text-evening d-sm-inline d-lg-none"><?php echo t("Evening") ?></span>
+                            <span class="text-evening d-none d-md-inline d-lg-inline"><?php echo t("Evening Price") ?></span>
+                            <br class="d-sm-none">
+                            <span class="font-weight-light text-smaller-sm">4<?php echo t("pm") ?> - 8<?php echo t("pm") ?></span></th>
+                            <td>12.7<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
+                            <td>23.1<?php echo t("p") ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content hide">
