@@ -345,5 +345,10 @@
 "Total cost":"Cyfanswm",
 "Average unit cost":"Cyfartaledd cost uned",
 "Find Devices":"Darganfod Dyfais",
-"Price":"Pris"
+"Price":"Pris",
+
+
+"Missing household data": "Data ddim ar gael",
+"The household consumption data is currently unavailable.": "Tydi'r data ar eich defnydd trydan ddim ar gael.",
+"It will appear here as it becomes available.": "Fydd yn dangos yma pan fydd ar gael eto."
 }

@@ -189,11 +189,12 @@ function show_page(page) {
         $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
         
         // if(session.admin===1 && !data_available) {
-        //     dialog.open('<button class="close">×</button><h4>Missing household data</h4> \
-        //     <p>The usage data is currently not available.</p> \
-        //     <p>When the data is available your score will be shown here. </p>');
+        //     dialog.open(' \
+        //       <button class="close">×</button> \
+        //       <h4>Missing household data</h4> \
+        //       <p>The usage data is currently not available.</p> \
+        //     ');
         // }
-        
     }
 }
 

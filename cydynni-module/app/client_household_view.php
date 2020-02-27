@@ -26,8 +26,9 @@
                 <div class="block-content">
                     
                     <div class="bg-household" style="padding:20px">
-                        <div style="font-weight:bold; font-size:32px"><?php echo t("Missing household data"); ?></div>
-                        <?php echo t("Your data is currently unavailable. It will appear here as it becomes available."); ?><br><br>
+                        <h2><?php echo t("Missing household data"); ?></h2>
+                        <p><?php echo t("The household consumption data is currently unavailable.") ?></p>
+                        <p class="lead"><?php echo t("It will appear here as it becomes available."); ?></p>
                     </div>
                 </div>
             </div>
