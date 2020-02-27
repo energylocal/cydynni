@@ -188,6 +188,53 @@ function household_draw_summary(day) {
     household_pie_draw();
 }
 
+var dialog = new Vue({
+    el: '#dialog',
+    data: {
+        hidden: true,
+        removed: true,
+        message: '',
+        clickListener: false,
+        keydownListener: false
+    },
+    methods: {
+        open: function(text) {
+            this.hidden = false;
+            this.removed = false;
+            if(typeof text === 'string') {
+                this.message = text;
+            }
+            this.addEventListeners();
+        },
+        close: function() {
+            this.hidden = true;
+            this.removeEventListeners();
+        },
+        toggle: function() {
+            if (this.hidden) {
+                this.open();
+            } else {
+                this.close();
+            }
+        },
+        onCloseDialog: function (event) {
+            if (event.key && (event.key === 'Escape' || event.key === 'Esc' ) || 
+               event.target.matches('.dialog *'))
+            {
+                this.close();
+            }
+        },
+        addEventListeners: function() {
+            document.addEventListener('keydown', this.onCloseDialog);
+            document.addEventListener('click', this.onCloseDialog);
+        },
+        removeEventListeners: function() {
+            document.removeEventListener('keydown', this.onCloseDialog);
+            document.removeEventListener('click', this.onCloseDialog);
+        }
+    }
+});
+
 function household_pie_draw() {
 
     width = 300;
@@ -253,8 +300,9 @@ function household_bargraph_load() {
             dataType: 'json',
             async: true,                      
             success: function(result) {
-                if (!result || result===null || result==="" || result.constructor!=Array) {
-                    console.log("ERROR","invalid response: "+result);
+                if (!result || result===null || result==="" || result.constructor!=Array || result.length === 0) {
+                    console.log("ERROR","invalid household-daily-summary response: ", result);
+                    console.log('page',page);
                 } else {
                     household_result = result;
                     

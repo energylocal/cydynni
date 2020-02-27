@@ -14,6 +14,7 @@ $app_path = $path."Modules/cydynni/app/";
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/vue.min.js"></script>
 <script type="text/javascript" src="<?php echo $app_path; ?>js/vis.helper.js"></script>
 <script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
 
@@ -46,8 +47,25 @@ $app_path = $path."Modules/cydynni/app/";
         <div>Energy Local</div>
         <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
         <div style="font-weight:normal; font-size:14px; padding-top:25px"><a href="<?php echo $path; ?>find"><i class="icon-search icon-white"></i> <?php echo t("Find Devices"); ?></a></div>
-
     </div>
+
+    <!-- user notifications -->
+    <template id="dialog">
+        <transition name="fade">
+            <div class="dialog" v-if="!removed">
+                <transition name="fade" 
+                @after-leave="removed=true"
+                @before-enter="removed=false"
+                leave-to-class="bounce-leave" 
+                leave-active-class="bounce-leave-active">
+                    <dialog v-if="!hidden" :open="!hidden" v-html="message"></dialog>
+                </transition>
+                <transition name="fade">
+                    <div v-if="!hidden" class="backdrop"></div>
+                </transition>
+            </div>
+        </transition>
+    </template>
 </div>
 
 <script>
@@ -146,7 +164,7 @@ $(".block-title").click(function() {
 });
 
 function show_page(page) {
-
+    dialog.close();
     // Highlighted selected menu
     $(".navigation li > div").removeClass("active");
     $(".navigation li[name="+page+"] > div").addClass("active");
@@ -163,6 +181,11 @@ function show_page(page) {
         household_pie_draw();
         household_bargraph_resize();
         household_powergraph_draw();
+        if(session.admin===1) {
+            dialog.open('<button class="close">×</button><h4>Missing household data</h4> \
+            <p>The usage data is currently not available.</p> \
+            <p>When the data is available your score will be shown here. </p>');
+        }
     }
 }
 

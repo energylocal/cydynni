@@ -169,9 +169,11 @@ function cydynni_controller()
                     $start = $_GET['start']*0.001;
                     $end = $_GET['end']*0.001;
                     $tmp = array();
-                    for ($i=0; $i<count($data); $i++) {
-                        if ($data[$i][0]>=$start && $data[$i][0]<=$end) {
-                            $tmp[] = $data[$i];
+                    if ($data) {
+                        for ($i=0; $i<count($data); $i++) {
+                            if ($data[$i][0]>=$start && $data[$i][0]<=$end) {
+                                $tmp[] = $item;
+                            }
                         }
                     }
                     $data = $tmp;

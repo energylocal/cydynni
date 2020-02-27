@@ -1,4 +1,3 @@
-            
             <div id="login-block" class="block">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
