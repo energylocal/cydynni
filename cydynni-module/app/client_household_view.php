@@ -21,6 +21,17 @@
                 </div>
             </div>
 
+            <div id="missing-data-block" class="block hide">
+                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                    
+                    <div class="bg-household" style="padding:20px">
+                        <div style="font-weight:bold; font-size:32px"><?php echo t("Missing household data"); ?></div>
+                        <?php echo t("Your data is currently unavailable. It will appear here as it becomes available."); ?><br><br>
+                    </div>
+                </div>
+            </div>
+
             <div id="passwordreset-block" class="block" style="display:none">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">                    
@@ -63,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="block household-block">
+            <div id="your-score" class="block household-block">
               <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div></div>
               
               <div class="block-content" style="color:#c20000">
@@ -108,7 +119,7 @@
               </div>
             </div>
                         
-            <div class="block household-block">
+            <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 
                 <div class="block-content">
@@ -130,7 +141,7 @@
                 </div>
             </div>
             
-            <div class="block household-block">
+            <div id="your-usage-price" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?>: <span class="household_date"></span><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                     <!--
