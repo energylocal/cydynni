@@ -402,11 +402,13 @@ function club_bargraph_load() {
         stack: true, data: exported_generation_data, color: "#a5e7ff", label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
-    
-    clubseries.push({
-        data: price_data, color: "#fb1a80", label: t("Price"), yaxis:2,
-        lines: { show: true }
-    });
+
+    if(showClubPrice) {
+        clubseries.push({
+            data: price_data, color: "#fb1a80", label: t("Price"), yaxis:2,
+            lines: { show: true }
+        });
+    }
 
     // estimate
     /*
@@ -625,4 +627,14 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             tooltip(item.pageX,item.pageY,out,"#fff");
         }
     } else $("#tooltip").remove();
+});
+
+// show/hide club price
+var showClubPrice = false;
+$(function(){
+    $("#showClubPriceInput").on("input", function(event) {
+        showClubPrice = event.target.checked;
+        club_bargraph_load();
+        club_bargraph_draw();
+    })
 });
