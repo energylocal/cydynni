@@ -6,7 +6,7 @@
 
 If you have the option to connect your hub directly via Ethernet this is usually easier and more reliable than using WIFI, alternatively if you wish to setup using the WIFI hotspot, skip this section and continue to WIFI Setup below.
 
-Power up the hub by connecting the micro USB cable and USB power supply. Plug in an Ethernet cable to link your hub to your internet router.
+Plug in an Ethernet cable to link your hub to your internet router and then power up the hub by connecting the micro USB cable and USB power supply.
 
 ### Option 2: WIFI Setup
 
