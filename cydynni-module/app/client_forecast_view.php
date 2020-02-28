@@ -152,7 +152,7 @@
                         </tr>
                         <tr>
                         <th scope="row">
-                            <span class="text-day d-sm-inline d-lg-none"><?php echo t("Day") ?></span>
+                            <span class="text-day d-sm-inline d-lg-none"><?php echo t("Midday") ?></span>
                             <span class="text-day d-none d-md-inline d-lg-inline"> <?php echo t("Midday Price") ?></span> 
                             <br class="d-sm-none">
                             <span class="font-weight-light text-smaller-sm">7<?php echo t("am") ?> - 4<?php echo t("pm") ?></span></th>
