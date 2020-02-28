@@ -100,8 +100,9 @@ function cydynni_controller()
              * @todo: import `$tariffs_table` as json object
              */
             $tariffs_table = [[
-                    "name" => _("Overnight Price"), // check locale/cy_GB
-                    "short" => _("Overnight"), // check locale/cy_GB
+                    "key" => "overnight",
+                    "name" => translate("Overnight Price", $lang), // check locale/cy_GB
+                    "short" => translate("Overnight", $lang), // check locale/cy_GB
                     "start" => 20, //24h
                     "end" => 7, //24h,
                     "sources" => [
@@ -109,8 +110,9 @@ function cydynni_controller()
                         "import" => 10.5 //pence/kwh
                     ]
                 ],[
-                    "name" => _("Midday Price"),
-                    "short" => _("Midday"),
+                    "key" => "midday",
+                    "name" => translate("Midday Price", $lang),
+                    "short" => translate("Midday", $lang),
                     "start" => 7,
                     "end" => 16,
                     "sources" => [
@@ -118,8 +120,9 @@ function cydynni_controller()
                         "import" => 18.9
                     ]
                 ],[
-                    "name" => _("Evening Price"),
-                    "short" => _("Evening"),
+                    "key" => "evening",
+                    "name" => translate("Evening Price", $lang),
+                    "short" => translate("Evening", $lang),
                     "start" => 16,
                     "end" => 20,
                     "sources" => [
@@ -131,19 +134,19 @@ function cydynni_controller()
             // convert php array to stdClass. (treat as imported json)
             $tariffs_table = json_decode(json_encode($tariffs_table));
 
-            // translate and format strings...
+            // add properties and format strings...
             foreach($tariffs_table as $t) {
                 // calculate how much smaller "hydro" is from "import"
                 $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
                 $t->isCurrent = date('G') >= $t->start && date('G') < $t->end;
                 // add the currenty symbol
-                $t->sources->hydro .= _('p');
-                $t->sources->import .= _('p');
+                $t->sources->hydro .= translate('p', $lang);
+                $t->sources->import .= translate('p', $lang);
                 // add 12hr times with am/pm
-                $t->start = date('g', strtotime($t->start.':00')) . ($t->start < 12 ? _('am'): _('pm'));
-                $t->end = date('g', strtotime($t->end.':00')) . ($t->end < 12 ? _('am'): _('pm'));
+                $t->start = date('g', strtotime($t->start.':00')) . ($t->start < 12 ? translate('am', $lang): translate('pm', $lang));
+                $t->end = date('g', strtotime($t->end.':00')) . ($t->end < 12 ? translate('am', $lang): translate('pm', $lang));
                 // add css class names to style the title column
-                $t->css = 'text-' . strtolower(translate($t->short, $lang));
+                $t->css = 'text-' . $t->key;
                 $t->rowClass = $t->isCurrent ? ' class="current"': '';
             }
 
