@@ -36,7 +36,15 @@ After clicking connect the following message is shown. Your hub is now rebooting
 
 ![setup4.png](images/setup4.png)
 
-### Navigate to the 'Find Devices' tool on the EnergyLocal App:
+Switch back to your home network. Try connecting to your hub via it's hostname. Try the following links:
+
+- [http://emonpi](http://emonpi)
+- [http://emonpi.lan](http://emonpi.lan)
+- [http://emonpi.local](http://emonpi.local)
+
+If these links do not work try the 'Find Devices' tool:
+
+### Optional: Navigate to the 'Find Devices' tool on the EnergyLocal App:
 
 #### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
 
