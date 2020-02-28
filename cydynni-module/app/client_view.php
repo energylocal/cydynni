@@ -27,7 +27,13 @@ $app_path = $path."Modules/cydynni/app/";
     </ul>
 
     <div class="page" name="forecast">
-        <?php echo view("Modules/cydynni/app/client_forecast_view.php", array('tariffs_table'=>$tariffs_table)) ?>
+        <?php echo view("Modules/cydynni/app/client_forecast_view.php", array(
+            'club'=>$club,
+            'app_path'=>$app_path, 
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings,
+            'tariffs_table'=>$tariffs_table)
+        ); ?>
     </div>
 
     <div class="page" name="household">
