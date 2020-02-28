@@ -95,7 +95,65 @@ function cydynni_controller()
 
             $route->format = "html";
 
-            $content = view("Modules/cydynni/app/client_view.php",array('is_hub'=>$settings["cydynni"]["is_hub"], 'session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            /**
+             * build table of tariff prices per production source
+             * @todo: import `$tariffs_table` as json object
+             */
+            $tariffs_table = [[
+                    "name" => _("Overnight Price"), // check locale/cy_GB
+                    "short" => _("Overnight"), // check locale/cy_GB
+                    "start" => 20, //24h
+                    "end" => 7, //24h,
+                    "sources" => [
+                        "hydro" => 5.8, //pence/kwh
+                        "import" => 10.5 //pence/kwh
+                    ]
+                ],[
+                    "name" => _("Midday Price"),
+                    "short" => _("Midday"),
+                    "start" => 7,
+                    "end" => 16,
+                    "sources" => [
+                        "hydro" => 10.4,
+                        "import" => 18.9
+                    ]
+                ],[
+                    "name" => _("Evening Price"),
+                    "short" => _("Evening"),
+                    "start" => 16,
+                    "end" => 20,
+                    "sources" => [
+                        "hydro" => 12.7,
+                        "import" => 23.1
+                    ]
+                ]
+            ];
+            // convert php array to stdClass. (treat as imported json)
+            $tariffs_table = json_decode(json_encode($tariffs_table));
+
+            // translate and format strings...
+            foreach($tariffs_table as $t) {
+                // calculate how much smaller "hydro" is from "import"
+                $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
+                $t->isCurrent = date('G') >= $t->start && date('G') < $t->end;
+                // add the currenty symbol
+                $t->sources->hydro .= _('p');
+                $t->sources->import .= _('p');
+                // add 12hr times with am/pm
+                $t->start = date('g', strtotime($t->start.':00')) . ($t->start < 12 ? _('am'): _('pm'));
+                $t->end = date('g', strtotime($t->end.':00')) . ($t->end < 12 ? _('am'): _('pm'));
+                // add css class names to style the title column
+                $t->css = 'text-' . strtolower(translate($t->short, $lang));
+                $t->rowClass = $t->isCurrent ? ' class="current"': '';
+            }
+
+            $content = view("Modules/cydynni/app/client_view.php", array(
+                'is_hub' => $settings["cydynni"]["is_hub"], 
+                'session' => $session,'club' => $club,
+                'club_settings' => $club_settings[$club],
+                'tariffs_table' => $tariffs_table
+            ));
+
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
             break;
 

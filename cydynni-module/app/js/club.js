@@ -639,35 +639,3 @@ $(function(){
         club_bargraph_draw();
     })
 });
-
-// show current tariff in pricing table based on time now
-$(function() {
-    /**
-     * highlight the row for the current tarrif in use now
-     */
-    $('table.tariff tbody tr').each(function(index, elem) {
-        // one table row for each tariff row
-        // list of start/end hours (24hr format)
-        var tariffs = [
-            [20, 7],
-            [7, 16],
-            [16, 20]
-        ];
-        // get current hour
-        var time = new Date();
-        var hour = time.getHours();
-        // get tariff start/end hour
-        var start = tariffs[index] && tariffs[index][0] ? tariffs[index][0]: false;
-        var end = tariffs[index] && tariffs[index][1] ? tariffs[index][1]: false;
-        // break..move to next table row if no tariff found
-        if (!start && end) return true;
-        // if current hour between tariff hours return true
-        var isCurrent = hour >= start && hour < end;
-        // if tariff spans two days check again +24hrs
-        if(end < start) {
-            isCurrent = hour >= start && hour < end + 24;
-        }
-        // toggle() uses bool as second arg to add or not
-        elem.classList.toggle('current', isCurrent);
-    });
-});
