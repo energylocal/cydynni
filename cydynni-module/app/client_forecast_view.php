@@ -127,6 +127,59 @@
             </div>
 -->
             <div class="block">
+<?php
+    /**
+     * build table of tariff prices per production source
+     * @todo: import `$tariffs_table` as json object
+     */
+    $tarrifs_table = [
+        [
+            "name" => _("Overnight Price"), // check locale/cy_GB
+            "short" => _("Overnight"), // check locale/cy_GB
+            "start" => 20, //24h
+            "end" => 7, //24h,
+            "sources" => [
+                "hydro" => 5.8, //pence/kwh
+                "import" => 10.5 //pence/kwh
+            ]
+        ],
+        [
+            "name" => _("Midday Price"),
+            "short" => _("Midday"),
+            "start" => 7,
+            "end" => 16,
+            "sources" => [
+                "hydro" => 10.4,
+                "import" => 18.9
+            ]
+        ],
+        [
+            "name" => _("Evening Price"),
+            "short" => _("Evening"),
+            "start" => 16,
+            "end" => 20,
+            "sources" => [
+                "hydro" => 12.7,
+                "import" => 23.1
+            ]
+        ]
+    ];
+        // convert php array to stdClass. (treat as json)
+        $tarrifs_table = json_decode(json_encode($tarrifs_table));
+        // translate strings...
+        foreach($tarrifs_table as $t) {
+            // calculate how much smaller "hydro" is from "import"
+            $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
+            // add the currenty symbol
+            $t->sources->hydro .= _('p');
+            $t->sources->import .= _('p');
+            // add 12hr times with am/pm
+            $t->start = date('g',strtotime($t->start.':00')) . ($t->start < 12 ? _('am'): _('pm'));
+            $t->end = date('g',strtotime($t->end.':00')) . ($t->end < 12 ? _('am'): _('pm'));
+            // add css class names to style the title column
+            $t->css = 'text-' . strtolower(translate($t->short, $lang));
+        }
+?>
                 <table class="tariff table table-sm my-3">
                     <colgroup>
                         <col>
@@ -141,33 +194,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                        <th scope="row">
-                            <span class="text-overnight d-sm-inline d-lg-none"><?php echo t("Overnight") ?></span>
-                            <span class="text-overnight d-none d-md-inline d-lg-inline"> <?php echo t("Overnight Price") ?></span> 
-                            <br class="d-sm-none">
-                            <span class="font-weight-light text-smaller-sm">8<?php echo t("pm") ?> - 7<?php echo t("am") ?></span></th>
-                            <td>5.8<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
-                            <td>10.5<?php echo t("p") ?></td>
-                        </tr>
-                        <tr>
-                        <th scope="row">
-                            <span class="text-day d-sm-inline d-lg-none"><?php echo t("Midday") ?></span>
-                            <span class="text-day d-none d-md-inline d-lg-inline"> <?php echo t("Midday Price") ?></span> 
-                            <br class="d-sm-none">
-                            <span class="font-weight-light text-smaller-sm">7<?php echo t("am") ?> - 4<?php echo t("pm") ?></span></th>
-                            <td>10.4<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
-                            <td>18.9<?php echo t("p") ?></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">
-                            <span class="text-evening d-sm-inline d-lg-none"><?php echo t("Evening") ?></span>
-                            <span class="text-evening d-none d-md-inline d-lg-inline"><?php echo t("Evening Price") ?></span>
-                            <br class="d-sm-none">
-                            <span class="font-weight-light text-smaller-sm">4<?php echo t("pm") ?> - 8<?php echo t("pm") ?></span></th>
-                            <td>12.7<?php echo t("p") ?> <span class="font-weight-light d-none d-sm-inline">(-45%)</span></td>
-                            <td>23.1<?php echo t("p") ?></td>
-                        </tr>
+                        <?php
+                            // display row per tariff
+                            foreach ($tarrifs_table as $t) {
+                                echo <<<template
+                                <tr>
+                                    <th scope="row">
+                                        <span class="{$t->css} d-sm-inline d-lg-none">{$t->short}</span>
+                                        <span class="{$t->css} d-none d-md-inline d-lg-inline"> {$t->name}</span> 
+                                        <br class="d-sm-none">
+                                        <span class="font-weight-light text-smaller-sm">{$t->start} - {$t->end}</span>
+                                    </th>
+                                    <td>{$t->sources->hydro} <span class="font-weight-light d-none d-sm-inline">{$t->diff}</span></td>
+                                    <td>{$t->sources->import}</td>
+                                </tr>
+template; //can be indented in php7.3+
+                            }
+                        ?>
                     </tbody>
                 </table>
             </div>

@@ -101,8 +101,7 @@ if (session.read) {
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
-var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
-
+var tariffs <?php echo isset($tariffs[$club]) ? '='.json_encode($tariffs[$club]): ''; ?>;
 // Language selection top-right
 
 if (languages.length>1) {

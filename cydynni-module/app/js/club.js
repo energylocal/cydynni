@@ -69,24 +69,25 @@ function club_summary_load()
                   }
                   //club_resize();
               }, 400);
+              var generation_value = 0;
+              if(tariffs) {
+                if (result.time>=1551398400) {
+                    tariffs.generation.cost = 0.115;
+                    // tariffs.morning.cost = 0.182;
+                    tariffs.midday.cost = 0.166;
+                    tariffs.evening.cost = 0.202;
+                    tariffs.overnight.cost = 0.1305;
+                } else {
+                    tariffs.generation.cost = 0.07;
+                    // tariffs.morning.cost = 0.12;
+                    tariffs.midday.cost = 0.10;
+                    tariffs.evening.cost = 0.14;
+                    tariffs.overnight.cost = 0.0725;
+                }
               
-              
-              if (result.time>=1551398400) {
-                  tariffs.generation.cost = 0.115;
-                  // tariffs.morning.cost = 0.182;
-                  tariffs.midday.cost = 0.166;
-                  tariffs.evening.cost = 0.202;
-                  tariffs.overnight.cost = 0.1305;
-              } else {
-                  tariffs.generation.cost = 0.07;
-                  // tariffs.morning.cost = 0.12;
-                  tariffs.midday.cost = 0.10;
-                  tariffs.evening.cost = 0.14;
-                  tariffs.overnight.cost = 0.0725;
+                // generation value retained in the club
+                generation_value = result.kwh.generation * tariffs.generation.cost;
               }
-              
-              // generation value retained in the club
-              var generation_value = result.kwh.generation * tariffs.generation.cost;
 
               var ext = "";
               if (result.day==1) ext = "st";
