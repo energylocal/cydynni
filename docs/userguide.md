@@ -2,13 +2,13 @@
 
 ## CydYnni Hub & Smart Plug Setup Guide
 
-### Ethernet Setup
+### Option 1: Ethernet Setup
 
 If you have the option to connect your hub directly via Ethernet this is usually easier and more reliable than using WIFI, alternatively if you wish to setup using the WIFI hotspot, skip this section and continue to WIFI Setup below.
 
 Power up the hub by connecting the micro USB cable and USB power supply. Plug in an Ethernet cable to link your hub to your internet router.
 
-### WIFI Setup
+### Option 2: WIFI Setup
 
 #### 1. Power up the CydYnni hub
 
