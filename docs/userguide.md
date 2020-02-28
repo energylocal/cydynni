@@ -54,19 +54,11 @@ Click SCAN to find your hub:
 
 ![scan2.png](images/scan2.png)
 
+*If the hub does not appear the first time, try refreshing the page a couple of times.*
+
 Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
 
 ![setup5.png](images/setup5.png)
-
----
-
-**Troubleshooting**
-
-If the hub does not appear the first time, try refreshing the page a couple of times. If this does not work try navigating to your hub directly with the following links
-
-[http://emonpi.local](http://emonpi.local) or: [http://emonpi](http://emonpi)
- 
-Or alternatively check your routers device list or use a mobile app called 'fing' to scan your network to find the hub.
 
 ---
 
