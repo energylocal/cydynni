@@ -28,24 +28,37 @@ $app_path = $path."Modules/cydynni/app/";
 
     <div class="page" name="forecast">
         <?php echo view("Modules/cydynni/app/client_forecast_view.php", array(
-            'club'=>$club,
             'app_path'=>$app_path, 
+            'club'=>$club,
             'tariffs'=>$tariffs,
             'club_settings'=>$club_settings,
-            'tariffs_table'=>$tariffs_table)
-        ); ?>
+            'tariffs_table'=>$tariffs_table
+        )); ?>
     </div>
 
     <div class="page" name="household">
-        <?php include("Modules/cydynni/app/client_household_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_household_view.php", array(
+            'app_path'=>$app_path, 
+            'club'=>$club,
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings
+        )); ?>
     </div>
    
     <div class="page" name="club">
-        <?php include("Modules/cydynni/app/client_club_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_club_view.php", array(
+            'app_path'=>$app_path, 
+            'club'=>$club,
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings
+        )) ?>
     </div>
     
     <div class="page" name="tips">
-        <?php include("Modules/cydynni/app/client_tips_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_tips_view.php", array(
+            'app_path'=>$app_path, 
+            'club_settings'=>$club_settings
+        )) ?>
     </div>
 
     <div class="footer">
