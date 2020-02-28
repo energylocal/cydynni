@@ -280,7 +280,6 @@ class Cydynni{
     
     /**
      * build table of tariff prices per production source
-     * @todo: import `$tariffs_table` as json object
      */
     public function getTariffsTable() {
         global $lang;
@@ -302,6 +301,12 @@ class Cydynni{
         }
         return $tariffs;
     }
+    /**
+     * return tariff data
+     *  
+     * @return stdClass
+     * @todo import tariff from db or api
+     */
     private function getTariffs() {
         global $lang;
         $tariffs = [[
