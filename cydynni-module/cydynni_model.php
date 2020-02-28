@@ -307,7 +307,7 @@ class Cydynni{
      * @return stdClass
      * @todo import tariff from db or api
      */
-    private function getTariffs() {
+    public function getTariffs() {
         global $lang;
         $tariffs = [[
             "key" => "overnight",

@@ -798,6 +798,9 @@ function cydynni_controller()
                 return false;
             }
         break;*/
+        case 'tariffs':
+            return $cydynni->getTariffs();
+        break;
     }
     
     return array("content"=>$result);   
