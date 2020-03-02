@@ -1,6 +1,8 @@
 ![EnergyLocalEnglish.png](images/EnergyLocalEnglish.png)
 
-## EnergyLocal Hub & Smart Plug Setup Guide
+# EnergyLocal Hub & Smart Plug Setup Guide
+
+## 1. Connect
 
 ### Option 1: Ethernet Setup
 
@@ -10,13 +12,13 @@ Plug in an Ethernet cable to link your hub to your internet router and then powe
 
 ### Option 2: WIFI Setup
 
-#### 1. Power up the CydYnni hub
+#### a. Power up the CydYnni hub
 
 After a short while a WIFI Access Point should appear called 'EmonPi'.<br>Connect to this network, open an internet browser and enter the following address:
 
     http://192.168.42.1
 
-#### 2. Connect to WIFI network
+#### b. Connect to WIFI network
 
 Once the page at the address above loads it will give the following options, or if the hub is connected with an ethernet cable there will also be the option to connect over ethernet.
 
@@ -46,7 +48,7 @@ If these links do not work try the following device provisioning steps.
 
 ---
 
-### Hub provisioning
+## 2. Hub provisioning
 
 1. Login to your online Energy Local dashboard: [http://dashboard.energylocal.org.uk/?household](http://dashboard.energylocal.org.uk/?household)
 
@@ -64,13 +66,13 @@ If these links do not work try the following device provisioning steps.
 
 ---
 
-### Login to the Hub with your EnergyLocal online account
+## 3. Login to the Hub with your EnergyLocal online account
 
 Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
 ![setup6.png](images/setup6.png)
 
-### Explore your hub dashboard
+## 4. Explore your hub dashboard
 
 The first page that you see when you login shows your household electricity consumption overview.
 
@@ -88,7 +90,9 @@ The Club page shows the club score and overview.
 
 The 4rth tab shows tips on energy saving and moving power to lower cost times.
 
-### 5. Setting up your WiFi Smart Plug
+---
+
+## 5. Setting up your WiFi Smart Plug
 
 The Smart Plug will allow you to schedule whatever is plugged into it to come on and go off for periods of time that you set and is connected to the Forecast facility. This allows you to automatically use electricity at the best times.
 
@@ -116,7 +120,7 @@ If the smartplug fails to connect to the selected WIFI network the green LED wil
 
 ---
 
-### Device pairing on the hub
+## 6. Device pairing on the hub
 
 With the smartplug WIFI settings configured connect back to you home network and navigate to the devices page on the hub:
 
@@ -128,7 +132,7 @@ After a couple of minutes a notice will appear asking whether to allow device at
 
 Click allow and wait a couple of minutes for the device to appear.
 
-### Scheduling the Smart Plug
+## 7. Scheduling the Smart Plug
 
 Try adjusting the schedule using the run period, complete by and ok to interrupt settings:
 
