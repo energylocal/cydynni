@@ -50,19 +50,19 @@ If these links do not work try the following device provisioning steps.
 
 ## 2. Hub provisioning
 
-1. Login to your online Energy Local dashboard: [https://dashboard.energylocal.org.uk/?household](https://dashboard.energylocal.org.uk/?household)
+a. Login to your online Energy Local dashboard: [https://dashboard.energylocal.org.uk/?household](https://dashboard.energylocal.org.uk/?household)
 
-2. Navigate to 'My Account' (top-right hand corner of the window).
+b. Navigate to 'My Account' (top-right hand corner of the window).
 
-3. In the 'Find my Hub' section. Enter the 8 character hub code printed on the top of the hub and click 'Find':
+c. In the 'Find my Hub' section. Enter the 8 character hub code printed on the top of the hub and click 'Find':
 
 ![provision1.png](images/provision1.png)
 
-4. If the hub is connected to your local network and has been turned on for about 60s, the hub's IP address should now show: 
+d. If the hub is connected to your local network and has been turned on for about 60s, the hub's IP address should now show: 
 
 ![provision2.png](images/provision2.png)
 
-5. Click on the IP address link to navigate to your hub.
+e. Click on the IP address link to navigate to your hub.
 
 
 ## 3. Login to the Hub with your EnergyLocal online account
