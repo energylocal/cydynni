@@ -159,6 +159,4 @@ Click SCAN to find your hub:
 
 *If the hub does not appear the first time, try refreshing the page a couple of times.*
 
-Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
-
-![setup5.png](images/setup5.png)
+Click on the hub (listed as emonbase) to open it in your browser.
