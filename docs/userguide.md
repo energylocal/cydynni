@@ -2,6 +2,7 @@
 
 # EnergyLocal Hub & Smart Plug Setup Guide
 
+
 ## 1. Connect
 
 ### Option 1: Ethernet Setup
@@ -46,7 +47,6 @@ Switch back to your home network. Try connecting to your hub via it's hostname. 
 
 If these links do not work try the following device provisioning steps.
 
----
 
 ## 2. Hub provisioning
 
@@ -64,13 +64,13 @@ If these links do not work try the following device provisioning steps.
 
 5. Click on the IP address link to navigate to your hub.
 
----
 
 ## 3. Login to the Hub with your EnergyLocal online account
 
 Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
 ![setup6.png](images/setup6.png)
+
 
 ## 4. Explore your hub dashboard
 
@@ -90,7 +90,6 @@ The Club page shows the club score and overview.
 
 The 4rth tab shows tips on energy saving and moving power to lower cost times.
 
----
 
 ## 5. Setting up your WiFi Smart Plug
 
@@ -118,7 +117,6 @@ The green light on the smartplug will now turn on again. If the connection is su
 
 If the smartplug fails to connect to the selected WIFI network the green LED will stay on with a slight pulsing rythym for 30 seconds before the plug automatically resets and tries again. To re-enter setup mode hold the button on the front of the smartplug down while the green LED is on.
 
----
 
 ## 6. Device pairing on the hub
 
@@ -131,6 +129,7 @@ After a couple of minutes a notice will appear asking whether to allow device at
 ![pairing2.png](images/pairing2.png)
 
 Click allow and wait a couple of minutes for the device to appear.
+
 
 ## 7. Scheduling the Smart Plug
 
