@@ -50,7 +50,7 @@ If these links do not work try the following device provisioning steps.
 
 ## 2. Hub provisioning
 
-1. Login to your online Energy Local dashboard: [http://dashboard.energylocal.org.uk/?household](http://dashboard.energylocal.org.uk/?household)
+1. Login to your online Energy Local dashboard: [https://dashboard.energylocal.org.uk/?household](https://dashboard.energylocal.org.uk/?household)
 
 2. Navigate to 'My Account' (top-right hand corner of the window).
 
