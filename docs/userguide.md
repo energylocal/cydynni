@@ -1,6 +1,6 @@
 ![EnergyLocalEnglish.png](images/EnergyLocalEnglish.png)
 
-## CydYnni Hub & Smart Plug Setup Guide
+## EnergyLocal Hub & Smart Plug Setup Guide
 
 ### Option 1: Ethernet Setup
 
@@ -42,27 +42,29 @@ Switch back to your home network. Try connecting to your hub via it's hostname. 
 - [http://emonpi.lan](http://emonpi.lan)
 - [http://emonpi.local](http://emonpi.local)
 
-If these links do not work try the 'Find Devices' tool:
-
-### Optional: Navigate to the 'Find Devices' tool on the EnergyLocal App:
-
-#### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
-
-![scan.png](images/scan.png)
-
-Click SCAN to find your hub:
-
-![scan2.png](images/scan2.png)
-
-*If the hub does not appear the first time, try refreshing the page a couple of times.*
-
-Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
-
-![setup5.png](images/setup5.png)
+If these links do not work try the following device provisioning steps.
 
 ---
 
-### Login with your EnergyLocal online account
+### Hub provisioning
+
+1. Login to your online Energy Local dashboard: [http://dashboard.energylocal.org.uk/?household](http://dashboard.energylocal.org.uk/?household)
+
+2. Navigate to 'My Account' (top-right hand corner of the window).
+
+3. In the 'Find my Hub' section. Enter the 8 character hub code printed on the top of the hub and click 'Find':
+
+![provision1.png](images/provision1.png)
+
+4. If the hub is connected to your local network and has been turned on for about 60s, the hub's IP address should now show: 
+
+![provision2.png](images/provision2.png)
+
+5. Click on the IP address link to navigate to your hub.
+
+---
+
+### Login to the Hub with your EnergyLocal online account
 
 Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
@@ -137,3 +139,21 @@ or/and turn the smartplug on and off directly by clicking on the on/off buttons:
 ![demandshaper1.png](images/demandshaper1.png) 
 
 **Tip:** The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
+
+---
+
+### Optional: Navigate to the 'Find Devices' tool on the EnergyLocal App:
+
+#### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
+
+![scan.png](images/scan.png)
+
+Click SCAN to find your hub:
+
+![scan2.png](images/scan2.png)
+
+*If the hub does not appear the first time, try refreshing the page a couple of times.*
+
+Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
+
+![setup5.png](images/setup5.png)
