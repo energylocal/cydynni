@@ -1,22 +1,25 @@
 ![EnergyLocalEnglish.png](images/EnergyLocalEnglish.png)
 
-## CydYnni Hub & Smart Plug Setup Guide
+# EnergyLocal Hub & Smart Plug Setup Guide
 
-### Ethernet Setup
+
+## 1. Connect
+
+### Option 1: Ethernet Setup
 
 If you have the option to connect your hub directly via Ethernet this is usually easier and more reliable than using WIFI, alternatively if you wish to setup using the WIFI hotspot, skip this section and continue to WIFI Setup below.
 
-Power up the hub by connecting the micro USB cable and USB power supply. Plug in an Ethernet cable to link your hub to your internet router.
+Plug in an Ethernet cable to link your hub to your internet router and then power up the hub by connecting the micro USB cable and USB power supply.
 
-### WIFI Setup
+### Option 2: WIFI Setup
 
-#### 1. Power up the CydYnni hub
+#### a. Power up the CydYnni hub
 
 After a short while a WIFI Access Point should appear called 'EmonPi'.<br>Connect to this network, open an internet browser and enter the following address:
 
     http://192.168.42.1
 
-#### 2. Connect to WIFI network
+#### b. Connect to WIFI network
 
 Once the page at the address above loads it will give the following options, or if the hub is connected with an ethernet cable there will also be the option to connect over ethernet.
 
@@ -36,39 +39,40 @@ After clicking connect the following message is shown. Your hub is now rebooting
 
 ![setup4.png](images/setup4.png)
 
-### Navigate to the 'Find Devices' tool on the EnergyLocal App:
+Switch back to your home network. Try connecting to your hub via it's hostname. Try the following links:
 
-#### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
+- [http://emonpi](http://emonpi)
+- [http://emonpi.lan](http://emonpi.lan)
+- [http://emonpi.local](http://emonpi.local)
 
-![scan.png](images/scan.png)
+If these links do not work try the following device provisioning steps.
 
-Click SCAN to find your hub:
 
-![scan2.png](images/scan2.png)
+## 2. Hub provisioning
 
-Click on the hub (listed as emonbase) to open it in your browser. You will now be greeted with the EnergyLocal Hub dashboard page.
+a. Login to your online Energy Local dashboard: [https://dashboard.energylocal.org.uk/?household](https://dashboard.energylocal.org.uk/?household)
 
-![setup5.png](images/setup5.png)
+b. Navigate to 'My Account' (top-right hand corner of the window).
 
----
+c. In the 'Find my Hub' section. Enter the 8 character hub code printed on the top of the hub and click 'Find':
 
-**Troubleshooting**
+![provision1.png](images/provision1.png)
 
-If the hub does not appear the first time, try refreshing the page a couple of times. If this does not work try navigating to your hub directly with the following links
+d. If the hub is connected to your local network and has been turned on for about 60s, the hub's IP address should now show: 
 
-[http://emonpi.local](http://emonpi.local) or: [http://emonpi](http://emonpi)
- 
-Or alternatively check your routers device list or use a mobile app called 'fing' to scan your network to find the hub.
+![provision2.png](images/provision2.png)
 
----
+e. Click on the IP address link to navigate to your hub.
 
-### Login with your EnergyLocal online account
+
+## 3. Login to the Hub with your EnergyLocal online account
 
 Click on the My Score tab and enter your energy local online account details. The login process take about 5 seconds - during which your hub is linked to your online account. 
 
 ![setup6.png](images/setup6.png)
 
-### Explore your hub dashboard
+
+## 4. Explore your hub dashboard
 
 The first page that you see when you login shows your household electricity consumption overview.
 
@@ -86,7 +90,8 @@ The Club page shows the club score and overview.
 
 The 4rth tab shows tips on energy saving and moving power to lower cost times.
 
-### 5. Setting up your WiFi Smart Plug
+
+## 5. Setting up your WiFi Smart Plug
 
 The Smart Plug will allow you to schedule whatever is plugged into it to come on and go off for periods of time that you set and is connected to the Forecast facility. This allows you to automatically use electricity at the best times.
 
@@ -112,9 +117,8 @@ The green light on the smartplug will now turn on again. If the connection is su
 
 If the smartplug fails to connect to the selected WIFI network the green LED will stay on with a slight pulsing rythym for 30 seconds before the plug automatically resets and tries again. To re-enter setup mode hold the button on the front of the smartplug down while the green LED is on.
 
----
 
-### Device pairing on the hub
+## 6. Device pairing on the hub
 
 With the smartplug WIFI settings configured connect back to you home network and navigate to the devices page on the hub:
 
@@ -126,7 +130,8 @@ After a couple of minutes a notice will appear asking whether to allow device at
 
 Click allow and wait a couple of minutes for the device to appear.
 
-### Scheduling the Smart Plug
+
+## 7. Scheduling the Smart Plug
 
 Try adjusting the schedule using the run period, complete by and ok to interrupt settings:
 
@@ -137,3 +142,21 @@ or/and turn the smartplug on and off directly by clicking on the on/off buttons:
 ![demandshaper1.png](images/demandshaper1.png) 
 
 **Tip:** The smartplug can be turned on and off at the plug as well by clicking the push button on the front of the smartplug. Refresh the page to see changes in the dashboard.
+
+---
+
+### Alternative hub detection method
+
+Navigate to the 'Find Devices' tool on the EnergyLocal App:
+
+#### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
+
+![scan.png](images/scan.png)
+
+Click SCAN to find your hub:
+
+![scan2.png](images/scan2.png)
+
+*If the hub does not appear the first time, try refreshing the page a couple of times.*
+
+Click on the hub (listed as emonbase) to open it in your browser.
