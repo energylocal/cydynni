@@ -142,7 +142,9 @@ or/and turn the smartplug on and off directly by clicking on the on/off buttons:
 
 ---
 
-### Optional: Navigate to the 'Find Devices' tool on the EnergyLocal App:
+### Alternative hub detection method
+
+Navigate to the 'Find Devices' tool on the EnergyLocal App:
 
 #### [https://dashboard.energylocal.org.uk/find](https://dashboard.energylocal.org.uk/find)
 
