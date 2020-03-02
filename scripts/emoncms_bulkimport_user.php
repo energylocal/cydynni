@@ -13,15 +13,19 @@ require "process_settings.php";
 require "Modules/cydynni/meter_data_api.php";
 require "Lib/EmonLogger.php";
 
-// MYSQL and REDIS
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
-
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 
 // Feed model
 require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$feed_settings);
+$feed = new Feed($mysqli,$redis,$settings["feed"]);
 
 
 $result_users = $mysqli->query("SELECT * FROM users");

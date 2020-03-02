@@ -4,9 +4,15 @@ chdir("/var/www/emoncms");
 require "process_settings.php";
 require "Lib/EmonLogger.php";
 
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 
 $result_users = $mysqli->query("SELECT * FROM users");
 while ($row = $result_users->fetch_object())

@@ -19,7 +19,13 @@ require "core.php";
 require "Lib/EmonLogger.php";
 
 // Connect to MYSQL
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 if ( $mysqli->connect_error ) {
     echo "Can't connect to database, please verify credentials/configuration in settings.php<br />";
     if ( $display_errors ) {
@@ -32,7 +38,7 @@ $mysqli->set_charset("utf8");
 
 // Connect to Redis
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 if (!$connected) { echo "Can't connect to redis at ".$redis_server['host'].":".$redis_server['port']." , it may be that redis-server is not installed or started see readme for redis installation"; die; }
 
 require "Lib/email.php";

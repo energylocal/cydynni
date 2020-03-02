@@ -15,9 +15,15 @@ require "Lib/EmonLogger.php";
 
 $club = "bethesda";
 
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 
 print "get_club_consumption_monthly:\n";
 $result = get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
