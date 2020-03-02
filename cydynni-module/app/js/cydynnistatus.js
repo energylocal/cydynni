@@ -111,7 +111,7 @@ function cydynnistatus_update() {
   }
   
   // If evening peak then wait until overnight tariff
-  if (tariff=="generation") {
+  if (typeof tariffs != 'undefined' && tariff=="generation") {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
       $("#tariff_summary").html(t("Now")+": "+t(ucfirst(club_settings.generator)+" Price"));
