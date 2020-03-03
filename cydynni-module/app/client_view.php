@@ -26,19 +26,38 @@ $app_path = $path."Modules/cydynni/app/";
     </ul>
 
     <div class="page" name="forecast">
-        <?php include("Modules/cydynni/app/client_forecast_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_forecast_view.php", array(
+            'app_path'=>$app_path, 
+            'club'=>$club,
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings,
+            'tariffs_table'=>$tariffs_table
+        )); ?>
     </div>
 
     <div class="page" name="household">
-        <?php include("Modules/cydynni/app/client_household_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_household_view.php", array(
+            'app_path'=>$app_path, 
+            'club'=>$club,
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings
+        )); ?>
     </div>
    
     <div class="page" name="club">
-        <?php include("Modules/cydynni/app/client_club_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_club_view.php", array(
+            'app_path'=>$app_path, 
+            'club'=>$club,
+            'tariffs'=>$tariffs,
+            'club_settings'=>$club_settings
+        )) ?>
     </div>
     
     <div class="page" name="tips">
-        <?php include("Modules/cydynni/app/client_tips_view.php") ?>
+        <?php echo view("Modules/cydynni/app/client_tips_view.php", array(
+            'app_path'=>$app_path, 
+            'club_settings'=>$club_settings
+        )) ?>
     </div>
 
     <div class="footer">
@@ -46,8 +65,8 @@ $app_path = $path."Modules/cydynni/app/";
         <div>Energy Local</div>
         <div style="float:right; font-weight:normal; font-size:12px; padding-top:5px"><a href="https://github.com/energylocal">Open Source on GitHub</a></div>
         <div style="font-weight:normal; font-size:14px; padding-top:25px"><a href="<?php echo $path; ?>find"><i class="icon-search icon-white"></i> <?php echo t("Find Devices"); ?></a></div>
-
     </div>
+
 </div>
 
 <script>
@@ -83,8 +102,7 @@ if (session.read) {
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
 
-var tariffs = <?php echo json_encode($tariffs[$club]); ?>;
-
+var tariffs <?php echo isset($tariffs[$club]) ? '='.json_encode($tariffs[$club]): ''; ?>;
 // Language selection top-right
 
 if (languages.length>1) {
@@ -146,7 +164,6 @@ $(".block-title").click(function() {
 });
 
 function show_page(page) {
-
     // Highlighted selected menu
     $(".navigation li > div").removeClass("active");
     $(".navigation li[name="+page+"] > div").addClass("active");
@@ -163,6 +180,12 @@ function show_page(page) {
         household_pie_draw();
         household_bargraph_resize();
         household_powergraph_draw();
+
+        var combined_data = [].concat(household_result, household_data);
+        var data_available = combined_data.length > 0;
+        
+        $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
+        $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
     }
 }
 

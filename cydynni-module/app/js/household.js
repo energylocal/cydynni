@@ -253,8 +253,8 @@ function household_bargraph_load() {
             dataType: 'json',
             async: true,                      
             success: function(result) {
-                if (!result || result===null || result==="" || result.constructor!=Array) {
-                    console.log("ERROR","invalid response: "+result);
+                if (!result || result===null || result==="" || result.constructor!=Array || result.length === 0) {
+                    console.log("ERROR","invalid household-daily-summary response: ", result);
                 } else {
                     household_result = result;
                     
