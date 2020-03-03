@@ -261,6 +261,92 @@ function club_controller()
                 return $result;
             }
             break;
+        
+        case "club-summary":
+            $route->format = "json";
+            
+            $end = time();
+            $start = $end - (3600*24*365);
+            
+            require_once "Modules/feed/feed_model.php";
+            $feed = new Feed($mysqli,$redis,$settings["feed"]);
+            $datadir = $settings["feed"]["phpfina"]["datadir"];
+            
+            $gen_id = 1;
+            $club_id = 2;
+            
+            // 1. Load gen and club meta files - check for interval match
+            $gen_meta = $feed->get_meta($gen_id);
+            $club_meta = $feed->get_meta($club_id);
+            if ($gen_meta->interval!=$club_meta->interval) return false;
+            
+            // 2. Load gen file position
+            $pos_gen_start = floor(($start - $gen_meta->start_time) / $gen_meta->interval);
+            $pos_gen_end = floor(($end - $gen_meta->start_time) / $gen_meta->interval);
+            $fh_gen = fopen($datadir.$gen_id.".dat", 'rb');
+            fseek($fh_gen,$pos_gen_start*4);
+
+            // 3. Load club file position
+            $pos_club_start = floor(($start - $club_meta->start_time) / $club_meta->interval);
+            $pos_club_end = floor(($end - $club_meta->start_time) / $club_meta->interval);
+            $fh_club = fopen($datadir.$club_id.".dat", 'rb');
+            fseek($fh_club,$pos_club_start*4);
+
+            // 4. Prepare date and time
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $time = $club_meta->start_time + $pos_club_start * $club_meta->interval;
+                 
+            $out = ""; $n = 0;
+            
+            $gen = 0; $use = 0;
+            
+            $result = array(
+                "overnight"=>array('selfuse'=>0,'import'=>0),
+                "daytime"=>array('selfuse'=>0,'import'=>0),
+                "evening"=>array('selfuse'=>0,'import'=>0)
+            );
+            
+            for ($pos=$pos_gen_start; $pos<$pos_gen_end; $pos++) {
+                $date->setTimestamp($time);
+                $hour = $date->format("H");
+                
+                $tmp = unpack("f",fread($fh_gen,4));
+                if (!is_nan($tmp[1])) $gen = $tmp[1];
+                $tmp = unpack("f",fread($fh_club,4));
+                if (!is_nan($tmp[1])) $use = $tmp[1];
+                
+                $imprt = 0.0;
+                if ($gen<=$use) $imprt = $use-$gen;
+                $selfuse = $use - $imprt;
+                
+                // echo "$hour $gen $use\n";
+
+                // hydro price
+                if ($hour>=20.0 || $hour<7.0) {
+                    $result['overnight']['selfuse'] += $selfuse;
+                    $result['overnight']['import'] += $imprt;
+                }
+                if ($hour>=7.0 && $hour<16.0) {
+                    $result['daytime']['selfuse'] += $selfuse;
+                    $result['daytime']['import'] += $imprt;
+                }
+                if ($hour>=16.0 && $hour<20.0) {
+                    $result['evening']['selfuse'] += $selfuse;
+                    $result['evening']['import'] += $imprt;
+                }
+
+                $time += 1800;
+                if ($n>100000) break;
+                $n++;
+            }
+            
+            fclose($fh_gen);
+            fclose($fh_club);
+            
+            return $result;
+            
+            break;
                     
         case "generation-estimate":
             $route->format = "json";
