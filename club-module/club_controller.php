@@ -265,30 +265,37 @@ function club_controller()
         case "club-summary":
             $route->format = "json";
             
-            $end = time();
-            $start = $end - (3600*24*365);
+            if (!isset($_GET['start'])) return false;
+            if (!isset($_GET['end'])) return false;
+            $end = (int) ($_GET['end'] * 0.001);
+            $start = (int) ($_GET['start'] * 0.001);
             
             require_once "Modules/feed/feed_model.php";
             $feed = new Feed($mysqli,$redis,$settings["feed"]);
             $datadir = $settings["feed"]["phpfina"]["datadir"];
             
-            $gen_id = 1;
-            $club_id = 2;
+            $gen_id = $club_settings[$club]['generation_feed'];
+            $club_id = $club_settings[$club]['consumption_feed'];
             
             // 1. Load gen and club meta files - check for interval match
-            $gen_meta = $feed->get_meta($gen_id);
-            $club_meta = $feed->get_meta($club_id);
-            if ($gen_meta->interval!=$club_meta->interval) return false;
+            if (!$gen_meta = $feed->get_meta($gen_id)) return false;
+            if (!$club_meta = $feed->get_meta($club_id)) return false;
+            if ($gen_meta->interval!=1800 || $gen_meta->interval!=$club_meta->interval) return false;
+            if ($start<$gen_meta->start_time) $start = $gen_meta->start_time;
+            if ($start<$club_meta->start_time) $start = $club_meta->start_time;
+            if ($end<$start) $end = $start;
             
             // 2. Load gen file position
             $pos_gen_start = floor(($start - $gen_meta->start_time) / $gen_meta->interval);
             $pos_gen_end = floor(($end - $gen_meta->start_time) / $gen_meta->interval);
+            if ($pos_gen_end>$gen_meta->npoints) $pos_gen_end = $gen_meta->npoints;
             $fh_gen = fopen($datadir.$gen_id.".dat", 'rb');
             fseek($fh_gen,$pos_gen_start*4);
 
             // 3. Load club file position
             $pos_club_start = floor(($start - $club_meta->start_time) / $club_meta->interval);
             $pos_club_end = floor(($end - $club_meta->start_time) / $club_meta->interval);
+            if ($pos_club_end>$club_meta->npoints) $pos_club_end = $club_meta->npoints;
             $fh_club = fopen($datadir.$club_id.".dat", 'rb');
             fseek($fh_club,$pos_club_start*4);
 
@@ -299,43 +306,46 @@ function club_controller()
                  
             $out = ""; $n = 0;
             
-            $gen = 0; $use = 0;
+            // Used keys here so that we can itterate through array in multiple places below
+            $v = array('use'=>0,'gen'=>0,'selfuse'=>0,'import'=>0,'export'=>0);
             
-            $result = array(
-                "overnight"=>array('selfuse'=>0,'import'=>0),
-                "daytime"=>array('selfuse'=>0,'import'=>0),
-                "evening"=>array('selfuse'=>0,'import'=>0)
-            );
+            $tariffs = $club_settings[$club]['tariffs'];
+            
+            // Init totals array
+            $kwh = array();
+            foreach ($tariffs as $t) $kwh[$t['name']] = $v;
+            $kwh['total'] = $v;
             
             for ($pos=$pos_gen_start; $pos<$pos_gen_end; $pos++) {
                 $date->setTimestamp($time);
                 $hour = $date->format("H");
                 
                 $tmp = unpack("f",fread($fh_gen,4));
-                if (!is_nan($tmp[1])) $gen = $tmp[1];
+                if (!is_nan($tmp[1])) $v['gen'] = $tmp[1];
                 $tmp = unpack("f",fread($fh_club,4));
-                if (!is_nan($tmp[1])) $use = $tmp[1];
+                if (!is_nan($tmp[1])) $v['use'] = $tmp[1];
                 
-                $imprt = 0.0;
-                if ($gen<=$use) $imprt = $use-$gen;
-                $selfuse = $use - $imprt;
+                $v['import'] = 0;
+                $v['export'] = 0;
+                if ($v['gen']<=$v['use']) $v['import'] = $v['use']-$v['gen']; else $v['export'] = $v['gen']-$v['use'];
+                $v['selfuse'] = $v['use'] - $v['import'];
                 
                 // echo "$hour $gen $use\n";
-
-                // hydro price
-                if ($hour>=20.0 || $hour<7.0) {
-                    $result['overnight']['selfuse'] += $selfuse;
-                    $result['overnight']['import'] += $imprt;
+                
+                foreach ($tariffs as $t) {
+                    $on_tariff = false;
+                    $sh = explode(":",$t['start'])[0];
+                    $eh = explode(":",$t['end'])[0];
+                    
+                    if ($sh<$eh && ($hour>=$sh && $hour<$eh)) $on_tariff = true;
+                    if ($sh>$eh && ($hour>=$sh || $hour<$eh)) $on_tariff = true;
+                    
+                    if ($on_tariff) {
+                        foreach ($v as $key=>$val) $kwh[$t['name']][$key] += $val;
+                    }
                 }
-                if ($hour>=7.0 && $hour<16.0) {
-                    $result['daytime']['selfuse'] += $selfuse;
-                    $result['daytime']['import'] += $imprt;
-                }
-                if ($hour>=16.0 && $hour<20.0) {
-                    $result['evening']['selfuse'] += $selfuse;
-                    $result['evening']['import'] += $imprt;
-                }
-
+                foreach ($v as $key=>$val) $kwh['total'][$key] += $val;
+                    
                 $time += 1800;
                 if ($n>100000) break;
                 $n++;
@@ -344,8 +354,29 @@ function club_controller()
             fclose($fh_gen);
             fclose($fh_club);
             
-            return $result;
+            // Costs
+            $total_selfuse = 0;
+            $total_import = 0;
+            $cost = array();
+            foreach ($tariffs as $t) {
+                $cost[$t['name']] = array();
+                
+                $selfuse = $kwh[$t['name']]['selfuse'] * 0.01 * $t['generator'];
+                $total_selfuse += $selfuse;
+                $cost[$t['name']]['selfuse'] = 1*number_format($selfuse,2,'.','');
+                
+                $import = $kwh[$t['name']]['import'] * 0.01 * $t['import'];
+                $total_import += $import;
+                $cost[$t['name']]['import'] = 1*number_format($import,2,'.','');
+            }
+            $cost['total']['selfuse'] = 1*number_format($total_selfuse,2,'.','');
+            $cost['total']['import'] = 1*number_format($total_import,2,'.','');
             
+            foreach ($kwh as $name=>$a) {
+                foreach ($v as $key=>$b) $kwh[$name][$key] = 1*number_format($kwh[$name][$key],3,'.','');
+            }
+            
+            return array('kwh'=>$kwh,'cost'=>$cost);
             break;
                     
         case "generation-estimate":
