@@ -33,7 +33,6 @@ function club_controller()
     $route->format = "json";
     $result = false;
     require "Modules/club/club_model.php";
-    require "Modules/club/meter_data_api.php";
     $club_model = new Club($mysqli,$redis);
 
     $club = "bethesda";
@@ -104,7 +103,7 @@ function club_controller()
                 'is_hub' => $settings["cydynni"]["is_hub"], 
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
-                'tariffs_table' => $club_model->getTariffsTable()
+                'tariffs_table' => $club_model->getTariffsTable($club_settings[$club]['tariffs'])
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
@@ -811,7 +810,7 @@ function club_controller()
             }
         break;*/
         case 'tariffs':
-            return $cydynni->getTariffs();
+            return $club_model->getTariffsTable($club_settings[$club]['tariffs']);
         break;
     }
     
@@ -822,9 +821,9 @@ function t($s) {
     global $translation,$lang;
     
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
-        echo $translation->$lang->$s;
+        return $translation->$lang->$s;
     } else {
-        echo $s;
+        return $s;
     }
 }
 

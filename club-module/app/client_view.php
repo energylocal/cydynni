@@ -1,6 +1,6 @@
 <?php
 
-global $path, $translation, $lang, $tariffs;
+global $path, $translation, $lang;
 $v = 30;
 
 $app_path = $path."Modules/club/app/";
@@ -29,7 +29,6 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_forecast_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'tariffs'=>$tariffs,
             'club_settings'=>$club_settings,
             'tariffs_table'=>$tariffs_table
         )); ?>
@@ -39,7 +38,6 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_household_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'tariffs'=>$tariffs,
             'club_settings'=>$club_settings
         )); ?>
     </div>
@@ -48,7 +46,6 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_club_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'tariffs'=>$tariffs,
             'club_settings'=>$club_settings
         )) ?>
     </div>
@@ -104,8 +101,6 @@ if (session.read) {
 
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
-
-var tariffs <?php echo isset($tariffs[$club]) ? '='.json_encode($tariffs[$club]): ''; ?>;
 // Language selection top-right
 
 if (languages.length>1) {

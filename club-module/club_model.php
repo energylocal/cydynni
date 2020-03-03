@@ -281,69 +281,24 @@ class Club{
     /**
      * build table of tariff prices per production source
      */
-    public function getTariffsTable() {
+    public function getTariffsTable($tariffs) {
         global $lang;
-        $tariffs = $this->getTariffs();
+        $tariffs = json_decode(json_encode($tariffs));
         // add properties and format strings...
         foreach($tariffs as $t) {
             // calculate how much smaller "hydro" is from "import"
-            // $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
+            // $t->diff = sprintf("(%d%%)", round(100/($t->import / $t->generator)));
             $start = intval(date('G', strtotime($t->start)));
             $end = intval(date('G', strtotime($t->end)));
             $now = intval(date('G'));
             $t->isCurrent = $now >= $start && $now < $end;
-            // add the currenty symbol
-            $t->sources->hydro .= translate('p', $lang);
-            $t->sources->import .= translate('p', $lang);
             // add 12hr times with am/pm
             $t->start = date('g', strtotime($t->start)) . ($t->start < 12 ? translate('am', $lang): translate('pm', $lang));
             $t->end = date('g', strtotime($t->end)) . ($t->end < 12 ? translate('am', $lang): translate('pm', $lang));
             // add css class names to style the title column
-            $t->css = 'text-' . $t->key;
+            $t->css = 'text-' . $t->name;
             $t->rowClass = $t->isCurrent ? ' class="current"': '';
         }
         return $tariffs;
-    }
-    /**
-     * return tariff data
-     *  
-     * @return stdClass
-     * @todo import tariff from db or api
-     */
-    public function getTariffs() {
-        global $lang;
-        $tariffs = [[
-            "key" => "overnight",
-            "name" => translate("Overnight Price", $lang), // check locale/cy_GB
-            "short" => translate("Overnight", $lang), // check locale/cy_GB
-            "start" => '20:00', //24h
-            "end" => '7:00', //24h,
-            "sources" => [
-                "hydro" => 5.8, //pence/kwh
-                "import" => 10.5 //pence/kwh
-            ]
-        ],[
-            "key" => "midday",
-            "name" => translate("Midday Price", $lang),
-            "short" => translate("Midday", $lang),
-            "start" => '7:00',
-            "end" => '16:00',
-            "sources" => [
-                "hydro" => 10.4,
-                "import" => 18.9
-            ]
-        ],[
-            "key" => "evening",
-            "name" => translate("Evening Price", $lang),
-            "short" => translate("Evening", $lang),
-            "start" => '16:00',
-            "end" => '20:00',
-            "sources" => [
-                "hydro" => 12.7,
-                "import" => 23.1
-            ]
-        ]];
-        // convert php array to stdClass. (treat as imported json)
-        return json_decode(json_encode($tariffs));
     }
 }

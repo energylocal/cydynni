@@ -74,58 +74,6 @@
                   </div>
                 </div>
             </div>
-            <!--
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Current Tariff"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
-                <div class="block-content hide">
-                  <div style="background-color:#005b0b; color:#fff">
-                    <div class="bound">
-                    <b><?php echo t("You're currently on the"); ?></b>
-                    </div>
-                  </div>
-                  
-                  <div class="no-padding">
-                    <div class="triangle-wrapper">
-                      <div class="triangle-down">
-                        <div class="triangle-down-content triangle-topup-bg"></div>
-                      </div>
-                    </div>
-                  </div>
-                    
-                  <br>
-                  <div id="tariff-now-title" style="font-size:26px; font-weight:bold; color:#29aae3"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
-                  <div id="tariff-now-circle" class="circle bg-generation">
-                      <div class="circle-inner">
-                          <div id="tariff-now-price" style="font-size:36px">11.5p</div>
-                          <div style="font-size:22px"><?php echo t("per unit"); ?></div>
-                      </div>
-                  </div>
-                  <br>
-                </div>
-            </div>
-            -->
-<!--
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
-                <div class="block-content hide">
-                  <div style="background-color:#29aae3; padding:10px; color:#fff; margin:10px">
-                      <div style="font-size:18px; color:#fff; font-weight:bold; padding:5px">Hydro</div>
-                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Night 8pm - 7am: 5.8 p/kWh</div>
-                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Day 7am - 4pm: 10.4 p/kWh</div>
-                      <div style="font-size:18px; color:#d8f3ff; padding:5px">Evening 4pm - 8pm: 12.7 p/kWh</div>
-                  </div>
-
-                  <div style="background-color:#e6602b; padding:10px; color:#fff; margin:10px">
-                      <div style="font-size:18px; color:#fff; font-weight:bold; padding:5px">Import</div>
-                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Night 8pm - 7am: 10.5 p/kWh</div>
-                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Day 7am - 4pm: 18.9 p/kWh</div>
-                      <div style="font-size:18px; color:#ffe1d5; padding:5px">Evening 4pm - 8pm: 23.1 p/kWh</div>
-                  </div>
-                  <div style="height:1px; clear:both"></div>
-                  
-                </div>
-            </div>
--->
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content" style="padding: .6rem">
@@ -138,7 +86,7 @@
                         <thead>
                             <tr>
                             <th></th>
-                            <th scope="col">Hydro</th>
+                            <th scope="col"><?=t(ucfirst($club_settings["generator"])); ?></th>
                             <th scope="col"><?php echo t("Import") ?></th>
                             </tr>
                         </thead>
@@ -146,103 +94,16 @@
                             <?php foreach ($tariffs_table as $t) : ?>
                             <tr<?=$t->rowClass?>>
                                 <th scope="row">
-                                    <span class="<?=$t->css?> d-sm-inline d-lg-none"><?=$t->short?></span>
-                                    <span class="<?=$t->css?> d-none d-md-inline d-lg-inline"> <?=$t->name?></span> 
+                                    <span class="<?=$t->css?> d-sm-inline d-lg-none"><?=t(ucfirst($t->name))?></span>
+                                    <span class="<?=$t->css?> d-none d-md-inline d-lg-inline"> <?=t(ucfirst($t->name)." Price")?></span> 
                                     <br class="d-sm-none">
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
-                                <td><?=$t->sources->hydro?></td>
-                                <td><?=$t->sources->import?></td>
+                                <td><?=$t->generator.t('p')?></td>
+                                <td><?=$t->import.t('p')?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <!--
-            <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
-                <div class="block-content hide">
-
-                  <br>
-
-                  <div id="generation-tariff-box" class="box5" style="color:#29aae3">
-                      <div style="font-size:26px; font-weight:bold"><?php echo t(strtoupper($club_settings["generator"])."<br>PRICE"); ?></div>
-                      <div style="font-size:14px; padding:5px"><?php echo t("Your local electricity"); ?></div>
-
-                      <div class="circle bg-generation">
-                          <div class="circle-inner">
-                              <div style="font-size:36px"><?php echo $tariffs[$club]["generation"]["cost"]*100;?>p</div>
-                              <div style="font-size:22px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:22px; font-weight:bold"></div>
-                  </div>
-                    
-                  <div style="margin-bottom:10px; color:#444;"><?php echo t("Prices for extra electricity (in the event your local electricity is not covering all of your needs)"); ?></div>  
-                    
-                  <div id="morning-tariff-box" class="box5" style="color:#ffb401">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("MORNING<br>PRICE"); ?></div>
-
-                      <div class="circle-small bg-morning">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px"><?php echo $tariffs[$club]["morning"]["cost"]*100;?>p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:22px; font-weight:bold">6am - 11am</div>
-                  </div>
-                  
-                  <div id="midday-tariff-box" class="box5" style="color:#4dac34">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("MIDDAY<br>PRICE"); ?></div>
-
-                      <div class="circle-small bg-midday">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px"><?php echo $tariffs[$club]["midday"]["cost"]*100;?>p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-
-                      <div style="font-size:24px; font-weight:bold">11am - 4pm</div>
-                  </div>
-                  
-                  <div id="evening-tariff-box" class="box5" style="color:#e6602b">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("EVENING<br>PRICE");?></div>
-                      <div class="circle-small bg-evening">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px"><?php echo $tariffs[$club]["evening"]["cost"]*100;?>p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-                      <div style="font-size:22px; font-weight:bold">4pm - 8pm</div>
-                  </div>
-                  
-                  <div id="overnight-tariff-box" class="box5" style="color:#014c2d">
-                      <div style="font-size:22px; font-weight:bold"><?php echo t("OVERNIGHT<br>PRICE"); ?></div>
-                      
-                      <div class="circle-small bg-overnight">
-                          <div class="circle-small-inner">
-                              <div style="font-size:32px"><?php echo $tariffs[$club]["overnight"]["cost"]*100;?>p</div>
-                              <div style="font-size:18px"><?php echo t("per unit"); ?></div>
-                          </div>
-                      </div>
-                      
-                      <div style="font-size:22px; font-weight:bold">8pm - 6am</div>
-                  </div>
-                  
-
-                  
-                  <div style="clear:both"></div>
-                  <br>
-                  
-                  <div style="background-color:#005b0b; color:#fff; margin-bottom:10px">
-                    <div style="padding:20px">
-                      <?php echo t("Check the Local Electricity Forecast tab to see if it is high or low!"); ?>
-                    </div>
-                  </div>
-                  
-                </div>
-            </div>
-            -->
