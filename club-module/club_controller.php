@@ -1,5 +1,4 @@
 <?php
-
 /*
 
 All Emoncms code is released under the GNU Affero General Public License.
@@ -101,7 +100,13 @@ function club_controller()
 
             $route->format = "html";
 
-            $content = view("Modules/club/app/client_view.php",array('is_hub'=>$settings["cydynni"]["is_hub"], 'session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+            $content = view("Modules/club/app/client_view.php", array(
+                'is_hub' => $settings["cydynni"]["is_hub"], 
+                'session' => $session,'club' => $club,
+                'club_settings' => $club_settings[$club],
+                'tariffs_table' => $club->getTariffsTable()
+            ));
+
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
             break;
 
@@ -174,9 +179,11 @@ function club_controller()
                     $start = $_GET['start']*0.001;
                     $end = $_GET['end']*0.001;
                     $tmp = array();
-                    for ($i=0; $i<count($data); $i++) {
-                        if ($data[$i][0]>=$start && $data[$i][0]<=$end) {
-                            $tmp[] = $data[$i];
+                    if ($data) {
+                        for ($i=0; $i<count($data); $i++) {
+                            if ($data[$i][0]>=$start && $data[$i][0]<=$end) {
+                                $tmp[] = $data[$i];
+                            }
                         }
                     }
                     $data = $tmp;
@@ -803,6 +810,9 @@ function club_controller()
                 return false;
             }
         break;*/
+        case 'tariffs':
+            return $cydynni->getTariffs();
+        break;
     }
     
     return array("content"=>$result);   

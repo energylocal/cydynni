@@ -473,6 +473,138 @@ textarea {
     cursor:pointer;
 }
 
+
+
+
+
+/* pricing table layout style tariff list */
+table.tariff .bg-info {
+    background: #29aae3!important;
+    border-color: #29AAE3;
+}
+table.tariff thead th:nth-child(2) {
+    background: #269dd2;
+}
+table.tariff thead th:nth-child(3) {
+    background: #d55928;
+}
+table.tariff .bg-danger {
+    background: #e6602b!important;
+    border-color: #dee2e6;
+}
+table.tariff td:nth-child(n+2) {
+    border-color: rgba(255,255,255,.3);
+}
+table.tariff th:nth-child(n+2) {
+    border-color: rgba(255,255,255,.6);
+}
+table.tariff th:nth-child(n+2),
+table.tariff td:nth-child(n+2) {
+    color: white;
+}
+table.tariff [scope=col] {
+    width: 19vw;
+}
+table.tariff th:nth-child(n+2),
+table.tariff td:nth-child(n+2) {
+    text-align: center;
+    vertical-align: middle;
+}
+table.tariff tbody tr:hover > td, table.tariff tbody tr:hover > th {
+    background: initial;
+}
+table.tariff tbody tr.current {
+    background-color: rgba(0,0,0,.075);
+}
+table.tariff tbody tr.current th:first-child span:last-child::after{
+    content: " ⚡"
+}
+.font-weight-light {
+    font-weight: 300 !important;
+}
+.text-smaller-sm{
+    font-size: .8em;
+}
+table.tariff {
+    font-size: 1.2rem;
+    color: #3d7b97;
+}
+table.tariff .text-midday {
+    color: #ffb401;
+}
+table.tariff .text-overnight {
+    color: #014c2d;
+}
+table.tariff .text-evening {
+    color: #e6602b;
+}
+@media screen and (min-width:450px) {
+    .d-xs-block {
+        display: inline;
+    }
+}
+@media screen and (min-width:576px) {
+    .d-sm-inline {
+        display: inline!important;
+    }
+    .text-smaller-sm{
+        font-size: inherit;
+    }
+    table.tariff {
+        font-size: 3vw;
+    }
+    table.tariff [scope=col] {
+        width: 23vw;
+        padding: .4em 0;
+    }
+    table.tariff tbody tr td,
+    table.tariff tbody tr th {
+        padding: 1.3vw;
+    }
+}
+@media screen and (min-width:768px) {
+    .d-sm-inline {
+        display: inline!important;
+    }
+    table.tariff {
+        font-size: 2.4vw;
+    }
+}
+@media screen and (min-width: 992px) {
+    .d-lg-inline{
+        display: inline!important;
+    }
+    .d-lg-none{
+        display: none!important;
+    }
+}
+@media screen and (min-width: 1200px) {
+    table.tariff {
+        font-size: 23px;
+    }
+    table.tariff [scope=col] {
+        width: 28%;
+    }
+    table.tariff tbody tr td,
+    table.tariff tbody tr th {
+        padding: .5em;
+    }
+}
+/* end of tariff table styles */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* --------------------------------------------------------------- */
 
 @media (max-width: 650px) {

@@ -69,24 +69,25 @@ function club_summary_load()
                   }
                   //club_resize();
               }, 400);
+              var generation_value = 0;
+              if(tariffs) {
+                if (result.time>=1551398400) {
+                    tariffs.generation.cost = 0.115;
+                    // tariffs.morning.cost = 0.182;
+                    tariffs.midday.cost = 0.166;
+                    tariffs.evening.cost = 0.202;
+                    tariffs.overnight.cost = 0.1305;
+                } else {
+                    tariffs.generation.cost = 0.07;
+                    // tariffs.morning.cost = 0.12;
+                    tariffs.midday.cost = 0.10;
+                    tariffs.evening.cost = 0.14;
+                    tariffs.overnight.cost = 0.0725;
+                }
               
-              
-              if (result.time>=1551398400) {
-                  tariffs.generation.cost = 0.115;
-                  // tariffs.morning.cost = 0.182;
-                  tariffs.midday.cost = 0.166;
-                  tariffs.evening.cost = 0.202;
-                  tariffs.overnight.cost = 0.1305;
-              } else {
-                  tariffs.generation.cost = 0.07;
-                  // tariffs.morning.cost = 0.12;
-                  tariffs.midday.cost = 0.10;
-                  tariffs.evening.cost = 0.14;
-                  tariffs.overnight.cost = 0.0725;
+                // generation value retained in the club
+                generation_value = result.kwh.generation * tariffs.generation.cost;
               }
-              
-              // generation value retained in the club
-              var generation_value = result.kwh.generation * tariffs.generation.cost;
 
               var ext = "";
               if (result.day==1) ext = "st";
@@ -402,7 +403,6 @@ function club_bargraph_load() {
         stack: true, data: midday_data, color: "#ffb401", label: t("Midday Tariff"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
-    
     clubseries.push({
         stack: true, data: evening_data, color: "#e6602b", label: t("Evening Tariff"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
@@ -411,11 +411,13 @@ function club_bargraph_load() {
         stack: true, data: exported_generation_data, color: generator_color, label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
-    
-    clubseries.push({
-        data: price_data, color: "#fb1a80", label: t("Price"), yaxis:2,
-        lines: { show: true }
-    });
+
+    if(showClubPrice) {
+        clubseries.push({
+            data: price_data, color: "#fb1a80", label: t("Price"), yaxis:2,
+            lines: { show: true }
+        });
+    }
 
     // estimate
     /*
@@ -634,4 +636,14 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             tooltip(item.pageX,item.pageY,out,"#fff");
         }
     } else $("#tooltip").remove();
+});
+
+// show/hide club price
+var showClubPrice = false;
+$(function(){
+    $("#showClubPriceInput").on("input", function(event) {
+        showClubPrice = event.target.checked;
+        club_bargraph_load();
+        club_bargraph_draw();
+    })
 });
