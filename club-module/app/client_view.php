@@ -72,6 +72,8 @@ var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
 var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
+
+var club_settings = <?php echo json_encode($club_settings);?>;
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
@@ -82,7 +84,6 @@ var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 
 <script>
-var club_settings = <?php echo json_encode($club_settings);?>;
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
 
 var generation_feed = club_settings.generation_feed;

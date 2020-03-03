@@ -42,14 +42,10 @@
 
                   <div style="padding:10px">
                     <div style="padding-top:5px; padding-bottom:5px">
-                      <div class="legend-label-box" style="background-color:#ffb401"></div>
-                      <span class="legend-label"><?php echo t("Day");?></span>
-                      <!-- <div class="legend-label-box" style="background-color:#4dac34"></div> -->
-                      <!--<span class="legend-label"><?php echo t("Midday");?></span>-->
-                      <div class="legend-label-box" style="background-color:#e6602b"></div>
-                      <span class="legend-label"><?php echo t("Evening");?></span>
-                      <div class="legend-label-box" style="background-color:#014c2d"></div>
-                      <span class="legend-label"><?php echo t("Night");?></span>
+                      <?php foreach ($tariffs_table as $t) : ?>
+                      <div class="legend-label-box" style="background-color:<?=$t->color?>"></div>
+                      <span class="legend-label"><?=t(ucfirst($t->name))?></span>
+                      <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
                       <div class="legend-label-box" style="background-color:#fb1a80"></div>

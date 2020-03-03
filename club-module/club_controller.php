@@ -236,12 +236,15 @@ function club_controller()
             $date->modify("midnight");
             $time = $date->getTimestamp();
             if ($content){
-                $content->dayoffset = ($time - decode_date($content->date))/(3600*24);
+                $input_format = 'M d Y G:i:s';
+                $output_format = 'U';
+                $content_time = DateTime::createFromFormat($input_format, $content->date)->format($output_format);
+                $content->dayoffset = ($time - $content_time)/(3600*24);
             } else {
                 return "Invalid data";
             }
             
-            $content->time = decode_date($content->date);
+            $content->time = $content_time;
             return $content;
             break;
 

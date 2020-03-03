@@ -1,10 +1,15 @@
             <div class="block">
-                <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
+                  <div class="visnav-block">
+                    <div class="visnav-club club-year"><?php echo t("YEAR");?></div><div class="visnav-club club-month"><?php echo t("MONTH");?></div><div class="visnav-club club-week"><?php echo t("WEEK");?></div><div class="visnav-club club-day" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("DAY");?></div>
+                  </div>
+                </div>
                 
                 <div class="block-content" style="color:#ffb401">
                 
                   <div style="background-color:#ffb401; color:#fff">
-                    <b><?php echo t("On the"); ?> <span class="club_date"></span> <?php echo t("we scored"); ?>:</b>
+                  
+                    <b><span class="club_date">In the last fortnight, we scored:</span></b>
                     <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score">50</span>/100</div>
                   </div>
                   

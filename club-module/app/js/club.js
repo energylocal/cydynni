@@ -26,67 +26,40 @@ var club_height = 0;
 view.end = +new Date;
 view.start = view.end - (3600000*24.0*12);
 
-
+// var tariffs = club_settings.tariffs;
 var day_view = 1;
 
 function club_summary_load()
 {
-  $.ajax({                                      
-      url: path+"club/club-summary-day",
-      dataType: 'json',                  
-      success: function(result) {
-          
+    /*
+    $.ajax({
+        url: path+"club/club-summary-day",
+        dataType: 'json',
+        success: function(result) {
           if (result!="Invalid data") {
-          
-              var score = Math.round(100*((result.kwh.overnight + result.kwh.midday + result.kwh.generation) / result.kwh.total));
-              
-              if (result.dayoffset==1) {
-                  $("#club_score_text").html(t("Yesterday we scored"));
-              } else {
-                  if (result.month==undefined) {
-                      $("#club_score_text").html(t("We scored"));
-                  } else {
-                      $("#club_score_text").html(t("We scored")+" "+t("on")+" "+t(result.month)+" "+result.day);
-                  }
-              }
-              
-              $(".club_score").html(score);
-              if (score>20) $("#club_star1").attr("src",app_path+"images/staryellow.png");
-              if (score>40) setTimeout(function() { $("#club_star2").attr("src",app_path+"images/staryellow.png"); }, 100);
-              if (score>60) setTimeout(function() { $("#club_star3").attr("src",app_path+"images/staryellow.png"); }, 200);
-              if (score>80) setTimeout(function() { $("#club_star4").attr("src",app_path+"images/staryellow.png"); }, 300);
-              if (score>90) setTimeout(function() { $("#club_star5").attr("src",app_path+"images/staryellow.png"); }, 400);
-              
-              setTimeout(function() {
-                  if (score<30) {
-                      $("#club_statusmsg").html(t("We are using power in a very expensive way"));
-                  }
-                  if (score>=30 && score<70) {
-                      $("#club_statusmsg").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
-                  }
-                  if (score>=70) {
-                      $("#club_statusmsg").html(t("We’re doing really well using the "+club_settings.generator+" and cheaper power"));
-                  }
-                  //club_resize();
-              }, 400);
+
               var generation_value = 0;
-              if(tariffs) {
-                if (result.time>=1551398400) {
-                    tariffs.generation.cost = 0.115;
-                    // tariffs.morning.cost = 0.182;
-                    tariffs.midday.cost = 0.166;
-                    tariffs.evening.cost = 0.202;
-                    tariffs.overnight.cost = 0.1305;
-                } else {
-                    tariffs.generation.cost = 0.07;
-                    // tariffs.morning.cost = 0.12;
-                    tariffs.midday.cost = 0.10;
-                    tariffs.evening.cost = 0.14;
-                    tariffs.overnight.cost = 0.0725;
+              try{
+                if(tariffs) {
+                    if (result.time>=1551398400) {
+                        tariffs.generation.cost = 0.115;
+                        // tariffs.morning.cost = 0.182;
+                        tariffs.midday.cost = 0.166;
+                        tariffs.evening.cost = 0.202;
+                        tariffs.overnight.cost = 0.1305;
+                    } else {
+                        tariffs.generation.cost = 0.07;
+                        // tariffs.morning.cost = 0.12;
+                        tariffs.midday.cost = 0.10;
+                        tariffs.evening.cost = 0.14;
+                        tariffs.overnight.cost = 0.0725;
+                    }
+
+                    // generation value retained in the club
+                    generation_value = result.kwh.generation * tariffs.generation.cost;
                 }
-              
-                // generation value retained in the club
-                generation_value = result.kwh.generation * tariffs.generation.cost;
+              } catch (error) {
+                  console.error(error);
               }
 
               var ext = "";
@@ -95,9 +68,8 @@ function club_summary_load()
               if (result.day==3) ext = "rd";
               if (result.day>3) ext = "th";
               if (lang=="cy") ext = "";
+              // $(".club_date").html(result.day+t(ext)+" "+t(result.month));
 
-              $(".club_date").html(result.day+t(ext)+" "+t(result.month));
-              
               // 2nd ssection showing total consumption and cost
               var generation_value_str = "";
               if (generation_value>10) {
@@ -108,51 +80,56 @@ function club_summary_load()
 
               $(".club_generation_value").html(generation_value_str);
               $("#club_value_summary").html(generation_value_str+" "+t("kept in the club"));
-              
+
               club_pie_data_cost = [];
               club_pie_data_energy = [];
-              
-              for (var z in tariffs) {
-                  if (z!="generation") {
-                      club_pie_data_cost.push({
-                          name:t(z.toUpperCase()), 
-                          generation: result.generation[z]*tariffs.generation.cost, 
-                          import: result.kwh[z]*tariffs[z].cost, 
-                          color:tariffs[z].color
-                      });
-                      
-                      club_pie_data_energy.push({
-                          name:t(z.toUpperCase()), 
-                          generation: result.generation[z], 
-                          import: result.kwh[z], 
-                          color:tariffs[z].color
-                      });
-                  }
-              
-                  if (result.kwh[z]!=null) {
-                      $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
-                      $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+            try{
+                for (var z in tariffs) {
+                    if (z!="generation") {
+                        club_pie_data_cost.push({
+                            name:t(z.toUpperCase()),
+                            generation: result.generation[z]*tariffs.generation.cost,
+                            import: result.kwh[z]*tariffs[z].cost,
+                            color:tariffs[z].color
+                        });
 
-                      var unitcoststr = "";
-                      if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
-                      $("#club_"+z+"_unitcost").html(unitcoststr);
-                  }
-              }
-                                         
+                        club_pie_data_energy.push({
+                            name:t(z.toUpperCase()),
+                            generation: result.generation[z],
+                            import: result.kwh[z],
+                            color:tariffs[z].color
+                        });
+                    }
+
+                    if (result.kwh[z]!=null) {
+                        $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
+                        $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+
+                        var unitcoststr = "";
+                        if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
+                        $("#club_"+z+"_unitcost").html(unitcoststr);
+                    }
+                }
+            } catch (error) {
+                    console.error(error);
+            }
               club_generation_use = result.kwh.generation
-              
+
               club_pie_draw();
-          } 
+          }
           else
           {
-          
+
           }
-      } 
-  });
+      }
+  })
+  .fail(function(jqXHR, textStatus){
+    console.log( "Request failed: " + textStatus );
+  });*/
 }
 
 function club_pie_draw() {
-    
+
     width = 300;
     height = 300;
 
@@ -160,25 +137,25 @@ function club_pie_draw() {
     $("#club_piegraph2_placeholder").attr('width',width);
     $('#club_piegraph1_placeholder').attr("height",height);
     $('#club_piegraph2_placeholder').attr("height",height);
-    
+
     var options = {
       color: "#3b6358",
       centertext: "THIS WEEK",
       width: width,
       height: height
     };
-    
-    piegraph3("club_piegraph1_placeholder",club_pie_data_energy,options); 
+
+    piegraph3("club_piegraph1_placeholder",club_pie_data_energy,options);
     piegraph3("club_piegraph2_placeholder",club_pie_data_cost,options);
-    
+
     var options = {
       color: "#3b6358",
       centertext: "THIS WEEK",
       width: width,
       height: 50
     };
-    
-    hrbar("club_hrbar1_placeholder",club_pie_data_energy,options); 
+
+    hrbar("club_hrbar1_placeholder",club_pie_data_energy,options);
     hrbar("club_hrbar2_placeholder",club_pie_data_cost,options);
 }
 
@@ -188,11 +165,11 @@ function club_bargraph_load() {
     var npoints = 200;
     interval = ((view.end - view.start) * 0.001) / npoints;
     interval = round_interval(interval);
-    
+
     // Limit interval to 1800s
     if (interval<1800) interval = 1800;
     var intervalms = interval * 1000;
-    
+
     // Start and end time rounding
     view.end = Math.floor(view.end / intervalms) * intervalms;
     view.start = Math.floor(view.start / intervalms) * intervalms;
@@ -201,16 +178,16 @@ function club_bargraph_load() {
     // Load data from server
     if (generation_feed==194360) {
         generation_data = feed.getdataremote(generation_feed,view.start,view.end,interval,1,1);
-        for (var z in generation_data) { 
+        for (var z in generation_data) {
         generation_data[z][1] = generation_data[z][1]*2;
         }
     } else {
         generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
     }
     var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
-    
+
     if (generation_data.success!=undefined) $("#local_electricity_forecast").hide();
-    
+
     // -------------------------------------------------------------------------
     // Colour code graph
     // -------------------------------------------------------------------------
@@ -226,23 +203,27 @@ function club_bargraph_load() {
     var overnight_data = [];
     exported_generation_data = [];
     used_generation_data = [];
-    
+
     var price_data = []
-    
+
     var total_generation = 0;
     var total_used_generation = 0;
     var total_club = 0;
     var total_time = 0;
+    
+    var total_daytime = 0;
+    var total_evening = 0;
+    var total_consumption = 0;
 
-    for (var z in club_data) {    
-        var time = club_data[z][0];    
+    for (var z in club_data) {
+        var time = club_data[z][0];
         var d = new Date(time);
         var hour = d.getHours();
-        
+
         var generation = 0;
         if (generation_data[z]!=undefined) generation = generation_data[z][1] * scale;
         var consumption = club_data[z][1] * scale;
-        
+
         var overnight = 0;
         // var morning = 0;
         var midday = 0;
@@ -270,14 +251,14 @@ function club_bargraph_load() {
             if (hour>=16 && hour<20) evening = grid_import;
             if (hour>=20) overnight = grid_import;
         }
-
+        
         overnight_data[z] = [time,overnight];
         // morning_data[z] = [time,morning];
         midday_data[z] = [time,midday];
         evening_data[z] = [time,evening];
         exported_generation_data[z] = [time,exported_generation];
         used_generation_data[z] = [time,used_generation];
-        
+
         if (units=="kW") {
             total_generation += generation * (interval/3600);
             total_club += consumption * (interval/3600);
@@ -288,14 +269,14 @@ function club_bargraph_load() {
             total_used_generation += used_generation;
         }
         total_time += interval;
-        
+
         // ---------------------------------------------------
         // Price signal
         // ---------------------------------------------------
         var imprt = 0.0
         if (generation<=consumption) imprt = consumption-generation
         var selfuse = consumption - imprt
-        
+
         var hydro_price = 0.0;
         var import_price = 0.0;
         // hydro price
@@ -310,40 +291,74 @@ function club_bargraph_load() {
         import_cost = imprt * import_price
         // unit price
         unit_price = (import_cost + hydro_cost) / consumption
-        
+
         // total_cost += import_cost + hydro_cost
         // total_kwh += club
-        
+
         price_data.push([time,unit_price]);
-    }    
-    
+        
+        total_daytime += midday * import_price;
+        total_evening += evening * import_price;
+        total_consumption += import_cost + hydro_cost;
+        
+    }
+
+    var score = 1.0 - ((total_daytime+total_evening)/total_consumption);
+    score = Math.round(100*score);
+    $(".club_score").html(score);
+
+    if (score>=20) star1 = "staryellow"; else star1 = "star20yellow";
+    if (score>=40) star2 = "staryellow"; else star2 = "star20yellow";
+    if (score>=60) star3 = "staryellow"; else star3 = "star20yellow";
+    if (score>=80) star4 = "staryellow"; else star4 = "star20yellow";
+    if (score>=90) star5 = "staryellow"; else star5 = "star20yellow";
+
+    $("#club_star1").attr("src",app_path+"images/"+star1+".png");
+    setTimeout(function() { $("#club_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
+    setTimeout(function() { $("#club_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
+    setTimeout(function() { $("#club_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
+    setTimeout(function() { $("#club_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
+
+    setTimeout(function() {
+      if (score<30) {
+          $("#club_statusmsg").html(t("We are using power in a very expensive way"));
+      }
+      if (score>=30 && score<70) {
+          $("#club_statusmsg").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+      }
+      if (score>=70) {
+          $("#club_statusmsg").html(t("We’re doing really well using the "+club_settings.generator+" and cheaper power"));
+      }
+      //club_resize();
+    }, 400);
+
     // ----------------------------------------------------------------------------
     // estimate
     // ----------------------------------------------------------------------------
     generation_estimate = [];
     club_estimate = [];
-    
+
     var lasttime = 0;
     var lastvalue = 0;
     for (var z in generation_data) {
         if (generation_data[z][1]!=null) {
             lasttime = generation_data[z][0];
             lastvalue = generation_data[z][1];
-        } 
+        }
     }
-    
+
     /*
     if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
         // ----------------------------------------------------------------------------
         // generation estimate USING YNNI PADARN PERIS DATA
         // ----------------------------------------------------------------------------
         if (lasttime==0) lasttime = view.start;
-        
-        $.ajax({                                      
+
+        $.ajax({
             url: path+"club/generation-estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
             dataType: 'json', async: false, success: function(result) {
             generation_estimate = result;
-            
+
             for (var z in generation_estimate) {
                 generation_estimate[z][1] = generation_estimate[z][1]*2; // * scale;
             }
@@ -357,32 +372,32 @@ function club_bargraph_load() {
         var d3 = new Date(lasttime);
         var t3 = d3.getTime()*0.001;
         var divisions_behind = Math.floor((t1 - t3) / interval);
-        
+
         var club_estimate_raw = [];
-        
+
         var time = lasttime;
         if (generation_estimate.length>0) {
             time = generation_estimate[0][0];
         }
-        $.ajax({                                      
+        $.ajax({
             url: path+"club/club-estimate?lasttime="+lasttime+"&interval="+interval,
             dataType: 'json',
-            async: false,                      
+            async: false,
             success: function(result) {
                 var club_estimate_raw = result;
                 var l = club_estimate_raw.length;
-                
+
                 club_estimate = [];
                 for (var h=0; h<divisions_behind; h++) {
                     club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
                 }
         }});
-       
+
     }*/
     // ----------------------------------------------------------------------------
-    
+
     clubseries = [];
-    
+
     var widthprc = 0.75;
     var barwidth = widthprc*interval*1000;
     // Actual
@@ -428,7 +443,7 @@ function club_bargraph_load() {
         data: club_estimate, color: "#aaa", label: t("Club estimate"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 0.4, lineWidth:0}
     });*/
-    
+
     // club_bargraph_draw();
 }
 
@@ -439,9 +454,9 @@ function club_bargraph_resize() {
     if (window_width<450) flot_font_size = 10;
 
     width = $("#club_bargraph_bound").width();
-    
+
     var h = 400; if (width<400) h = width;
-    
+
     $("#club_bargraph_placeholder").width(width);
     $('#club_bargraph_bound').height(h);
     $('#club_bargraph_placeholder').height(h);
@@ -453,10 +468,10 @@ function club_bargraph_draw() {
 
     var options = {
         legend: { show: true, noColumns: 8, container: $('#legendholder') },
-        xaxis: { 
-            mode: "time", 
-            timezone: "browser", 
-            font: {size:flot_font_size, color:"#666"}, 
+        xaxis: {
+            mode: "time",
+            timezone: "browser",
+            font: {size:flot_font_size, color:"#666"},
             // labelHeight:-5
             reserveSpace:false,
             min: view.start,
@@ -468,16 +483,16 @@ function club_bargraph_draw() {
         ],
         selection: { mode: "x" },
         grid: {
-            show:true, 
+            show:true,
             color:"#aaa",
             borderWidth:0,
-            hoverable: true, 
+            hoverable: true,
             clickable: true
         }
     }
-    
+
     // if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
-    
+
     if ($("#club_bargraph_placeholder").width()>0) {
         $.plot("#club_bargraph_placeholder",clubseries, options);
     }
@@ -486,16 +501,16 @@ function club_bargraph_draw() {
 function round_interval(interval) {
     var outinterval = 1800;
     if (interval>3600*1) outinterval = 3600*1;
-    
+
     if (interval>3600*2) outinterval = 3600*2;
     if (interval>3600*3) outinterval = 3600*3;
     if (interval>3600*4) outinterval = 3600*4;
     if (interval>3600*5) outinterval = 3600*5;
     if (interval>3600*6) outinterval = 3600*6;
     if (interval>3600*12) outinterval = 3600*12;
-    
+
     if (interval>3600*24) outinterval = 3600*24;
-    
+
     if (interval>3600*36) outinterval = 3600*36;
     if (interval>3600*48) outinterval = 3600*48;
     if (interval>3600*72) outinterval = 3600*72;
@@ -551,6 +566,7 @@ $(".club-day").click(function(event) {
     view.start = view.end - (3600000*24.0*1);
     club_bargraph_load();
     club_bargraph_draw();
+    $(".club_date").html(t("In the last day, we scored:"));
 });
 
 $(".club-week").click(function(event) {
@@ -559,6 +575,7 @@ $(".club-week").click(function(event) {
     view.start = view.end - (3600000*24.0*7);
     club_bargraph_load();
     club_bargraph_draw();
+    $(".club_date").html(t("In the last week, we scored:"));
 });
 
 $(".club-month").click(function(event) {
@@ -567,6 +584,7 @@ $(".club-month").click(function(event) {
     view.start = view.end - (3600000*24.0*30);
     club_bargraph_load();
     club_bargraph_draw();
+    $(".club_date").html(t("In the last month, we scored:"));
 });
 
 $(".club-year").click(function(event) {
@@ -575,6 +593,7 @@ $(".club-year").click(function(event) {
     view.start = view.end - (3600000*24.0*365);
     club_bargraph_load();
     club_bargraph_draw();
+    $(".club_date").html(t("In the last year, we scored:"));
 });
 
 $('#club_bargraph_placeholder').bind("plotselected", function (event, ranges) {
@@ -582,6 +601,7 @@ $('#club_bargraph_placeholder').bind("plotselected", function (event, ranges) {
     view.end = ranges.xaxis.to;
     club_bargraph_load();
     club_bargraph_draw();
+    $(".club_date").html(t("For the range selected in the graph:"));
 });
 
 $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
@@ -589,12 +609,12 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
     if (item) {
         var z = item.dataIndex;
         var selected_series = clubseries[item.seriesIndex].label;
-        
+
         if (previousPoint != item.datapoint) {
             previousPoint = item.datapoint;
 
             $("#tooltip").remove();
-            
+
             // Date and time
             var itemTime = item.datapoint[0];
             var d = new Date(itemTime);
@@ -603,9 +623,9 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             var mins = d.getMinutes();
             if (mins==0) mins = "00";
             var date = d.getHours()+":"+mins+" "+days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate();
-            
+
             var out = date+"<br>";
-                        
+
             // Non estimate part of the graph
             if (selected_series!=t(ucfirst(club_settings.generator)+" estimate") && selected_series!=t("Club estimate")) {
 
@@ -620,13 +640,13 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                                 out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+units+"<br>";
                             } else {
                                 out += series.label+ ": "+(series.data[z][1]*1).toFixed(1)+" p/kWh<br>";
-                            } 
+                            }
                             if (series.label!=t("Exported "+ucfirst(club_settings.generator))) total_consumption += series.data[z][1]*1;
                         }
                     }
                 }
                 if (total_consumption) out += t("Total consumption: ")+(total_consumption).toFixed(1)+units;
-            
+
             } else {
                 // Print estimate amounts
                 out += clubseries[5].label+ ": "+(clubseries[5].data[z][1]*1).toFixed(1)+units+"<br>";
@@ -638,7 +658,6 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
 });
 
 // show/hide club price
-var showClubPrice = false;
 $(function(){
     $("#showClubPriceInput").on("input", function(event) {
         showClubPrice = event.target.checked;
