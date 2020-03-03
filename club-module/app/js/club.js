@@ -29,104 +29,7 @@ view.start = view.end - (3600000*24.0*12);
 // var tariffs = club_settings.tariffs;
 var day_view = 1;
 
-function club_summary_load()
-{
-    /*
-    $.ajax({
-        url: path+"club/club-summary-day",
-        dataType: 'json',
-        success: function(result) {
-          if (result!="Invalid data") {
-
-              var generation_value = 0;
-              try{
-                if(tariffs) {
-                    if (result.time>=1551398400) {
-                        tariffs.generation.cost = 0.115;
-                        // tariffs.morning.cost = 0.182;
-                        tariffs.midday.cost = 0.166;
-                        tariffs.evening.cost = 0.202;
-                        tariffs.overnight.cost = 0.1305;
-                    } else {
-                        tariffs.generation.cost = 0.07;
-                        // tariffs.morning.cost = 0.12;
-                        tariffs.midday.cost = 0.10;
-                        tariffs.evening.cost = 0.14;
-                        tariffs.overnight.cost = 0.0725;
-                    }
-
-                    // generation value retained in the club
-                    generation_value = result.kwh.generation * tariffs.generation.cost;
-                }
-              } catch (error) {
-                  console.error(error);
-              }
-
-              var ext = "";
-              if (result.day==1) ext = "st";
-              if (result.day==2) ext = "nd";
-              if (result.day==3) ext = "rd";
-              if (result.day>3) ext = "th";
-              if (lang=="cy") ext = "";
-              // $(".club_date").html(result.day+t(ext)+" "+t(result.month));
-
-              // 2nd ssection showing total consumption and cost
-              var generation_value_str = "";
-              if (generation_value>10) {
-                  generation_value_str = "£"+(generation_value).toFixed(0);
-              } else {
-                  generation_value_str = "£"+(generation_value).toFixed(2);
-              }
-
-              $(".club_generation_value").html(generation_value_str);
-              $("#club_value_summary").html(generation_value_str+" "+t("kept in the club"));
-
-              club_pie_data_cost = [];
-              club_pie_data_energy = [];
-            try{
-                for (var z in tariffs) {
-                    if (z!="generation") {
-                        club_pie_data_cost.push({
-                            name:t(z.toUpperCase()),
-                            generation: result.generation[z]*tariffs.generation.cost,
-                            import: result.kwh[z]*tariffs[z].cost,
-                            color:tariffs[z].color
-                        });
-
-                        club_pie_data_energy.push({
-                            name:t(z.toUpperCase()),
-                            generation: result.generation[z],
-                            import: result.kwh[z],
-                            color:tariffs[z].color
-                        });
-                    }
-
-                    if (result.kwh[z]!=null) {
-                        $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
-                        $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
-
-                        var unitcoststr = "";
-                        if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
-                        $("#club_"+z+"_unitcost").html(unitcoststr);
-                    }
-                }
-            } catch (error) {
-                    console.error(error);
-            }
-              club_generation_use = result.kwh.generation
-
-              club_pie_draw();
-          }
-          else
-          {
-
-          }
-      }
-  })
-  .fail(function(jqXHR, textStatus){
-    console.log( "Request failed: " + textStatus );
-  });*/
-}
+function club_summary_load() { }
 
 function club_pie_draw() {
 
@@ -198,7 +101,7 @@ function club_bargraph_load() {
     if (units=="kW") scale = 2;
 
     var morning_data = [];
-    var midday_data = [];
+    var daytime_data = [];
     var evening_data = [];
     var overnight_data = [];
     exported_generation_data = [];
@@ -211,8 +114,14 @@ function club_bargraph_load() {
     var total_club = 0;
     var total_time = 0;
     
-    var total_daytime = 0;
-    var total_evening = 0;
+    var total_daytime_import = 0;
+    var total_evening_import = 0;
+    var total_overnight_import = 0;
+
+    var total_daytime_gen = 0;
+    var total_evening_gen = 0;
+    var total_overnight_gen = 0;
+    
     var total_consumption = 0;
 
     for (var z in club_data) {
@@ -226,7 +135,7 @@ function club_bargraph_load() {
 
         var overnight = 0;
         // var morning = 0;
-        var midday = 0;
+        var daytime = 0;
         var evening = 0;
         var exported_generation = 0;
         var used_generation = 0;
@@ -247,14 +156,14 @@ function club_bargraph_load() {
             // Import times
             if (hour<7) overnight = grid_import;
             // if (hour>=6 && hour<11) morning = grid_import;
-            if (hour>=7 && hour<16) midday = grid_import;
+            if (hour>=7 && hour<16) daytime = grid_import;
             if (hour>=16 && hour<20) evening = grid_import;
             if (hour>=20) overnight = grid_import;
         }
         
         overnight_data[z] = [time,overnight];
         // morning_data[z] = [time,morning];
-        midday_data[z] = [time,midday];
+        daytime_data[z] = [time,daytime];
         evening_data[z] = [time,evening];
         exported_generation_data[z] = [time,exported_generation];
         used_generation_data[z] = [time,used_generation];
@@ -292,18 +201,23 @@ function club_bargraph_load() {
         // unit price
         unit_price = (import_cost + hydro_cost) / consumption
 
-        // total_cost += import_cost + hydro_cost
-        // total_kwh += club
-
         price_data.push([time,unit_price]);
         
-        total_daytime += midday * import_price;
-        total_evening += evening * import_price;
+        total_daytime_import += daytime;
+        total_evening_import += evening;
+        total_overnight_import += overnight;
+
+        total_daytime_gen += used_generation;
+        total_evening_gen += used_generation;
+        total_overnight_gen += used_generation;
+        
         total_consumption += import_cost + hydro_cost;
         
     }
+    
+    var generation_value = (total_daytime_gen*10.4+total_evening_gen*12.7+total_overnight_gen*5.8)*0.01;
 
-    var score = 1.0 - ((total_daytime+total_evening)/total_consumption);
+    var score = 1.0 - ((total_daytime_import*18.9+total_evening_import*23.1)/total_consumption);
     score = Math.round(100*score);
     $(".club_score").html(score);
 
@@ -332,6 +246,72 @@ function club_bargraph_load() {
       //club_resize();
     }, 400);
 
+    // 2nd ssection showing total consumption and cost
+    var generation_value_str = "";
+    if (generation_value>10) {
+        generation_value_str = "£"+(generation_value).toFixed(0);
+    } else {
+        generation_value_str = "£"+(generation_value).toFixed(2);
+    }
+
+    $(".club_generation_value").html(generation_value_str);
+    $("#club_value_summary").html(generation_value_str+" "+t("kept in the club"));
+
+    club_pie_data_cost = [];
+    club_pie_data_energy = [];
+    
+    // COST
+    club_pie_data_cost.push({
+        name:t("Day"),
+        generation: total_daytime_gen*0.01*10.4,
+        import: total_daytime_import*0.01*18.9,
+        color:"#ffb401"
+    });
+    club_pie_data_cost.push({
+        name:t("Evening"),
+        generation: total_evening_gen*0.01*12.7,
+        import: total_evening_import*0.01*23.1,
+        color:"#e6602b"
+    });
+    club_pie_data_cost.push({
+        name:t("Overnight"),
+        generation: total_overnight_gen*0.01*5.8,
+        import: total_overnight_import*0.01*10.5,
+        color:"#014c2d"
+    });
+    
+    // ENERGY
+    club_pie_data_energy.push({
+        name:t("Day"),
+        generation: total_daytime_gen,
+        import: total_daytime_import,
+        color:"#ffb401"
+    });
+    club_pie_data_energy.push({
+        name:t("Evening"),
+        generation: total_evening_gen,
+        import: total_evening_import,
+        color:"#e6602b"
+    });
+    club_pie_data_energy.push({
+        name:t("Overnight"),
+        generation: total_overnight_gen,
+        import: total_overnight_import,
+        color:"#014c2d"
+    });
+    
+    /*
+    if (result.kwh[z]!=null) {
+        $("#club_"+z+"_kwh").html(result.kwh[z].toFixed(0));
+        $("#club_"+z+"_cost").html((result.kwh[z]*tariffs[z].cost).toFixed(2));
+
+        var unitcoststr = "";
+        if (result.kwh[z]>0) unitcoststr = "@ "+(100*result.kwh[z]*tariffs[z].cost/result.kwh[z]).toFixed(2)+" p/kWh";
+        $("#club_"+z+"_unitcost").html(unitcoststr);
+    }
+    */
+    club_pie_draw();
+
     // ----------------------------------------------------------------------------
     // estimate
     // ----------------------------------------------------------------------------
@@ -346,56 +326,7 @@ function club_bargraph_load() {
             lastvalue = generation_data[z][1];
         }
     }
-
-    /*
-    if ((((new Date()).getTime()-view.end)<3600*1000*48) && ((view.end-lasttime)*0.001)>1800) {
-        // ----------------------------------------------------------------------------
-        // generation estimate USING YNNI PADARN PERIS DATA
-        // ----------------------------------------------------------------------------
-        if (lasttime==0) lasttime = view.start;
-
-        $.ajax({
-            url: path+"club/generation-estimate?start="+view.start+"&end="+view.end+"&interval="+interval+"&lasttime="+lasttime+"&lastvalue="+lastvalue,
-            dataType: 'json', async: false, success: function(result) {
-            generation_estimate = result;
-
-            for (var z in generation_estimate) {
-                generation_estimate[z][1] = generation_estimate[z][1]*2; // * scale;
-            }
-        }});
-        // ----------------------------------------------------------------------------
-        // CONSUMPTION estimate
-        // ----------------------------------------------------------------------------
-        var d1 = new Date();
-        var t1 = d1.getTime()*0.001;
-        if (view.end>0) t1 = view.end * 0.001;
-        var d3 = new Date(lasttime);
-        var t3 = d3.getTime()*0.001;
-        var divisions_behind = Math.floor((t1 - t3) / interval);
-
-        var club_estimate_raw = [];
-
-        var time = lasttime;
-        if (generation_estimate.length>0) {
-            time = generation_estimate[0][0];
-        }
-        $.ajax({
-            url: path+"club/club-estimate?lasttime="+lasttime+"&interval="+interval,
-            dataType: 'json',
-            async: false,
-            success: function(result) {
-                var club_estimate_raw = result;
-                var l = club_estimate_raw.length;
-
-                club_estimate = [];
-                for (var h=0; h<divisions_behind; h++) {
-                    club_estimate.push([time+(h*interval*1000),club_estimate_raw[h%l]*scale]);
-                }
-        }});
-
-    }*/
-    // ----------------------------------------------------------------------------
-
+    
     clubseries = [];
 
     var widthprc = 0.75;
@@ -414,7 +345,7 @@ function club_bargraph_load() {
     //    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     //});
     clubseries.push({
-        stack: true, data: midday_data, color: "#ffb401", label: t("Midday Tariff"),
+        stack: true, data: daytime_data, color: "#ffb401", label: t("Daytime Tariff"),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
@@ -432,19 +363,6 @@ function club_bargraph_load() {
             lines: { show: true }
         });
     }
-
-    // estimate
-    /*
-    clubseries.push({
-        data: generation_estimate, color: "#dadada", label: t(ucfirst(club_settings.generator)+" estimate"),
-        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-    });
-    clubseries.push({
-        data: club_estimate, color: "#aaa", label: t("Club estimate"),
-        bars: { show: true, align: "center", barWidth: barwidth, fill: 0.4, lineWidth:0}
-    });*/
-
-    // club_bargraph_draw();
 }
 
 function club_bargraph_resize() {
