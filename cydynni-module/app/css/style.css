@@ -554,7 +554,8 @@ table.tariff .text-evening {
         font-size: 3vw;
     }
     table.tariff [scope=col] {
-        width: 25vw;
+        width: 23vw;
+        padding: .4em 0;
     }
     table.tariff tbody tr td,
     table.tariff tbody tr th {

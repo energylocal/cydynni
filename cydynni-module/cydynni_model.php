@@ -287,8 +287,11 @@ class Cydynni{
         // add properties and format strings...
         foreach($tariffs as $t) {
             // calculate how much smaller "hydro" is from "import"
-            $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
-            $t->isCurrent = date('G') >= $t->start && date('G') < $t->end;
+            // $t->diff = sprintf("(%d%%)", round(100/($t->sources->import / $t->sources->hydro)));
+            $start = intval(date('G', strtotime($t->start)));
+            $end = intval(date('G', strtotime($t->end)));
+            $now = intval(date('G'));
+            $t->isCurrent = $now >= $start && $now < $end;
             // add the currenty symbol
             $t->sources->hydro .= translate('p', $lang);
             $t->sources->import .= translate('p', $lang);

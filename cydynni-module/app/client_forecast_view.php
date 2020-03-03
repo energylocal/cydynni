@@ -127,34 +127,37 @@
             </div>
 -->
             <div class="block">
-                <table class="tariff table table-sm my-3">
-                    <colgroup>
-                        <col>
-                        <col class="bg-info">
-                        <col class="bg-danger">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                        <th></th>
-                        <th scope="col">Hydro</th>
-                        <th scope="col"><?php echo t("Import") ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($tariffs_table as $t) : ?>
-                        <tr<?=$t->rowClass?>>
-                            <th scope="row">
-                                <span class="<?=$t->css?> d-sm-inline d-lg-none"><?=$t->short?></span>
-                                <span class="<?=$t->css?> d-none d-md-inline d-lg-inline"> <?=$t->name?></span> 
-                                <br class="d-sm-none">
-                                <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
-                            </th>
-                            <td><?=$t->sources->hydro?> <span class="font-weight-light d-none d-sm-inline"><?=$t->diff?></span></td>
-                            <td><?=$t->sources->import?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
+                <div class="block-content" style="padding: .6rem">
+                    <table class="tariff table table-sm m-0">
+                        <colgroup>
+                            <col>
+                            <col class="bg-info">
+                            <col class="bg-danger">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                            <th></th>
+                            <th scope="col">Hydro</th>
+                            <th scope="col"><?php echo t("Import") ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($tariffs_table as $t) : ?>
+                            <tr<?=$t->rowClass?>>
+                                <th scope="row">
+                                    <span class="<?=$t->css?> d-sm-inline d-lg-none"><?=$t->short?></span>
+                                    <span class="<?=$t->css?> d-none d-md-inline d-lg-inline"> <?=$t->name?></span> 
+                                    <br class="d-sm-none">
+                                    <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
+                                </th>
+                                <td><?=$t->sources->hydro?></td>
+                                <td><?=$t->sources->import?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!--
             <div class="block">
