@@ -94,6 +94,7 @@ var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 
 var generator_color = '<?php echo $club_settings["generator_color"]; ?>';
+var export_color = '<?php echo $club_settings["export_color"]; ?>';
 
 
 var apikeystr = "";

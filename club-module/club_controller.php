@@ -34,7 +34,7 @@ function club_controller()
     $result = false;
     require "Modules/club/club_model.php";
     require "Modules/club/meter_data_api.php";
-    $club = new Club($mysqli,$redis);
+    $club_model = new Club($mysqli,$redis);
 
     $club = "bethesda";
     
@@ -104,7 +104,7 @@ function club_controller()
                 'is_hub' => $settings["cydynni"]["is_hub"], 
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
-                'tariffs_table' => $club->getTariffsTable()
+                'tariffs_table' => $club_model->getTariffsTable()
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));

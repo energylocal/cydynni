@@ -385,7 +385,6 @@ function club_bargraph_load() {
     
     var widthprc = 0.75;
     var barwidth = widthprc*interval*1000;
-    
     // Actual
     clubseries.push({
         stack: true, data: used_generation_data, color: generator_color, label: t("Used "+ucfirst(club_settings.generator)),
@@ -408,7 +407,7 @@ function club_bargraph_load() {
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     clubseries.push({
-        stack: true, data: exported_generation_data, color: generator_color, label: t("Exported "+ucfirst(club_settings.generator)),
+        stack: true, data: exported_generation_data, color: export_color, label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
 
