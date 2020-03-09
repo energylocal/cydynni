@@ -580,6 +580,7 @@ function household_realtime() {
     async: true,
     success: function(data) {  
         console.log(data);
+	household_realtime_data = data;
         $("#power_value").html(data.value);
     }
   });

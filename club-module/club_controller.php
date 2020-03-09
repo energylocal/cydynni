@@ -103,7 +103,8 @@ function club_controller()
                 'is_hub' => $settings["cydynni"]["is_hub"], 
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
-                'tariffs_table' => $club_model->getTariffsTable($club_settings[$club]['tariffs'])
+                'tariffs_table' => $club_model->getTariffsTable($club_settings[$club]['tariffs']),
+                'tariffs' => $tariffs
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));

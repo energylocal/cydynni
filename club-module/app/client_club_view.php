@@ -9,7 +9,7 @@
                 
                   <div style="background-color:#ffb401; color:#fff">
                   
-                    <b><span class="club_date">In the last fortnight, we scored:</span></b>
+                    <b><span class="club_date"><?= sprintf(t('In the last %s, we scored:'),t("fortnight")) ?></span></b>
                     <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score">50</span>/100</div>
                   </div>
                   
@@ -66,7 +66,7 @@
                 <div class="block-content">
                 
                     <div class="bg-club2">
-                      <div class="bound"><?php echo t("How much of the electricity the club used, came from the ".$club_settings["generator"]."."); ?></div>
+                      <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), ucfirst($club_settings["generator"]),t('fortnight')) . "."; ?></div>
                     </div>
                     
                     <div class="no-padding">
@@ -110,10 +110,26 @@
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
-                          <?php foreach ($tariffs[$club] as $key=>$tariff) { ?>
+                          <?php 
+                          $club_gen_tariff = $tariffs[strtolower($club_settings['name'])]['generation'];
+                          $generation = array(
+                            'name'=> $club_gen_tariff['name'],
+                            'cost'=> $club_gen_tariff['cost'],
+                            'color'=> $club_gen_tariff['color'],
+                            'key'=>'generation'
+                          );
+                          foreach (array_merge([$generation], $club_settings['tariffs']) as $key=>$tariff) {
+                            if(!isset($tariff['key'])) {
+                                $tariff['key'] = strtolower($tariff['name']);
+                            }
+                          ?>
                           <tr>
                             <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td><b><?php echo t($tariff['name']." Price");?> </b><br><span id="club_<?php echo $key; ?>_kwh"></span> kWh <span id="club_<?php echo $key; ?>_unitcost"></span><br><?php echo t("Costing");?> £<span id="club_<?php echo $key; ?>_cost"></span></td>
+                            <td>
+                                <b><?php echo t(ucfirst(t($tariff['name'])." Price"));?> </b><br>
+                                <span id="club_<?=$tariff['key'] ?>_kwh"></span> kWh <span id="club_<?=$tariff['key']?>_unitcost"></span><br>
+                                <?php echo t("Costing");?> £<span id="club_<?=$tariff['key']?>_cost"></span>
+                            </td>
                           </tr>
                           <?php } ?>
                         </table>

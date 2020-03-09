@@ -46,7 +46,6 @@
 "Electricity charge":"Tâl trydan",
 "Standing charge":"Tâl sefydlog",
 "days at":"diwrnod ar",
-"day":"dydd",
 "VAT":"TAW",
 "Total cost of electricity supply":"Cyfanswm cost trydan",
 
@@ -129,7 +128,7 @@
 
 "Now":"Rŵan",
 "Morning Price":"Pris Bore",
-"Midday Price":"Pris Canol Dydd",
+"Daytime Price":"Pris Canol Dydd",
 "Evening Price":"Pris Gyda'r Nos",
 "Overnight Price":"Pris Dros Nos",
 
@@ -177,7 +176,7 @@
 "Midday":"Canol Dydd",
 "Evening":"Gyda'r nos",
 "Overnight":"Dros Nos",
-"Day":"Dydd",
+"Daytime":"Dydd",
 "Night":"Nos",
 
 "WEEK":"W",
@@ -347,17 +346,37 @@
 "Average unit cost":"Cyfartaledd cost uned",
 "Find Devices":"Darganfod Dyfais",
 "Price":"Pris",
-
+"Average price":"Pris gyfartaleb",
 
 "Missing household data": "Data ddim ar gael",
 "The household consumption data is currently unavailable.": "Tydi'r data ar eich defnydd trydan ddim ar gael.",
 "It will appear here as it becomes available.": "Fydd yn dangos yma pan fydd ar gael eto.",
 
 
-"Show club price": "Dangos prïs y clwb",
+"Show average club price": "Dangos pris clwb ar gyfartaledd",
 "Overlay the average club price offset by the available hydro": "Dangos y prïs ar gyfartaleb wrth wneud defnydd o'r egni adnewyddadwy",
 "pm": "yh",
 "am": "yb",
 "Import": "I Mewn",
-"p": "c"
+"p": "c",
+
+"day": "diwrnod",
+"week": "wythnos",
+"month": "mis",
+"year": "blwyddyn",
+"fortnight": "bythefnos",
+
+"Club estimate": "Amcangyfrif y clwb",
+"Hydro estimate": "Amcangyfrif Hydro",
+"Solar estimate": "Amcangyfrif Solar",
+
+"Used %s": "%s a ddefnyddwyd",
+"Exported %s": "Allforwyd %s",
+"%s estimate": "Amcangyfrif %s",
+"%s tariff": "Tariff %s",
+
+"Total consumption":"Defnyddwyd",
+"For the range selected in the graph": "Ar gyfer yr ystod a ddewiswyd yn y graff",
+"How much of the electricity the club used, came from the %s in the last %s": "Cyfanswm trydan a ddefnyddiwyd gan y gymuned, a ddaeth o'r %s yn yr %s dwythaf",
+"In the last %s, we scored:": "Yn y %s diwethaf, sgorwyd:"
 }

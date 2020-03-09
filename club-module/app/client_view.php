@@ -14,6 +14,13 @@ $app_path = $path."Modules/club/app/";
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
+
+<script src="<?php echo $path; ?>Lib/moment.min.js"></script>
+<script> 
+    var _user = {lang:"<?= $_SESSION['lang']; ?>"};
+</script>
+<script src="<?php echo $path; ?>Lib/user_locale.js"></script>
+
 <script type="text/javascript" src="<?php echo $app_path; ?>js/vis.helper.js"></script>
 <script type="text/javascript" src="<?php echo $app_path; ?>js/feed.js"></script>
 
@@ -46,7 +53,8 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_club_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'club_settings'=>$club_settings
+            'club_settings'=>$club_settings,
+            'tariffs'=>$tariffs
         )) ?>
     </div>
     
@@ -93,7 +101,6 @@ var session = <?php echo json_encode($session); ?>;
 
 var generator_color = '<?php echo $club_settings["generator_color"]; ?>';
 var export_color = '<?php echo $club_settings["export_color"]; ?>';
-
 
 var apikeystr = "";
 if (session.read) {
@@ -172,7 +179,10 @@ function show_page(page) {
 
     if (page=="forecast") {
         club_pie_draw();
-        club_bargraph_resize();
+        setTimeout(function(){
+            // delaying this to run so that the translations have a chance to load (set to 0 seconds it still works!!??)
+            club_bargraph_resize();
+        }, 0)
     }
     
     if (page=="household") {
@@ -181,8 +191,9 @@ function show_page(page) {
         household_powergraph_draw();
 
         var combined_data = [].concat(household_result, household_data);
+       // console.log([].concat(household_result, household_data, householdpowerseries));
         var data_available = combined_data.length > 0;
-        
+//	console.log(household_result, household_data);
         $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
         $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
     }

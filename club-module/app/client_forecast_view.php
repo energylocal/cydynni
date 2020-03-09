@@ -48,8 +48,10 @@
                       <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
-                      <div class="legend-label-box" style="background-color:#fb1a80"></div>
-                      <span class="legend-label" ><?php echo t("Price");?></span>
+                      <span id="club-price-legend" class="hide">
+                        <div class="legend-label-box" style="background-color:#fb1a80"></div>
+                        <span class="legend-label" ><?php echo t("Average price");?></span>
+                      </span>
                     </div>
                     
                     <div id="club_bargraph_bound" style="width:100%; height:405px;">
@@ -64,7 +66,7 @@
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
                         <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput">
-                        <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Show club price"); ?></strong></label>
+                        <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Show average club price"); ?></strong></label>
                     </div>
 
                   </div>
@@ -90,8 +92,8 @@
                             <?php foreach ($tariffs_table as $t) : ?>
                             <tr<?=$t->rowClass?>>
                                 <th scope="row">
-                                    <span class="<?=$t->css?> d-sm-inline d-lg-none"><?=t(ucfirst($t->name))?></span>
-                                    <span class="<?=$t->css?> d-none d-md-inline d-lg-inline"> <?=t(ucfirst($t->name)." Price")?></span> 
+                                    <span class="d-sm-inline d-lg-none" style="color:<?=$t->color?>"><?=t(ucfirst($t->name))?></span>
+                                    <span class="d-none d-md-inline d-lg-inline" style="color:<?=$t->color?>"> <?=t(ucfirst($t->name)." Price")?></span> 
                                     <br class="d-sm-none">
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
