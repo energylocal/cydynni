@@ -12,15 +12,22 @@ require "Lib/EmonLogger.php";
 
 $club = "bethesda";
 
-$mysqli = @new mysqli($server,$username,$password,$database,$port);
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
 $redis = new Redis();
-$connected = $redis->connect($redis_server['host'], $redis_server['port']);
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
+
 include "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis, $feed_settings);
+$feed = new Feed($mysqli,$redis, $settings['feed']);
 
 // Club totals
 print "get_club_consumption club:summary:day ";
-$result = get_club_consumption($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+$result = get_club_consumption($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$meter_data_api_root_token);
 print json_encode($result);
 if ($result!="Invalid data") {
     $redis->set("$club:club:summary:day",json_encode($result));
@@ -30,7 +37,7 @@ print "\n";
 
 // DemandShaper
 print "get_demand_shaper $club:club:demandshaper ";
-$result = get_demand_shaper($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+$result = get_demand_shaper($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$meter_data_api_root_token);
 // print json_encode($result);
 
 if (count($result->DATA)==0) 

@@ -41,7 +41,7 @@ while ($end<(time()+(3600*24*$days)))
     $endms = ($end-(3600*24)) * 1000;
     $startms = $start * 1000;
 
-    $data = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"],29,$startms,$endms);
+    $data = get_meter_data_history($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$meter_data_api_root_token,29,$startms,$endms);
 
     if (isset($data[0]) && isset($data[0][0]))
     {

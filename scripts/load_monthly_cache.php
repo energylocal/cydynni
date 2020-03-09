@@ -26,7 +26,7 @@ $redis = new Redis();
 $connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 
 print "get_club_consumption_monthly:\n";
-$result = get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$club_settings[$club]["root_token"]);
+$result = get_club_consumption_monthly($meter_data_api_baseurl,$club_settings[$club]["api_prefix"],$meter_data_api_root_token);
 if ($result!="Invalid data" && $result!="Date mismatch") {
     $result = json_encode($result);
     $redis->set("$club:club:summary:monthly",$result);
