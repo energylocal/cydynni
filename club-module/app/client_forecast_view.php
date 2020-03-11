@@ -85,7 +85,7 @@
                             <tr>
                             <th></th>
                             <th scope="col"><?=t(ucfirst($club_settings["generator"])); ?></th>
-                            <th scope="col"><?php echo t("Import") ?></th>
+                            <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -98,7 +98,7 @@
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
                                 <td><?=$t->generator.t('p')?></td>
-                                <td><?=$t->import.t('p')?></td>
+                                <td style="background-color:#ececec; color:#666"><?=$t->import.t('p')?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>

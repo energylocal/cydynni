@@ -487,6 +487,8 @@ table.tariff thead th:nth-child(2) {
 }
 table.tariff thead th:nth-child(3) {
     background: #d55928;
+    color: #666; 
+    background: #ececec;
 }
 table.tariff .bg-danger {
     background: #e6602b!important;
@@ -537,6 +539,15 @@ table.tariff .text-overnight {
 }
 table.tariff .text-evening {
     color: #e6602b;
+}
+table.tariff .bg-midday {
+    background-color: #ffb401;
+}
+table.tariff .bg-overnight {
+    background-color: #014c2d;
+}
+table.tariff .bg-evening {
+    background-color: #e6602b;
 }
 @media screen and (min-width:450px) {
     .d-xs-block {
