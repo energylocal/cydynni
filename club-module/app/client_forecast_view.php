@@ -98,7 +98,7 @@
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
                                 <td><?=$t->generator.t('p')?></td>
-                                <td style="background-color:#ececec; color:#666"><?=$t->import.t('p')?></td>
+                                <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=$t->import.t('p')?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
