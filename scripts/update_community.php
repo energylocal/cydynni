@@ -24,7 +24,7 @@ $date = new DateTime();
 $date->setTimezone(new DateTimeZone("Europe/London"));
 
 $meta = $phpfina->get_meta(2);
-$start = $meta->start_time + ($meta->interval * $meta->npoints);
+//$start = $meta->start_time + ($meta->interval * $meta->npoints);
 
 print $start." ".$end." ".(($end-$start)/3600)."\n";
 
