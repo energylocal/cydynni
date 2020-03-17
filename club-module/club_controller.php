@@ -37,30 +37,47 @@ function club_controller()
 
     $club = "bethesda";
     
-    if (in_array($route->action,$available_clubs)) {
+    if (isset($available_clubs) && in_array($route->action,$available_clubs)) {
         $club = $route->action;
         $route->action = "";
     }
     
     if ($settings["cydynni"]["is_hub"]) {
-	      $club_settings = array();
-	      $club_settings[$club] = array(
-	          "name"=>"Bethesda",
-	          "generator"=>"hydro",
-	          "languages"=>array("cy","en"),
-	          "generation_feed"=>1,
-	          "consumption_feed"=>2
-	      );
-	      
-        $tariffs = array(
-          "bethesda"=>array(
-              "generation"=>array("name"=>"Hydro","cost"=>0.115,"color"=>"#29aae3"),
-              "morning"=>array("name"=>"Morning","cost"=>0.182,"color"=>"#ffdc00"),
-              "midday"=>array("name"=>"Midday","cost"=>0.166,"color"=>"#4abd3e"),
-              "evening"=>array("name"=>"Evening","cost"=>0.202,"color"=>"#c92760"),
-              "overnight"=>array("name"=>"Overnight","cost"=>0.1305,"color"=>"#274e3f")
-          )
-        );
+	      $club_settings = array(
+  "bethesda"=>array(
+      "name"=>"Bethesda",
+      "generator"=>"hydro",
+      "generator_color"=>"#29aae3",
+      "export_color"=>"#a5e7ff",
+      "api_prefix"=>1,
+      "languages"=>array("cy","en"),
+      "generation_feed"=>1,
+      "consumption_feed"=>2,
+      "tariffs"=>[[
+          "name" => "overnight",
+          "start" => '20:00',
+          "end" => '7:00',
+          "generator" => 5.8,
+          "import" => 10.5,
+          "color" => "#014c2d"
+      ],[
+          "name" => "daytime",
+          "start" => '7:00',
+          "end" => '16:00',
+          "generator" => 10.4,
+          "import" => 18.9,
+          "color" => "#ffb401"
+      ],[
+          "name" => "evening",
+          "start" => '16:00',
+          "end" => '20:00',
+          "generator" => 12.7,
+          "import" => 23.1,
+          "color" => "#e6602b"
+      ]]
+  ));
+
+
 	  }
 	  
 	  global $translation;
