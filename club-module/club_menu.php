@@ -8,10 +8,7 @@
             'icon' => 'format_list_bulleted',
             'order' => 'z'
         );
-    }    
-    
-    /*
-
+    }
 
     $apikeystr = "";
     if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
@@ -21,14 +18,14 @@
     $menu['tabs'][] = array(
         'icon'=>'cydynni',
         'text'=> $session["lang"]=="cy_GB" ? "Dangosfwrdd" : "Dashboard",
-        'path'=> "cydynni".$apikeystr,
+        'path'=> "club".$apikeystr,
         'order' => 2,
         'data'=> array('is-link' => true)
     );
 
     $menu['tabs'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Adroddiad" : "Report",
-        'path'=> "cydynni/report".$apikeystr,
+        'path'=> "club/report".$apikeystr,
         'order' => 3,
         'icon'=>'folder-plus',
         'data' => array(
@@ -43,7 +40,7 @@
             $result = json_decode($result,true);
 
             $menu['sidebar']['reports'][] = array(
-                'path' => 'cydynni/report',
+                'path' => 'club/report',
                 'li_class' => 'd-none'
             );
             foreach ($result as $index=>$item) {
@@ -51,14 +48,14 @@
                 $year = $item['year'];
 
                 $menu['sidebar']['reports'][] = array(
-                    'href' => $path.'cydynni/report'.$apikeystr.'#'.$index,
-                    'active' => $path.'cydynni/report'.$apikeystr.'#'.$index,
+                    'href' => $path.'club/report'.$apikeystr.'#'.$index,
+                    'active' => $path.'club/report'.$apikeystr.'#'.$index,
                     'text' => sprintf("%s %s",$name,$year),
                     'order' => $index
                 );
             }
         }
-    }*/
+    }
 
     // $cydynni = new Cydynni($mysqli,$redis);
     // foreach($cydynni->getHouseholdSummaryMonthly($userid) as $key=>$value) {
