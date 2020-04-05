@@ -14,6 +14,8 @@ require "Modules/cydynni/meter_data_api.php";
 require "Lib/EmonLogger.php";
 require "Modules/feed/engine/PHPFina.php";
 
+$club_settings[$club]["generation_feed"] = 832;
+
 $phpfina = new PHPFina(array("datadir"=>"/var/lib/phpfina/"));
 
 // CydYnni data starts on the 1st of october 2016

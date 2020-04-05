@@ -61,10 +61,10 @@ while ($row = $result_users->fetch_object())
         
         print $feedid." ".json_encode($lastvalue)."\n";
         
-        if (isset($lastvalue["time"])) {
-            $start = (int) $lastvalue["time"] - (86400*7);
-            print "start: $start\n";
-        }
+        //if (isset($lastvalue["time"])) {
+        //    $start = (int) $lastvalue["time"] - (86400*7);
+        //    print "start: $start\n";
+        //}
 
         // Import in 30 day blocks
         $days = 30;
@@ -107,7 +107,7 @@ while ($row = $result_users->fetch_object())
             $end = $start + (3600*24*$days);
             print "-------------------------------\n";
         }
-            
+
         // Check if feed 'halfhour_consumption' has been created
         if (!$use_kwh_id = $feed->get_id($userid,"use_kwh")) {
             print "Creating use_kwh\n";

@@ -173,7 +173,7 @@ function club_controller()
             if ($session["read"]) {
                 $userid = $session["userid"];
                 
-                $data = json_decode($redis->get("household:daily:summary:$userid"));
+                $data = json_decode($redis->get("household:daily:summary:v2:$userid"));
                 
                 if (isset($_GET['start']) && isset($_GET['end'])) {
                     $start = $_GET['start']*0.001;

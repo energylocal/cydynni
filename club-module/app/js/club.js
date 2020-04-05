@@ -41,17 +41,17 @@ $.ajax({
             score = Math.round(100*score);
             $(".club_score").html(score);
 
-            if (score>=20) star1 = "staryellow"; else star1 = "star20yellow";
-            if (score>=40) star2 = "staryellow"; else star2 = "star20yellow";
-            if (score>=60) star3 = "staryellow"; else star3 = "star20yellow";
-            if (score>=80) star4 = "staryellow"; else star4 = "star20yellow";
-            if (score>=90) star5 = "staryellow"; else star5 = "star20yellow";
+            if (score>=20) cstar1 = "staryellow"; else cstar1 = "star20yellow";
+            if (score>=40) cstar2 = "staryellow"; else cstar2 = "star20yellow";
+            if (score>=60) cstar3 = "staryellow"; else cstar3 = "star20yellow";
+            if (score>=80) cstar4 = "staryellow"; else cstar4 = "star20yellow";
+            if (score>=90) cstar5 = "staryellow"; else cstar5 = "star20yellow";
 
-            $("#club_star1").attr("src",app_path+"images/"+star1+".png");
-            setTimeout(function() { $("#club_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
-            setTimeout(function() { $("#club_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
-            setTimeout(function() { $("#club_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
-            setTimeout(function() { $("#club_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
+            $("#club_star1").attr("src",app_path+"images/"+cstar1+".png");
+            setTimeout(function() { $("#club_star2").attr("src",app_path+"images/"+cstar2+".png"); }, 100);
+            setTimeout(function() { $("#club_star3").attr("src",app_path+"images/"+cstar3+".png"); }, 200);
+            setTimeout(function() { $("#club_star4").attr("src",app_path+"images/"+cstar4+".png"); }, 300);
+            setTimeout(function() { $("#club_star5").attr("src",app_path+"images/"+cstar5+".png"); }, 400);
 
             setTimeout(function() {
             if (score<30) {

@@ -45,7 +45,8 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_household_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'club_settings'=>$club_settings
+            'club_settings'=>$club_settings,
+            'tariffs'=>$tariffs
         )); ?>
     </div>
    
@@ -139,8 +140,6 @@ if (!session.read) {
 var url_string = location.href
 var url = new URL(url_string);
 
-console.log(session);
-
 var page = "";
 
 if (url.searchParams!=undefined) {
@@ -194,7 +193,7 @@ function show_page(page) {
        // console.log([].concat(household_result, household_data, householdpowerseries));
         var data_available = combined_data.length > 0;
 //	console.log(household_result, household_data);
-        $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
+        // $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
         $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
     }
 }
