@@ -83,9 +83,11 @@ $date->setTime(0,0,0);
 $start_time = $date->getTimestamp();
 
 $daily_summaries = array();
+$monthly_summaries = array();
 foreach ($users as $user) {
     $userid = $user["userid"];
     $daily_summaries[$userid] = array();
+    $monthly_summaries[$userid] = array();
 }
 
 $n=0;
@@ -250,6 +252,77 @@ while ($start_time<time())
         $result[3][] = number_format($total_cost,2)*1; 
         
         $daily_summaries[$userid][] = $result;
+        
+        // -----------------------------------------------------------------------------------
+        // Add to monthly summary object
+        // -----------------------------------------------------------------------------------
+        $year = $date->format("Y");
+        $month = $date->format("m");
+        if (!isset($monthly_summaries[$userid]["$year-$month"])) {
+            // If present month does not yet exist in the monthly summary array
+            // create initial month data object 
+            $month_data = [
+                "month"=>$month*1,
+                "monthdesc"=>$date->format("M"),
+                "year"=>$year*1,
+                "days"=>0,
+                "estimate"=>0,
+                "demand"=>[],
+                "generation"=>[],
+                "import"=>[],
+                "generation_cost"=>[],
+                "import_cost"=>[],
+                "cost"=>[]
+            ];
+            
+            for ($t=0; $t<$tcount; $t++) {
+                $name = $tariffs[$t]["name"];
+                $month_data["demand"][$name] = 0;
+                $month_data["generation"][$name] = 0;
+                $month_data["import"][$name] = 0;
+                $month_data["generation_cost"][$name] = 0;
+                $month_data["import_cost"][$name] = 0;
+                $month_data["cost"][$name] = 0;
+
+            }
+            $month_data["demand"]["total"] = 0;
+            $month_data["generation"]["total"] = 0;
+            $month_data["import"]["total"] = 0;
+            $month_data["generation_cost"]["total"] = 0;
+            $month_data["import_cost"]["total"] = 0;
+            $month_data["cost"]["total"] = 0;
+            
+            
+        } else {
+            $month_data = $monthly_summaries[$userid]["$year-$month"];
+        }
+        
+        $month_data["days"]++;
+        for ($t=0; $t<$tcount; $t++) {
+            $name = $tariffs[$t]["name"];
+            $gen = $use[$t][$userid]-$import[$t][$userid];
+            $import_cost = $import[$t][$userid]*$tariffs[$t]["import"];
+            $generation_cost = $gen*$tariffs[$t]["generator"];
+            $cost = $generation_cost + $import_cost;
+            
+            $month_data["demand"][$name] += $use[$t][$userid];
+            $month_data["generation"][$name] += $gen;
+            $month_data["import"][$name] += $import[$t][$userid];
+            $month_data["generation_cost"][$name] += $generation_cost;
+            $month_data["import_cost"][$name] += $import_cost;
+            $month_data["cost"][$name] += $cost;
+            
+            $month_data["demand"]["total"] += $use[$t][$userid];
+            $month_data["generation"]["total"] += $gen;
+            $month_data["import"]["total"] += $import[$t][$userid];
+            $month_data["generation_cost"]["total"] += $generation_cost;
+            $month_data["import_cost"]["total"] += $import_cost;
+            $month_data["cost"]["total"] += $cost;
+        }
+        
+        $monthly_summaries[$userid]["$year-$month"] = $month_data;
+        // -----------------------------------------------------------------------------------
+      
     }
 
     $date->modify('+1 day');
@@ -263,6 +336,7 @@ foreach ($users as $user) {
     $userid = $user["userid"];    
     // print json_encode($daily_summaries[$userid])."\n";
     $redis->set("household:daily:summary:v2:$userid",json_encode($daily_summaries[$userid]));
+    $redis->set("household:monthly:summary:v2:$userid",json_encode($monthly_summaries[$userid]));
 }
 
 function get_meta($id)

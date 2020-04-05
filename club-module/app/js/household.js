@@ -3,9 +3,6 @@
 Household page
 
 */
-console.log(club_settings.tariff_history);
-
-
 
 var household_end = +new Date;
 var household_start = household_end - (3600000*24.0*120);
@@ -21,26 +18,19 @@ var household_pie_data_energy = [];
 var householdseries = [];
 var householdpowerseries = [];
 
-var household_overnight_data = [];
-var household_morning_data = [];
-var household_evening_data = [];
-var household_midday_data = [];
-var household_daily_data = [];
+// var household_overnight_data = [];
+// var household_morning_data = [];
+// var household_evening_data = [];
+// var household_midday_data = [];
 
 var household_tariff_data = {};
 
 var household_data = [];
 var household_result = [];
 
-var household_view = "piechart";
-
-var meterdataenable = false;
 var mode = "daily";
 
 var household_firstload = true;
-
-var tariff_colors = {generation:'#29aae3', morning:'#ffdc00', midday:'#4abd3e', evening:'#c92760', overnight:'#274e3f'};
-var tariff_cost = {generation:0.07, morning:0.12, midday:0.10, evening:0.14, overnight:0.0725};
 
 function household_summary_load()
 {    

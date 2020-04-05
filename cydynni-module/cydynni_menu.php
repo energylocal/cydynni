@@ -27,7 +27,7 @@
     if ($session["read"]) {
         $userid = (int) $session["userid"];
         $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
-        if ($result = $redis->get("household:summary:monthly:$userid")) {
+        if ($result = $redis->get("household:monthly:summary:v2:$userid")) {
             $result = json_decode($result,true);
 
             $menu['sidebar']['reports'][] = array(

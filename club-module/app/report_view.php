@@ -39,28 +39,7 @@ $app_path = $path."Modules/club/app/";
       
       <div class="box3">
         <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-          <table class="keytable">
-            <tr>
-              <td><div class="key" style="background-color:#29abe2"></div></td>
-              <td><b><?php echo t("Hydro Power");?></b><br><span id="household_generation_kwh"></span> kWh @ 7.0 p/kWh<br><?php echo t("Costing");?> £<span id="household_generation_cost"></span></td>
-            </tr>
-            <tr>
-              <td><div class="key" style="background-color:#ffdc00"></div></td>
-              <td><b><?php echo t("Morning Price");?></b> 6am - 11am<br><span id="household_morning_kwh"></span> kWh @ 12p/kWh<br><?php echo t("Costing");?> £<span id="household_morning_cost"></span></td>
-            </tr>
-            <tr>
-              <td><div class="key" style="background-color:#4abd3e"></div></td>
-              <td><b><?php echo t("Midday Price");?></b> 11am - 4pm<br><span id="household_midday_kwh"></span> kWh @ 10p/kWh<br><?php echo t("Costing");?> £<span id="household_midday_cost"></span></td>
-            </tr>
-            <tr>
-              <td><div class="key" style="background-color:#c92760"></div></td>
-              <td><b><?php echo t("Evening Price");?></b> 4pm - 8pm<br><span id="household_evening_kwh"></span> kWh @ 14p/kWh<br><?php echo t("Costing");?> £<span id="household_evening_cost"></span></td>
-            </tr>
-            <tr>
-              <td><div class="key" style="background-color:#274e3f"></div></td>
-              <td><b><?php echo t("Overnight Price");?></b> 8pm - 6am<br><span id="household_overnight_kwh"></span> kWh @ 7.25p/kWh<br><?php echo t("Costing");?> £<span id="household_overnight_cost"></span></td>
-            </tr>
-          </table>
+          <table class="keytable"></table>
         </div>
       </div>
       <div style="clear:both"></div>
@@ -120,11 +99,10 @@ $app_path = $path."Modules/club/app/";
 </div>
 
 <script>
-if (window.init_sidebar!=undefined) init_sidebar({menu_element:"#club_report_menu"});
-
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
+var club_settings = <?php echo json_encode($club_settings);?>;
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var session = <?php echo json_encode($session); ?>;
 var lang = session.lang;
@@ -137,9 +115,9 @@ var clubdata = {};
 var data = {};
 var generation = 0;
 
-var selected_month = 0;
+var selected_month = false;
 var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-if (location.hash) selected_month = parseInt(location.hash.slice(1));
+if (location.hash) selected_month = location.hash.slice(1);
 
 // Language selection top-right
 if (lang=="cy_GB") {
@@ -163,8 +141,6 @@ $.ajax({
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact contact@energylocal.co.uk or try again later.");
         else {
             household = result;
-            $container = $('#sidebar_club');
-            buildMenuItems($container, result);
             $.ajax({
                 url: path+"club/club-summary-monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
@@ -177,36 +153,6 @@ $.ajax({
     }
 })
 
-function buildMenuItems($container,list){
-    $container.append($('\
-    <section class="collapse in include-container" id="club-sidebar-include">\
-    <ul class="nav sidebar-menu sub-nav"></ul>\
-    </section>'));
-
-    $menu = $("#club-sidebar-include ul");
-    out = $menu.html();
-    // add to existing menu
-    list.forEach(function(item,i) {
-        name = t(months[item.month-1])+" "+item.year;
-        out += '<li class="collapse in"><a href="#'+i+'">' + name + '</a></li>'
-    })
-    $menu.html(out);
-
-    // open/close 2nd&3rd level menu items
-    $parentMenu = $('#menu-club')
-    $parentMenu.find('li.collapse').removeClass('in');
-    $menuTrigger = $parentMenu.find('li.active').addClass('in');
-
-    $menuTrigger.find('a').click(function(event){
-        $this = $(this)
-        $this.find('.third-level-indicator').toggle()
-        $parentMenu.find('li.collapse').filter(':not(.active)').toggleClass('in');
-        $menu.toggle();
-        event.preventDefault();
-    })
-    .append('<span class="pull-right third-level-indicator"> <svg class="icon"><use xlink:href="#icon-arrow_back"></use></svg></span>')
-    
-}
 function household_pie_draw() {
 
     width = 300;
@@ -225,13 +171,7 @@ function household_pie_draw() {
     };
     
     piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
-
-   
-    // Pie chart
-    // piegraph2("household_piegraph2_placeholder",household_pie2_data,household_generation_use,options);
-
     piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
-
 
     var options = {
       color: "#3b6358",
@@ -242,8 +182,6 @@ function household_pie_draw() {
     
     hrbar("household_hrbar1_placeholder",household_pie3_data_energy,options); 
     hrbar("household_hrbar2_placeholder",household_pie3_data_cost,options); 
-    // generation droplet
-    // generationdroplet("generation_droplet_placeholder",(community_generation_use*1).toFixed(1),{width: width,height: height});
 }
 
 function load()
@@ -261,38 +199,49 @@ function load()
         $("#estimated_days").html("");
     }
     
-    // household pie chart
-    household_pie3_data_cost = [
-      {name:t("MORNING"), generation: month.generation.morning*0.07, import: month.import.morning*0.12, color:"#ffdc00"},
-      {name:t("MIDDAY"), generation: month.generation.midday*0.07, import: month.import.midday*0.10, color:"#4abd3e"},
-      {name:t("EVENING"), generation: month.generation.evening*0.07, import: month.import.evening*0.14, color:"#c92760"},
-      {name:t("OVERNIGHT"), generation: month.generation.overnight*0.07, import: month.import.overnight*0.0725, color:"#274e3f"} 
-    ];
+    var tariff_colors = {morning:"#ffdc00",midday:"#ffb401",daytime:"#ffb401",evening:"#e6602b",overnight:"#014c2d"};
     
     // household pie chart
-    household_pie3_data_energy = [
-      {name:t("MORNING"), generation: month.generation.morning, import: month.import.morning, color:"#ffdc00"},
-      {name:t("MIDDAY"), generation: month.generation.midday, import: month.import.midday, color:"#4abd3e"},
-      {name:t("EVENING"), generation: month.generation.evening, import: month.import.evening, color:"#c92760"},
-      {name:t("OVERNIGHT"), generation: month.generation.overnight, import: month.import.overnight, color:"#274e3f"} 
-    ];
+    household_pie3_data_cost = []
+    household_pie3_data_energy = []
+    
+    var keytable = "";
+
+    if (month.generation.total>0) {
+        keytable += '<tr>'
+        keytable += '<td><div class="key" style="background-color:#29aae3"></div></td>'
+        keytable += '<td><b>'+t("Hydro Price")+'</b><br>'
+        keytable += month.generation.total.toFixed(1)+' kWh @ '+(100*month.generation_cost.total/month.generation.total).toFixed(2)+'p/kWh<br>'
+        keytable += t("Costing")+' £'+(month.generation_cost.total).toFixed(2)+'</td>'
+        keytable += '</tr>'
+    }
+   
+    ['morning','midday','daytime','evening','overnight'].forEach(function(name) {
+        if (month.import[name]!=undefined) {
+            household_pie3_data_cost.push({name:t(name.toUpperCase()), generation: month.generation_cost[name], import: month.import_cost[name], color:tariff_colors[name]});
+            household_pie3_data_energy.push({name:t(name.toUpperCase()), generation: month.generation[name], import: month.import[name], color:tariff_colors[name]});
+            
+            if (month.import[name]>0) {
+                keytable += '<tr>'
+                keytable += '<td><div class="key" style="background-color:'+tariff_colors[name]+'"></div></td>'
+                keytable += '<td><b>'+t(ucfirst(name)+" Price")+'</b><br>'
+                keytable += month.import[name].toFixed(1)+' kWh @ '+(100*month.import_cost[name]/month.import[name]).toFixed(2)+'p/kWh<br>'
+                keytable += t("Costing")+' £'+(month.import_cost[name]).toFixed(2)+'</td>'
+                keytable += '</tr>'
+            }
+        }
+    });
+    
+    $(".keytable").html(keytable);
     
     $("#household_generation_kwh").html(month.generation.total.toFixed(1));
-    $("#household_morning_kwh").html(month.import.morning.toFixed(1));
-    $("#household_midday_kwh").html(month.import.midday.toFixed(1));
-    $("#household_evening_kwh").html(month.import.evening.toFixed(1));
-    $("#household_overnight_kwh").html(month.import.overnight.toFixed(1));
-
-    $("#household_generation_cost").html((month.generation.total*0.07).toFixed(2));
-    $("#household_morning_cost").html((month.import.morning*0.12).toFixed(2));
-    $("#household_midday_cost").html((month.import.midday*0.10).toFixed(2));
-    $("#household_evening_cost").html((month.import.evening*0.14).toFixed(2));
-    $("#household_overnight_cost").html((month.import.overnight*0.0725).toFixed(2));
+    $("#household_generation_cost").html((month.generation_cost.total).toFixed(2));
 
     //                   1  2  3  4  5  6  7  8  9  10 11 12
-    var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
-    var days = days_in_month[month.month-1];
-    var elec_cost = (month.generation.total*0.07)+(month.import.morning*0.12)+(month.import.midday*0.10)+(month.import.evening*0.14)+(month.import.overnight*0.0725);
+    // var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+    // var days = days_in_month[month.month-1];
+    var days = month.days;
+    var elec_cost = month.cost.total;
     var standing_charge = 0.178*days;
     var vat = (elec_cost+standing_charge)*0.05;
     var total_cost = elec_cost + standing_charge + vat;
@@ -302,8 +251,14 @@ function load()
     $("#standing_charge").html((standing_charge).toFixed(2));
     $("#vat").html((vat).toFixed(2));
     $("#total_cost").html((total_cost).toFixed(2));
-
-    var score = Math.round(100*((month.import.overnight + month.import.midday + month.generation.total) / month.demand.total));
+    
+    var low_cost_power = 0
+    low_cost_power += month.generation_cost.total
+    low_cost_power += month.import_cost.overnight
+    if (month.import_cost.midday!=undefined) low_cost_power += month.import_cost.midday
+    if (month.import_cost.daytime!=undefined) low_cost_power += month.import_cost.daytime
+    
+    var score = Math.round(100*(low_cost_power / (month.import_cost.total+month.generation_cost.total)));
     $(".score").html(score);
 
     for (var i=1; i<6; i++) $("#star"+i).attr("src",app_path+"images/star20blue.png"); // reset stars
@@ -322,7 +277,7 @@ function load()
     }
 
     // ---------------------------------------------
-    
+    /*
     var month = clubdata[selected_month];   
     var eid = 1;   
     
@@ -345,7 +300,7 @@ function load()
     }
     if (score_club>=70) {
         $(".club_message").html(t("We’re doing really well using the hydro and cheaper power"));
-    }
+    }*/
 
     household_pie_draw();
 }
@@ -355,7 +310,7 @@ $(window).resize(function(){
 });
 
 $(window).on('hashchange',function(){
-   selected_month = parseInt(location.hash.slice(1));
+   selected_month = location.hash.slice(1);
    load();
 });
 
@@ -378,6 +333,10 @@ function t(s) {
     } else {
         return s;
     }
+}
+
+function ucfirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 </script>
 

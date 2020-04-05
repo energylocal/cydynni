@@ -195,7 +195,7 @@ function club_controller()
             }
             break;
 
-        case "household-summary-monthly":
+        case "household-summary-monthly-v1":
             $format = "json";
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
@@ -205,19 +205,18 @@ function club_controller()
             } else {
                 return "session not valid";
             }
-
-/*
+            break;
+            
         case "household-summary-monthly":
             $format = "json";
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
-                return $cydynni->getHouseholdSummaryMonthly($userid,get("month"),$session["apikey_read"]);
+                if ($result = $redis->get("household:monthly:summary:v2:$userid")) {
+                    return json_decode($result);
+                }
             } else {
                 return "session not valid";
             }
-            break;
-*/
-
             break;
             
         case "club-summary-day":
