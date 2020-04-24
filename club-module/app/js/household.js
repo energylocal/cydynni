@@ -326,75 +326,89 @@ function household_bargraph_load() {
         $("#household-daily-note").hide();
         
         $.ajax({                                      
-            url: path+"feed/average.json?id="+session.feeds["use_hh"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
+            url: path+"feed/average.json?id="+session.feeds["use_hh_est"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {
                 if (!result || result===null || result==="" || result.constructor!=Array) {
                     console.log("ERROR","invalid response: "+result);
                 } else {
-
                     household_data = result;
-                    var total = 0
-                    
-                    var len = household_data.length;
-                    var lastvalid = 0;
 
-                    for (var z=0; z<len; z++) {    
-                    
-                        var time = household_data[z][0];  
-                        var use = household_data[z][1];
-                        /*
-                        var d = new Date(time);
-                        var hour = d.getHours();
-                        
-                        var overnight = 0;
-                        var morning = 0;
-                        var midday = 0;
-                        var evening = 0;
+                    $.ajax({                                      
+                        url: path+"feed/average.json?id="+session.feeds["gen_hh"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
+                        dataType: 'json',
+                        async: true,                      
+                        success: function(result) {
+                            if (!result || result===null || result==="" || result.constructor!=Array) {
+                                console.log("ERROR","invalid response: "+result);
+                            } else {
+                                gen_data = result;
+                                
+                                householdseries = [];
+                                barwidth = interval*1000*0.75;
 
-                        // Import times
-                        if (hour<6) overnight = use;
-                        if (hour>=6 && hour<11) morning = use;
-                        if (hour>=11 && hour<16) midday = use;
-                        if (hour>=16 && hour<20) evening = use;
-                        if (hour>=20) overnight = use;
+                                householdseries.push({
+                                    stack: false, data: household_data, color: "#e62f31", label: t("Consumption"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });
+                                householdseries.push({
+                                    stack: false, data: gen_data, color: "#29aae3", label: t("Hydro"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });
+                                household_bargraph_resize();
+                                
+                                /*
+                                var total = 0
+                                var len = household_data.length;
+                                var lastvalid = 0;
+                                for (var z=0; z<len; z++) {    
+                                
+                                    var time = household_data[z][0];  
+                                    var use = household_data[z][1];
+                                    var d = new Date(time);
+                                    var hour = d.getHours();
+                                    
+                                    var overnight = 0;
+                                    var morning = 0;
+                                    var midday = 0;
+                                    var evening = 0;
 
-                        household_overnight_data[z] = [time,overnight];
-                        household_morning_data[z] = [time,morning];
-                        household_midday_data[z] = [time,midday];
-                        household_evening_data[z] = [time,evening];
-                        */
-                        total += use;
-                    }
-                    
-                    var now = +new Date;
-                    console.log("Total kWh in window: "+total.toFixed(2));
-                    
-                    householdseries = [];
-                    barwidth = interval*1000*0.75;
-                    householdseries.push({
-                        stack: true, data: household_data, color: "#e62f31", label: t("Consumption"),
-                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                    // Import times
+                                    if (hour<6) overnight = use;
+                                    if (hour>=6 && hour<11) morning = use;
+                                    if (hour>=11 && hour<16) midday = use;
+                                    if (hour>=16 && hour<20) evening = use;
+                                    if (hour>=20) overnight = use;
+
+                                    household_overnight_data[z] = [time,overnight];
+                                    household_morning_data[z] = [time,morning];
+                                    household_midday_data[z] = [time,midday];
+                                    household_evening_data[z] = [time,evening];
+                                    total += use;
+                                }
+                                var now = +new Date;
+                                console.log("Total kWh in window: "+total.toFixed(2));
+
+                                householdseries.push({
+                                    stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });
+                                householdseries.push({
+                                    stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });
+                                householdseries.push({
+                                    stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });
+                                householdseries.push({
+                                    stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
+                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
+                                });*/
+                            }
+                        }
                     });
-                    /*
-                    householdseries.push({
-                        stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight"),
-                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                    });
-                    householdseries.push({
-                        stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning"),
-                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                    });
-                    householdseries.push({
-                        stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday"),
-                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                    });
-                    householdseries.push({
-                        stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
-                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                    });*/
-                    household_bargraph_resize();
                 }
             }
         });

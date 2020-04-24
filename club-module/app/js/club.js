@@ -36,9 +36,13 @@ $.ajax({
     url: path+"club/club-summary?start="+view.start+"&end="+view.end,
     dataType: 'json',
         success: function(result) {
-            var generation_value = result.cost.total.selfuse;
-            var score = 1.0 - ((result.cost.daytime.import+result.cost.evening.import)/(result.cost.total.import+result.cost.total.selfuse));
-            score = Math.round(100*score);
+            
+            var generation_value = result.generation_cost.total;
+            var total_low_cost = result.generation_cost.total;
+            var total_day_cost = result.cost.total;
+            total_low_cost += result.import_cost.total - result.import_cost.evening          
+                        
+            var score = Math.round(100*(total_low_cost / total_day_cost));
             $(".club_score").html(score);
 
             if (score>=20) cstar1 = "staryellow"; else cstar1 = "star20yellow";
@@ -79,48 +83,59 @@ $.ajax({
 
             club_pie_data_cost = [];
             club_pie_data_energy = [];
+            
+            var tariff_colors = {
+                "overnight": "#014c2d",
+                "morning": "#ffdc00",
+                "midday": "#ffb401",
+                "daytime": "#ffb401",
+                "evening": "#e6602b"
+            }
 
             // COST
-            for(x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                club_pie_data_cost.push({
-                    name: t(ucfirst(tariff.name)),
-                    generation: result.cost[tariff.name].selfuse,
-                    import: result.cost[tariff.name].import,
-                    color: tariff.color
-                });
+            for (var tariff_name in result.cost) {
+                if (tariff_name!='total') {
+                    club_pie_data_cost.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation_cost[tariff_name],
+                        import: result.import_cost[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
             }
-            
+
             // ENERGY
-            for(x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                club_pie_data_energy.push({
-                    name: t(ucfirst(tariff.name)),
-                    generation: result.kwh[tariff.name].selfuse,
-                    import: result.kwh[tariff.name].import,
-                    color: tariff.color
-                });
+            for (var tariff_name in result.demand) {
+                if (tariff_name!='total') {
+                    club_pie_data_energy.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation[tariff_name],
+                        import: result.import[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
             }
             
             // CHART KEY VALUES FOR EACH TARIFF:
             // populate tariff totals for club in pie chart key
-            for (x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                var tariff_cost = result.cost[tariff.name];
-                var tariff_kwh = result.kwh[tariff.name];
+            for (var tariff_name in result.import) {
+                if (tariff_name!='total') {
+                    var tariff_cost = result.import_cost[tariff_name];
+                    var tariff_kwh = result.import[tariff_name];
 
-                var tarriffKwhTotal = (tariff_kwh.import).toFixed(0);
-                var tariffTotalCost = (tariff_cost.import).toFixed(2);
-                var tariffUnitCost = '@' + (100*tariffTotalCost/tarriffKwhTotal).toFixed(1) + " p/kWh";
+                    var tarriffKwhTotal = tariff_kwh.toFixed(0);
+                    var tariffTotalCost = tariff_cost.toFixed(2);
+                    var tariffUnitCost = '@' + (100*tariffTotalCost/tarriffKwhTotal).toFixed(1) + " p/kWh";
 
-                $("#club_"+tariff.name+"_kwh").html(tarriffKwhTotal);
-                $("#club_"+tariff.name+"_cost").html(tariffTotalCost);
-                $("#club_"+tariff.name+"_unitcost").html(tariffUnitCost);
+                    $("#club_"+tariff_name+"_kwh").html(tarriffKwhTotal);
+                    $("#club_"+tariff_name+"_cost").html(tariffTotalCost);
+                    $("#club_"+tariff_name+"_unitcost").html(tariffUnitCost);
+                }
             }
             // GENERATION TARIFF:
             // populate aggrigated totals for club generation
-            $("#club_generation_kwh").html(result.kwh.total.selfuse.toFixed(0));
-            $("#club_generation_cost").html(result.cost.total.selfuse);
+            $("#club_generation_kwh").html(result.generation.total.toFixed(0));
+            $("#club_generation_cost").html(generation_value.toFixed(2));
             // $("#club_generation_unitcost").html('@' + (100*result.cost.total.selfuse/result.kwh.total.selfuse).toFixed(1) + " p/kWh");
             club_pie_draw();
         }

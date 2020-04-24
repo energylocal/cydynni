@@ -277,20 +277,26 @@ function load()
     }
 
     // ---------------------------------------------
-    /*
+    
     var month = clubdata[selected_month];   
     var eid = 1;   
+
+    var low_cost_power = 0
+    low_cost_power += month.generation_cost.total
+    low_cost_power += month.import_cost.overnight
+    if (month.import_cost.midday!=undefined) low_cost_power += month.import_cost.midday
+    if (month.import_cost.daytime!=undefined) low_cost_power += month.import_cost.daytime
     
-    var score_club = Math.round(100*((month.import.overnight + month.import.midday + month.generation.total) / month.demand.total));
+    var score_club = Math.round(100*(low_cost_power / (month.import_cost.total+month.generation_cost.total)));
+    
     $(".club_score").html(score_club);
-    var prc_club = score_club;
     
     for (var i=1; i<6; i++) $("#club_star"+i).attr("src",app_path+"images/star20yellow.png"); // reset stars
-    if (prc_club>=20) $("#club_star1").attr("src",app_path+"images/staryellow.png");
-    if (prc_club>=40) setTimeout(function() { $("#club_star2").attr("src",app_path+"images/staryellow.png"); }, 100);
-    if (prc_club>=60) setTimeout(function() { $("#club_star3").attr("src",app_path+"images/staryellow.png"); }, 200);
-    if (prc_club>=80) setTimeout(function() { $("#club_star4").attr("src",app_path+"images/staryellow.png"); }, 300);
-    if (prc_club>=90) setTimeout(function() { $("#club_star5").attr("src",app_path+"images/staryellow.png"); }, 400);
+    if (score_club>=20) $("#club_star1").attr("src",app_path+"images/staryellow.png");
+    if (score_club>=40) setTimeout(function() { $("#club_star2").attr("src",app_path+"images/staryellow.png"); }, 100);
+    if (score_club>=60) setTimeout(function() { $("#club_star3").attr("src",app_path+"images/staryellow.png"); }, 200);
+    if (score_club>=80) setTimeout(function() { $("#club_star4").attr("src",app_path+"images/staryellow.png"); }, 300);
+    if (score_club>=90) setTimeout(function() { $("#club_star5").attr("src",app_path+"images/staryellow.png"); }, 400);
     
     if (score_club<30) {
         $(".club_message").html(t("We are using power in a very expensive way"));
@@ -300,7 +306,7 @@ function load()
     }
     if (score_club>=70) {
         $(".club_message").html(t("We’re doing really well using the hydro and cheaper power"));
-    }*/
+    }
 
     household_pie_draw();
 }

@@ -8,10 +8,7 @@
             'icon' => 'format_list_bulleted',
             'order' => 'z'
         );
-    }    
-    
-    /*
-
+    }
 
     $apikeystr = "";
     if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
@@ -21,14 +18,14 @@
     $menu['tabs'][] = array(
         'icon'=>'cydynni',
         'text'=> $session["lang"]=="cy_GB" ? "Dangosfwrdd" : "Dashboard",
-        'path'=> "cydynni".$apikeystr,
+        'path'=> "club".$apikeystr,
         'order' => 2,
         'data'=> array('is-link' => true)
     );
 
     $menu['tabs'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Adroddiad" : "Report",
-        'path'=> "cydynni/report".$apikeystr,
+        'path'=> "club/report".$apikeystr,
         'order' => 3,
         'icon'=>'folder-plus',
         'data' => array(
@@ -38,35 +35,37 @@
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
+        
+        $end = floor(time()/1800)*1800;
+        $start = $end-3600*24*365;
+        
+        $d = new DateTime();
+        $d->setTimezone(new DateTimeZone("Europe/London"));
+        $d->setTimestamp($start);
+        $d->setDate($d->format("Y"),$d->format("m"),1);
+        $d->setTime(0,0,0);
+        $time = $d->getTimestamp();
+        
         $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
-        if ($result = $redis->get("household:summary:monthly:$userid")) {
-            $result = json_decode($result,true);
+
+        $menu['sidebar']['reports'][] = array(
+            'path' => 'club/report',
+            'li_class' => 'd-none'
+        );
+        
+        while ($time<$end) {
+            $name = $months[$d->format("m")-1];
+            $year = $d->format("Y");
+            $index = $d->format("Y-m");
 
             $menu['sidebar']['reports'][] = array(
-                'path' => 'cydynni/report',
-                'li_class' => 'd-none'
+                'href' => $path.'club/report'.$apikeystr.'#'.$index,
+                'active' => $path.'club/report'.$apikeystr.'#'.$index,
+                'text' => sprintf("%s %s",$name,$year),
+                'order' => $index
             );
-            foreach ($result as $index=>$item) {
-                $name = $months[$item['month'] - 1];
-                $year = $item['year'];
-
-                $menu['sidebar']['reports'][] = array(
-                    'href' => $path.'cydynni/report'.$apikeystr.'#'.$index,
-                    'active' => $path.'cydynni/report'.$apikeystr.'#'.$index,
-                    'text' => sprintf("%s %s",$name,$year),
-                    'order' => $index
-                );
-            }
+            
+            $d->modify('+1 month');
+            $time = $d->getTimestamp();
         }
-    }*/
-
-    // $cydynni = new Cydynni($mysqli,$redis);
-    // foreach($cydynni->getHouseholdSummaryMonthly($userid) as $key=>$value) {
-    //     DateTime::createFromFormat('!m', $value['month']);
-    //     $dateObj = DateTime::createFromFormat('!m', $monthNum);
-    //     $monthName = $dateObj->format('F');
-    //     $menu['sidebar']['cydynni'][] = array(
-    //         'text' => sprintf("%s %s", _($dateObj->format('F')), $value['year']),
-    //         'href'=> "#".$key
-    //     );
-    // }
+    }

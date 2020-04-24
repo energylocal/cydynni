@@ -1,0 +1,218 @@
+<?php
+
+// -------------------------------------------------------------------------------------------------
+// Sharing algorithm
+// - Shares generator production between multiple households
+// - Allocates an equall share per half hour
+// -------------------------------------------------------------------------------------------------
+
+define('EMONCMS_EXEC', 1);
+
+require "lib/common.php";
+require "lib/accumulator.php";
+
+chdir("/var/www/emoncms");
+require "process_settings.php";
+require_once "Lib/EmonLogger.php";
+
+$mysqli = @new mysqli(
+    $settings["sql"]["server"],
+    $settings["sql"]["username"],
+    $settings["sql"]["password"],
+    $settings["sql"]["database"],
+    $settings["sql"]["port"]
+);
+$redis = new Redis();
+$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
+
+// Feed model
+require_once "Modules/feed/feed_model.php";
+$feed = new Feed($mysqli,$redis,$settings["feed"]);
+$dir = "/var/lib/phpfina/";
+
+// ----------------------------------------------------------------
+// 1. Start by finding out the start time of the feeds to aggregate
+// ----------------------------------------------------------------
+echo "1. Prepare and open generation and consumption feeds\n";
+
+$start_time = 2000000000; // sufficiently large 2033
+
+$users = array();
+$meta = array();
+$fh = array();
+$buffer = array();
+
+$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 ORDER BY userid ASC");
+while ($row = $result_users->fetch_object()) {
+    $userid = $row->userid;
+    if (!in_array($userid,array(132,130,129,123,1))) {
+        if ($use_hh_id = $feed->get_id($userid,"use_hh_est")) {
+            $meta_tmp = getmeta($dir,$use_hh_id);
+            if ($meta_tmp->start_time>0) {
+                $meta[$use_hh_id] = $meta_tmp;
+                if ($meta_tmp->start_time < $start_time) $start_time = $meta_tmp->start_time;
+                
+                // Load consumption file handler
+                $fh[$use_hh_id] = fopen($dir."$use_hh_id.dat", 'rb');
+                
+                // Create feeds to hold half hourly shared generation
+                if (!$gen_hh_id = $feed->get_id($userid,"gen_hh")) {
+                    $result = $feed->create($userid,"","gen_hh",1,5,json_decode('{"interval":1800}'));
+                    if (!$result['success']) { echo json_encode($result)."\n"; die; }
+                    $gen_hh_id = $result['feedid'];
+                    createmeta($dir,$gen_hh_id,$meta_tmp);
+                }
+                // $feed->clear($gen_hh_id);
+                // createmeta($dir,$gen_hh_id,$meta_tmp);
+                
+                $fh[$gen_hh_id] = fopen($dir."$gen_hh_id.dat", 'c+');
+                $meta[$gen_hh_id] = getmeta($dir,$gen_hh_id);
+                $buffer[$gen_hh_id] = "";
+                
+                $users["".$userid] = array("use_hh"=>$use_hh_id, "gen_hh"=>$gen_hh_id);
+            }
+        }
+    }
+}
+
+// Load hydro feed meta data
+$gen_id = 1;
+$meta[$gen_id] = getmeta($dir,$gen_id);
+$fh[$gen_id] = fopen($dir."$gen_id.dat", 'rb');
+$hydro = 0;
+
+// Create club aggregation feed
+$admin_userid = 1;
+if (!$club_use_hh_id = $feed->get_id($admin_userid,"club_use_hh")) {
+    $result = $feed->create($admin_userid,"","club_use_hh",1,5,json_decode('{"interval":1800}'));
+    if (!$result['success']) { echo json_encode($result)."\n"; die; }
+    $club_use_hh_id = $result['feedid'];
+    createmeta($dir,$club_use_hh_id,$meta[$gen_id]);
+}
+$fh[$club_use_hh_id] = fopen($dir."$club_use_hh_id.dat", 'c+');
+$meta[$club_use_hh_id] = getmeta($dir,$club_use_hh_id);
+$buffer[$club_use_hh_id] = "";
+
+// ----------------------------------------------------------------
+echo "2. Sharing Algorithm\n";
+// ----------------------------------------------------------------
+$now = floor(time()/1800)*1800;
+$start_time = $now - 3600*24*2;
+
+if ($start_time<$meta[$gen_id]->start_time) $start_time = $meta[$gen_id]->start_time;
+if ($now>$meta[$gen_id]->end_time) $now = $meta[$gen_id]->end_time;
+
+$n=0;
+for ($time=$start_time; $time<$now; $time+=1800) {
+
+    // --------------------------------------------------
+    // Read in hydro and user consumption
+    // --------------------------------------------------
+    // Get hydro value 
+    $pos = floor(($time - $meta[$gen_id]->start_time) / $meta[$gen_id]->interval);
+    fseek($fh[$gen_id],$pos*4);
+    $val = unpack("f",fread($fh[$gen_id],4));
+    if (!is_nan($val[1])) $hydro = $val[1]*1.0;  
+
+    // Create an array that holds the current half hour consumption value for each user
+    $use_hh = array();
+    foreach ($users as $userid=>$u)
+    {
+        $use_hh_id = $u["use_hh"];
+        // If timestep is within user feed availability
+        if ($time>=$meta[$use_hh_id]->start_time && $time<$meta[$use_hh_id]->end_time) {
+            $pos = floor(($time - $meta[$use_hh_id]->start_time) / $meta[$use_hh_id]->interval);
+            fseek($fh[$use_hh_id],$pos*4);
+            $val = unpack("f",fread($fh[$use_hh_id],4));
+            if (!is_nan($val[1])) $use_hh[$userid] = $val[1]*1.0;   
+        }
+    }
+
+    // --------------------------------------------------
+    // *************** Sharing algorithm ****************
+    // --------------------------------------------------
+    $spare_hydro = $hydro;
+    $import_hh = $use_hh;
+    
+    // Calculate aggregated total consumption for club
+    $club_use_hh = 0;
+    foreach ($use_hh as $userid=>$value) {
+        $club_use_hh += $value;
+    }
+    if ($club_use_hh==0) $club_use_hh = NAN; 
+
+    // Calculate number of users with import requirements
+    $users_to_share = 0;
+    foreach ($import_hh as $userid=>$value) {
+        if ($value>0.0) $users_to_share++;
+    }
+    
+    while ($spare_hydro>0.0 && $users_to_share) 
+    {
+        // Calculate hydro share per user
+        $hydro_share = $spare_hydro / $users_to_share;
+
+        // Itterate through each household subtracting hydro share
+        $spare_hydro = 0;
+        $users_to_share = 0;
+        foreach ($import_hh as $userid=>$value) {
+
+		        $balance = $value;
+            
+		        if ($balance>0) {
+				        $balance -= $hydro_share;
+				        if ($balance<0) {
+						        $remainder = $balance * -1;
+				            $spare_hydro += $remainder;
+				            $balance = 0;
+				        } else {
+				            $users_to_share++;
+				        }
+            }
+            $import_hh[$userid] = $balance;
+        }
+    }
+
+    // --------------------------------------------------
+    // Write allocated hydro to buffers for each user
+    // --------------------------------------------------
+    foreach ($import_hh as $userid=>$value) {
+        // calc allocated hydro from use and import
+        $gen_hh = $use_hh[$userid] - $import_hh[$userid];
+        // allocated hydro feed id
+        $gen_hh_id = $users[$userid]['gen_hh'];
+        // if first item in buffer, seek to correct position ready for writting in next stage
+        if ($buffer[$gen_hh_id]=="") {
+            $pos = floor(($time - $meta[$gen_hh_id]->start_time) / $meta[$gen_hh_id]->interval);
+            fseek($fh[$gen_hh_id],$pos*4);
+        }
+        // add value to buffer
+        $buffer[$gen_hh_id] .= pack("f",$gen_hh);
+    }
+    
+    // Write aggregated club half hourly consumption
+    if ($buffer[$club_use_hh_id]=="") {
+        $pos = floor(($time - $meta[$club_use_hh_id]->start_time) / $meta[$club_use_hh_id]->interval);
+        fseek($fh[$club_use_hh_id],$pos*4);
+    }
+    $buffer[$club_use_hh_id] .= pack("f",$club_use_hh);
+
+    // --------------------------------------------------
+    
+    if ($n%48==0) print ".";
+    $n++;
+}
+print "\n";
+
+// ------------------------------------------------
+// Write buffers to feed data files
+// ------------------------------------------------
+$size = 0;
+foreach ($buffer as $gen_hh_id=>$data) {
+    $len = strlen($data);
+    $size += $len;
+    fwrite($fh[$gen_hh_id],$data);
+    // print $gen_hh_id." ".json_encode($meta[$gen_hh_id])." ".number_format(($len/1024),0)."kb\n";
+}
+
+print "total written: ".number_format(($size/1024),0)."kb\n";
