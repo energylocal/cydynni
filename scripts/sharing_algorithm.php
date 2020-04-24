@@ -157,17 +157,17 @@ for ($time=$start_time; $time<$now; $time+=1800) {
         $users_to_share = 0;
         foreach ($import_hh as $userid=>$value) {
 
-		        $balance = $value;
+            $balance = $value;
             
-		        if ($balance>0) {
-				        $balance -= $hydro_share;
-				        if ($balance<0) {
-						        $remainder = $balance * -1;
-				            $spare_hydro += $remainder;
-				            $balance = 0;
-				        } else {
-				            $users_to_share++;
-				        }
+            if ($balance>0) {
+                $balance -= $hydro_share;
+                if ($balance<0) {
+                        $remainder = $balance * -1;
+                    $spare_hydro += $remainder;
+                    $balance = 0;
+                } else {
+                    $users_to_share++;
+                }
             }
             $import_hh[$userid] = $balance;
         }
