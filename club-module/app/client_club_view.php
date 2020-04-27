@@ -111,14 +111,12 @@
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
                         <table class="keytable">
                           <?php 
-                          $club_gen_tariff = $tariffs[strtolower($club_settings['name'])]['generation'];
                           $generation = array(
-                            'name'=> $club_gen_tariff['name'],
-                            'cost'=> $club_gen_tariff['cost'],
-                            'color'=> $club_gen_tariff['color'],
+                            'name'=> $club_settings['generator'],
+                            'color'=> $club_settings['generator_color'],
                             'key'=>'generation'
                           );
-                          foreach (array_merge([$generation], $club_settings['tariffs']) as $key=>$tariff) {
+                          foreach (array_merge([$generation], $tariffs) as $key=>$tariff) {
                             if(!isset($tariff['key'])) {
                                 $tariff['key'] = strtolower($tariff['name']);
                             }

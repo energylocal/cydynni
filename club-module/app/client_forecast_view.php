@@ -14,7 +14,7 @@
             </div>
         
             <div id="local_electricity_forecast" class="block">
-                <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity Forecast"); ?>
+                <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity"); ?>
                 
                 <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                 <div class="visnav-block">
@@ -84,7 +84,7 @@
                         <thead>
                             <tr>
                             <th></th>
-                            <th scope="col"><?=t(ucfirst($club_settings["generator"])); ?></th>
+                            <th scope="col" style="background-color:<?=$club_settings["generator_color"]?>"><?=t(ucfirst($club_settings["generator"])); ?></th>
                             <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>
@@ -97,7 +97,7 @@
                                     <br class="d-sm-none">
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
-                                <td><?=$t->generator.t('p')?></td>
+                                <td style="background-color:<?=$club_settings["generator_color"]?>"><?=$t->generator.t('p')?></td>
                                 <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=$t->import.t('p')?></td>
                             </tr>
                             <?php endforeach; ?>

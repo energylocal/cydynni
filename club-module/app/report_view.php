@@ -1,5 +1,5 @@
 <?php global $path, $translation, $session; 
-$v=3;
+$v=4;
 $app_path = $path."Modules/club/app/";
 ?>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css" />
@@ -135,14 +135,14 @@ if (!session.write) {
 }
 
 $.ajax({                                      
-    url: path+"club/household-summary-monthly?apikey="+session.apikey_read,
+    url: path+club+"/household-summary-monthly?apikey="+session.apikey_read,
     dataType: 'json',      
     success: function(result) {
         if (result=="Invalid data") alert("There was an error reading the monthly data for your report, please contact contact@energylocal.co.uk or try again later.");
         else {
             household = result;
             $.ajax({
-                url: path+"club/club-summary-monthly?apikey="+session.apikey_read,
+                url: path+club+"/club-summary-monthly?apikey="+session.apikey_read,
                 dataType: 'json',      
                 success: function(result) {  
                     clubdata = result;
@@ -170,6 +170,7 @@ function household_pie_draw() {
       height: height
     };
     
+    pie_generator_color = club_settings.generator_color;
     piegraph3("household_piegraph1_placeholder",household_pie3_data_energy,options);
     piegraph3("household_piegraph2_placeholder",household_pie3_data_cost,options);
 
@@ -209,8 +210,8 @@ function load()
 
     if (month.generation.total>0) {
         keytable += '<tr>'
-        keytable += '<td><div class="key" style="background-color:#29aae3"></div></td>'
-        keytable += '<td><b>'+t("Hydro Price")+'</b><br>'
+        keytable += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+        keytable += '<td><b>'+t(ucfirst(club_settings.generator)+" Price")+'</b><br>'
         keytable += month.generation.total.toFixed(1)+' kWh @ '+(100*month.generation_cost.total/month.generation.total).toFixed(2)+'p/kWh<br>'
         keytable += t("Costing")+' £'+(month.generation_cost.total).toFixed(2)+'</td>'
         keytable += '</tr>'
@@ -271,9 +272,9 @@ function load()
     if (score<30) {
         $(".message").html(t("You are using power in a very expensive way"));
     } else if (score>=30 && score<70) {
-        $(".message").html(t("You’re doing ok at using hydro & cheaper power.<br>Can you move more of your use away from peak times?"));
+        $(".message").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
     } else if (score>=70) {
-        $(".message").html(t("You’re doing really well at using hydro & cheaper power"));
+        $(".message").html(t("You’re doing really well at using "+club_settings.generator+" & cheaper power"));
     }
 
     // ---------------------------------------------
@@ -302,10 +303,10 @@ function load()
         $(".club_message").html(t("We are using power in a very expensive way"));
     }
     if (score_club>=30 && score_club<70) {
-        $(".club_message").html(t("We could do more to make the most of the hydro power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+        $(".club_message").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
     }
     if (score_club>=70) {
-        $(".club_message").html(t("We’re doing really well using the hydro and cheaper power"));
+        $(".club_message").html(t("We’re doing really well using the "+club_settings.generator+" and cheaper power"));
     }
 
     household_pie_draw();

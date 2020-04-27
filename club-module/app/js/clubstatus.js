@@ -30,9 +30,9 @@ function clubstatus_update() {
   if (live.tariff=="overnight") $("#status-img").attr("src",app_path+"images/new-tick.png");
   if (live.tariff=="generation") $("#status-img").attr("src",app_path+"images/new-tick.png");
 
-  var tariff = false;
-  for (var z in club_settings.tariffs) {
-     if (live.tariff==club_settings.tariffs[z].name) tariff = club_settings.tariffs[z];
+  var current_tariff = false;
+  for (var z in tariffs) {
+     if (live.tariff==tariffs[z].name) current_tariff = tariffs[z];
   }
   
   // Todo: review suggestion
@@ -42,7 +42,7 @@ function clubstatus_update() {
       $("#status-pre").html(t("Now is a good time to use electricity"));
       $("#status-title").html(t("GO!"));
 
-      var time_to_wait = (tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      var time_to_wait = (current_tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? day time price currently available"));
   }
 
@@ -50,7 +50,7 @@ function clubstatus_update() {
       $("#status-pre").html(t("If possible"));
       $("#status-title").html(t("WAIT"));
 
-      var time_to_wait = (tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+      var time_to_wait = (current_tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? overnight price coming up"));
   }
 
@@ -59,9 +59,9 @@ function clubstatus_update() {
       $("#status-title").html(t("GO!"));
 
       if (hour>7) {
-          var time_to_wait = (24-(hour+1)+tariff.end.split(":")[0])+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+          var time_to_wait = (24-(hour+1)+tarcurrent_tariffiff.end.split(":")[0])+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       } else {
-          var time_to_wait = (tariff.end.split(":")[0]-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+          var time_to_wait = (current_tariff.end.split(":")[0]-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
       }
       $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
   }

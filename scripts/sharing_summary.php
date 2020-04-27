@@ -32,12 +32,9 @@
     print json_encode($summary);
 */
 
-function get_daily_summary($use_id,$gen_id,$start_time,$end_time,$format,$fixdp=true)
+function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,$format,$fixdp=true)
 {
-    global $club_settings;
     $dir = "/var/lib/phpfina/";
-
-    $tariff_history = $club_settings["bethesda"]["tariff_history"];
 
     // translate tariff object to format required by sharing algorithm
     for ($h=0; $h<count($tariff_history); $h++) {                     // for each history index
@@ -64,9 +61,12 @@ function get_daily_summary($use_id,$gen_id,$start_time,$end_time,$format,$fixdp=
     $d->modify('+1 day');
     $end_time = $d->getTimestamp();
     
-    if ($meta_use->start_time!=$meta_gen->start_time) die("start_times do not match!\n");
+    //if ($meta_use->start_time!=$meta_gen->start_time) die("start_times do not match!\n");
     if ($meta_use->interval!=$meta_gen->interval) die("intervals do not match!\n");
 
+    // Limit to end time of use and gen feeds
+    if ($start_time<$meta_use->start_time) $start_time = $meta_use->start_time;
+    if ($start_time<$meta_gen->start_time) $start_time = $meta_gen->start_time;
     // Limit to end time of use and gen feeds
     if ($end_time>$meta_use->end_time) $end_time = $meta_use->end_time;
     if ($end_time>$meta_gen->end_time) $end_time = $meta_gen->end_time;
@@ -78,6 +78,7 @@ function get_daily_summary($use_id,$gen_id,$start_time,$end_time,$format,$fixdp=
     // Seek to position of start_time
     $pos = floor(($start_time - $meta_use->start_time) / $meta_use->interval);
     fseek($fh_use,$pos*4);
+    $pos = floor(($start_time - $meta_gen->start_time) / $meta_gen->interval);
     fseek($fh_gen,$pos*4);
 
     // Set initial date time for last comparisons
@@ -257,9 +258,9 @@ function get_daily_summary($use_id,$gen_id,$start_time,$end_time,$format,$fixdp=
     return $summary;
 }
 
-function get_monthly_summary($use_id,$gen_id,$start_time,$end_time,$format)
+function get_monthly_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,$format)
 {
-    $daily = get_daily_summary($use_id,$gen_id,$start_time,$end_time,"keys",false);
+    $daily = get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,"keys",false);
     // return $daily;
     
     $monthly_summaries = array();
@@ -305,9 +306,9 @@ function get_monthly_summary($use_id,$gen_id,$start_time,$end_time,$format)
     return $monthly_summaries;   
 }
 
-function get_summary($use_id,$gen_id,$start_time,$end_time,$format)
+function get_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,$format)
 {
-    $daily = get_daily_summary($use_id,$gen_id,$start_time,$end_time,"keys",false);
+    $daily = get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,"keys",false);
     
     $summary = array();
     

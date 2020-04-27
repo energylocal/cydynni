@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 31;
+$v = 33;
 
 $app_path = $path."Modules/club/app/";
 
@@ -26,7 +26,7 @@ $app_path = $path."Modules/club/app/";
 
 <div class="app">
     <ul class="navigation">
-        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
+        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
         <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
@@ -83,6 +83,7 @@ var club_path = [path, club, '/'].join('');
 var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
+var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>

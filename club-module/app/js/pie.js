@@ -1,6 +1,8 @@
 var droplet = new Image();
 droplet.src = typeof path == 'undefined' ? "Modules/club/app/images/droplet.png" : path+"Modules/club/app/images/droplet.png";
 droplet.onload = function () { }
+
+var pie_generator_color = "#29aae3";
     
 function generationdroplet(element,value,options)
 {
@@ -176,7 +178,7 @@ function piegraph2(element,data,generation,options) {
     var prcarea = prc * fullarea;
     var cr = Math.sqrt(prcarea / Math.PI);
 
-    ctx.fillStyle = "#29aae3";
+    ctx.fillStyle = pie_generator_color;
     ctx.beginPath();
     ctx.arc(midx,midy,cr,0,2*Math.PI,true);
     ctx.fill();
@@ -279,7 +281,7 @@ function piegraph3(element,data,options) {
         var prcarea = prc * fullarea;
         var cr = Math.sqrt(prcarea / Math.PI);
         
-        ctx.fillStyle = "#29aae3";
+        ctx.fillStyle = pie_generator_color;
         ctx.beginPath();
         ctx.arc(midx,midy,cr,lastl,l,false);
         ctx.arc(midx,midy,size*0.0001,l,lastl,true);
@@ -333,7 +335,7 @@ function hrbar(element,data,options) {
     // Calculate total of segments 
     var total = 0; for (var z in data) total += data[z].generation + data[z].import;
     
-    segments.generation = {val:0, color:"#29aae3"};
+    segments.generation = {val:0, color:pie_generator_color};
     
     for (var z in data) {
         segments[z] = {val:data[z].import, color:data[z].color};

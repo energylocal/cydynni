@@ -21,8 +21,9 @@ $redis = new Redis();
 $connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
 require_once "Modules/feed/feed_model.php";
 $feed = new Feed($mysqli,$redis,$settings["feed"]);
-// ----------------------------------------------------------------
-
+// ------------------------------------------------------------------------------------------
+// Bethesda
+// ------------------------------------------------------------------------------------------
 $result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
@@ -68,17 +69,51 @@ while ($row = $result_users->fetch_object())
         
         // Create half hourly feed from combined feed
         $processitem->input = $feedC;
+        $processitem->recalc = 3600*24*2;
         powertohh("/var/lib/phpfina/",$processitem);
         
     } else if ($feedA) {
         // If only MQTT meter power create half hourly feed from this
         $processitem->input = $feedA;
+        $processitem->recalc = 3600;
         powertohh("/var/lib/phpfina/",$processitem);   
          
     } else if ($feedB) {
         // If only smartmeter create half hourly feed from this
         $processitem->input = $feedB;
+        $processitem->recalc = 3600*24*2;
         powertohh("/var/lib/phpfina/",$processitem);   
     }
-    // ----------------------------------------------------------------
+
+    $redis->hdel("feed:$feedD",'time');
+    $timevalue = $feed->get_timevalue($feedD);
+}
+
+// ------------------------------------------------------------------------------------------
+// Repower
+// ------------------------------------------------------------------------------------------
+$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=2 ORDER BY userid ASC");
+while ($row = $result_users->fetch_object()) 
+{
+    $userid = $row->userid;
+    
+    if ($meter_power = $feed->get_id($userid,"meter_power")) {
+        print $userid." ".$meter_power."\n";
+        
+        if (!$use_hh = $feed->exists_tag_name($userid,"user","use_hh")) {
+            $result = $feed->create($userid,"user","use_hh",1,5,json_decode('{"interval":1800}'));
+            if (!$result['success']) { echo json_encode($result)."\n"; die; }
+            $use_hh = $result['feedid'];
+        }
+        // $feed->clear($use_hh);
+        $processitem = new stdClass();
+        $processitem->input = $meter_power;
+        $processitem->output = $use_hh;
+        $processitem->recalc = 3600;
+        powertohh("/var/lib/phpfina/",$processitem);
+        
+        $redis->hdel("feed:$use_hh",'time');
+        $timevalue = $feed->get_timevalue($use_hh);
+    }
+   
 }

@@ -1,5 +1,5 @@
 <?php
-    global $session, $redis, $path;
+    global $session, $redis, $path, $club;
     
     if ($session["admin"]) {
         $menu['sidebar']['emoncms'][] = array(
@@ -37,7 +37,9 @@
         $userid = (int) $session["userid"];
         
         $end = floor(time()/1800)*1800;
-        $start = $end-3600*24*365;
+        if ($club=="bethesda") $start = round($end-3600*24*30.42*12);
+        if ($club=="repower") $start = round($end-3600*24*30.42*1);
+        
         
         $d = new DateTime();
         $d->setTimezone(new DateTimeZone("Europe/London"));
@@ -59,8 +61,8 @@
             $index = $d->format("Y-m");
 
             $menu['sidebar']['reports'][] = array(
-                'href' => $path.'club/report'.$apikeystr.'#'.$index,
-                'active' => $path.'club/report'.$apikeystr.'#'.$index,
+                'href' => $path.$club.'/report'.$apikeystr.'#'.$index,
+                'active' => $path.$club.'/report'.$apikeystr.'#'.$index,
                 'text' => sprintf("%s %s",$name,$year),
                 'order' => $index
             );

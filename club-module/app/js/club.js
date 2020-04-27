@@ -33,7 +33,7 @@ var day_view = 1;
 function club_summary_load() { 
 
 $.ajax({
-    url: path+"club/club-summary?start="+view.start+"&end="+view.end,
+    url: path+club+"/club-summary?start="+view.start+"&end="+view.end,
     dataType: 'json',
         success: function(result) {
             
@@ -159,6 +159,7 @@ function club_pie_draw() {
       height: height
     };
 
+    pie_generator_color = club_settings.generator_color;
     piegraph3("club_piegraph1_placeholder",club_pie_data_energy,options);
     piegraph3("club_piegraph2_placeholder",club_pie_data_cost,options);
 
@@ -190,16 +191,7 @@ function club_bargraph_load() {
 
     club_summary_load();
 
-    var generation_data = [];
-    // Load data from server
-    if (generation_feed==194360) {
-        generation_data = feed.getdataremote(generation_feed,view.start,view.end,interval,1,1);
-        for (var z in generation_data) {
-        generation_data[z][1] = generation_data[z][1]*2;
-        }
-    } else {
-        generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
-    }
+    var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
     var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
 
     if (generation_data.success!=undefined) $("#local_electricity_forecast").hide();
@@ -228,6 +220,12 @@ function club_bargraph_load() {
 
         var generation = 0;
         if (generation_data[z]!=undefined) generation = generation_data[z][1] * scale;
+        
+        if (generation_feed==1471) {
+            if (generation>40.0) generation = 40.0;
+            generation *= 0.5;
+        }
+        
         var consumption = club_data[z][1] * scale;
         
         var exported_generation = 0;
@@ -240,21 +238,20 @@ function club_bargraph_load() {
         
         var unit_price = 0.0;
         
-        for(var x in club_settings.tariffs) {
-            var tariff = club_settings.tariffs[x];
+        for(var x in tariffs) {
             var on_tariff = false;
-            var sh = 1*tariff.start.split(":")[0];
-            var eh = 1*tariff.end.split(":")[0];
+            var sh = 1*tariffs[x].start.split(":")[0];
+            var eh = 1*tariffs[x].end.split(":")[0];
                     
             if (sh<eh && (hour>=sh && hour<eh)) on_tariff = true;
             if (sh>eh && (hour>=sh || hour<eh)) on_tariff = true;
             
             if (on_tariff) {
-                unit_price = (tariff.import*imprt + tariff.generator*selfuse) / consumption
+                unit_price = (tariffs[x].import*imprt + tariffs[x].generator*selfuse) / consumption
                 
-                data[tariff.name][z] = [time,imprt];
+                data[tariffs[x].name][z] = [time,imprt];
             } else {
-                data[tariff.name][z] = [time,0];
+                data[tariffs[x].name][z] = [time,0];
             }
         }
         data.export[z] = [time,exprt];
@@ -273,10 +270,9 @@ function club_bargraph_load() {
     });
     
     // add series data for each tariff
-    for(x in club_settings.tariffs) {
-        var tariff = club_settings.tariffs[x];
+    for(x in tariffs) {
         clubseries.push({
-            stack: true, data: data[tariff.name], color: tariff.color, label: t(ucfirst(tariff.name)+" Tariff"),
+            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name)+" Tariff"),
             bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
         });
     }

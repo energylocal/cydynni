@@ -18,106 +18,94 @@ $feed = new Feed($mysqli,$redis,$settings["feed"]);
 $dir = "/var/lib/phpfina/";
 // ------------------------------------------------
 
-$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 ORDER BY userid ASC");
+$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 OR clubs_id=2 ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
     $userid = $row->userid;
     
     print $userid;
 
-    $source = $feed->get_id($userid,"use_hh");
+    if ($source = $feed->get_id($userid,"use_hh"))
+    {
+        if (!$output = $feed->get_id($userid,"use_hh_est")) {
+            $result = $feed->create($userid,"user","use_hh_est",1,5,json_decode('{"interval":1800}'));
+            if (!$result['success']) { echo json_encode($result)."\n"; die; }
+            $output = $result['feedid'];
+        }
 
-    if (!$output = $feed->get_id($userid,"use_hh_est")) {
-        $result = $feed->create($userid,"cydynni","use_hh_est",1,5,json_decode('{"interval":1800}'));
-        if (!$result['success']) { echo json_encode($result)."\n"; die; }
-        $output = $result['feedid'];
-    }
+        // copy("/var/lib/phpfina/$source.dat","/var/lib/phpfina/$output.dat");
+        // $feed->clear($output);
+        copy("/var/lib/phpfina/$source.meta","/var/lib/phpfina/$output.meta");
+        
+        //die;
+        // --------------------------------------------------
+        // CALC ESTIMATE
+        // --------------------------------------------------
 
-    // copy("/var/lib/phpfina/$source.dat","/var/lib/phpfina/$output.dat");
-    // $feed->clear($output);
-    copy("/var/lib/phpfina/$source.meta","/var/lib/phpfina/$output.meta");
-    
-    //die;
-    // --------------------------------------------------
-    // CALC ESTIMATE
-    // --------------------------------------------------
+        if (!$source_meta = getmeta($dir,$source)) {
+            print "input file $source.meta does not exist\n";
+            // return false;
+        }
 
-    if (!$source_meta = getmeta($dir,$source)) {
-        print "input file $source.meta does not exist\n";
-        // return false;
-    }
+        if (!$output_meta = getmeta($dir,$output)) {
+            print "output file $output.meta does not exist\n";
+            // return false;
+        }
 
-    if (!$output_meta = getmeta($dir,$output)) {
-        print "output file $output.meta does not exist\n";
-        // return false;
-    }
+        if ($source_meta->interval != $output_meta->interval) {
+            print "NOTICE: interval of feeds do not match, source:$source_meta->interval, output:$output_meta->interval\n";
+            // return false;
+        }
 
-    if ($source_meta->interval != $output_meta->interval) {
-        print "NOTICE: interval of feeds do not match, source:$source_meta->interval, output:$output_meta->interval\n";
-        // return false;
-    }
+        if (!$source_fh = @fopen($dir.$source.".dat", 'rb')) {
+            echo "ERROR: could not open $dir $source.dat\n";
+            return false;
+        }
+        
+        if (!$output_fh = @fopen($dir.$output.".dat", 'c+')) {
+            echo "ERROR: could not open $dir $output.dat\n";
+            return false;
+        }
 
-    if (!$source_fh = @fopen($dir.$source.".dat", 'rb')) {
-        echo "ERROR: could not open $dir $source.dat\n";
-        return false;
-    }
-    
-    if (!$output_fh = @fopen($dir.$output.".dat", 'c+')) {
-        echo "ERROR: could not open $dir $output.dat\n";
-        return false;
-    }
+        $o_end_time = $output_meta->start_time + ($output_meta->npoints * $output_meta->interval);
 
-    $o_end_time = $output_meta->start_time + ($output_meta->npoints * $output_meta->interval);
+        $start_time = $source_meta->start_time;
+        $start_time = $o_end_time - 3600*24*2;
+        if ($start_time<$source_meta->start_time) $start_time=$source_meta->start_time;
 
-    $start_time = $source_meta->start_time;
-    $start_time = $o_end_time - 3600*24*2;
-    if ($start_time<$source_meta->start_time) $start_time=$source_meta->start_time;
+        // $start_time = 1585474200;
+        $now = time();
+        $end_time = floor($now/1800)*1800;
+        
+        $source_duration = $source_meta->interval * $source_meta->npoints;
+        if ($source_duration>(3600*24*14)) $average_over = 7; else $average_over = 1;
+        
+        $i=0;
+        if ($source_meta->npoints>0) {
+            for ($time=$start_time; $time<$end_time; $time+=1800) {
 
-    // $start_time = 1585474200;
-    $now = time();
-    $end_time = floor($now/1800)*1800;
-    
-    $i=0;
-    if ($source_meta->npoints>0) {
-        for ($time=$start_time; $time<$end_time; $time+=1800) {
-
-            $pos = floor(($time - $source_meta->start_time) / $source_meta->interval);
-            
-            $actual = NAN;
-            $estimate = NAN;
-            $estimate_count = 0;
-            
-            if ($pos<$source_meta->npoints) {
-                fseek($source_fh,$pos*4);
-                $source_tmp = unpack("f",fread($source_fh,4));
-                $actual = $source_tmp[1];
+                $pos = floor(($time - $source_meta->start_time) / $source_meta->interval);
                 
-                $insert_pos = floor(($time-$output_meta->start_time)/$output_meta->interval);
-                fseek($output_fh,$insert_pos*4);
-                fwrite($output_fh,pack("f",$actual));
-            }
-            
-            if (is_nan($actual)) {
-                $estimate_sum = 0;
+                $actual = NAN;
+                $estimate = NAN;
                 $estimate_count = 0;
-                for ($z=1; $z<=50; $z++) {
-                    $pos = floor(($time - $source_meta->start_time - 3600*24*7*$z) / $source_meta->interval);
-                    if ($pos<0) break;
-                    if ($pos>0 && $pos<$source_meta->npoints) {
-                        fseek($source_fh,$pos*4);
-                        $source_tmp = unpack("f",fread($source_fh,4));
-                        if (!is_nan($source_tmp[1])) {
-                            $estimate_sum += $source_tmp[1];
-                            $estimate_count++;
-                            if ($estimate_count==8) break;
-                        }
-                    }
+                
+                if ($pos<$source_meta->npoints) {
+                    fseek($source_fh,$pos*4);
+                    $source_tmp = unpack("f",fread($source_fh,4));
+                    $actual = $source_tmp[1];
+                    
+                    $insert_pos = floor(($time-$output_meta->start_time)/$output_meta->interval);
+                    fseek($output_fh,$insert_pos*4);
+                    fwrite($output_fh,pack("f",$actual));
                 }
                 
-                if ($estimate_count<8) {
+                if (is_nan($actual)) {
+                    $estimate_sum = 0;
+                    $estimate_count = 0;
                     for ($z=1; $z<=50; $z++) {
-                        $pos = floor(($time - $source_meta->start_time + 3600*24*7*$z) / $source_meta->interval);
-                        if ($pos>$source_meta->npoints-1) break;
+                        $pos = floor(($time - $source_meta->start_time - 3600*24*$average_over*$z) / $source_meta->interval);
+                        if ($pos<0) break;
                         if ($pos>0 && $pos<$source_meta->npoints) {
                             fseek($source_fh,$pos*4);
                             $source_tmp = unpack("f",fread($source_fh,4));
@@ -128,20 +116,36 @@ while ($row = $result_users->fetch_object())
                             }
                         }
                     }
+                    
+                    if ($estimate_count<8) {
+                        for ($z=1; $z<=50; $z++) {
+                            $pos = floor(($time - $source_meta->start_time + 3600*24*$average_over*$z) / $source_meta->interval);
+                            if ($pos>$source_meta->npoints-1) break;
+                            if ($pos>0 && $pos<$source_meta->npoints) {
+                                fseek($source_fh,$pos*4);
+                                $source_tmp = unpack("f",fread($source_fh,4));
+                                if (!is_nan($source_tmp[1])) {
+                                    $estimate_sum += $source_tmp[1];
+                                    $estimate_count++;
+                                    if ($estimate_count==8) break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if ($estimate_count>0) {
+                        $estimate = $estimate_sum / $estimate_count;
+                        $insert_pos = floor(($time-$output_meta->start_time)/$output_meta->interval);
+                        fseek($output_fh,$insert_pos*4);
+                        fwrite($output_fh,pack("f",$estimate));
+                    }
                 }
                 
-                if ($estimate_count>0) {
-                    $estimate = $estimate_sum / $estimate_count;
-                    $insert_pos = floor(($time-$output_meta->start_time)/$output_meta->interval);
-                    fseek($output_fh,$insert_pos*4);
-                    fwrite($output_fh,pack("f",$estimate));
-                }
+                // print $actual." ".number_format($estimate,3)." ".$estimate_count."\n";
             }
-            
-            // print $actual." ".number_format($estimate,3)." ".$estimate_count."\n";
+        } else {
+            print " no data in source feed";
         }
-    } else {
-        print " no data in source feed";
     }
     print "\n";
 }

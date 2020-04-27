@@ -19,7 +19,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 function club_controller()
 {
     global $mysqli, $redis, $session, $route, $user, $settings, $available_clubs;
-    global $tariffs, $club_settings;
+    global $club_settings, $club;
     global $lang;
 
     if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
@@ -29,46 +29,22 @@ function club_controller()
     $lang = $session["lang"];
     
     $result = false;
-    
     $route->format = "json";
-    $result = false;
+    
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
-
-    $club = "bethesda";
     
-    if (in_array($route->action,$available_clubs)) {
-        $club = $route->action;
-        $route->action = "";
+    if ($club=="repower") {
+        $session['lang'] = "en_GB";
+        $lang = $session["lang"];
     }
     
-    if ($settings["cydynni"]["is_hub"]) {
-	      $club_settings = array();
-	      $club_settings[$club] = array(
-	          "name"=>"Bethesda",
-	          "generator"=>"hydro",
-	          "languages"=>array("cy","en"),
-	          "generation_feed"=>1,
-	          "consumption_feed"=>2
-	      );
-	      
-        $tariffs = array(
-          "bethesda"=>array(
-              "generation"=>array("name"=>"Hydro","cost"=>0.115,"color"=>"#29aae3"),
-              "morning"=>array("name"=>"Morning","cost"=>0.182,"color"=>"#ffdc00"),
-              "midday"=>array("name"=>"Midday","cost"=>0.166,"color"=>"#4abd3e"),
-              "evening"=>array("name"=>"Evening","cost"=>0.202,"color"=>"#c92760"),
-              "overnight"=>array("name"=>"Overnight","cost"=>0.1305,"color"=>"#274e3f")
-          )
-        );
-	  }
-	  
+    $tariff_history = $club_settings[$club]['tariff_history'];
+    $tariffs = $tariff_history[count($tariff_history)-1]["tariffs"];
+    
 	  global $translation;
 	  $translation = new stdClass();
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
-
-    $base_url = $settings["cydynni"]["is_hub"] ? "https://dashboard.energylocal.org.uk/club/" : "http://localhost/club/";
-    $emoncms_url = $settings["cydynni"]["is_hub"] ? 'http://localhost/emoncms/' : 'https://dashboard.energylocal.org.uk/';
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
@@ -103,7 +79,7 @@ function club_controller()
                 'is_hub' => $settings["cydynni"]["is_hub"], 
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
-                'tariffs_table' => $club_model->getTariffsTable($club_settings[$club]['tariffs']),
+                'tariffs_table' => $club_model->getTariffsTable($tariffs),
                 'tariffs' => $tariffs
             ));
 
@@ -185,7 +161,7 @@ function club_controller()
                     if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
                         
                     require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                    return get_daily_summary($use_id,$gen_id,$start,$end,"index");
+                    return get_daily_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"index");
                 }
             } else {
                 return "session not valid";
@@ -215,7 +191,7 @@ function club_controller()
                 if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
 
                 require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                return get_monthly_summary($use_id,$gen_id,$start,$end,"keys");
+                return get_monthly_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"keys");
 
 
 
@@ -241,7 +217,7 @@ function club_controller()
             $club_id = $club_settings[$club]['consumption_feed'];
 
             require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-            return get_monthly_summary($club_id,$gen_id,$start,$end,"keys");
+            return get_monthly_summary($club_settings[$club]["tariff_history"],$club_id,$gen_id,$start,$end,"keys");
 
             break;
 
@@ -257,7 +233,7 @@ function club_controller()
             $club_id = $club_settings[$club]['consumption_feed'];
 
             require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-            return get_summary($club_id,$gen_id,$start,$end,"keys");
+            return get_summary($club_settings[$club]["tariff_history"],$club_id,$gen_id,$start,$end,"keys");
 
             break;
 
@@ -554,9 +530,6 @@ function club_controller()
                  $result = json_decode($redis->get("cydynni:ota:log:$userid"));
             }
             break;
-            
-        case 'tariffs':
-            return $club_model->getTariffsTable($club_settings[$club]['tariffs']);
         break;
     }
     

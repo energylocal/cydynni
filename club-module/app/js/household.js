@@ -90,8 +90,8 @@ function household_draw_summary(day) {
     // Create aggregated legend item for hydro
     var legend = "";
     legend += '<tr>'
-    legend += '<td><div class="key" style="background-color:#29aae3"></div></td>'
-    legend += '<td><b>'+t("Hydro Price")+'</b><br>'
+    legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+    legend += '<td><b>'+t(ucfirst(club_settings.generator)+" Price")+'</b><br>'
     legend += total_hydro.toFixed(2)+" kWh "
     if (total_hydro>0) legend += "@"+(100*total_hydro_cost/total_hydro).toFixed(2)+" p/kWh"
     legend += "<br>"
@@ -201,7 +201,8 @@ function household_pie_draw() {
       width: width,
       height: height
     };
-    
+
+    pie_generator_color = club_settings.generator_color;
     piegraph3("household_piegraph1_placeholder",household_pie_data_energy,options);
     piegraph3("household_piegraph2_placeholder",household_pie_data_cost,options);
 
@@ -229,7 +230,7 @@ function household_bargraph_load() {
         
         $.ajax({                                      
             //url: path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+household_start+"&end="+household_end+"&mode=daily&apikey="+session['apikey_read'],
-            url: path+"club/household-daily-summary?start="+household_start+"&end="+household_end+"&apikey="+session['apikey_read'],
+            url: path+club+"/household-daily-summary?start="+household_start+"&end="+household_end+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {
@@ -291,7 +292,7 @@ function household_bargraph_load() {
                     barwidth = 3600*24*1000*0.75;
                     
                     householdseries.push({
-                        stack: true, data: household_tariff_data['generation'], color: "#29aae3",
+                        stack: true, data: household_tariff_data['generation'], color: club_settings.generator_color,
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                     });                      
                     householdseries.push({
@@ -353,7 +354,7 @@ function household_bargraph_load() {
                                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                                 });
                                 householdseries.push({
-                                    stack: false, data: gen_data, color: "#29aae3", label: t("Hydro"),
+                                    stack: false, data: gen_data, color:club_settings.generator_color, label: t(ucfirst(club_settings.generator)),
                                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                                 });
                                 household_bargraph_resize();
@@ -546,7 +547,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                     out += "<tr><td>"+days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate()+"</td></tr>";
                     out += "<tr><td>Tariff version: "+(history_index+1)+"</td></tr>";
                     out += "<tr><td>"+t("Total")+":</td><td>"+household_result[z][1][tariff_bands.length].toFixed(2)+" kWh</td></tr>";
-                    out += "<tr><td><div class='legend-label-box' style='background-color:#29aae3'></div> "+t("Hydro")+":</td><td>"+(household_result[z][1][tariff_bands.length]-household_result[z][2][tariff_bands.length]).toFixed(2)+" kWh</td></tr>"; 
+                    out += "<tr><td><div class='legend-label-box' style='background-color:"+club_settings.generator_color+"'></div> "+t(club_settings.generator)+":</td><td>"+(household_result[z][1][tariff_bands.length]-household_result[z][2][tariff_bands.length]).toFixed(2)+" kWh</td></tr>"; 
                     for (var tr=0; tr<tariff_bands.length; tr++) {
                         out += "<tr><td><div class='legend-label-box' style='background-color:"+tariff_bands[tr].color+"'></div> "+t(ucfirst(tariff_bands[tr].name))+":</td><td>"+household_result[z][2][tr].toFixed(2)+" kWh</td></tr>";
                     }                      
@@ -613,7 +614,7 @@ function household_powergraph_load() {
   if (household_power_interval<10) household_power_interval = 10;
     
   $.ajax({                  
-    url: path+'feed/average.json',             
+    url: path+'feed/data.json',             
     data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+household_power_interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
     dataType: 'json',               
     async: true,
