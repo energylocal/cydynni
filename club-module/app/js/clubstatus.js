@@ -9,103 +9,82 @@ function clubstatus_update() {
   var live = {};
 
   $.ajax({                                      
-      url: path+"club/live/"+club,
+      url: path+club+"/live",
       dataType: 'json',
-      async: false,                      
+      async: true,                      
       success: function(result) {
           live = result;
-  }});
 
-  var time = new Date();
+          var time = new Date();
 
-  var hour = time.getHours();
-  var minutes = time.getMinutes();
+          var hour = time.getHours();
+          var minutes = time.getMinutes();
 
-  $("#status-next").html("");
-  
-  if (live.tariff=="morning") $("#status-img").attr("src",app_path+"images/waiting-icon.png");
-  if (live.tariff=="midday") $("#status-img").attr("src",app_path+"images/new-tick.png");
-  if (live.tariff=="daytime") $("#status-img").attr("src",app_path+"images/new-tick.png");
-  if (live.tariff=="evening") $("#status-img").attr("src",app_path+"images/waiting-icon.png");
-  if (live.tariff=="overnight") $("#status-img").attr("src",app_path+"images/new-tick.png");
-  if (live.tariff=="generation") $("#status-img").attr("src",app_path+"images/new-tick.png");
+          $("#status-next").html("");
 
-  var current_tariff = false;
-  for (var z in tariffs) {
-     if (live.tariff==tariffs[z].name) current_tariff = tariffs[z];
-  }
-  
-  // Todo: review suggestion
-  // Todo: add in half hourly tariff boundaries
+          var current_tariff = false;
+          for (var z in tariffs) {
+             if (live.tariff==tariffs[z].name) current_tariff = tariffs[z];
+          }
+          
+          var prc_gen = (100*(live.generation / live.club)).toFixed(0);
 
-  if (live.tariff=="daytime") {
-      $("#status-pre").html(t("Now is a good time to use electricity"));
-      $("#status-title").html(t("GO!"));
+          var tariff_name = live.tariff.toUpperCase()
+          if (tariff_name=="DAYTIME") tariff_name = "DAY TIME";
 
-      var time_to_wait = (current_tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
-      $("#status-until").html(t("until")+" <b>4<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? day time price currently available"));
-  }
+          $("#status-title").html(t(tariff_name));
+          
+          if (prc_gen>=1.0) {
+              $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+": <b>~"+prc_gen+"%</b> "+t("of club consumption."));
+          } else {
+              $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+          }
+          
+          var tariff_end = 1*current_tariff.end.split(":")[0];
+          var hours_to_wait = tariff_end - (hour+1);
+          if (hours_to_wait<0) hours_to_wait += 24;
 
-  else if (live.tariff=="evening") {
-      $("#status-pre").html(t("If possible"));
-      $("#status-title").html(t("WAIT"));
-
-      var time_to_wait = (current_tariff.end.split(":")[0] - (hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
-      $("#status-until").html(t("until")+" <b>8<span style='font-size:12px'>PM</span></b> <span style='font-size:12px'>("+time_to_wait+" "+t("FROM NOW")+")</span><br>"+t("Why? overnight price coming up"));
-  }
-
-  else if (live.tariff=="overnight") {
-      $("#status-pre").html(t("Now is a good time to use electricity"));
-      $("#status-title").html(t("GO!"));
-
-      if (hour>7) {
-          var time_to_wait = (24-(hour+1)+tarcurrent_tariffiff.end.split(":")[0])+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
-      } else {
-          var time_to_wait = (current_tariff.end.split(":")[0]-(hour+1))+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+          var time_to_wait = hours_to_wait+" "+t("HOURS")+", "+(60-minutes)+" "+t("MINS");
+          if (tariff_end<=12) {
+              am_pm = "AM";
+          } else {
+              tariff_end -= 12;
+              am_pm = "PM";
+          }
+          
+          $("#status-until").html(t("until")+" <b>"+tariff_end+"<span style='font-size:12px'>"+am_pm+"</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
+          
+          var levels = {
+              bethesda: {high:50,medium:30,low:10},
+              towerpower: {high:3,medium:1,low:0.5},
+              corwen: {high:50,medium:30,low:10},
+              crickhowell: {high:50,medium:30,low:10},
+              repower: {high:50,medium:30,low:10},
+              redress: {high:50,medium:30,low:10}
+          }
+         
+          if (live.generation>=levels[club].high) {
+              $("#generation-status").html(t("HIGH"));
+          } else if (live.generation>=levels[club].medium) {
+              $("#generation-status").html(t("MEDIUM"));
+          } else if (live.generation>=levels[club].low) {
+              $("#generation-status").html(t("LOW"));
+          } else {
+              $("#generation-status").html(t("VERY LOW"));
+          }
+          
+          var generation = Math.round(live.generation||0);
+          $("#generation-power").html(generation);
+          var consumption = Math.round(live.club||0);
+          
+          if (generation > consumption ) {
+              $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently exceeding club consumption'));
+          } else if (generation == consumption) {
+              $('#status-summary').text(t(ucfirst(club_settings.generator)+' output currently matches club consumption'));
+          } else {
+              $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently lower than club consumption'));
+          }
       }
-      $("#status-until").html(t("until")+" <b>6<span style='font-size:12px'>AM</span></b> <span style='font-size:12px'>("+time_to_wait+")</span><br>"+t("Why? overnight price currently available"));
-  }
-  
-  else if (live.tariff=="generation") {
-      $("#status-pre").html(t("Now is a good time to use electricity"));
-      $("#status-title").html(t("GO!"));
-      $("#status-until").html(t("Why? Plenty of "+club_settings.generator+" currently available")); // +"<br>"+t("Estimated unit cost: ")+live.unit_price+" p/kWh"
-  }
-
-  var levels = {
-      bethesda: {high:50,medium:30,low:10},
-      towerpower: {high:3,medium:1,low:0.5},
-      corwen: {high:50,medium:30,low:10},
-      crickhowell: {high:50,medium:30,low:10},
-      repower: {high:50,medium:30,low:10},
-      redress: {high:50,medium:30,low:10}
-  }
- 
-  if (live.generation>=levels[club].high) {
-      $("#generation-status").html(t("HIGH"));
-  } else if (live.generation>=levels[club].medium) {
-      $("#generation-status").html(t("MEDIUM"));
-  } else if (live.generation>=levels[club].low) {
-      $("#generation-status").html(t("LOW"));
-  } else {
-      $("#generation-status").html(t("VERY LOW"));
-  }
-  
-
-  
-  var generation = Math.round(live.generation||0);
-  $("#generation-power").html(generation);
-  var consumption = Math.round(live.club||0);
-  
-  console.log(generation+" "+consumption);
-  
-  if (generation > consumption ) {
-    $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently exceeding club consumption'));
-  } else if (generation == consumption) {
-    $('#status-summary').text(t(ucfirst(club_settings.generator)+' output currently matches club consumption'));
-  } else {
-    $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently lower than club consumption'));
-  }
-  
+  });
 }
 

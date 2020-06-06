@@ -116,6 +116,17 @@ $.ajax({
                 }
             }
             
+            // Create aggregated legend item for hydro
+            var legend = "";
+            legend += '<tr>'
+            legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+            legend += '<td><b>'+t(ucfirst(club_settings.generator)+" Price")+'</b><br>'
+            legend += result.generation.total.toFixed(2)+" kWh "
+            if (result.generation.total>0) legend += "@"+(100*generation_value/result.generation.total).toFixed(2)+" p/kWh"
+            legend += "<br>"
+            legend += t("Costing")+" £"+generation_value.toFixed(2)+'</td>'
+            legend += '</tr>'
+            
             // CHART KEY VALUES FOR EACH TARIFF:
             // populate tariff totals for club in pie chart key
             for (var tariff_name in result.import) {
@@ -130,8 +141,18 @@ $.ajax({
                     $("#club_"+tariff_name+"_kwh").html(tarriffKwhTotal);
                     $("#club_"+tariff_name+"_cost").html(tariffTotalCost);
                     $("#club_"+tariff_name+"_unitcost").html(tariffUnitCost);
+                    
+                    // Legend for each import tariff band
+                    legend += '<tr>'
+                    legend += '<td><div class="key" style="background-color:'+tariff_colors[tariff_name]+'"></div></td>'
+                    legend += '<td><b>'+t(ucfirst(t(tariff_name)+" Price"))+'</b><br>'
+                    legend += tarriffKwhTotal+" kWh "+tariffUnitCost+"<br>"
+                    legend += t("Costing")+" £"+tariffTotalCost+'</td>'
+                    legend += '</tr>'
                 }
             }
+            
+            $("#club_pie_legend").html(legend);  
             // GENERATION TARIFF:
             // populate aggrigated totals for club generation
             $("#club_generation_kwh").html(result.generation.total.toFixed(0));

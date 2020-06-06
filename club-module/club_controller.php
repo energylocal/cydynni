@@ -113,34 +113,35 @@ function club_controller()
             $date->setTimezone(new DateTimeZone("Europe/London"));
             $date->setTimestamp(time());
             $hour = $date->format("H");
-
-            $tariff = "";
-            if ($hour<7) $tariff = "overnight";
-            if ($hour>=7 && $hour<16) $tariff = "daytime";
-            if ($hour>=16 && $hour<20) $tariff = "evening";
-            if ($hour>=20) $tariff = "overnight";
-            if ($live->generation>=$live->club) $tariff = "generation";
-                
-            $live->tariff = $tariff;
-
+           
+            $hydro_price = 0.0;
+            $import_price = 0.0;
+            
             $imprt = 0.0;
             if ($live->generation<=$live->club) $imprt = $live->club - $live->generation;
             $selfuse = $live->club - $imprt;
             
-            $hydro_price = 0.0;
-            $import_price = 0.0;
-            // hydro price
-            if ($hour>=20.0 || $hour<7.0) $hydro_price = 5.8;
-            if ($hour>=7.0 && $hour<16.0) $hydro_price = 10.4;
-            if ($hour>=16.0 && $hour<20.0) $hydro_price = 12.7;
-            $hydro_cost = $selfuse * $hydro_price;
-            // import price
-            if ($hour>=20.0 || $hour<7.0) $import_price = 10.5;
-            if ($hour>=7.0 && $hour<16.0) $import_price = 18.9;
-            if ($hour>=16.0 && $hour<20.0) $import_price = 23.1;
-            $import_cost = $imprt * $import_price;
-            // unit price
-            $live->unit_price = ($import_cost + $hydro_cost) / $live->club;
+            foreach ($tariffs as $tariff) {
+                $start = explode(":",$tariff["start"])[0];
+                $end = explode(":",$tariff["end"])[0];
+                
+                if ($start<$end) {
+                    if ($hour>=$start && $hour<$end) {
+                        $live->tariff = $tariff["name"];
+                        $live->generator_price = $tariff["generator"];
+                        $live->import_price = $tariff["import"];
+                    }
+                } else {
+                    if ($hour>=$start || $hour<$end) {
+                        $live->tariff = $tariff["name"];
+                        $live->generator_price = $tariff["generator"];
+                        $live->import_price = $tariff["import"];
+                    }
+                }
+            }
+            $hydro_cost = $selfuse * $live->generator_price;
+            $import_cost = $imprt * $live->import_price;
+            $live->unit_price = number_format(($import_cost + $hydro_cost) / $live->club,2)*1;
 
             return $live;
             break;

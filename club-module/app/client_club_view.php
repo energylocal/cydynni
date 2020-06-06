@@ -109,28 +109,7 @@
                     
                     <div class="box3">
                       <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table class="keytable">
-                          <?php 
-                          $generation = array(
-                            'name'=> $club_settings['generator'],
-                            'color'=> $club_settings['generator_color'],
-                            'key'=>'generation'
-                          );
-                          foreach (array_merge([$generation], $tariffs) as $key=>$tariff) {
-                            if(!isset($tariff['key'])) {
-                                $tariff['key'] = strtolower($tariff['name']);
-                            }
-                          ?>
-                          <tr>
-                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td>
-                                <b><?php echo t(ucfirst(t($tariff['name'])." Price"));?> </b><br>
-                                <span id="club_<?=$tariff['key'] ?>_kwh"></span> kWh <span id="club_<?=$tariff['key']?>_unitcost"></span><br>
-                                <?php echo t("Costing");?> £<span id="club_<?=$tariff['key']?>_cost"></span>
-                            </td>
-                          </tr>
-                          <?php } ?>
-                        </table>
+                        <table class="keytable" id="club_pie_legend"></table>
                       </div>
                     </div>
                     

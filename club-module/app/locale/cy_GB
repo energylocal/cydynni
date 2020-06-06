@@ -126,9 +126,21 @@
 "OVERNIGHT PRICE":"PRIS DROS NOS",
 "PENCE PER UNIT":"CEINIOG YR UNED",
 
+
+"Current Tariff Period":"Band Tariff Rwan",
+"DAY TIME":"DYDD",
+"OVERNIGHT":"DROS NOS",
+"EVENING":"GYDA'R NOS",
+
+"currently providing":"yn cynhyrchu",
+"of club consumption.":"o defnydd y clwb.",
+"No local hydro currently available.":"Nid oes hydro lleol ar gael ar hyn o bryd.",
+"No local solar currently available.":"Nid oes solar lleol ar gael ar hyn o bryd.",
+
 "Now":"Rŵan",
 "Morning Price":"Pris Bore",
-"Daytime Price":"Pris Canol Dydd",
+"Daytime Price":"Pris Dydd",
+"Midday Price":"Pris Canol Dydd",
 "Evening Price":"Pris Gyda'r Nos",
 "Overnight Price":"Pris Dros Nos",
 
