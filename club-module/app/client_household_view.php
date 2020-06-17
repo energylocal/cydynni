@@ -76,12 +76,16 @@
             </div>
 
             <div id="your-score" class="block household-block">
-              <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div></div>
+              <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div>
+                <div class="visnav-block">
+                  <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("WEEK");?></div>
+                </div>
+              </div>
               
               <div class="block-content" style="color:#c20000">
               
                 <div class="bg-household">
-                  <b><?php echo t("On the");?> <span class="household_date"></span> <?php echo t("you scored");?>:</b>
+                  <b><span class="household_date"></span></b>
                   <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100</div>
                   <!--<div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score"></span>/100</div>-->
                 </div>
@@ -103,7 +107,7 @@
                 <br><br>
                 <p><?php echo t("This means that"); ?> <span class="household_score"></span>% <?php echo t("of your electricity came from local or low-cost power");?></p>
                 <!--<br><br><div class="household_status" style="height:40px"></div><br>-->
-                <br>
+                <!--<br>
                 <p><?php echo t("In total you used"); ?> <span class="household_totalkwh"></span> kWh, <?php echo t("costing"); ?>:</p>
  
                 
@@ -119,19 +123,70 @@
                 <br>
               </div>
             </div>
+
+            <div id="your-usage-price" class="block household-block">
+                <div class="block-title bg-household2"><?php echo t("Your usage by price"); ?>: <span class="household_date"></span><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                -->
+                    <!--
+                    <div class="bg-household3">
+                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you used on"); ?> <span class="household_date"></span></div>
+                    </div>-->
+                    
+                    <br>
+                    
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold;"><?php echo t("ELECTRICITY"); ?></div>
+                      <div style="font-size:22px"><span class="household_totalkwh"></span> kWh</div>
+                      <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph1_placeholder"></canvas>
+                      </div>
+                      <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="household_hrbar1_placeholder"></canvas>
+                      </div>
+                      <br>
+                    </div>
+                
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold;"><?php echo t("COST"); ?></div>
+                      <div style="font-size:22px" class="household_totalcost"></div>
+                      <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
+                          <canvas id="household_piegraph2_placeholder"></canvas>
+                      </div>
+                      <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
+                          <canvas id="household_hrbar2_placeholder"></canvas>
+                      </div>
+                      <br>
+                    </div>
+                    
+                    <div class="box3">
+                      <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("SAVING"); ?></div>
+                      <div style="font-size:22px" class="household_saving"></div>
+                      <div style="padding:15px; text-align:left; margin: 20px auto; max-width:270px; color:#333">
+                        <table id="household_pie_legend" class="keytable"></table>
+                      </div>
+                    </div>
+                    
+                    <div style="clear:both"></div>
+                </div>
+            </div>
                         
             <div id="your-usage" class="block household-block">
-                <div class="block-title bg-household2"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
+                  <div class="visnav-block">
+                    <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("WEEK");?></div>
+                  </div>
+                </div>
                 
                 <div class="block-content">
-                
-                    <div class="bg-household2">
+                    <!--
+                    <div class="bg-household3">
                         <div class="visnav-block-household">
                           <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week"><?php echo t("WEEK");?></div><div class="visnav-household household-left"><</div><div class="visnav-household household-right">></div><div class="visnav-household household-daily"><?php echo t("DAILY");?></div>
                         </div>
                         <div style="clear:both"></div>
                     </div>
-                
+                    -->
                     <div style="padding:10px">
                         <div id="household_bargraph_bound" style="width:100%; height:405px;">
                             <div id="household_bargraph_placeholder" style="height:405px"></div>
@@ -146,49 +201,4 @@
                 </div>
             </div>
             
-            <div id="your-usage-price" class="block household-block">
-                <div class="block-title bg-household3"><?php echo t("Your usage by price"); ?>: <span class="household_date"></span><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">
-                    <!--
-                    <div class="bg-household3">
-                      <div class="bound" style="padding-bottom:20px"><?php echo t("Your electricity is provided on five different price bands. Here's how much of each you used on"); ?> <span class="household_date"></span></div>
-                    </div>-->
-                    
-                    <br>
-                    
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("ELECTRICITY"); ?></div>
-                      <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="household_piegraph1_placeholder"></canvas>
-                      </div>
-                      <div id="household_hrbar1_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="household_hrbar1_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                
-                    <div class="box3">
-                      <div style="font-size:26px; font-weight:bold; color:#f47677"><?php echo t("COST"); ?></div>
-                      <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
-                          <canvas id="household_piegraph2_placeholder"></canvas>
-                      </div>
-                      <div id="household_hrbar2_bound" style="width:100%; height:50px; margin: 0 auto">
-                          <canvas id="household_hrbar2_placeholder"></canvas>
-                      </div>
-                      <br>
-                    </div>
-                    
-                    <div class="box3">
-                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table id="household_pie_legend" class="keytable"></table>
-                      </div>
-                    </div>
-                    
-                    <div style="clear:both"></div>
 
-                    <div class="bg-household3" style="padding:20px">
-                      <div class="bound"><?php echo t("Head to the tips section or get in touch with your Energy Local club to see how you can shift more of your use to cheaper times."); ?></div>
-                    </div>
-                    
-                </div>
-            </div>

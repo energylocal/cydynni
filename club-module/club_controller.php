@@ -169,7 +169,6 @@ function club_controller()
             }
             break;
 
-
         case "household-summary-monthly":
             $format = "json";
             if ($session["read"]) {
@@ -196,6 +195,30 @@ function club_controller()
 
 
 
+            } else {
+                return "session not valid";
+            }
+            break;
+
+        case "household-summary":
+            $format = "json";
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+                
+                if (!isset($_GET['start'])) return false;
+                if (!isset($_GET['end'])) return false;
+                $end = (int) ($_GET['end'] * 0.001);
+                $start = (int) ($_GET['start'] * 0.001);
+                
+                require_once "Modules/feed/feed_model.php";
+                $feed = new Feed($mysqli,$redis,$settings["feed"]);
+                
+                if (!$use_id = $feed->get_id($userid,"use_hh_est")) return "Could not find consumption feed";
+                if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
+
+                require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
+                return get_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"keys");
+                
             } else {
                 return "session not valid";
             }

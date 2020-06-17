@@ -5,7 +5,8 @@ Household page
 */
 
 var household_end = +new Date;
-var household_start = household_end - (3600000*24.0*120);
+var household_start = household_end - (3600000*24.0*30);
+var household_date = "month";
 
 var household_power_end = +new Date;
 var household_power_start = household_power_end - (3600000*12.0);
@@ -33,8 +34,7 @@ var mode = "daily";
 var household_firstload = true;
 
 function household_summary_load()
-{    
-
+{
   if (session.feeds.hub_use!=undefined) {
 
       household_power_feedid = session.feeds.hub_use
@@ -131,6 +131,14 @@ function household_draw_summary(day) {
         total_day_cost += day[2][tr]*tariff_bands[tr].import*0.01;
     }
     
+    // Legend for each import tariff band
+    /*legend += '<tr>'
+    legend += '<td></td>'
+    legend += '<td><b>TOTAL</b><br>'
+    legend += (0).toFixed(2)+" kWh @"+((0).toFixed(2))+" p/kWh<br>"
+    legend += t("Costing")+" £"+total_day_cost.toFixed(2)+'</td>'
+    legend += '</tr>'*/
+    
     $("#household_pie_legend").html(legend);  
     
     // 1. Determine score
@@ -171,7 +179,7 @@ function household_draw_summary(day) {
     if (d.getDate()>3) ext = "th";
     if (lang=="cy_GB") ext = "";    
 
-    $(".household_date").html(d.getDate()+ext+" "+t(months_long[d.getMonth()]));   
+    // $(".household_date").html(d.getDate()+ext+" "+t(months_long[d.getMonth()]));   
     
     var total_day_kwh = day[1][tariff_bands.length]; 
     $(".household_totalkwh").html(total_day_kwh.toFixed(2));
@@ -180,10 +188,139 @@ function household_draw_summary(day) {
     // Saving calculation
     var totalcostflatrate = total_day_kwh * 0.1544;
     var costsaving = totalcostflatrate - total_day_cost;
-    $(".household_costsaving").html("£"+costsaving.toFixed(2));
+    $(".household_saving").html("£"+costsaving.toFixed(2));
+    
+    var unit_price = 100 * total_day_cost / total_day_kwh
+    $(".household_unitprice").html(unit_price.toFixed(2)+" p/kWh");
+    
+  
     
     household_pie_draw();
 }
+
+function household_draw_summary2() { 
+
+$(".household_date").html(t("In the last %s, you scored:").replace('%s', t(household_date)));
+
+$.ajax({
+    url: path+club+"/household-summary?start="+household_start+"&end="+household_end,
+    dataType: 'json',
+        success: function(result) {
+            
+            var generation_value = result.generation_cost.total;
+            var total_low_cost = result.generation_cost.total;
+            var total_day_cost = result.cost.total;
+            if (result.import_cost.total!=undefined) total_low_cost += result.import_cost.total
+            if (result.import_cost.evening!=undefined) total_low_cost -= result.import_cost.evening  
+                        
+            var score = Math.round(100*(total_low_cost / total_day_cost));
+            $(".household_score").html(score);
+
+            if (score>=20) star1 = "starred"; else star1 = "star20red";
+            if (score>=40) star2 = "starred"; else star2 = "star20red";
+            if (score>=60) star3 = "starred"; else star3 = "star20red";
+            if (score>=80) star4 = "starred"; else star4 = "star20red";
+            if (score>=90) star5 = "starred"; else star5 = "star20red";
+            
+            $("#household_star1").attr("src",app_path+"images/"+star1+".png");
+            setTimeout(function() { $("#household_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
+            setTimeout(function() { $("#household_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
+            setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
+            setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
+
+            household_pie_data_cost = [];
+            household_pie_data_energy = [];
+                    
+            var tariff_colors = {
+                "overnight": "#014c2d",
+                "morning": "#ffdc00",
+                "midday": "#ffb401",
+                "daytime": "#ffb401",
+                "evening": "#e6602b",
+                "standard": "#ffb401"
+            }
+
+            // COST
+            for (var tariff_name in result.cost) {
+                if (tariff_name!='total') {
+                    household_pie_data_cost.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation_cost[tariff_name],
+                        import: result.import_cost[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
+            }
+
+            // ENERGY
+            for (var tariff_name in result.demand) {
+                if (tariff_name!='total') {
+                    household_pie_data_energy.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation[tariff_name],
+                        import: result.import[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
+            }
+            
+            // Create aggregated legend item for hydro
+            var legend = "";
+            legend += '<tr>'
+            legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+            legend += '<td><b>'+t(ucfirst(club_settings.generator)+" Price")+'</b><br>'
+            legend += result.generation.total.toFixed(2)+" kWh "
+            if (result.generation.total>0) legend += "@"+(100*generation_value/result.generation.total).toFixed(2)+" p/kWh"
+            legend += "<br>"
+            legend += t("Costing")+" £"+generation_value.toFixed(2)+'</td>'
+            legend += '</tr>'
+            
+            // CHART KEY VALUES FOR EACH TARIFF:
+            // populate tariff totals for club in pie chart key
+            for (var tariff_name in result.import) {
+                if (tariff_name!='total') {
+                    var tariff_cost = result.import_cost[tariff_name];
+                    var tariff_kwh = result.import[tariff_name];
+                    
+                    // Legend for each import tariff band
+                    legend += '<tr>'
+                    legend += '<td><div class="key" style="background-color:'+tariff_colors[tariff_name]+'"></div></td>'
+                    legend += '<td><b>'+t(ucfirst(t(tariff_name)+" Price"))+'</b><br>'
+                    legend += tariff_kwh.toFixed(0)+" kWh @"+(100*tariff_cost/tariff_kwh).toFixed(1)+" p/kWh<br>"
+                    legend += t("Costing")+" £"+tariff_cost.toFixed(2)+'</td>'
+                    legend += '</tr>'
+                }
+            }
+            var unit_price = 100 * result.cost.total / result.demand.total
+            
+            legend += '<tr>'
+            legend += '<td></td>'
+            legend += '<td><b>'+t("Average Price")+':</b><br>'+unit_price.toFixed(1)+" p/kWh</td>"
+            legend += '</tr>'
+            
+            $("#household_pie_legend").html(legend);  
+
+            $(".household_totalkwh").html(result.demand.total.toFixed(2));
+            $(".household_totalcost").html("£"+result.cost.total.toFixed(2));
+
+            // Saving calculation
+            var saving = (result.demand.total * 0.1544) - result.cost.total;
+            if (saving>0) {
+                // $(".household_saving_title").show();
+                $(".household_saving").html("£"+saving.toFixed(2));
+            } else {
+                // $(".household_saving_title").hide();
+                $(".household_saving").html("£0");
+            }
+            
+            household_pie_draw();
+        }
+    });
+}
+
+
+
+
 
 function household_pie_draw() {
 
@@ -241,8 +378,9 @@ function household_bargraph_load() {
                     
                     if (household_firstload) {
                         household_firstload = false;
-                        household_draw_summary(household_result[household_result.length-1]);
+                        // household_draw_summary(household_result[household_result.length-1]);
                     }
+                    household_draw_summary2();
 
                     // Create initial household_tariff_data array for each tariff band
                     household_tariff_data = {morning:[],midday:[],daytime:[],evening:[],overnight:[],generation:[],standard:[]}
@@ -260,6 +398,9 @@ function household_bargraph_load() {
                     var kwh_in_window = 0;
                     var cost_in_window = 0;
                     
+                    var use_totals = {};
+                    var import_totals = {};
+                    
                     for (var z=0; z<len; z++) {
                     
                         var time = result[z][0];
@@ -276,7 +417,13 @@ function household_bargraph_load() {
                         // populate this half hour array with values for each tariff band, default to 0 if band not present
                         let hh = {morning:0,midday:0,daytime:0,evening:0,overnight:0,standard:0}
                         for (var tr=0; tr<tariff_bands.length; tr++) {
-                            hh[tariff_bands[tr].name] = result[z][2][tr];
+                            var name = tariff_bands[tr].name;
+                            hh[name] = result[z][2][tr];
+                            
+                            if (import_totals[name]==undefined) import_totals[name] = 0;
+                            import_totals[name] += result[z][2][tr];
+                            if (use_totals[name]==undefined) use_totals[name] = 0;
+                            use_totals[name] += result[z][1][tr];
                         }
                         
                         household_tariff_data.morning.push([time*1000,hh.morning]);
@@ -292,6 +439,9 @@ function household_bargraph_load() {
                         kwh_in_window += result[z][1][result[z][1].length-1];
                         cost_in_window += result[z][3][result[z][3].length-1];
                     }
+                    
+                    console.log(import_totals);
+                    console.log(use_totals);
                     
                     var unit_cost = 100 * cost_in_window / kwh_in_window;
                     
@@ -498,6 +648,7 @@ $(".household-day").click(function(event) {
     event.stopPropagation();
     household_end = +new Date;
     household_start = household_end - (3600000*24.0*1);
+    household_date = "day";
     household_bargraph_load();
 });
 
@@ -505,6 +656,7 @@ $(".household-week").click(function(event) {
     event.stopPropagation();
     household_end = +new Date;
     household_start = household_end - (3600000*24.0*7);
+    household_date = "week";
     household_bargraph_load();
 });
 
@@ -512,6 +664,7 @@ $(".household-month").click(function(event) {
     event.stopPropagation();
     household_end = +new Date;
     household_start = household_end - (3600000*24.0*30);
+    household_date = "month";
     household_bargraph_load();
 });
 
@@ -519,6 +672,7 @@ $(".household-year").click(function(event) {
     event.stopPropagation();
     household_end = +new Date;
     household_start = household_end - (3600000*24.0*365);
+    household_date = "year";
     household_bargraph_load();
 });
 
