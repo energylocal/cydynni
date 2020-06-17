@@ -200,7 +200,7 @@ function load()
         $("#estimated_days").html("");
     }
     
-    var tariff_colors = {morning:"#ffdc00",midday:"#ffb401",daytime:"#ffb401",evening:"#e6602b",overnight:"#014c2d"};
+    var tariff_colors = {morning:"#ffdc00",midday:"#ffb401",daytime:"#ffb401",evening:"#e6602b",overnight:"#014c2d",standard:"#ffb401"};
     
     // household pie chart
     household_pie3_data_cost = []
@@ -217,7 +217,7 @@ function load()
         keytable += '</tr>'
     }
    
-    ['morning','midday','daytime','evening','overnight'].forEach(function(name) {
+    ['morning','midday','daytime','evening','overnight','standard'].forEach(function(name) {
         if (month.import[name]!=undefined) {
             household_pie3_data_cost.push({name:t(name.toUpperCase()), generation: month.generation_cost[name], import: month.import_cost[name], color:tariff_colors[name]});
             household_pie3_data_energy.push({name:t(name.toUpperCase()), generation: month.generation[name], import: month.import[name], color:tariff_colors[name]});

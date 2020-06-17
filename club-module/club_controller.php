@@ -245,6 +245,13 @@ function club_controller()
             }
             break;
 
+        case "demandshaper-octopus":
+            $format = "json";
+            if ($result = $redis->get("$club:club:demandshaper-octopus")) {
+                return json_decode($result);
+            }
+            break;
+
         case "login":
             if (!$session['read']) {
             
@@ -327,45 +334,50 @@ function club_controller()
         // Administration functions 
         // ----------------------------------------------------------------------
         case "admin":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "html";
+            $route->format = "html";
+            if ($session['admin']) {
                 unset($session["token"]);
                 return view("Modules/club/app/admin_view.php",array('session'=>$session));
             }
             break;
             
         case "admin-users":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "json";
-                if ($session['admin']) {
-                    // Include data from club table here too
-                    $result = $mysqli->query("SELECT id,username,email,apikey_read,admin FROM users ORDER BY id ASC");
-                    $users = array();
-                    while($row = $result->fetch_object()) {
-                        $userid = $row->id;
-                        // Include fields from club table
-                        $user_result = $mysqli->query("SELECT mpan,token,welcomedate,reportdate,clubs_id FROM cydynni WHERE `userid`='$userid'");
-                        $user_row = $user_result->fetch_object();
-                        if ($user_row) {
-                            foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
-                        }
-                        $row->hits = $redis->get("userhits:$userid");
-                        $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
-                        
-                        $result1 = $mysqli->query("SELECT count(*) FROM feeds WHERE `userid`='$userid'");
-                        $row->feeds = $result1->fetch_array()[0];
-                        
-                        $feed_result = $mysqli->query("SELECT id FROM feeds WHERE `userid`='$userid' AND `name`='meter_power'");
-                        if ($feed_row = $feed_result->fetch_object()) {
-                            $row->meter_power = $feed_row->id;
-                        } else { 
-                            $row->meter_power = "";
-                        }
-                        
-                        $users[] = $row;
-                    }
-                    return $users;
+            $route->format = "json";
+            if ($session['admin']) {
+            
+                $select_by_club = "";
+                if (isset($_GET['club_id'])) {
+                    $club_id = (int) $_GET['club_id'];
+                    $select_by_club = "WHERE `clubs_id`='$club_id'";
                 }
+                
+                $result = $mysqli->query("SELECT userid,mpan,token,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
+                $users = array();
+                while($row = $result->fetch_object()) {
+                    $userid = $row->userid;
+                    
+                    $user_result = $mysqli->query("SELECT username,email,apikey_read,admin FROM users WHERE `id`='$userid'");
+                    $user_row = $user_result->fetch_object();
+                    if ($user_row) {
+                        foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                    }
+                    
+                    $row->hits = $redis->get("userhits:$userid");
+                    $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
+                    
+                    $result1 = $mysqli->query("SELECT count(*) FROM feeds WHERE `userid`='$userid'");
+                    $row->feeds = $result1->fetch_array()[0];
+                    
+                    $feed_result = $mysqli->query("SELECT id FROM feeds WHERE `userid`='$userid' AND `name`='meter_power'");
+                    if ($feed_row = $feed_result->fetch_object()) {
+                        $row->meter_power = $feed_row->id;
+                    } else { 
+                        $row->meter_power = "";
+                    }
+                    
+                    $users[] = $row;
+                }
+                return $users;
             }
             break;
             
@@ -400,6 +412,29 @@ function club_controller()
                 }
             }
             break;
+
+        case "admin-add-user":
+            $route->format = "json";
+            if ($session['admin']) {
+                
+                $club_id = (int) post('club_id');
+                $username = post('username');
+                $email = post('email');
+                $mpan = (int) post('mpan');
+            
+                // Generate new random password
+                $password = hash('sha256',md5(uniqid(rand(), true)));
+                $password = substr($password, 0, 10);
+            
+                $result = $user->register($username, $password, $email);
+                if ($result["success"]) {
+                    $userid = $result["userid"];
+                    $mysqli->query("INSERT INTO cydynni (clubs_id,userid,mpan,token,premisestoken,welcomedate,reportdate) VALUES ('$club_id','$userid','$mpan','','',0,0)");
+                }
+                return $result;
+            }
+            break;
+            
             
         case "admin-registeremail":
             if (!$settings["cydynni"]["is_hub"]) {

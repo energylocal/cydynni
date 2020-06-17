@@ -87,3 +87,49 @@ $result = new stdClass();
 $result->DATA = array();
 $result->DATA[0] = $demandshaper;
 $redis->set("$club:club:demandshaper",json_encode($result));
+
+// --------------------------------------------------------------------------------
+// Octopus format
+// --------------------------------------------------------------------------------
+$start = floor(time()/1800)*1800;
+$end = $start + (3600*24);
+
+$date = new DateTime();
+$date->setTimezone(new DateTimeZone("UTC"));
+
+$rows = array();
+
+for ($time=$start; $time<$end; $time+=1800) {
+    $row = array();
+    
+    $date->setTimestamp($time);
+    $row['valid_from'] = $date->format("Y-m-d\TH:i:s\Z");
+    $hm = $date->format('H:i');
+    $h = $date->format('H')*1;
+    
+    $date->setTimestamp($time+1800);
+    $row['valid_to'] = $date->format("Y-m-d\TH:i:s\Z");
+
+    
+
+    $hydro_price = 0.0;
+    if ($h>=20.0 || $h<7.0) $hydro_price = 0.058;
+    if ($h>=7.0 && $h<16.0) $hydro_price = 0.104;
+    if ($h>=16.0 && $h<20.0) $hydro_price = 0.127;
+
+    $average = $sum[$hm] / $count[$hm];
+    $row['value_exc_vat'] = number_format($average*$hydro_price,2)*1;
+    $row['value_inc_vat'] = number_format($average*$hydro_price,2)*1;
+    
+    $rows[] = $row;
+}
+
+$demandshaper = array(
+    "count"=>0,
+    "next"=>null,
+    "previous"=>null,
+    "results"=>$rows
+);
+
+$redis->set("$club:club:demandshaper-octopus",json_encode($demandshaper));
+// --------------------------------------------------------------------------------

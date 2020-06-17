@@ -115,10 +115,12 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
         // -------------------------------------------------------
         // Work out which tariff version we are on
         $history_index = 0;
-        for ($t=0; $t<count($tariff_history); $t++) {
-            $s = $tariff_history[$t]['start'];
-            $e = $tariff_history[$t]['end'];
-            if ($time>=$s && $time<$e) $history_index = $t;
+        if (count($tariff_history)>1) {
+            for ($t=0; $t<count($tariff_history); $t++) {
+                $s = $tariff_history[$t]['start'];
+                $e = $tariff_history[$t]['end'];
+                if ($time>=$s && $time<$e) $history_index = $t;
+            }
         }
         $tariffs = $tariff_history[$history_index]["tariffs"];
         $tcount = count($tariffs);
@@ -240,6 +242,12 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
                         $imp_t[$name] += $import;
                         $gen_t[$name] += $gen;
                     }
+                }
+                // Standard daytime tariffs
+                if ($tariffs[$t]["start"]==$tariffs[$t]["end"]) {
+                    $use_t[$name] += $use;
+                    $imp_t[$name] += $import;
+                    $gen_t[$name] += $gen;
                 }
             }
 

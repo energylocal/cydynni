@@ -40,7 +40,8 @@ $.ajax({
             var generation_value = result.generation_cost.total;
             var total_low_cost = result.generation_cost.total;
             var total_day_cost = result.cost.total;
-            total_low_cost += result.import_cost.total - result.import_cost.evening          
+            if (result.import_cost.total!=undefined) total_low_cost += result.import_cost.total
+            if (result.import_cost.evening!=undefined) total_low_cost -= result.import_cost.evening  
                         
             var score = Math.round(100*(total_low_cost / total_day_cost));
             $(".club_score").html(score);
@@ -89,7 +90,8 @@ $.ajax({
                 "morning": "#ffdc00",
                 "midday": "#ffb401",
                 "daytime": "#ffb401",
-                "evening": "#e6602b"
+                "evening": "#e6602b",
+                "standard": "#ffb401"
             }
 
             // COST
@@ -233,6 +235,7 @@ function club_bargraph_load() {
     data.export = [];
     data.selfuse = [];
     data.price = [];
+    data.standard = [];
 
     for (var z in club_data) {
         var time = club_data[z][0];
@@ -266,6 +269,7 @@ function club_bargraph_load() {
                     
             if (sh<eh && (hour>=sh && hour<eh)) on_tariff = true;
             if (sh>eh && (hour>=sh || hour<eh)) on_tariff = true;
+            if (sh==eh) on_tariff = true;
             
             if (on_tariff) {
                 unit_price = (tariffs[x].import*imprt + tariffs[x].generator*selfuse) / consumption
