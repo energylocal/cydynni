@@ -63,6 +63,17 @@ function household_draw_summary(day) {
     if (day==undefined) return false;
     var time = day[0];
 
+    var d = new Date(time*1000);
+    var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var ext = "";
+    if (d.getDate()==1) ext = "st";
+    if (d.getDate()==2) ext = "nd";
+    if (d.getDate()==3) ext = "rd";
+    if (d.getDate()>3) ext = "th";
+    if (lang=="cy_GB") ext = "";
+    
+    $(".household_date").html(t("On the %s you scored").replace('%s', d.getDate()+ext+" "+t(months_long[d.getMonth()])));
+
     // Work out which tariff version we are on
     var history_index = 0;
     for (var tr=0; tr<club_settings.tariff_history.length; tr++) {
@@ -71,10 +82,7 @@ function household_draw_summary(day) {
         if (time>=s && time<e) history_index = tr;
     }
     var tariff_bands = club_settings.tariff_history[history_index].tariffs;
-    
-    var d = new Date(time*1000);
-    var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
+        
     household_pie_data_cost = [];
     household_pie_data_energy = [];
     
@@ -131,103 +139,31 @@ function household_draw_summary(day) {
         total_day_cost += day[2][tr]*tariff_bands[tr].import*0.01;
     }
     
-    // Legend for each import tariff band
-    /*legend += '<tr>'
-    legend += '<td></td>'
-    legend += '<td><b>TOTAL</b><br>'
-    legend += (0).toFixed(2)+" kWh @"+((0).toFixed(2))+" p/kWh<br>"
-    legend += t("Costing")+" £"+total_day_cost.toFixed(2)+'</td>'
-    legend += '</tr>'*/
-    
-    $("#household_pie_legend").html(legend);  
-    
-    // 1. Determine score
-    // Calculated as amount of power consumed at times off peak times and from generation
-    var score = Math.round(100*(total_low_cost / total_day_cost));
-
-    if (score>=20) star1 = "starred"; else star1 = "star20red";
-    if (score>=40) star2 = "starred"; else star2 = "star20red";
-    if (score>=60) star3 = "starred"; else star3 = "star20red";
-    if (score>=80) star4 = "starred"; else star4 = "star20red";
-    if (score>=90) star5 = "starred"; else star5 = "star20red";
-
-    $("#household_star1").attr("src",app_path+"images/"+star1+".png");
-    setTimeout(function() { $("#household_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
-    setTimeout(function() { $("#household_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
-    setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
-    setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
-
-    // Show status summary ( below score stars )
-    setTimeout(function() {
-        if (score<30) {
-            $(".household_status").html(t("You are using power in a very expensive way"));
-        }
-        if (score>=30 && score<70) {
-            $(".household_status").html(t("You’re doing ok at using "+club_settings.generator+" & cheaper power.<br>Can you move more of your use away from peak times?"));
-        }
-        if (score>=70) {
-            $(".household_status").html(t("You’re doing really well at matching your use to local electricity and cheap times for extra electricity"));
-        }
-    }, 400);
-    
-    $(".household_score").html(score);
-    
-    var ext = "";
-    if (d.getDate()==1) ext = "st";
-    if (d.getDate()==2) ext = "nd";
-    if (d.getDate()==3) ext = "rd";
-    if (d.getDate()>3) ext = "th";
-    if (lang=="cy_GB") ext = "";    
-
-    // $(".household_date").html(d.getDate()+ext+" "+t(months_long[d.getMonth()]));   
-    
-    var total_day_kwh = day[1][tariff_bands.length]; 
-    $(".household_totalkwh").html(total_day_kwh.toFixed(2));
-    $(".household_totalcost").html("£"+total_day_cost.toFixed(2));
-    
-    // Saving calculation
-    var totalcostflatrate = total_day_kwh * 0.1544;
-    var costsaving = totalcostflatrate - total_day_cost;
-    $(".household_saving").html("£"+costsaving.toFixed(2));
-    
-    var unit_price = 100 * total_day_cost / total_day_kwh
-    $(".household_unitprice").html(unit_price.toFixed(2)+" p/kWh");
-    
-  
-    
+    $("#household_pie_legend").html(legend);
+    draw_score(day[1][tariff_bands.length],total_day_cost,total_low_cost);
     household_pie_draw();
 }
 
 function household_draw_summary2() { 
 
-$(".household_date").html(t("In the last %s, you scored:").replace('%s', t(household_date)));
+    if(['year','month','week','day'].indexOf(household_date) != -1) {  
+        $(".household_date").html(t("In the last %s, you scored:").replace('%s', t(household_date)));
+    } else if (household_date=="custom") {
+        $(".household_date").html(t("For the range selected in the graph")+":");
+    }
 
-$.ajax({
-    url: path+club+"/household-summary?start="+household_start+"&end="+household_end,
-    dataType: 'json',
-        success: function(result) {
-            
+    $.ajax({
+        url: path+club+"/household-summary?start="+household_start+"&end="+household_end,
+        dataType: 'json',
+        success: function(result) 
+        {    
             var generation_value = result.generation_cost.total;
             var total_low_cost = result.generation_cost.total;
             var total_day_cost = result.cost.total;
             if (result.import_cost.total!=undefined) total_low_cost += result.import_cost.total
             if (result.import_cost.evening!=undefined) total_low_cost -= result.import_cost.evening  
-                        
-            var score = Math.round(100*(total_low_cost / total_day_cost));
-            $(".household_score").html(score);
-
-            if (score>=20) star1 = "starred"; else star1 = "star20red";
-            if (score>=40) star2 = "starred"; else star2 = "star20red";
-            if (score>=60) star3 = "starred"; else star3 = "star20red";
-            if (score>=80) star4 = "starred"; else star4 = "star20red";
-            if (score>=90) star5 = "starred"; else star5 = "star20red";
-            
-            $("#household_star1").attr("src",app_path+"images/"+star1+".png");
-            setTimeout(function() { $("#household_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
-            setTimeout(function() { $("#household_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
-            setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
-            setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
-
+            if (result.import_cost.standard!=undefined) total_low_cost -= result.import_cost.standard
+              
             household_pie_data_cost = [];
             household_pie_data_energy = [];
                     
@@ -298,29 +234,43 @@ $.ajax({
             legend += '<td><b>'+t("Average Price")+':</b><br>'+unit_price.toFixed(1)+" p/kWh</td>"
             legend += '</tr>'
             
-            $("#household_pie_legend").html(legend);  
-
-            $(".household_totalkwh").html(result.demand.total.toFixed(2));
-            $(".household_totalcost").html("£"+result.cost.total.toFixed(2));
-
-            // Saving calculation
-            var saving = (result.demand.total * 0.1544) - result.cost.total;
-            if (saving>0) {
-                // $(".household_saving_title").show();
-                $(".household_saving").html("£"+saving.toFixed(2));
-            } else {
-                // $(".household_saving_title").hide();
-                $(".household_saving").html("£0");
-            }
-            
+            $("#household_pie_legend").html(legend);
+            draw_score(result.demand.total,result.cost.total,total_low_cost);
             household_pie_draw();
         }
     });
 }
 
+function draw_score(total_demand,total_cost,total_low_cost) {
 
+    var score = Math.round(100*(total_low_cost / total_cost));
+    $(".household_score").html(score);
 
+    if (score>=20) star1 = "starred"; else star1 = "star20red";
+    if (score>=40) star2 = "starred"; else star2 = "star20red";
+    if (score>=60) star3 = "starred"; else star3 = "star20red";
+    if (score>=80) star4 = "starred"; else star4 = "star20red";
+    if (score>=90) star5 = "starred"; else star5 = "star20red";
+    
+    $("#household_star1").attr("src",app_path+"images/"+star1+".png");
+    setTimeout(function() { $("#household_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
+    setTimeout(function() { $("#household_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
+    setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
+    setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
 
+    $(".household_totalkwh").html(total_demand.toFixed(2));
+    $(".household_totalcost").html("£"+total_cost.toFixed(2));
+
+    // Saving calculation
+    var saving = (total_demand * club_settings.unitprice_comparison) - total_cost;
+    if (saving>0) {
+        // $(".household_saving_title").show();
+        $(".household_saving").html("£"+saving.toFixed(2));
+    } else {
+        // $(".household_saving_title").hide();
+        $(".household_saving").html("£0");
+    }
+}
 
 function household_pie_draw() {
 
@@ -445,6 +395,7 @@ function household_bargraph_load() {
                     
                     var unit_cost = 100 * cost_in_window / kwh_in_window;
                     
+                    $("#household_use_history_stats").parent().parent().show();
                     $("#household_use_history_stats").html(kwh_in_window.toFixed(1)+" kWh, £"+cost_in_window.toFixed(0)+", "+unit_cost.toFixed(2)+"p/kWh");
                     
                     householdseries = [];
@@ -487,6 +438,7 @@ function household_bargraph_load() {
     {
         $(".household-daily").show();
         $("#household-daily-note").hide();
+        $("#household_use_history_stats").parent().parent().hide();
         
         $.ajax({                                      
             url: path+"feed/average.json?id="+session.feeds["use_hh_est"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
@@ -680,6 +632,7 @@ $('#household_bargraph_placeholder').bind("plotselected", function (event, range
     household_start = ranges.xaxis.from;
     household_end = ranges.xaxis.to;
     household_bargraph_load();
+    household_date = "custom";
 });
 
 $('#household_bargraph_placeholder').bind("plothover", function (event, pos, item) {
@@ -728,7 +681,10 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                 tooltip(item.pageX, item.pageY, date+"<br>"+(elec_kwh).toFixed(3)+" kWh", "#fff"); 
             }
         }
-    } else $("#tooltip").remove();
+    } else {
+        $("#tooltip").remove();
+        // household_draw_summary2();
+    }    
 });
 
 $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, item) {
@@ -838,7 +794,7 @@ function household_powergraph_draw() {
         $('#household_powergraph_placeholder').append("<div id='powergraph-label' style='position:absolute;left:50px;top:30px;color:#666;font-size:12px'></div>");
     }
     
-    $("#household_use_history_stats").html("");
+    $("#household_use_history_stats").parent().parent().hide();
 }
 
 $(".household-power-left").click(function(event) {
