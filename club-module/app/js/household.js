@@ -4,10 +4,6 @@ Household page
 
 */
 
-var household_end = +new Date;
-var household_start = household_end - (3600000*24.0*14);
-var household_date = "fortnight";
-
 var household_power_end = +new Date;
 var household_power_start = household_power_end - (3600000*12.0);
 var household_power_feedid = 0;
@@ -145,14 +141,14 @@ function household_draw_summary_day(day) {
 
 function household_draw_summary_range() { 
 
-    if(['year','month','fortnight','week','day'].indexOf(household_date) != -1) {  
-        $(".household_date").html(t("In the last %s, you scored:").replace('%s', t(household_date)));
+    if(['year','month','fortnight','week','day'].indexOf(date_selected) != -1) {  
+        $(".household_date").html(t("In the last %s, you scored:").replace('%s', t(date_selected)));
     } else if (household_date=="custom") {
         $(".household_date").html(t("For the range selected in the graph")+":");
     }
 
     $.ajax({
-        url: path+club+"/household-summary?start="+household_start+"&end="+household_end,
+        url: path+club+"/household-summary?start="+view.start+"&end="+view.end,
         dataType: 'json',
         success: function(result) 
         {    
@@ -313,7 +309,7 @@ function household_pie_draw() {
 function household_bargraph_load() {
 
     var npoints = 800;
-    interval = ((household_end - household_start) * 0.001) / npoints;
+    interval = ((view.end - view.start) * 0.001) / npoints;
     interval = round_interval(interval);
     
     if (mode=="daily") {
@@ -321,8 +317,8 @@ function household_bargraph_load() {
         $("#household-daily-note").show();
         
         $.ajax({                                      
-            //url: path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+household_start+"&end="+household_end+"&mode=daily&apikey="+session['apikey_read'],
-            url: path+club+"/household-daily-summary?start="+household_start+"&end="+household_end+"&apikey="+session['apikey_read'],
+            //url: path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+view.start+"&end="+view.end+"&mode=daily&apikey="+session['apikey_read'],
+            url: path+club+"/household-daily-summary?start="+view.start+"&end="+view.end+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {
@@ -438,7 +434,7 @@ function household_bargraph_load() {
         $("#household_use_history_stats").parent().parent().hide();
         
         $.ajax({                                      
-            url: path+"feed/average.json?id="+session.feeds["use_hh_est"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
+            url: path+"feed/average.json?id="+session.feeds["use_hh_est"]+"&start="+view.start+"&end="+view.end+"&interval="+interval+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {
@@ -448,7 +444,7 @@ function household_bargraph_load() {
                     household_data = result;
 
                     $.ajax({                                      
-                        url: path+"feed/average.json?id="+session.feeds["gen_hh"]+"&start="+household_start+"&end="+household_end+"&interval="+interval+"&apikey="+session['apikey_read'],
+                        url: path+"feed/average.json?id="+session.feeds["gen_hh"]+"&start="+view.start+"&end="+view.end+"&interval="+interval+"&apikey="+session['apikey_read'],
                         dataType: 'json',
                         async: true,                      
                         success: function(result) {
@@ -530,6 +526,7 @@ function household_bargraph_resize() {
 
 // -------------------------------------------------------------------------------------------
 
+/*
 $(".household-left").click(function(event) {
     event.stopPropagation();
     var time_window = household_end - household_start;
@@ -544,49 +541,13 @@ $(".household-right").click(function(event) {
     household_end += time_window * 0.5;
     household_start += time_window * 0.5;
     household_bargraph_load();
-});
-
-$(".household-period-select").click(function(event) {
-    event.stopPropagation();
-});
-
-$(".household-period-select").change(function(event) {
-    event.stopPropagation();
-    
-    household_date = $(this).val();
-    household_end = +new Date;
-    
-    var period_length = 3600000*24.0*30;
-    
-    switch (household_date) {
-        case "day": period_length = (3600000*24.0*1); break;
-        case "week": period_length = (3600000*24.0*7); break;
-        case "fortnight": period_length = (3600000*24.0*14); break; 
-        case "month": period_length = (3600000*24.0*30); break;
-        case "year": period_length = (3600000*24.0*365); break;
-    }
-    
-    household_start = household_end - period_length;
-      
-    household_bargraph_load();
-    $(".household-period-select").val(household_date);
-    
-    view.start = household_start
-    view.end = household_end
-    club_date = household_date
-    club_bargraph_load();
-    club_bargraph_draw();
-    $(".club-period-select").val(club_date);
-    $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(club_date)));
-});
-
-
+});*/
 
 $('#household_bargraph_placeholder').bind("plotselected", function (event, ranges) {
-    household_start = ranges.xaxis.from;
-    household_end = ranges.xaxis.to;
+    view.start = ranges.xaxis.from;
+    view.end = ranges.xaxis.to;
     household_bargraph_load();
-    household_date = "custom";
+    date_selected = "custom";
     $(".household-period-select").val("custom");
     
 });
@@ -644,14 +605,14 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
 
 $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, item) {
     if (item) {
-        household_start = item.datapoint[0];
-        household_end = household_start + (3600*24*1000);
+        view.start = item.datapoint[0];
+        view.end = view.start + (3600*24*1000);
         mode = "halfhourly";
         household_bargraph_load();
         
         if (session.feeds.meter_power!=undefined) {
-            household_power_start = household_start
-            household_power_end = household_end
+            household_power_start = view.start
+            household_power_end = view.end
             household_powergraph_load()
         }
     }
@@ -659,8 +620,9 @@ $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, ite
 
 $(".household-daily").click(function(event) {
     event.stopPropagation();
-    household_end = +new Date;
-    household_start = household_end - (3600000*24.0*30);
+    view.end = +new Date;
+    view.start = view.end - (3600000*24.0*30);
+    date_selected = "month"
     mode = "daily";
     household_bargraph_load();
 

@@ -84,6 +84,7 @@ var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
 var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
+
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
@@ -215,6 +216,15 @@ function resize() {
     household_powergraph_draw();
 }
 
+date_selected = "fortnight";
+var out = "";
+var period_select_options = ["day","week","fortnight","month","year"];
+for (var z in period_select_options) {
+    out += '<option value="'+period_select_options[z]+'">'+t(ucfirst(period_select_options[z]))+'</option>';
+}
+$(".period-select").html(out);
+$(".period-select").val(date_selected);
+
 // Flot
 var flot_font_size = 12;
 var previousPoint = false;
@@ -230,6 +240,41 @@ if (session.read) {
 }
 
 resize();
+
+// ----------------------------------------------------------------------
+// Period selection
+// ----------------------------------------------------------------------
+$(".period-select").click(function(event) {
+    event.stopPropagation();
+});
+
+$(".period-select").change(function(event) {
+    event.stopPropagation();
+    
+    date_selected = $(this).val();
+    view.end = +new Date;
+    
+    var period_length = 3600000*24.0*30;
+    
+    switch (date_selected) {
+        case "day": period_length = (3600000*24.0*1); break;
+        case "week": period_length = (3600000*24.0*7); break;
+        case "fortnight": period_length = (3600000*24.0*14); break;
+        case "month": period_length = (3600000*24.0*30); break;
+        case "year": period_length = (3600000*24.0*365); break;
+    }
+    
+    view.start = view.end - period_length;
+        
+    club_bargraph_load();
+    club_bargraph_draw();
+    $(".period-select").val(date_selected);
+    $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
+    
+    // Copy to household
+    household_bargraph_load()
+});
+
 // ----------------------------------------------------------------------
 // Translation
 // ----------------------------------------------------------------------

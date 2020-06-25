@@ -1,15 +1,6 @@
             <div class="block">
                 <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                  <div class="visnav-block">
-                    <select class="club-period-select">
-                      <option value="custom"><?php echo t("Custom");?></option>
-                      <option value="day"><?php echo t("Day");?></option>
-                      <option value="week"><?php echo t("Week");?></option>
-                      <option value="fortnight" selected><?php echo t("Fortnight");?></option>
-                      <option value="month"><?php echo t("Month");?></option>
-                      <option value="year"><?php echo t("Year");?></option>
-                    </select>
-                  </div>
+                  <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 
                 <div class="block-content" style="color:#ffb401">
@@ -66,16 +57,7 @@
             </div>
             <div class="block">
                 <div class="block-title bg-club2"><?php echo t("Club breakdown"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                <div class="visnav-block">
-                  <select class="club-period-select">
-                    <option value="custom"><?php echo t("Custom");?></option>
-                    <option value="day"><?php echo t("Day");?></option>
-                    <option value="week"><?php echo t("Week");?></option>
-                    <option value="fortnight" selected><?php echo t("Fortnight");?></option>
-                    <option value="month"><?php echo t("Month");?></option>
-                    <option value="year"><?php echo t("Year");?></option>
-                  </select>
-                </div>
+                <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 <div class="block-content">
                 

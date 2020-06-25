@@ -77,16 +77,7 @@
 
             <div id="your-score" class="block household-block">
               <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div>
-                <div class="visnav-block">
-                  <select class="household-period-select">
-                    <option value="custom"><?php echo t("Custom");?></option>
-                    <option value="day"><?php echo t("Day");?></option>
-                    <option value="week"><?php echo t("Week");?></option>
-                    <option value="fortnight" selected><?php echo t("Fortnight");?></option>
-                    <option value="month"><?php echo t("Month");?></option>
-                    <option value="year"><?php echo t("Year");?></option>
-                  </select>
-                </div>
+              <div class="visnav-block"><select class="period-select"></select></div>
               </div>
               
               <div class="block-content" style="color:#c20000">
@@ -180,16 +171,7 @@
                         
             <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                  <div class="visnav-block">
-                    <select class="household-period-select">
-                      <option value="custom"><?php echo t("Custom");?></option>
-                      <option value="day"><?php echo t("Day");?></option>
-                      <option value="week"><?php echo t("Week");?></option>
-                      <option value="fortnight" selected><?php echo t("Fortnight");?></option>
-                      <option value="month"><?php echo t("Month");?></option>
-                      <option value="year"><?php echo t("Year");?></option>
-                    </select>
-                  </div>
+                   <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 
                 <div class="block-content">
