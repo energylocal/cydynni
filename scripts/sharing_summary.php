@@ -180,7 +180,6 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
             
             if ($format=="keys") {
                 $result["time"] = $d->getTimestamp();
-
                 $result["demand"] = $use_t;
                 $result["import"] = $imp_t;
                 $result["generation"] = $gen_t;
@@ -194,8 +193,10 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
                 $result[0] = $d->getTimestamp();
                 $result[1] = $use_t;
                 $result[2] = $imp_t;
-                // $result[3] = $gen_t;
-                $result[3] = $cost_t;
+                $result[3] = $gen_t;
+                $result[4] = $gen_cost_t;
+                $result[5] = $imp_cost_t;
+                $result[6] = $cost_t;
                 $summary[] = $result;   
             }
             
