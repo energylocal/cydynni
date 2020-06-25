@@ -5,8 +5,8 @@ Household page
 */
 
 var household_end = +new Date;
-var household_start = household_end - (3600000*24.0*30);
-var household_date = "month";
+var household_start = household_end - (3600000*24.0*14);
+var household_date = "fortnight";
 
 var household_power_end = +new Date;
 var household_power_start = household_power_end - (3600000*12.0);
@@ -18,11 +18,6 @@ var household_pie_data_energy = [];
 
 var householdseries = [];
 var householdpowerseries = [];
-
-// var household_overnight_data = [];
-// var household_morning_data = [];
-// var household_evening_data = [];
-// var household_midday_data = [];
 
 var household_tariff_data = {};
 
@@ -58,7 +53,9 @@ function household_summary_load()
   }
 }
 
-function household_draw_summary(day) {
+// -------------------------------------------------------------------------------------------
+
+function household_draw_summary_day(day) {
 
     if (day==undefined) return false;
     var time = day[0];
@@ -144,9 +141,11 @@ function household_draw_summary(day) {
     household_pie_draw();
 }
 
-function household_draw_summary2() { 
+// -------------------------------------------------------------------------------------------
 
-    if(['year','month','week','day'].indexOf(household_date) != -1) {  
+function household_draw_summary_range() { 
+
+    if(['year','month','fortnight','week','day'].indexOf(household_date) != -1) {  
         $(".household_date").html(t("In the last %s, you scored:").replace('%s', t(household_date)));
     } else if (household_date=="custom") {
         $(".household_date").html(t("For the range selected in the graph")+":");
@@ -241,6 +240,8 @@ function household_draw_summary2() {
     });
 }
 
+// -------------------------------------------------------------------------------------------
+
 function draw_score(total_demand,total_cost,total_low_cost) {
 
     var score = Math.round(100*(total_low_cost / total_cost));
@@ -271,6 +272,8 @@ function draw_score(total_demand,total_cost,total_low_cost) {
         $(".household_saving").html("£0");
     }
 }
+
+// -------------------------------------------------------------------------------------------
 
 function household_pie_draw() {
 
@@ -305,6 +308,8 @@ function household_pie_draw() {
     hrbar("household_hrbar2_placeholder",household_pie_data_cost,options);
 }
 
+// -------------------------------------------------------------------------------------------
+
 function household_bargraph_load() {
 
     var npoints = 800;
@@ -328,19 +333,11 @@ function household_bargraph_load() {
                     
                     if (household_firstload) {
                         household_firstload = false;
-                        // household_draw_summary(household_result[household_result.length-1]);
                     }
-                    household_draw_summary2();
+                    household_draw_summary_range();
 
                     // Create initial household_tariff_data array for each tariff band
                     household_tariff_data = {morning:[],midday:[],daytime:[],evening:[],overnight:[],generation:[],standard:[]}
-                    /*
-                    for (var history_index=0; history_index<club_settings.tariff_history.length; history_index++) {
-                        for (var tr=0; tr<club_settings.tariff_history[history_index].tariffs.length; tr++) {
-                            var tariff_name = club_settings.tariff_history[history_index].tariffs[tr].name;
-                            household_tariff_data[tariff_name] = []
-                        }
-                    }*/
                 
                     // transpose daily summary array into flot graph ready format
                     var len = result.length;
@@ -387,7 +384,7 @@ function household_bargraph_load() {
                         household_tariff_data.generation.push([time*1000,generation]);
                         
                         kwh_in_window += result[z][1][result[z][1].length-1];
-                        cost_in_window += result[z][3][result[z][3].length-1];
+                        cost_in_window += result[z][6][result[z][6].length-1];
                     }
                     
                     console.log(import_totals);
@@ -472,55 +469,6 @@ function household_bargraph_load() {
                                     bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                                 });
                                 household_bargraph_resize();
-                                
-                                /*
-                                var total = 0
-                                var len = household_data.length;
-                                var lastvalid = 0;
-                                for (var z=0; z<len; z++) {    
-                                
-                                    var time = household_data[z][0];  
-                                    var use = household_data[z][1];
-                                    var d = new Date(time);
-                                    var hour = d.getHours();
-                                    
-                                    var overnight = 0;
-                                    var morning = 0;
-                                    var midday = 0;
-                                    var evening = 0;
-
-                                    // Import times
-                                    if (hour<6) overnight = use;
-                                    if (hour>=6 && hour<11) morning = use;
-                                    if (hour>=11 && hour<16) midday = use;
-                                    if (hour>=16 && hour<20) evening = use;
-                                    if (hour>=20) overnight = use;
-
-                                    household_overnight_data[z] = [time,overnight];
-                                    household_morning_data[z] = [time,morning];
-                                    household_midday_data[z] = [time,midday];
-                                    household_evening_data[z] = [time,evening];
-                                    total += use;
-                                }
-                                var now = +new Date;
-                                console.log("Total kWh in window: "+total.toFixed(2));
-
-                                householdseries.push({
-                                    stack: true, data: household_overnight_data, color: "#274e3f", label: t("Overnight"),
-                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                                });
-                                householdseries.push({
-                                    stack: true, data: household_morning_data, color: "#ffdc00", label: t("Morning"),
-                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                                });
-                                householdseries.push({
-                                    stack: true, data: household_midday_data, color: "#4abd3e", label: t("Midday"),
-                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                                });
-                                householdseries.push({
-                                    stack: true, data: household_evening_data, color: "#c92760", label: t("Evening"),
-                                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
-                                });*/
                             }
                         }
                     });
@@ -580,6 +528,8 @@ function household_bargraph_resize() {
     household_bargraph_draw();
 }
 
+// -------------------------------------------------------------------------------------------
+
 $(".household-left").click(function(event) {
     event.stopPropagation();
     var time_window = household_end - household_start;
@@ -596,43 +546,49 @@ $(".household-right").click(function(event) {
     household_bargraph_load();
 });
 
-$(".household-day").click(function(event) {
+$(".household-period-select").click(function(event) {
     event.stopPropagation();
-    household_end = +new Date;
-    household_start = household_end - (3600000*24.0*1);
-    household_date = "day";
-    household_bargraph_load();
 });
 
-$(".household-week").click(function(event) {
+$(".household-period-select").change(function(event) {
     event.stopPropagation();
+    
+    household_date = $(this).val();
     household_end = +new Date;
-    household_start = household_end - (3600000*24.0*7);
-    household_date = "week";
+    
+    var period_length = 3600000*24.0*30;
+    
+    switch (household_date) {
+        case "day": period_length = (3600000*24.0*1); break;
+        case "week": period_length = (3600000*24.0*7); break;
+        case "fortnight": period_length = (3600000*24.0*14); break; 
+        case "month": period_length = (3600000*24.0*30); break;
+        case "year": period_length = (3600000*24.0*365); break;
+    }
+    
+    household_start = household_end - period_length;
+      
     household_bargraph_load();
+    $(".household-period-select").val(household_date);
+    
+    view.start = household_start
+    view.end = household_end
+    club_date = household_date
+    club_bargraph_load();
+    club_bargraph_draw();
+    $(".club-period-select").val(club_date);
+    $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(club_date)));
 });
 
-$(".household-month").click(function(event) {
-    event.stopPropagation();
-    household_end = +new Date;
-    household_start = household_end - (3600000*24.0*30);
-    household_date = "month";
-    household_bargraph_load();
-});
 
-$(".household-year").click(function(event) {
-    event.stopPropagation();
-    household_end = +new Date;
-    household_start = household_end - (3600000*24.0*365);
-    household_date = "year";
-    household_bargraph_load();
-});
 
 $('#household_bargraph_placeholder').bind("plotselected", function (event, ranges) {
     household_start = ranges.xaxis.from;
     household_end = ranges.xaxis.to;
     household_bargraph_load();
     household_date = "custom";
+    $(".household-period-select").val("custom");
+    
 });
 
 $('#household_bargraph_placeholder').bind("plothover", function (event, pos, item) {
@@ -669,9 +625,9 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                     out += "<tr><td><div class='legend-label-box' style='background-color:"+club_settings.generator_color+"'></div> "+t(club_settings.generator)+":</td><td>"+(household_result[z][1][tariff_bands.length]-household_result[z][2][tariff_bands.length]).toFixed(2)+" kWh</td></tr>"; 
                     for (var tr=0; tr<tariff_bands.length; tr++) {
                         out += "<tr><td><div class='legend-label-box' style='background-color:"+tariff_bands[tr].color+"'></div> "+t(ucfirst(tariff_bands[tr].name))+":</td><td>"+household_result[z][2][tr].toFixed(2)+" kWh</td></tr>";
-                    }                      
+                    }                    
                     
-                    household_draw_summary(household_result[z]);
+                    household_draw_summary_day(household_result[z]);
                     
                     out += "</table>";
                     tooltip(item.pageX, item.pageY, out, "#fff");
@@ -683,7 +639,6 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
         }
     } else {
         $("#tooltip").remove();
-        // household_draw_summary2();
     }    
 });
 
@@ -839,4 +794,3 @@ $('#household_powergraph_placeholder').bind("plotselected", function (event, ran
     household_power_end = ranges.xaxis.to;
     household_powergraph_load();
 });
-

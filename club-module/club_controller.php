@@ -275,6 +275,23 @@ function club_controller()
             }
             break;
 
+        // Demandshaper v2: renamed to forecast
+        // multiple forecasts per club e.g with and without solar
+        // format matches latest format used by demandshaper module
+        case "forecast":
+            $format = "json";
+            if (isset($_GET['name'])) {
+                $key = $_GET['name'];
+                if (in_array($key,array("bethesda","bethesda_solar","repower"))) {
+                    if ($result = $redis->get("energylocal:forecast:$key")) {
+                        return json_decode($result);
+                    }
+                } else {
+                    return "forecast not found\n";
+                }
+            }
+            break;
+
         case "login":
             if (!$session['read']) {
             

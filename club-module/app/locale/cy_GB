@@ -192,10 +192,18 @@
 "Daytime":"Dydd",
 "Night":"Nos",
 
-"WEEK":"W",
-"DAY":"D",
-"MONTH":"M",
-"YEAR":"B",
+"WEEK":"WYTHNOS",
+"DAY":"DIWRNOD",
+"MONTH":"MIS",
+"YEAR":"BLWYDDYN",
+
+"Custom":"Chwstwm",
+"Week":"Wythnos",
+"Fortnight":"Pythefnos",
+"Day":"Diwrnod",
+"Month":"Mis",
+"Year":"Blwyddyn",
+
 "MORNING":"BORE",
 "MIDDAY":"CANOL DYDD",
 "EVENING":"GYDA'R NOS",
@@ -396,5 +404,6 @@
 "In the last %s, we scored:": "Yn y %s diwethaf, sgorwyd:",
 "In the last %s, you scored:": "Yn y %s diwethaf, sgorwyd:",
 "Extra electricity": "Gweddill y trydan",
-"SAVING":"ARBEDION"
+"SAVING":"ARBEDION",
+"Average Price":"Pris cyfartalog"
 }

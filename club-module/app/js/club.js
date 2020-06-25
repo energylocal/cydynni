@@ -482,6 +482,41 @@ $(".club-year").click(function(event) {
     club_bargraph_draw();
 });
 
+$(".club-period-select").click(function(event) {
+    event.stopPropagation();
+});
+
+$(".club-period-select").change(function(event) {
+    event.stopPropagation();
+    
+    club_date = $(this).val();
+    view.end = +new Date;
+    
+    var period_length = 3600000*24.0*30;
+    
+    switch (club_date) {
+        case "day": period_length = (3600000*24.0*1); break;
+        case "week": period_length = (3600000*24.0*7); break;
+        case "fortnight": period_length = (3600000*24.0*14); break;
+        case "month": period_length = (3600000*24.0*30); break;
+        case "year": period_length = (3600000*24.0*365); break;
+    }
+    
+    view.start = view.end - period_length;
+        
+    club_bargraph_load();
+    club_bargraph_draw();
+    $(".club-period-select").val(club_date);
+    $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(club_date)));
+    
+    // Copy to household
+    household_start = view.start
+    household_end = view.end
+    household_date = club_date
+    household_bargraph_load()
+    $(".household-period-select").val(household_date);
+});
+
 $('#club_bargraph_placeholder').bind("plotselected", function (event, ranges) {
     view.start = ranges.xaxis.from;
     view.end = ranges.xaxis.to;

@@ -78,7 +78,14 @@
             <div id="your-score" class="block household-block">
               <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div>
                 <div class="visnav-block">
-                  <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("WEEK");?></div>
+                  <select class="household-period-select">
+                    <option value="custom"><?php echo t("Custom");?></option>
+                    <option value="day"><?php echo t("Day");?></option>
+                    <option value="week"><?php echo t("Week");?></option>
+                    <option value="fortnight" selected><?php echo t("Fortnight");?></option>
+                    <option value="month"><?php echo t("Month");?></option>
+                    <option value="year"><?php echo t("Year");?></option>
+                  </select>
                 </div>
               </div>
               
@@ -174,7 +181,14 @@
             <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                   <div class="visnav-block">
-                    <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("WEEK");?></div><div class="visnav-household household-daily"><?php echo t("DAILY");?></div>
+                    <select class="household-period-select">
+                      <option value="custom"><?php echo t("Custom");?></option>
+                      <option value="day"><?php echo t("Day");?></option>
+                      <option value="week"><?php echo t("Week");?></option>
+                      <option value="fortnight" selected><?php echo t("Fortnight");?></option>
+                      <option value="month"><?php echo t("Month");?></option>
+                      <option value="year"><?php echo t("Year");?></option>
+                    </select>
                   </div>
                 </div>
                 

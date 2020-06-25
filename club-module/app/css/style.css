@@ -392,6 +392,16 @@ a:visited {
   background-color:rgba(255,255,255,0.2);
 }
 
+.household-period-select,.club-period-select {
+  font-size:14px; 
+  width:120px; 
+  margin:4px 0px 0px 0px; 
+  padding: 0px 10px; 
+  height:30px; 
+  background-color: rgba(255,255,255,0.2);
+  color:#fff;
+  font-weight:bold;
+}
 
 @media (max-width: 600px) {
     .tips-appliance img {

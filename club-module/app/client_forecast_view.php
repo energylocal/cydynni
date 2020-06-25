@@ -20,7 +20,15 @@
                 <div class="visnav-block">
                   <!--<div class="visnav-club club-zoomin">+</div>-->
                   <!--<div class="visnav-club club-zoomout">-</div>-->
-                  <div class="visnav-club club-left"><</div><div class="visnav-club club-right">></div><div class="visnav-club club-year"><?php echo t("YEAR");?></div><div class="visnav-club club-month"><?php echo t("MONTH");?></div><div class="visnav-club club-week"><?php echo t("WEEK");?></div><div class="visnav-club club-day" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("DAY");?></div>
+                  <div class="visnav-club club-left"><</div><div class="visnav-club club-right">></div>
+                    <select class="club-period-select">
+                      <option value="custom"><?php echo t("Custom");?></option>
+                      <option value="day"><?php echo t("Day");?></option>
+                      <option value="week"><?php echo t("Week");?></option>
+                      <option value="fortnight" selected><?php echo t("Fortnight");?></option>
+                      <option value="month"><?php echo t("Month");?></option>
+                      <option value="year"><?php echo t("Year");?></option>
+                    </select>
                 </div>
                 
                 
