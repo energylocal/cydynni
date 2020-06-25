@@ -132,4 +132,39 @@ $demandshaper = array(
 );
 
 $redis->set("$club:club:demandshaper-octopus",json_encode($demandshaper));
+
 // --------------------------------------------------------------------------------
+// Forecast v2 format
+// starts at current time and extends forwards for 24h
+// --------------------------------------------------------------------------------
+$interval = 1800;
+$start = floor(time()/$interval)*$interval;
+$end = $start + 3600*24;
+
+$forecast = new stdClass();
+$forecast->start = $start;
+$forecast->end = $end; 
+$forecast->interval = $interval;
+$forecast->profile = array();
+$forecast->optimise = 0;
+
+$date = new DateTime();
+$date->setTimezone(new DateTimeZone("Europe/London"));
+
+for ($time=$start; $time<$end; $time+=$interval) {
+
+    $date->setTimestamp($time);
+    $hm = $date->format('H:i');
+    $h = $date->format('H')*1;
+    $average = $sum[$hm] / $count[$hm];
+
+    $hydro_price = 0.0;
+    if ($h>=20.0 || $h<7.0) $hydro_price = 0.058;
+    if ($h>=7.0 && $h<16.0) $hydro_price = 0.104;
+    if ($h>=16.0 && $h<20.0) $hydro_price = 0.127;
+
+    $forecast->profile[] = number_format($average*$hydro_price,2)*1;
+}
+
+$redis->set("energylocal:forecast:bethesda",json_encode($forecast));
+
