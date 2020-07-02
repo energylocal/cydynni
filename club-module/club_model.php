@@ -301,4 +301,27 @@ class Club{
         }
         return $tariffs;
     }
+    
+    public function get_available_reports($feed,$feedid) {
+        $available_reports = array();
+        
+        $meta = $feed->get_meta($feedid);
+       
+        $d = new DateTime();
+        $d->setTimezone(new DateTimeZone("Europe/London"));
+        $d->setTimestamp($meta->start_time);
+        $d->setDate($d->format("Y"),$d->format("m"),1);
+        $d->setTime(0,0,0);
+        $time = $d->getTimestamp();
+        
+        $end = time();
+        
+        while ($time<$end) {
+            $available_reports[] = $d->format("Y-m");
+            $d->modify('+1 month');
+            $time = $d->getTimestamp();
+        }
+        
+        return $available_reports;
+    }
 }

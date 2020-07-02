@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 35;
+$v = 36;
 
 $app_path = $path."Modules/club/app/";
 
@@ -84,6 +84,8 @@ var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
 var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
+
+var available_reports = <?php echo json_encode($available_reports); ?>;
 
 </script>
 
@@ -216,12 +218,27 @@ function resize() {
     household_powergraph_draw();
 }
 
+// Fetch start time of consumption data
 date_selected = "fortnight";
 var out = "";
 var period_select_options = ["day","week","fortnight","month","year"];
 for (var z in period_select_options) {
     out += '<option value="'+period_select_options[z]+'">'+t(ucfirst(period_select_options[z]))+'</option>';
 }
+
+if (available_reports.length>0) {
+    out = '<optgroup label="Last">'+out+'</optgroup>';
+
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    out += '<optgroup label="Reports">';
+    for (var z=available_reports.length-1; z>=0; z--) {
+        var parts = available_reports[z].split('-');
+        description = months[parts[1]-1]+" "+parts[0];
+        out += '<option value="'+available_reports[z]+'">'+t(description)+'</option>';
+    }
+    out += '</optgroup>';
+}
+
 $(".period-select").html(out);
 $(".period-select").val(date_selected);
 
@@ -257,14 +274,32 @@ $(".period-select").change(function(event) {
     var period_length = 3600000*24.0*30;
     
     switch (date_selected) {
-        case "day": period_length = (3600000*24.0*1); break;
-        case "week": period_length = (3600000*24.0*7); break;
-        case "fortnight": period_length = (3600000*24.0*14); break;
-        case "month": period_length = (3600000*24.0*30); break;
-        case "year": period_length = (3600000*24.0*365); break;
+        case "day": view.start = view.end - (3600000*24.0*1); break;
+        case "week": view.start = view.end - (3600000*24.0*7); break;
+        case "fortnight": view.start = view.end - (3600000*24.0*14); break;
+        case "month": view.start = view.end - (3600000*24.0*30); break;
+        case "year": view.start = view.end - (3600000*24.0*365); break;
+        default:
+            var parts = date_selected.split('-');
+            var month = (parts[1]*1)-1;
+            var year = parts[0]*1;
+            
+            var date = new Date();
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+            date.setDate(1);
+            date.setMonth(month);
+            date.setYear(year);
+            view.start = date.getTime();
+            
+            var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+            date.setDate(days_in_month[month]);
+            view.end = date.getTime();
+            
+            console.log(view.start*0.001+" "+view.end*0.001);
     }
-    
-    view.start = view.end - period_length;
         
     club_bargraph_load();
     club_bargraph_draw();
@@ -340,5 +375,4 @@ History.Adapter.bind(window,'statechange',function(){ // Note: We are using stat
     var State = History.getState(); // Note: We are using History.getState() instead of event.state
     show_page(State.title);
 });
-
 </script>

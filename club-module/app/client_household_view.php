@@ -133,9 +133,12 @@
                     
                     <br>
                     
+                    <div style="padding:15px;">
+                    
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold;"><?php echo t("ELECTRICITY"); ?></div>
                       <div style="font-size:22px"><span class="household_totalkwh"></span> kWh</div>
+                      <div class="hrdiv"></div>
                       <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph1_placeholder"></canvas>
                       </div>
@@ -147,7 +150,8 @@
                 
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold;"><?php echo t("COST"); ?></div>
-                      <div style="font-size:22px" class="household_totalcost"></div>
+                      <div style="font-size:22px" class="household_elec_cost"></div>
+                      <div class="hrdiv"></div>
                       <div id="household_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph2_placeholder"></canvas>
                       </div>
@@ -160,12 +164,26 @@
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("SAVING"); ?></div>
                       <div style="font-size:22px" class="household_saving"></div>
+                      <div class="hrdiv"></div>
                       <div style="padding:15px; text-align:left; margin: 20px auto; max-width:270px; color:#333">
                         <table id="household_pie_legend" class="keytable"></table>
                       </div>
                     </div>
-                    
+                    </div>
                     <div style="clear:both"></div>
+                    
+                    <div style="text-align:left; color:#333; font-size:14px; padding:0px 15px 15px 15px;">
+                      <table style="width:100%">
+                      <tr>
+                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span class="household_totalkwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span class="household_days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%</td>
+                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><span class="household_elec_cost"></span><br><span class="household_standing_charge"></span><br><span class="household_vat"></span></td>
+                      </tr>
+                      <tr>
+                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><b><?php echo t("Total cost of electricity supply");?></b></td>
+                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><b><span class="household_total_cost"></span></b></td>
+                      </tr>
+                      </table>
+                    </div>  
                 </div>
             </div>
                         

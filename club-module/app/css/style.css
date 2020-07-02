@@ -111,7 +111,7 @@ a:visited {
 }
 
 .box3 {
-    width:33%;
+    width:33.333%;
     float:left;
     text-align:center;
 }
@@ -403,6 +403,18 @@ a:visited {
   font-weight:bold;
 }
 
+.period-select option {
+background-color: #333;
+}
+
+
+.hrdiv {
+  background-color:#eee;
+  height:1px;
+  margin-top:30px;
+  display:none;
+}
+
 @media (max-width: 600px) {
     .tips-appliance img {
         height: 180px;
@@ -630,6 +642,10 @@ table.tariff .bg-evening {
 
 @media (max-width: 650px) {
   .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
+  
+  .hrdiv {
+      display:none;
+  }
   
   .content-container {
       padding:8px 5px 5px 5px;

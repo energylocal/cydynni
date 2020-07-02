@@ -58,11 +58,14 @@ function club_controller()
     switch ($route->action)
     {
         case "":
+            $available_reports = array();
+        
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
                 
                 require_once "Modules/feed/feed_model.php";
                 $feed = new Feed($mysqli,$redis,$settings["feed"]);
+                $available_reports = $club_model->get_available_reports($feed,$feed->get_id($userid,"use_hh_est"));
                 
                 $tmp = $feed->get_user_feeds($userid);
                 
@@ -80,7 +83,8 @@ function club_controller()
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
                 'tariffs_table' => $club_model->getTariffsTable($tariffs),
-                'tariffs' => $tariffs
+                'tariffs' => $tariffs,
+                'available_reports'=>$available_reports
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));

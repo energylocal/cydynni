@@ -133,7 +133,7 @@ function household_draw_summary_day(day) {
     }
     
     $("#household_pie_legend").html(legend);
-    draw_score(day[1][tariff_bands.length],total_day_cost,total_low_cost);
+    draw_score(day[1][tariff_bands.length],total_day_cost,total_low_cost,1);
     household_pie_draw();
 }
 
@@ -143,7 +143,7 @@ function household_draw_summary_range() {
 
     if(['year','month','fortnight','week','day'].indexOf(date_selected) != -1) {  
         $(".household_date").html(t("In the last %s, you scored:").replace('%s', t(date_selected)));
-    } else if (household_date=="custom") {
+    } else if (date_selected=="custom") {
         $(".household_date").html(t("For the range selected in the graph")+":");
     }
 
@@ -230,7 +230,7 @@ function household_draw_summary_range() {
             legend += '</tr>'
             
             $("#household_pie_legend").html(legend);
-            draw_score(result.demand.total,result.cost.total,total_low_cost);
+            draw_score(result.demand.total,result.cost.total,total_low_cost,result.days);
             household_pie_draw();
         }
     });
@@ -238,9 +238,9 @@ function household_draw_summary_range() {
 
 // -------------------------------------------------------------------------------------------
 
-function draw_score(total_demand,total_cost,total_low_cost) {
+function draw_score(total_demand,elec_cost,total_low_cost,days) {
 
-    var score = Math.round(100*(total_low_cost / total_cost));
+    var score = Math.round(100*(total_low_cost / elec_cost));
     $(".household_score").html(score);
 
     if (score>=20) star1 = "starred"; else star1 = "star20red";
@@ -254,12 +254,21 @@ function draw_score(total_demand,total_cost,total_low_cost) {
     setTimeout(function() { $("#household_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
     setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
     setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
+    
+    var standing_charge = 0.178*days;
+    var vat = (elec_cost+standing_charge)*0.05;
+    var total_cost = elec_cost + standing_charge + vat;
 
     $(".household_totalkwh").html(total_demand.toFixed(2));
-    $(".household_totalcost").html("£"+total_cost.toFixed(2));
+    $(".household_elec_cost").html("£"+elec_cost.toFixed(2));
+    $(".household_standing_charge").html("£"+standing_charge.toFixed(2));
+    $(".household_vat").html("£"+vat.toFixed(2));
+    $(".household_total_cost").html("£"+total_cost.toFixed(2));
+    $(".household_days").html(days);
+
 
     // Saving calculation
-    var saving = (total_demand * club_settings.unitprice_comparison) - total_cost;
+    var saving = (total_demand * club_settings.unitprice_comparison) - elec_cost;
     if (saving>0) {
         // $(".household_saving_title").show();
         $(".household_saving").html("£"+saving.toFixed(2));

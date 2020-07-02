@@ -54,6 +54,7 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
     $d = new DateTime();
     $d->setTimezone(new DateTimeZone("Europe/London"));
     $d->setTimestamp($start_time);
+    // echo $d->format('Y-m-d H:i:s');
     $d->setTime(0,0,0);
     $start_time = $d->getTimestamp();
     $d->setTimestamp($end_time);
@@ -320,6 +321,7 @@ function get_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,$form
     $daily = get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,"keys",false);
     
     $summary = array();
+    $days = 0;
     
     foreach ($daily as $key=>$day) {
         
@@ -333,7 +335,11 @@ function get_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time,$form
                 $summary[$name][$key] += $val;
             }
         }
+        
+        $days++;
     }
+    
+    $summary["days"] = $days;
     
     return $summary;   
 }

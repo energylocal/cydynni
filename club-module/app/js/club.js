@@ -153,6 +153,12 @@ $.ajax({
                     legend += '</tr>'
                 }
             }
+
+            var unit_price = 100 * result.cost.total / result.demand.total
+            legend += '<tr>'
+            legend += '<td></td>'
+            legend += '<td><b>'+t("Average Price")+':</b><br>'+unit_price.toFixed(1)+" p/kWh</td>"
+            legend += '</tr>'
             
             $("#club_pie_legend").html(legend);  
             // GENERATION TARIFF:
@@ -161,6 +167,18 @@ $.ajax({
             $("#club_generation_cost").html(generation_value.toFixed(2));
             // $("#club_generation_unitcost").html('@' + (100*result.cost.total.selfuse/result.kwh.total.selfuse).toFixed(1) + " p/kWh");
             club_pie_draw();
+            
+            $(".club_totalkwh").html(result.demand.total.toFixed(2));
+            $(".club_totalcost").html("£"+result.cost.total.toFixed(2));
+                    
+            // Saving calculation
+            var saving = (result.demand.total * club_settings.unitprice_comparison) - result.cost.total;
+            if (saving>0) {
+                $(".club_saving").html("£"+saving.toFixed(2));
+            } else {
+                $(".club_saving").html("£0");
+            }
+            
         }
     });
 }
@@ -209,8 +227,8 @@ function club_bargraph_load() {
     var intervalms = interval * 1000;
 
     // Start and end time rounding
-    view.end = Math.floor(view.end / intervalms) * intervalms;
-    view.start = Math.floor(view.start / intervalms) * intervalms;
+    // view.end = Math.floor(view.end / intervalms) * intervalms;
+    // view.start = Math.floor(view.start / intervalms) * intervalms;
 
     club_summary_load();
 

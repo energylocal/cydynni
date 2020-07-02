@@ -23,6 +23,7 @@
         'data'=> array('is-link' => true)
     );
 
+    /*
     $menu['tabs'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Adroddiad" : "Report",
         'path'=> "club/report".$apikeystr,
@@ -70,4 +71,4 @@
             $d->modify('+1 month');
             $time = $d->getTimestamp();
         }
-    }
+    }*/
