@@ -87,6 +87,19 @@ var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1
 
 var available_reports = <?php echo json_encode($available_reports); ?>;
 
+var tariff_colors = {
+    "overnight": "#014c2d",
+    "morning": "#ffdc00",
+    "midday": "#ffb401",
+    "daytime": "#ffb401",
+    "evening": "#e6602b",
+    "standard": "#ffb401"
+}
+
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
@@ -220,7 +233,7 @@ function resize() {
 
 // Fetch start time of consumption data
 date_selected = "fortnight";
-var out = "";
+var out = '<option value="custom" style="display:none">'+t("Custom")+'</option>';
 var period_select_options = ["day","week","fortnight","month","year"];
 for (var z in period_select_options) {
     out += '<option value="'+period_select_options[z]+'">'+t(ucfirst(period_select_options[z]))+'</option>';
@@ -228,8 +241,6 @@ for (var z in period_select_options) {
 
 if (available_reports.length>0) {
     out = '<optgroup label="Last">'+out+'</optgroup>';
-
-    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     out += '<optgroup label="Reports">';
     for (var z=available_reports.length-1; z>=0; z--) {
         var parts = available_reports[z].split('-');
@@ -273,6 +284,9 @@ $(".period-select").change(function(event) {
     
     var period_length = 3600000*24.0*30;
     
+    var club_date_text = t("In the last %s, we scored:").replace('%s', t(date_selected));
+    var household_date_text = t("In the last %s, you scored:").replace('%s', t(date_selected));
+    
     switch (date_selected) {
         case "day": view.start = view.end - (3600000*24.0*1); break;
         case "week": view.start = view.end - (3600000*24.0*7); break;
@@ -294,17 +308,19 @@ $(".period-select").change(function(event) {
             date.setYear(year);
             view.start = date.getTime();
             
-            var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
             date.setDate(days_in_month[month]);
             view.end = date.getTime();
             
-            console.log(view.start*0.001+" "+view.end*0.001);
+            club_date_text = t("In %s, we scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
+            household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
     }
         
     club_bargraph_load();
     club_bargraph_draw();
     $(".period-select").val(date_selected);
-    $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
+    
+    $(".club_date").html(club_date_text);
+    $(".household_date").html(household_date_text);
     
     // Copy to household
     household_bargraph_load()

@@ -14,13 +14,25 @@ function clubstatus_update() {
       async: true,                      
       success: function(result) {
           live = result;
+          
+          if (live.unit_price<11.0) {
+              trafficlight('green');
+              $("#status-pre").html(t("Yes! Low cost electricity available"));
+              // $("#status-pre").html(t("Now is a good time to use electricity"));
+          } else if (live.unit_price<15.0) {
+              trafficlight('amber');
+              $("#status-pre").html(t("Medium cost electricity"));
+          } else {
+              trafficlight('red'); 
+              $("#status-pre").html(t("High cost electricity"));
+          }
 
           var time = new Date();
 
           var hour = time.getHours();
           var minutes = time.getMinutes();
 
-          $("#status-next").html("");
+          // $("#status-next").html("");
 
           var current_tariff = false;
           for (var z in tariffs) {
@@ -29,10 +41,9 @@ function clubstatus_update() {
           
           var prc_gen = (100*(live.generation / live.club)).toFixed(0);
 
-          var tariff_name = live.tariff.toUpperCase()
-          if (tariff_name=="DAYTIME") tariff_name = "DAY TIME";
-
-          $("#status-title").html(t(tariff_name));
+          // var tariff_name = live.tariff.toUpperCase()
+          // if (tariff_name=="DAYTIME") tariff_name = "DAY TIME";
+          // $("#status-title").html(t(tariff_name));
           
           if (prc_gen>=1.0) {
               $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+": <b>~"+prc_gen+"%</b> "+t("of club consumption."));
@@ -88,3 +99,22 @@ function clubstatus_update() {
   });
 }
 
+function trafficlight(state) {
+    switch(state) {
+      case 'green':
+        $("#tl-red").removeClass('tl-red-on').addClass('tl-red-off');
+        $("#tl-amber").removeClass('tl-amber-on').addClass('tl-amber-off');
+        $("#tl-green").removeClass('tl-green-off').addClass('tl-green-on');
+        break;
+      case 'amber':
+        $("#tl-red").removeClass('tl-red-on').addClass('tl-red-off');
+        $("#tl-amber").removeClass('tl-amber-off').addClass('tl-amber-on');
+        $("#tl-green").removeClass('tl-green-on').addClass('tl-green-off'); 
+        break;
+      case 'red':
+        $("#tl-red").removeClass('tl-red-off').addClass('tl-red-on');
+        $("#tl-amber").removeClass('tl-amber-on').addClass('tl-amber-off');
+        $("#tl-green").removeClass('tl-green-on').addClass('tl-green-off'); 
+        break;
+    }
+}

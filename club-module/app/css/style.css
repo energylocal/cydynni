@@ -248,6 +248,35 @@ a:visited {
 	  font-weight:bold;
 }
 
+.trafficlight-body {
+	  border-radius: 10px;
+	  background-color: rgba(0,0,0,0.1);
+	  width:250px;
+	  height:70px;
+	  margin: 0 auto;
+}
+
+.trafficlight {
+    margin: 10px auto 10px auto;
+	  border-radius: 50%;
+	  width: 50px;
+	  height: 50px;
+}
+
+.trafficlight-inner {
+	  color:#fff;
+	  font-weight:bold;
+}
+
+.tl-green-on {background-color:#57e530;}
+.tl-green-off {background-color:rgba(87,229,48,0.2);}
+
+.tl-amber-on {background-color:#ffb401;}
+.tl-amber-off {background-color:rgba(255,180,0,0.2);}
+
+.tl-red-on {background-color:#c20000;}
+.tl-red-off {background-color:rgba(194,0,0,0.2);}
+
 .bg-generation { background-color: #29aae3; color:#fff; }
 .bg-morning { background-color: #ffb401; color:#fff; }
 .bg-midday { background-color: #4dac34; color:#fff; }

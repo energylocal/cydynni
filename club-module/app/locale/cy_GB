@@ -92,6 +92,11 @@
 "If possible":"Os yn bosib",
 "WAIT":"AROS",
 "GO!":"AMDANI!",
+"Wait if possible":"Aros os yn bosib",
+"Go!":"Amdani!",
+"Yes! Low cost electricity available":"Amdani! Trydan rhad ar gael",
+"Medium cost electricity":"Trydan cost ganolig",
+"High cost electricity":"Trydan cost uchel",
 "until":"tan",
 "Wait until 8pm":"Aros tan 8pm",
 "Wait until 11am":"Aros tan 11am",
@@ -144,6 +149,13 @@
 "Midday Price":"Pris Canol Dydd",
 "Evening Price":"Pris Gyda'r Nos",
 "Overnight Price":"Pris Dros Nos",
+
+"Morning Electricity":"Trydan Bore",
+"Daytime Electricity":"Trydan Dydd",
+"Midday Electricity":"Trydan Canol Dydd",
+"Evening Electricity":"Trydan Gyda'r Nos",
+"Overnight Electricity":"Trydan Dros Nos",
+"Hydro Electricity":"Trydan Hydro",
 
 "Generating":"Yn cynhyrchu",
 "Last 24 hours":"24 awr diwethaf",
@@ -363,6 +375,8 @@
 "Electricity use in window":"Defnydd trydan yn y ffenestr",
 "This means that":"Mae hyn yn golygu bod",
 "of your electricity came from local or low-cost power":"o'ch trydan yn dod o bŵer lleol neu gost isel",
+"This means that %s% of your electricity came from hydro or low-cost power":"Mae hyn yn golygu bod %s% o'ch trydan yn dod o bŵer hydro neu gost isel",
+"This means that %s% of your electricity came from solar or low-cost power":"Mae hyn yn golygu bod %s% o'ch trydan yn dod o bŵer solar neu gost isel",
 "Click on a day to see half hourly consumption":"Cliciwch ar ddiwrnod i weld defnydd bob hanner awr",
 "In total you used":"Yn gyfanswm defnyddwyd",
 "Total cost":"Cyfanswm",
@@ -403,7 +417,12 @@
 "How much of the electricity the club used, came from the %s in the last %s": "Cyfanswm trydan a ddefnyddiwyd gan y gymuned, a ddaeth o'r %s yn yr %s dwythaf",
 "In the last %s, we scored:": "Yn y %s diwethaf, sgorwyd:",
 "In the last %s, you scored:": "Yn y %s diwethaf, sgorwyd:",
+"In %s, we scored:": "Yn %s, sgorwyd:",
+"In %s, you scored:": "Yn %s, sgorwyd:",
 "Extra electricity": "Gweddill y trydan",
 "SAVING":"ARBEDION",
-"Average Price":"Pris cyfartalog"
+"Average Price":"Pris cyfartalog",
+"DAILY":"DYDDIAU",
+"Select Range":"Dewis amser",
+"Custom":"Chwstwm"
 }

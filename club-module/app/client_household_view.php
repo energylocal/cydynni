@@ -103,7 +103,7 @@
                 <img id="household_star4" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <img id="household_star5" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <br><br>
-                <p><?php echo t("This means that"); ?> <span class="household_score"></span>% <?php echo t("of your electricity came from local or low-cost power");?></p>
+                <p class="household_score_description"></p>
                 <!--<br><br><div class="household_status" style="height:40px"></div><br>-->
                 <!--<br>
                 <p><?php echo t("In total you used"); ?> <span class="household_totalkwh"></span> kWh, <?php echo t("costing"); ?>:</p>
@@ -189,18 +189,10 @@
                         
             <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                   <div class="visnav-block"><select class="period-select"></select></div>
+                   <div class="visnav-block"><select id="household_daily_period_select" class="period-select"></select><div class="visnav-household household-daily"><?php echo t("DAILY");?></div></div>
                 </div>
                 
                 <div class="block-content">
-                    <!--
-                    <div class="bg-household3">
-                        <div class="visnav-block-household">
-                          <div class="visnav-household household-year"><?php echo t("YEAR");?></div><div class="visnav-household household-month"><?php echo t("MONTH");?></div><div class="visnav-household household-week"><?php echo t("WEEK");?></div><div class="visnav-household household-left"><</div><div class="visnav-household household-right">></div><div class="visnav-household household-daily"><?php echo t("DAILY");?></div>
-                        </div>
-                        <div style="clear:both"></div>
-                    </div>
-                    -->
                     <div style="padding:10px">
                         <div id="household_bargraph_bound" style="width:100%; height:405px;">
                             <div id="household_bargraph_placeholder" style="height:405px"></div>

@@ -4,10 +4,18 @@
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
                   
-                    <div id="status-pre" style="padding:10px;"><?php echo t("Current Tariff Period"); ?></div>
+                    <div id="status-pre" style="padding:10px;"></div>
+                    
+
+                
+                    <div class="trafficlight-body">
+                    <div class="box3"><div id="tl-red" class="trafficlight tl-red-off"><div class="trafficlight-inner"></div></div></div>
+                    <div class="box3"><div id="tl-amber" class="trafficlight tl-amber-off"><div class="trafficlight-inner"></div></div></div>
+                    <div class="box3"><div id="tl-green" class="trafficlight tl-green-off"><div class="trafficlight-inner"></div></div></div>
+                    </div>
                     <!--<img id="status-img" src="<?php echo $app_path; ?>images/new-tick.png"/>-->
-                    <div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>
-                    <div id="status-until" style="height:16px; padding:10px;"></div>
+                    <!--<div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>-->
+                    <!--<div id="status-until" style="height:16px; padding:10px;"></div>-->
                     <div id="gen-prc" style="height:16px; padding:10px;"></div><br>
                   </div>
                 </div>
