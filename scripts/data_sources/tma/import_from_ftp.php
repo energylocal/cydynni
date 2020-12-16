@@ -4,26 +4,7 @@
 // TMA data import tool
 // --------------------------------------------------------------------
 require "config.php";
-
-// -----------------------
-define('EMONCMS_EXEC', 1);
-chdir("/var/www/emoncms");
-require "process_settings.php";
-require "Lib/EmonLogger.php";
-$mysqli = @new mysqli(
-    $settings["sql"]["server"],
-    $settings["sql"]["username"],
-    $settings["sql"]["password"],
-    $settings["sql"]["database"],
-    $settings["sql"]["port"]
-);
-$redis = new Redis();
-$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-require("Modules/user/user_model.php");
-$user = new User($mysqli,$redis);
-require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$settings["feed"]);
-
+require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 // -----------------------
 
 $start = time();
@@ -54,7 +35,7 @@ for ($i=2; $i<count($files); $i++) {
         if ($date->getTimestamp()>=$start) {
             print "file date: ".$year." ".$month." ".$day." ".$date->getTimestamp()."\n";
         
-            $file = file_get_contents($ftp_dir.$files[$i]);
+            $file = file_get_contents($ftp_dir."/".$files[$i]);
             $lines = explode("\n",$file);
             for ($l=0; $l<count($lines); $l++) {
                 $line = explode(",",trim($lines[$l]));
