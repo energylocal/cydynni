@@ -9,5 +9,7 @@ scripts-hub/metermqttclient-req-lock
 scripts-hub/metermqttclient-req-v2-lock
 
 scripts/demandshapers/config.php
-data_sources/octopus/config.php
+scripts/data_sources/octopus/config.php
+scripts/data_sources/tma/config.php
+
 *.log
