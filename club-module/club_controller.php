@@ -79,7 +79,6 @@ function club_controller()
             $route->format = "html";
 
             $content = view("Modules/club/app/client_view.php", array(
-                'is_hub' => $settings["cydynni"]["is_hub"], 
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
                 'tariffs_table' => $club_model->getTariffsTable($tariffs),
@@ -286,9 +285,21 @@ function club_controller()
             $format = "json";
             if (isset($_GET['name'])) {
                 $key = $_GET['name'];
+                
+                $format = "standard";
+                if (isset($_GET['format'])) {
+                    $format = $_GET['format'];
+                }
+                
                 if (in_array($key,array("bethesda","bethesda_solar","repower"))) {
-                    if ($result = $redis->get("energylocal:forecast:$key")) {
-                        return json_decode($result);
+                    if ($format=="standard") {
+                        if ($result = $redis->get("energylocal:forecast:$key")) {
+                            return json_decode($result);
+                        }
+                    } else if ($format=="octopus") { 
+                        if ($result = $redis->get("$club:club:demandshaper-octopus")) {
+                            return json_decode($result);
+                        }         
                     }
                 } else {
                     return "forecast not found\n";
@@ -298,80 +309,18 @@ function club_controller()
 
         case "login":
             if (!$session['read']) {
-            
                 if ($user->get_number_of_users()>0) {
-                    return $user->login(post('username'),post('password'),post('rememberme'));
-                    
-                } else if ($settings["cydynni"]["is_hub"]) {
-                    $username = $_POST['username'];
-                    $password = $_POST['password'];
-                    
-                    // Send request
-                    $ch = curl_init();
-                    curl_setopt($ch,CURLOPT_URL,"https://dashboard.energylocal.org.uk/user/auth.json");
-                    curl_setopt($ch,CURLOPT_POST,1);
-                    curl_setopt($ch,CURLOPT_POSTFIELDS,"username=$username&password=".$password);
-                    curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-                    $result = curl_exec($ch);
-                    curl_close($ch);
-
-                    $result = json_decode($result);
-                    if ($result!=null && isset($result->success) && $result->success) {
-
-                        // Fetch full account details from remote emoncms
-                        $u = json_decode(file_get_contents("https://dashboard.energylocal.org.uk/user/get.json?apikey=".$result->apikey_write));
-
-                        // Register account locally
-                        $result = $user->register($username, $password, $u->email);
-
-                        // Save remote account apikey to local hub
-                        if ($result['success']==true) {
-                            $userid = $result['userid'];
-                            $mysqli->query("UPDATE users SET apikey_write = '".$u->apikey_write."' WHERE id='$userid'");
-                            $mysqli->query("UPDATE users SET apikey_read = '".$u->apikey_read."' WHERE id='$userid'");
-
-                            // Trigger download of user data
-                            $sync_script = $settings['emoncms_dir']."/modules/club/scripts-hub/club-sync.sh";
-                            $sync_logfile = "/var/log/emoncms/club-sync.log";
-                            $redis->rpush("service-runner","$sync_script>$sync_logfile");
-
-		            // Setup remote access
-                            $host = "dashboard.energylocal.org.uk";
-                            $config_file = $settings['emoncms_dir']."/modules/remoteaccess-client/remoteaccess.json";
-                            $config = json_decode(file_get_contents($config_file));
-                            if ($config!=null) {
-                                $config->APIKEY_WRITE = $u->apikey_write;
-                                $config->APIKEY_READ = $u->apikey_read;
-                                $config->MQTT_HOST = $host;
-                                $config->MQTT_USERNAME = $username;
-                                $config->MQTT_PASSWORD = $u->apikey_write;
-                                $fh = fopen($settings['emoncms_dir']."/modules/remoteaccess-client/remoteaccess.json","w");
-                                fwrite($fh,json_encode($config, JSON_PRETTY_PRINT));
-                                fclose($fh);
-                            }
-		            sleep(3);
-                            $content = $user->login($username, $password, false);
-
-                            return array("success"=>true);
-
-                        } else {
-                            return array("success"=>false, "message"=>"error creating account");
-                        }
-                    } else {
-                        return array("success"=>false, "message"=>"club online account not found");
-                    }
+                    return $user->login(post('username'),post('password'),post('rememberme')); 
                 }
             }
             break;
 
         case "passwordreset":
-            if (!$settings["cydynni"]["is_hub"]) {    
-                $format = "json";
-                $user->appname = "Cydynni";
-                $users = $user->get_usernames_by_email(get('email'));
-                if ($users && count($users)) return $user->passwordreset($users[0]["username"],get('email'));
-                else return array("success"=>false, "message"=>"User not found");
-            }   
+            $format = "json";
+            $user->appname = "Cydynni";
+            $users = $user->get_usernames_by_email(get('email'));
+            if ($users && count($users)) return $user->passwordreset($users[0]["username"],get('email'));
+            else return array("success"=>false, "message"=>"User not found");
         	  break;
     	    
         // ----------------------------------------------------------------------
@@ -395,7 +344,7 @@ function club_controller()
                     $select_by_club = "WHERE `clubs_id`='$club_id'";
                 }
                 
-                $result = $mysqli->query("SELECT userid,mpan,token,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
+                $result = $mysqli->query("SELECT userid,mpan,serial,guid,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
                 $users = array();
                 while($row = $result->fetch_object()) {
                     $userid = $row->userid;
@@ -407,16 +356,18 @@ function club_controller()
                     }
                     
                     $row->hits = $redis->get("userhits:$userid");
-                    $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
+                    // $row->testdata = json_decode($redis->get("user:summary:lastday:$userid"));
                     
                     $result1 = $mysqli->query("SELECT count(*) FROM feeds WHERE `userid`='$userid'");
                     $row->feeds = $result1->fetch_array()[0];
                     
-                    $feed_result = $mysqli->query("SELECT id FROM feeds WHERE `userid`='$userid' AND `name`='meter_power'");
+                    $feed_result = $mysqli->query("SELECT id,tag,name FROM feeds WHERE `userid`='$userid' AND `name`='use_hh'");
                     if ($feed_row = $feed_result->fetch_object()) {
-                        $row->meter_power = $feed_row->id;
+                        $row->use_hh_est = $feed_row->id;
+                        $row->last_updated = $redis->hget("feed:".$feed_row->id,'time');
                     } else { 
-                        $row->meter_power = "";
+                        $row->use_hh_est = "";
+                        $row->last_updated = 0;
                     }
                     
                     $users[] = $row;
@@ -426,34 +377,32 @@ function club_controller()
             break;
             
         case "admin-users-csv":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "text";
-                if ($session['admin']) {
-                    // Include data from cydynni table here too
-                    $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
-                    $users = array();
-                    while($row = $result->fetch_object()) {
-                        $userid = $row->id;
-                        // Include fields from cydynni table
-                        $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
-                        $user_row = $user_result->fetch_object();
-                        if ($user_row) {
-                            foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
-                        }
-                        $row->hits = $redis->get("userhits:$userid");
-                        $users[] = $row;
+            $route->format = "text";
+            if ($session['admin']) {
+                // Include data from cydynni table here too
+                $result = $mysqli->query("SELECT id,username,email,admin FROM users ORDER BY id ASC");
+                $users = array();
+                while($row = $result->fetch_object()) {
+                    $userid = $row->id;
+                    // Include fields from cydynni table
+                    $user_result = $mysqli->query("SELECT mpan,welcomedate,reportdate FROM cydynni WHERE `userid`='$userid'");
+                    $user_row = $user_result->fetch_object();
+                    if ($user_row) {
+                        foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
                     }
-                    
-                    $content = "";
-                    foreach ($users as $user) {
-                        $tmp = array();
-                        foreach ($user as $key=>$val) {
-                            $tmp[] = $val;
-                        }
-                        $content .= implode(",",$tmp)."\n";
-                    }
-                    return $content;
+                    $row->hits = $redis->get("userhits:$userid");
+                    $users[] = $row;
                 }
+                
+                $content = "";
+                foreach ($users as $user) {
+                    $tmp = array();
+                    foreach ($user as $key=>$val) {
+                        $tmp[] = $val;
+                    }
+                    $content .= implode(",",$tmp)."\n";
+                }
+                return $content;
             }
             break;
 
@@ -463,12 +412,15 @@ function club_controller()
                 
                 $club_id = (int) post('club_id');
                 $username = post('username');
+                $password = post('password');
                 $email = post('email');
                 $mpan = (int) post('mpan');
             
                 // Generate new random password
-                $password = hash('sha256',md5(uniqid(rand(), true)));
-                $password = substr($password, 0, 10);
+                if ($password==null || $password=="") {
+                    $password = hash('sha256',md5(uniqid(rand(), true)));
+                    $password = substr($password, 0, 10);
+                }
             
                 $result = $user->register($username, $password, $email);
                 if ($result["success"]) {
@@ -481,134 +433,77 @@ function club_controller()
             
             
         case "admin-registeremail":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "text";
-                if ($session['admin']) {
-                    require("Lib/email.php");
-                    require("Modules/club/club_emails.php");
-                    $club_emails = new ClubEmails($mysqli);
-                    return $club_emails->registeremail(get('userid'));
-                }
+            $route->format = "text";
+            if ($session['admin']) {
+                require("Lib/email.php");
+                require("Modules/club/club_emails.php");
+                $club_emails = new ClubEmails($mysqli);
+                return $club_emails->registeremail(get('userid'));
             }
             break;
             
         case "admin-change-user-email":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "json";
-                if ($session['admin']) {
-                    return $user->change_email(get("userid"),get("email"));
-                }
+            $route->format = "json";
+            if ($session['admin']) {
+                return $user->change_email(get("userid"),get("email"));
             }
             break;
 
         case "admin-change-user-username":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "json";
-                if ($session['admin']) {
-                    return $user->change_username(get("userid"),get("username"));
-                }
+            $route->format = "json";
+            if ($session['admin']) {
+                return $user->change_username(get("userid"),get("username"));
+            }
+            break;
+            
+        case "admin-change-user-mpan":
+            $route->format = "json";
+            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['mpan'])) {
+                return $club_model->change_user_mpan(get("userid"),get("mpan"));
+            }
+            break;
+
+        case "admin-change-user-serial":
+            $route->format = "json";
+            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['serial'])) {
+                return $club_model->change_user_serial(get("userid"),get("serial"));
+            }
+            break;
+
+        case "admin-change-user-guid":
+            $route->format = "json";
+            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['guid'])) {
+                return $club_model->change_user_guid(get("userid"),get("guid"));
             }
             break;
                     
         case "admin-switchuser":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "text";
-                if ($session['admin']) {
-                    $userid = (int) get("userid");
-                
-                    $result = $mysqli->query("SELECT username FROM users WHERE `id`='$userid'");
-                    if ($row = $result->fetch_object()) {
-                        $_SESSION['userid'] = $userid;
-                        $_SESSION['username'] = $row->username;
-                        header("Location: ../graph");
-                    }
+            $route->format = "text";
+            if ($session['admin']) {
+                $userid = (int) get("userid");
+            
+                $result = $mysqli->query("SELECT username FROM users WHERE `id`='$userid'");
+                if ($row = $result->fetch_object()) {
+                    $_SESSION['userid'] = $userid;
+                    $_SESSION['username'] = $row->username;
+                    header("Location: ../graph");
                 }
             }
             break;
 
         case "admin-sendreport":
-            if (!$settings["cydynni"]["is_hub"]) {
-                $route->format = "text";
-                if ($session['admin']) {
-                    require("Lib/email.php");
-                    require("Modules/club/club_emails.php");
-                    $club_emails = new ClubEmails($mysqli);
-                    return $club_emails->send_report_email(get('userid'));
-                }
+            $route->format = "text";
+            if ($session['admin']) {
+                require("Lib/email.php");
+                require("Modules/club/club_emails.php");
+                $club_emails = new ClubEmails($mysqli);
+                return $club_emails->send_report_email(get('userid'));
             }
             break;
             
         case "setupguide":
             header("Location: https://github.com/energylocal/cydynni/blob/master/docs/userguide.md");
             die;
-            break;
-
-        // -----------------------------------------------------------------------------------------
-        // OTA: Record local hub OTA version and log
-        // -----------------------------------------------------------------------------------------
-        case "ota":
-            if ($session["write"]) {
-                 $route->format = "html";
-                 $userid = $session["userid"];
-                 
-                 $result = "<br>";
-                 $result .= "<h3>OTA Status</h3>";
-
-                 $r = json_decode($redis->get("cydynni:ota:version:$userid"));
-                 if (isset($r->time) && isset($r->hub)) { 
-                     $result .= "<p>Hub version <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p><pre>".$r->hub."</pre>";  
-                 }                
-                 
-                 $r = json_decode($redis->get("cydynni:ota:log:$userid"));
-                 if (isset($r->time) && isset($r->log)) { 
-                    $result .= "<p>Log output: <i>(".date("Y-m-d H:i:s",$r->time).")</i>:</p>";
-                    $result .= "<pre>".$r->log."</pre>";
-                 }
-            }
-            break;
-        
-        case "ota-version":
-             $ota_version = (int) $redis->get("otaversion");
-             
-             // Record local hub ota version
-             if (isset($_GET['hub']) && $session["write"]) {
-                 $userid = $session["userid"];
-                 $redis->set("cydynni:ota:version:$userid",json_encode(array(
-                     "time"=>time(),
-                     "hub"=> (int) $_GET['hub'],
-                     "master"=>$ota_version
-                 )));
-             }
-             
-             $route->format = "text";
-             $result = $ota_version;
-             break;
-
-        case "ota-version-get":
-            if ($session["write"]) {
-                 $route->format = "json";
-                 $userid = $session["userid"];
-                 $result = json_decode($redis->get("cydynni:ota:version:$userid"));
-            }
-            break;
-             
-        case "ota-log-set":
-            if ($session["write"]) {
-                 $userid = $session["userid"];
-                 $redis->set("cydynni:ota:log:$userid",json_encode(array(
-                     "time"=>time(),
-                     "log"=>file_get_contents('php://input')
-                 )));
-                 return "ok";
-            }
-            break;
-            
-        case "ota-log-get":
-            if ($session["write"]) {
-                 $route->format = "json";
-                 $userid = $session["userid"];
-                 $result = json_decode($redis->get("cydynni:ota:log:$userid"));
-            }
             break;
         break;
     }
