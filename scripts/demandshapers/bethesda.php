@@ -28,7 +28,7 @@ $club_id = $club_settings[$club]['consumption_feed'];
 // -------------------------------------------------
 
 // Load hydro forecast
-require "/opt/emoncms/modules/cydynni/scripts/hydro_forecast.php";
+require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
 $hydro_forecast = hydro_forecast($feed);
 
 
