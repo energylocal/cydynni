@@ -1,0 +1,21 @@
+# Systemd unit file for service runner script
+
+# sudo ln -s /opt/emoncms/modules/cydynni/scripts/data_sources/owl/owl-monitor.service /lib/systemd/system
+# sudo systemctl daemon-reload
+# sudo systemctl enable owl-monitor.service
+# sudo systemctl start owl-monitor
+
+[Unit]
+Description=owl-monitor
+StartLimitIntervalSec=5
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/nodejs /opt/emoncms/modules/cydynni/scripts/data_sources/owl/monitor.js
+User=cydynni
+Restart=always
+RestartSec=30s
+SyslogIdentifier=owl-monitor
+
+[Install]
+WantedBy=multi-user.target
