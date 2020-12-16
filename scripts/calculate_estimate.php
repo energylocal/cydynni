@@ -1,4 +1,6 @@
 <?php
+$recalc_club = false;
+
 // ------------------------------------------------
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
@@ -18,10 +20,11 @@ $feed = new Feed($mysqli,$redis,$settings["feed"]);
 $dir = "/var/lib/phpfina/";
 // ------------------------------------------------
 
-$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 OR clubs_id=2 ORDER BY userid ASC");
+$result_users = $mysqli->query("SELECT * FROM cydynni ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
     $userid = $row->userid;
+    $clubid = $row->clubs_id;
     
     print $userid;
 
@@ -34,7 +37,7 @@ while ($row = $result_users->fetch_object())
         }
 
         // copy("/var/lib/phpfina/$source.dat","/var/lib/phpfina/$output.dat");
-        // $feed->clear($output);
+        if ($recalc_club && $clubid==$recalc_club) $feed->clear($output);
         copy("/var/lib/phpfina/$source.meta","/var/lib/phpfina/$output.meta");
         
         //die;
@@ -145,6 +148,11 @@ while ($row = $result_users->fetch_object())
             }
         } else {
             print " no data in source feed";
+        }
+        
+        if ($output) {
+            $redis->hdel("feed:$output",'time');
+            $timevalue = $feed->get_timevalue($output);
         }
     }
     print "\n";
