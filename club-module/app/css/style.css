@@ -111,7 +111,7 @@ a:visited {
 }
 
 .box3 {
-    width:33%;
+    width:33.333%;
     float:left;
     text-align:center;
 }
@@ -246,6 +246,41 @@ a:visited {
 	  color:#fff;
 	  padding-top: 30px;
 	  font-weight:bold;
+}
+
+.trafficlight-body {
+	  border-radius: 10px;
+	  background-color: rgba(0,0,0,0.1);
+	  width:250px;
+	  height:70px;
+	  margin: 0 auto;
+}
+
+.trafficlight {
+    margin: 10px auto 10px auto;
+	  border-radius: 50%;
+	  width: 50px;
+	  height: 50px;
+}
+
+.trafficlight-inner {
+	  color:#fff;
+	  font-weight:bold;
+}
+
+.tl-green-on {background-color:#57e530;}
+.tl-green-off {background-color:rgba(87,229,48,0.2);}
+
+.tl-amber-on {background-color:#ffb401;}
+.tl-amber-off {background-color:rgba(255,180,0,0.2);}
+
+.tl-red-on {background-color:#c20000;}
+.tl-red-off {background-color:rgba(194,0,0,0.2);}
+
+.tl3 {
+    width:33.333%;
+    float:left;
+    text-align:center;
 }
 
 .bg-generation { background-color: #29aae3; color:#fff; }
@@ -392,6 +427,28 @@ a:visited {
   background-color:rgba(255,255,255,0.2);
 }
 
+.period-select {
+  font-size:14px; 
+  width:120px; 
+  margin:4px 0px 0px 0px; 
+  padding: 0px 10px; 
+  height:30px; 
+  background-color: rgba(255,255,255,0.2);
+  color:#fff;
+  font-weight:bold;
+}
+
+.period-select option {
+background-color: #333;
+}
+
+
+.hrdiv {
+  background-color:#eee;
+  height:1px;
+  margin-top:30px;
+  display:none;
+}
 
 @media (max-width: 600px) {
     .tips-appliance img {
@@ -620,6 +677,10 @@ table.tariff .bg-evening {
 
 @media (max-width: 650px) {
   .box2, .box3, .box4, .box5 { float:none; width:100%; margin-bottom:10px; }
+  
+  .hrdiv {
+      display:none;
+  }
   
   .content-container {
       padding:8px 5px 5px 5px;

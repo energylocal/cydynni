@@ -33,11 +33,11 @@ class ClubEmails
         // Save password and salt
         $this->mysqli->query("UPDATE users SET password = '$dbhash', salt = '$salt' WHERE id = '$userid'");
 
-        $subject = "Welcome to CydYnni, account details";   
+        $subject = "Welcome to EnergyLocal, account details";   
                          
-        $message = view("Modules/cydynni/emailbound.php",array(
-            "title"=>"Croeso i CydYnni, Welcome to CydYnni",
-            "message"=>"Gallwch fewngofnodi nawr ar <a href='https://dashboard.energylocal.org.uk'>dashboard.energylocal.org.uk</a> gyda enw: $username a chyfrinair: $newpass.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch ar dashboard.energylocal.org.uk yna cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='https://dashboard.energylocal.org.uk'>dashboard.energylocal.org.uk</a> with username: $username and password: $newpass.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login at dashboard.energylocal.org.uk then click on the My Account icon."
+        $message = view("Modules/club/emailbound.php",array(
+            "title"=>"Croeso i Ynni Lleol, Welcome to Energy Local",
+            "message"=>"Gallwch fewngofnodi nawr ar <a href='https://dashboard.energylocal.org.uk/?household&lang=cy'>dashboard.energylocal.org.uk</a> gyda enw: <b>$username</b> a chyfrinair: <b>$newpass</b>.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch a  cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='https://dashboard.energylocal.org.uk/?household&lang=en'>dashboard.energylocal.org.uk</a> with username: <b>$username</b> and password: <b>$newpass</b>.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login and then click on the My Account icon."
         ));
 
         $emailer = new Email();
@@ -98,7 +98,7 @@ class ClubEmails
         
         // $c .= "<i style='font-size:12px'>Questions? cwestiynau?, cysylltwch â: cydynni@energylocal.co.uk</i><br>";
         
-        $message = view("Modules/cydynni/emailbound.php",array(
+        $message = view("Modules/club/emailbound.php",array(
             "title"=>"Mae eich adroddiad Ynni Lleol Bethesda yn barod<br>Your Bethesda Energy Local report is ready",
             "message"=>$c
         ));

@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 31;
+$v = 38;
 
 $app_path = $path."Modules/club/app/";
 
@@ -26,7 +26,7 @@ $app_path = $path."Modules/club/app/";
 
 <div class="app">
     <ul class="navigation">
-        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Forecast"); ?></div></div></li>
+        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
         <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
@@ -45,7 +45,8 @@ $app_path = $path."Modules/club/app/";
         <?php echo view("Modules/club/app/client_household_view.php", array(
             'app_path'=>$app_path, 
             'club'=>$club,
-            'club_settings'=>$club_settings
+            'club_settings'=>$club_settings,
+            'tariffs'=>$tariffs
         )); ?>
     </div>
    
@@ -79,9 +80,31 @@ var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
-var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
+var is_hub = false;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
+
+var tariff_standing_charge = 0.178;
+if (club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge!=undefined) {
+    tariff_standing_charge = club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge*0.01;
+}
+var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
+
+var available_reports = <?php echo json_encode($available_reports); ?>;
+
+var tariff_colors = {
+    "overnight": "#014c2d",
+    "morning": "#ffdc00",
+    "midday": "#ffb401",
+    "daytime": "#ffb401",
+    "evening": "#e6602b",
+    "standard": "#ffb401"
+}
+
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
@@ -139,8 +162,6 @@ if (!session.read) {
 var url_string = location.href
 var url = new URL(url_string);
 
-console.log(session);
-
 var page = "";
 
 if (url.searchParams!=undefined) {
@@ -194,7 +215,7 @@ function show_page(page) {
        // console.log([].concat(household_result, household_data, householdpowerseries));
         var data_available = combined_data.length > 0;
 //	console.log(household_result, household_data);
-        $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
+        // $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
         $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
     }
 }
@@ -215,6 +236,28 @@ function resize() {
     household_powergraph_draw();
 }
 
+// Fetch start time of consumption data
+date_selected = "fortnight";
+var out = '<option value="custom" style="display:none">'+t("Custom")+'</option>';
+var period_select_options = ["day","week","fortnight","month","year"];
+for (var z in period_select_options) {
+    out += '<option value="'+period_select_options[z]+'">'+t(ucfirst(period_select_options[z]))+'</option>';
+}
+
+if (available_reports.length>0) {
+    out = '<optgroup label="Last">'+out+'</optgroup>';
+    out += '<optgroup label="Reports">';
+    for (var z=available_reports.length-1; z>=0; z--) {
+        var parts = available_reports[z].split('-');
+        description = months[parts[1]-1]+" "+parts[0];
+        out += '<option value="'+available_reports[z]+'">'+t(description)+'</option>';
+    }
+    out += '</optgroup>';
+}
+
+$(".period-select").html(out);
+$(".period-select").val(date_selected);
+
 // Flot
 var flot_font_size = 12;
 var previousPoint = false;
@@ -230,6 +273,64 @@ if (session.read) {
 }
 
 resize();
+
+// ----------------------------------------------------------------------
+// Period selection
+// ----------------------------------------------------------------------
+$(".period-select").click(function(event) {
+    event.stopPropagation();
+});
+
+$(".period-select").change(function(event) {
+    event.stopPropagation();
+    
+    date_selected = $(this).val();
+    view.end = +new Date;
+    
+    var period_length = 3600000*24.0*30;
+    
+    var club_date_text = t("In the last %s, we scored:").replace('%s', t(date_selected));
+    var household_date_text = t("In the last %s, you scored:").replace('%s', t(date_selected));
+    
+    switch (date_selected) {
+        case "day": view.start = view.end - (3600000*24.0*1); break;
+        case "week": view.start = view.end - (3600000*24.0*7); break;
+        case "fortnight": view.start = view.end - (3600000*24.0*14); break;
+        case "month": view.start = view.end - (3600000*24.0*30); break;
+        case "year": view.start = view.end - (3600000*24.0*365); break;
+        default:
+            var parts = date_selected.split('-');
+            var month = (parts[1]*1)-1;
+            var year = parts[0]*1;
+            
+            var date = new Date();
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+            date.setDate(1);
+            date.setMonth(month);
+            date.setYear(year);
+            view.start = date.getTime();
+            
+            date.setDate(days_in_month[month]);
+            view.end = date.getTime();
+            
+            club_date_text = t("In %s, we scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
+            household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
+    }
+        
+    club_bargraph_load();
+    club_bargraph_draw();
+    $(".period-select").val(date_selected);
+    
+    $(".club_date").html(club_date_text);
+    $(".household_date").html(household_date_text);
+    
+    // Copy to household
+    household_bargraph_load()
+});
+
 // ----------------------------------------------------------------------
 // Translation
 // ----------------------------------------------------------------------
@@ -295,5 +396,4 @@ History.Adapter.bind(window,'statechange',function(){ // Note: We are using stat
     var State = History.getState(); // Note: We are using History.getState() instead of event.state
     show_page(State.title);
 });
-
 </script>

@@ -14,6 +14,7 @@ function getmeta($dir,$id)
     clearstatcache($dir.$id.".dat");
     $npoints = floor(filesize($dir.$id.".dat") / 4.0);
     $meta->npoints = $npoints;
+    $meta->end_time = $meta->start_time + ($meta->npoints * $meta->interval);
     
     return $meta;
 }

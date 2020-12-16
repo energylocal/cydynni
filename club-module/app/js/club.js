@@ -33,25 +33,41 @@ var day_view = 1;
 function club_summary_load() { 
 
 $.ajax({
-    url: path+"club/club-summary?start="+view.start+"&end="+view.end,
+    url: path+club+"/club-summary?start="+view.start+"&end="+view.end,
     dataType: 'json',
         success: function(result) {
-            var generation_value = result.cost.total.selfuse;
-            var score = 1.0 - ((result.cost.daytime.import+result.cost.evening.import)/(result.cost.total.import+result.cost.total.selfuse));
-            score = Math.round(100*score);
+            
+            var generation_value = result.generation_cost.total;
+            var total_day_cost = result.cost.total;           
+            
+            var total_low_cost = result.generation_cost.total;
+            if (result.import_cost.overnight!=undefined) total_low_cost += result.import_cost.overnight
+            
+            var total_low_cost_demand = result.generation.total;
+            if (result.import.overnight!=undefined) total_low_cost_demand += result.import.overnight
+                        
+            var score = Math.round(100*(total_low_cost_demand / result.demand.total));
             $(".club_score").html(score);
+                
+            var star_icon_on = "staryellow";
+            var star_icon_off = "star20yellow";
 
-            if (score>=20) star1 = "staryellow"; else star1 = "star20yellow";
-            if (score>=40) star2 = "staryellow"; else star2 = "star20yellow";
-            if (score>=60) star3 = "staryellow"; else star3 = "star20yellow";
-            if (score>=80) star4 = "staryellow"; else star4 = "star20yellow";
-            if (score>=90) star5 = "staryellow"; else star5 = "star20yellow";
+            if (club=="repower") {
+                star_icon_on = "sunyellow";
+                star_icon_off = "sun20yellow";
+            }
 
-            $("#club_star1").attr("src",app_path+"images/"+star1+".png");
-            setTimeout(function() { $("#club_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
-            setTimeout(function() { $("#club_star3").attr("src",app_path+"images/"+star3+".png"); }, 200);
-            setTimeout(function() { $("#club_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
-            setTimeout(function() { $("#club_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
+            if (score>=20) cstar1 = star_icon_on; else cstar1 = star_icon_off;
+            if (score>=40) cstar2 = star_icon_on; else cstar2 = star_icon_off;
+            if (score>=60) cstar3 = star_icon_on; else cstar3 = star_icon_off;
+            if (score>=80) cstar4 = star_icon_on; else cstar4 = star_icon_off;
+            if (score>=90) cstar5 = star_icon_on; else cstar5 = star_icon_off;
+
+            $("#club_star1").attr("src",app_path+"images/"+cstar1+".png");
+            setTimeout(function() { $("#club_star2").attr("src",app_path+"images/"+cstar2+".png"); }, 100);
+            setTimeout(function() { $("#club_star3").attr("src",app_path+"images/"+cstar3+".png"); }, 200);
+            setTimeout(function() { $("#club_star4").attr("src",app_path+"images/"+cstar4+".png"); }, 300);
+            setTimeout(function() { $("#club_star5").attr("src",app_path+"images/"+cstar5+".png"); }, 400);
 
             setTimeout(function() {
             if (score<30) {
@@ -79,50 +95,101 @@ $.ajax({
 
             club_pie_data_cost = [];
             club_pie_data_energy = [];
+            
+            var tariff_colors = {
+                "overnight": "#014c2d",
+                "morning": "#ffdc00",
+                "midday": "#ffb401",
+                "daytime": "#ffb401",
+                "evening": "#e6602b",
+                "standard": "#ffb401"
+            }
 
             // COST
-            for(x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                club_pie_data_cost.push({
-                    name: t(ucfirst(tariff.name)),
-                    generation: result.cost[tariff.name].selfuse,
-                    import: result.cost[tariff.name].import,
-                    color: tariff.color
-                });
+            for (var tariff_name in result.cost) {
+                if (tariff_name!='total') {
+                    club_pie_data_cost.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation_cost[tariff_name],
+                        import: result.import_cost[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
+            }
+
+            // ENERGY
+            for (var tariff_name in result.demand) {
+                if (tariff_name!='total') {
+                    club_pie_data_energy.push({
+                        name: t(ucfirst(tariff_name)),
+                        generation: result.generation[tariff_name],
+                        import: result.import[tariff_name],
+                        color: tariff_colors[tariff_name]
+                    });
+                }
             }
             
-            // ENERGY
-            for(x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                club_pie_data_energy.push({
-                    name: t(ucfirst(tariff.name)),
-                    generation: result.kwh[tariff.name].selfuse,
-                    import: result.kwh[tariff.name].import,
-                    color: tariff.color
-                });
-            }
+            // Create aggregated legend item for hydro
+            var legend = "";
+            legend += '<tr>'
+            legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+            legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
+            legend += result.generation.total.toFixed(2)+" kWh "
+            if (result.generation.total>0) legend += "@"+(100*generation_value/result.generation.total).toFixed(2)+" p/kWh"
+            legend += "<br>"
+            legend += t("Costing")+" £"+generation_value.toFixed(2)+'</td>'
+            legend += '</tr>'
             
             // CHART KEY VALUES FOR EACH TARIFF:
             // populate tariff totals for club in pie chart key
-            for (x in club_settings.tariffs) {
-                var tariff = club_settings.tariffs[x];
-                var tariff_cost = result.cost[tariff.name];
-                var tariff_kwh = result.kwh[tariff.name];
+            for (var tariff_name in result.import) {
+                if (tariff_name!='total') {
+                    var tariff_cost = result.import_cost[tariff_name];
+                    var tariff_kwh = result.import[tariff_name];
 
-                var tarriffKwhTotal = (tariff_kwh.import).toFixed(0);
-                var tariffTotalCost = (tariff_cost.import).toFixed(2);
-                var tariffUnitCost = '@' + (100*tariffTotalCost/tarriffKwhTotal).toFixed(1) + " p/kWh";
+                    var tarriffKwhTotal = tariff_kwh.toFixed(0);
+                    var tariffTotalCost = tariff_cost.toFixed(2);
+                    var tariffUnitCost = '@' + (100*tariffTotalCost/tarriffKwhTotal).toFixed(1) + " p/kWh";
 
-                $("#club_"+tariff.name+"_kwh").html(tarriffKwhTotal);
-                $("#club_"+tariff.name+"_cost").html(tariffTotalCost);
-                $("#club_"+tariff.name+"_unitcost").html(tariffUnitCost);
+                    $("#club_"+tariff_name+"_kwh").html(tarriffKwhTotal);
+                    $("#club_"+tariff_name+"_cost").html(tariffTotalCost);
+                    $("#club_"+tariff_name+"_unitcost").html(tariffUnitCost);
+                    
+                    // Legend for each import tariff band
+                    legend += '<tr>'
+                    legend += '<td><div class="key" style="background-color:'+tariff_colors[tariff_name]+'"></div></td>'
+                    legend += '<td><b>'+t(ucfirst(tariff_name))+'</b><br>'
+                    legend += tarriffKwhTotal+" kWh "+tariffUnitCost+"<br>"
+                    legend += t("Costing")+" £"+tariffTotalCost+'</td>'
+                    legend += '</tr>'
+                }
             }
+
+            var unit_price = 100 * result.cost.total / result.demand.total
+            legend += '<tr>'
+            legend += '<td></td>'
+            legend += '<td><b>'+t("Average Price")+':</b><br>'+unit_price.toFixed(1)+" p/kWh</td>"
+            legend += '</tr>'
+            
+            $("#club_pie_legend").html(legend);  
             // GENERATION TARIFF:
             // populate aggrigated totals for club generation
-            $("#club_generation_kwh").html(result.kwh.total.selfuse.toFixed(0));
-            $("#club_generation_cost").html(result.cost.total.selfuse);
+            $("#club_generation_kwh").html(result.generation.total.toFixed(0));
+            $("#club_generation_cost").html(generation_value.toFixed(2));
             // $("#club_generation_unitcost").html('@' + (100*result.cost.total.selfuse/result.kwh.total.selfuse).toFixed(1) + " p/kWh");
             club_pie_draw();
+            
+            $(".club_totalkwh").html(result.demand.total.toFixed(2));
+            $(".club_totalcost").html("£"+result.cost.total.toFixed(2));
+                    
+            // Saving calculation
+            var saving = (result.demand.total * club_settings.unitprice_comparison) - result.cost.total;
+            if (saving>0) {
+                $(".club_saving").html("£"+saving.toFixed(2));
+            } else {
+                $(".club_saving").html("£0");
+            }
+            
         }
     });
 }
@@ -144,6 +211,7 @@ function club_pie_draw() {
       height: height
     };
 
+    pie_generator_color = club_settings.generator_color;
     piegraph3("club_piegraph1_placeholder",club_pie_data_energy,options);
     piegraph3("club_piegraph2_placeholder",club_pie_data_cost,options);
 
@@ -169,22 +237,19 @@ function club_bargraph_load() {
     if (interval<1800) interval = 1800;
     var intervalms = interval * 1000;
 
-    // Start and end time rounding
-    view.end = Math.floor(view.end / intervalms) * intervalms;
-    view.start = Math.floor(view.start / intervalms) * intervalms;
+    if(['year','month','fortnight','week','day'].indexOf(date_selected) != -1) {  
+        $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
+    } else if (date_selected=="custom") {
+        $(".club_date").html(t("For the range selected in the graph")+":");
+        $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", ucfirst(club_settings.generator)));
+    }
 
     club_summary_load();
-
-    var generation_data = [];
-    // Load data from server
-    if (generation_feed==194360) {
-        generation_data = feed.getdataremote(generation_feed,view.start,view.end,interval,1,1);
-        for (var z in generation_data) {
-        generation_data[z][1] = generation_data[z][1]*2;
-        }
-    } else {
-        generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
-    }
+    
+    view.start = Math.floor(view.start / intervalms)*intervalms
+    view.end = Math.ceil(view.end / intervalms)*intervalms
+    
+    var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
     var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
 
     if (generation_data.success!=undefined) $("#local_electricity_forecast").hide();
@@ -205,6 +270,7 @@ function club_bargraph_load() {
     data.export = [];
     data.selfuse = [];
     data.price = [];
+    data.standard = [];
 
     for (var z in club_data) {
         var time = club_data[z][0];
@@ -213,6 +279,12 @@ function club_bargraph_load() {
 
         var generation = 0;
         if (generation_data[z]!=undefined) generation = generation_data[z][1] * scale;
+        
+        if (generation_feed==1471) {
+            if (generation>40.0) generation = 40.0;
+            generation *= 0.5;
+        }
+        
         var consumption = club_data[z][1] * scale;
         
         var exported_generation = 0;
@@ -225,21 +297,21 @@ function club_bargraph_load() {
         
         var unit_price = 0.0;
         
-        for(var x in club_settings.tariffs) {
-            var tariff = club_settings.tariffs[x];
+        for(var x in tariffs) {
             var on_tariff = false;
-            var sh = 1*tariff.start.split(":")[0];
-            var eh = 1*tariff.end.split(":")[0];
+            var sh = 1*tariffs[x].start.split(":")[0];
+            var eh = 1*tariffs[x].end.split(":")[0];
                     
             if (sh<eh && (hour>=sh && hour<eh)) on_tariff = true;
             if (sh>eh && (hour>=sh || hour<eh)) on_tariff = true;
+            if (sh==eh) on_tariff = true;
             
             if (on_tariff) {
-                unit_price = (tariff.import*imprt + tariff.generator*selfuse) / consumption
+                unit_price = (tariffs[x].import*imprt + tariffs[x].generator*selfuse) / consumption
                 
-                data[tariff.name][z] = [time,imprt];
+                data[tariffs[x].name][z] = [time,imprt];
             } else {
-                data[tariff.name][z] = [time,0];
+                data[tariffs[x].name][z] = [time,0];
             }
         }
         data.export[z] = [time,exprt];
@@ -258,10 +330,9 @@ function club_bargraph_load() {
     });
     
     // add series data for each tariff
-    for(x in club_settings.tariffs) {
-        var tariff = club_settings.tariffs[x];
+    for(x in tariffs) {
         clubseries.push({
-            stack: true, data: data[tariff.name], color: tariff.color, label: t(ucfirst(tariff.name)+" Tariff"),
+            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name)+" Tariff"),
             bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
         });
     }
@@ -278,6 +349,8 @@ function club_bargraph_load() {
             lines: { show: true }
         });
     }
+    
+    club_bargraph_draw();
 }
 
 function club_bargraph_resize() {
@@ -366,30 +439,6 @@ function round_interval(interval) {
     return outinterval;
 }
 
-/*
-$(".club-zoomout").click(function(event) {
-    event.stopPropagation();
-    var time_window = view.end - view.start;
-    var middle = view.start + time_window / 2;
-    time_window = time_window * 2;
-    view.start = middle - (time_window/2);
-    view.end = middle + (time_window/2);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-
-$(".club-zoomin").click(function(event) {
-    event.stopPropagation();
-    var time_window = view.end - view.start;
-    var middle = view.start + time_window / 2;
-    time_window = time_window * 0.5;
-    view.start = middle - (time_window/2);
-    view.end = middle + (time_window/2);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-*/
-
 $(".club-left").click(function(event) {
     event.stopPropagation();
     var time_window = view.end - view.start;
@@ -414,45 +463,12 @@ $('.visnav-club').click(function(event){
     $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(range)));
 });
 
-$(".club-day").click(function(event) {
-    event.stopPropagation();
-    view.end = +new Date;
-    view.start = view.end - (3600000*24.0*1);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-
-$(".club-week").click(function(event) {
-    event.stopPropagation();
-    view.end = +new Date;
-    view.start = view.end - (3600000*24.0*7);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-
-$(".club-month").click(function(event) {
-    event.stopPropagation();
-    view.end = +new Date;
-    view.start = view.end - (3600000*24.0*30);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-
-$(".club-year").click(function(event) {
-    event.stopPropagation();
-    view.end = +new Date;
-    view.start = view.end - (3600000*24.0*365);
-    club_bargraph_load();
-    club_bargraph_draw();
-});
-
 $('#club_bargraph_placeholder').bind("plotselected", function (event, ranges) {
     view.start = ranges.xaxis.from;
     view.end = ranges.xaxis.to;
+    date_selected = "custom";
+    $(".period-select").val("custom");
     club_bargraph_load();
-    club_bargraph_draw();
-    $(".club_date").html(t("For the range selected in the graph")+":");
-    $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", ucfirst(club_settings.generator)));
 });
 
 $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {

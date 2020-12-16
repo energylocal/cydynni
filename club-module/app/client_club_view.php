@@ -1,8 +1,6 @@
             <div class="block">
                 <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                  <div class="visnav-block">
-                    <div class="visnav-club club-year"><?php echo t("YEAR");?></div><div class="visnav-club club-month"><?php echo t("MONTH");?></div><div class="visnav-club club-week"><?php echo t("WEEK");?></div><div class="visnav-club club-day" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("DAY");?></div>
-                  </div>
+                  <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 
                 <div class="block-content" style="color:#ffb401">
@@ -28,7 +26,9 @@
                   <img id="club_star5" src="<?php echo $app_path; ?>images/star20yellow.png" style="width:45px">
                 
                   <br><br><div class="bound" id="club_statusmsg"></div><br>
-                  
+                
+                <?php echo t("Together we've kept"); ?><br>
+                <!--  
                 <div style="background-color:#ffb401; color:#fff; height:50px">
                   <div style="padding-top:20px">
                     <?php echo t("Together we've kept"); ?>
@@ -41,7 +41,7 @@
                       <div class="triangle-down-content triangle-club-bg"></div>
                     </div>
                   </div>
-                </div>
+                </div>-->
                 
                 <br>
                 <div class="circle bg-club">
@@ -50,21 +50,21 @@
                     </div>
                 </div>
                 <br>
-                
+                <!--
                 <div style="background-color:#ffb401; color:#fff; padding:20px">
                     <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?></div>
-                </div>
+                </div>-->
+                <?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?><br><br>
                   
                 </div>
             </div>
             <div class="block">
                 <div class="block-title bg-club2"><?php echo t("Club breakdown"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                <div class="visnav-block">
-                    <div class="visnav-club club-year"><?php echo t("YEAR");?></div><div class="visnav-club club-month"><?php echo t("MONTH");?></div><div class="visnav-club club-week"><?php echo t("WEEK");?></div><div class="visnav-club club-day" style="border-right: 1px solid rgba(255,255,255,0.2);"><?php echo t("DAY");?></div>
+                <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
-                </div>
-                <div class="block-content">
+                <div class="block-content" style="color:#ff7900">
                 
+                    <!--
                     <div class="bg-club2">
                       <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), ucfirst($club_settings["generator"]),t('fortnight')) . "."; ?></div>
                     </div>
@@ -75,7 +75,7 @@
                           <div class="triangle-down-content triangle-club2-bg"></div>
                         </div>
                       </div>
-                    </div>
+                    </div>-->
                     <br>
 
                     <!--
@@ -87,6 +87,8 @@
                     
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("ELECTRICITY"); ?></div>
+                      <div style="font-size:22px"><span class="club_totalkwh"></span> kWh</div>
+                      
                       <div id="club_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="club_piegraph1_placeholder"></canvas>
                       </div>
@@ -98,6 +100,7 @@
                 
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("COST"); ?></div>
+                      <div style="font-size:22px" class="club_totalcost"></div>
                       <div id="club_piegraph2_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="club_piegraph2_placeholder"></canvas>
                       </div>
@@ -108,39 +111,18 @@
                     </div>
                     
                     <div class="box3">
-                      <div style="padding:15px; text-align:left; margin: 0 auto; max-width:270px">
-                        <table class="keytable">
-                          <?php 
-                          $club_gen_tariff = $tariffs[strtolower($club_settings['name'])]['generation'];
-                          $generation = array(
-                            'name'=> $club_gen_tariff['name'],
-                            'cost'=> $club_gen_tariff['cost'],
-                            'color'=> $club_gen_tariff['color'],
-                            'key'=>'generation'
-                          );
-                          foreach (array_merge([$generation], $club_settings['tariffs']) as $key=>$tariff) {
-                            if(!isset($tariff['key'])) {
-                                $tariff['key'] = strtolower($tariff['name']);
-                            }
-                          ?>
-                          <tr>
-                            <td><div class="key" style="background-color:<?php echo $tariff['color']; ?>"></div></td>
-                            <td>
-                                <b><?php echo t(ucfirst(t($tariff['name'])." Price"));?> </b><br>
-                                <span id="club_<?=$tariff['key'] ?>_kwh"></span> kWh <span id="club_<?=$tariff['key']?>_unitcost"></span><br>
-                                <?php echo t("Costing");?> £<span id="club_<?=$tariff['key']?>_cost"></span>
-                            </td>
-                          </tr>
-                          <?php } ?>
-                        </table>
+                      <div style="font-size:26px; font-weight:bold;" class="club_saving_title"><?php echo t("SAVING"); ?></div>
+                      <div style="font-size:22px" class="club_saving"></div>
+                      <div style="padding:15px; text-align:left; margin: 20px auto; max-width:270px; color:#333">
+                        <table class="keytable" id="club_pie_legend"></table>
                       </div>
                     </div>
                     
                     <div style="clear:both"></div>
 
-                    <div class="bg-club2" style="padding:20px">
+                    <!--<div class="bg-club2" style="padding:20px">
                       <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings["generator"].", the more money stays in the local club."); ?></div>
-                    </div>
+                    </div>-->
                     
                 </div>
             </div>

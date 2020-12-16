@@ -1,5 +1,5 @@
 <?php
-    global $session, $redis, $path;
+    global $session, $redis, $path, $club;
     
     if ($session["admin"]) {
         $menu['sidebar']['emoncms'][] = array(
@@ -23,6 +23,7 @@
         'data'=> array('is-link' => true)
     );
 
+    /*
     $menu['tabs'][] = array(
         'text' => $session["lang"]=="cy_GB" ? "Adroddiad" : "Report",
         'path'=> "club/report".$apikeystr,
@@ -35,35 +36,39 @@
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
+        
+        $end = floor(time()/1800)*1800;
+        if ($club=="bethesda") $start = round($end-3600*24*30.42*12);
+        if ($club=="repower") $start = round($end-3600*24*30.42*1);
+        
+        
+        $d = new DateTime();
+        $d->setTimezone(new DateTimeZone("Europe/London"));
+        $d->setTimestamp($start);
+        $d->setDate($d->format("Y"),$d->format("m"),1);
+        $d->setTime(0,0,0);
+        $time = $d->getTimestamp();
+        
         $months = array("January","February","March","April","May","June","July","August","September","October","November","December");
-        if ($result = $redis->get("household:summary:monthly:$userid")) {
-            $result = json_decode($result,true);
+
+        $menu['sidebar']['reports'][] = array(
+            'path' => 'club/report',
+            'li_class' => 'd-none'
+        );
+        
+        while ($time<$end) {
+            $name = $months[$d->format("m")-1];
+            $year = $d->format("Y");
+            $index = $d->format("Y-m");
 
             $menu['sidebar']['reports'][] = array(
-                'path' => 'club/report',
-                'li_class' => 'd-none'
+                'href' => $path.$club.'/report'.$apikeystr.'#'.$index,
+                'active' => $path.$club.'/report'.$apikeystr.'#'.$index,
+                'text' => sprintf("%s %s",$name,$year),
+                'order' => $index
             );
-            foreach ($result as $index=>$item) {
-                $name = $months[$item['month'] - 1];
-                $year = $item['year'];
-
-                $menu['sidebar']['reports'][] = array(
-                    'href' => $path.'club/report'.$apikeystr.'#'.$index,
-                    'active' => $path.'club/report'.$apikeystr.'#'.$index,
-                    'text' => sprintf("%s %s",$name,$year),
-                    'order' => $index
-                );
-            }
+            
+            $d->modify('+1 month');
+            $time = $d->getTimestamp();
         }
-    }
-
-    // $cydynni = new Cydynni($mysqli,$redis);
-    // foreach($cydynni->getHouseholdSummaryMonthly($userid) as $key=>$value) {
-    //     DateTime::createFromFormat('!m', $value['month']);
-    //     $dateObj = DateTime::createFromFormat('!m', $monthNum);
-    //     $monthName = $dateObj->format('F');
-    //     $menu['sidebar']['cydynni'][] = array(
-    //         'text' => sprintf("%s %s", _($dateObj->format('F')), $value['year']),
-    //         'href'=> "#".$key
-    //     );
-    // }
+    }*/
