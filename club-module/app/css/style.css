@@ -277,6 +277,12 @@ a:visited {
 .tl-red-on {background-color:#c20000;}
 .tl-red-off {background-color:rgba(194,0,0,0.2);}
 
+.tl3 {
+    width:33.333%;
+    float:left;
+    text-align:center;
+}
+
 .bg-generation { background-color: #29aae3; color:#fff; }
 .bg-morning { background-color: #ffb401; color:#fff; }
 .bg-midday { background-color: #4dac34; color:#fff; }

@@ -79,7 +79,20 @@ function household_draw_summary_range() {
     $.ajax({
         url: path+club+"/household-summary?start="+view.start+"&end="+view.end,
         dataType: 'json',
-        success: function(result) {    
+        success: function(result) {
+            if (result.demand==undefined) {
+                console.log("ERROR","invalid household-daily-summary response: ", result);
+                // Default zero result
+                result = {
+                    "demand": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "import": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "generation": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "generation_cost": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "import_cost": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "cost": {"overnight":0.0,"daytime":0.0,"evening":0.0,"total":0.0},
+                    "days": 0
+                }
+            }
             draw_summary(result);
         }
     });
@@ -164,8 +177,10 @@ function draw_summary(result) {
         total_low_cost_demand += result.import.overnight
         household_score_description += " or low-cost power";
     }
-    
-    var score = Math.round(100*(total_low_cost_demand / result.demand.total));
+    var score = 100;
+    if (result.demand.total>0) {
+        score = Math.round(100*(total_low_cost_demand / result.demand.total));
+    }
     $(".household_score").html(score);
     $(".household_score_description").html(t(household_score_description).replace("%s",score));
 
@@ -189,13 +204,14 @@ function draw_summary(result) {
     setTimeout(function() { $("#household_star4").attr("src",app_path+"images/"+star4+".png"); }, 300);
     setTimeout(function() { $("#household_star5").attr("src",app_path+"images/"+star5+".png"); }, 400);
     
-    var standing_charge = 0.178*result.days;
+    var standing_charge = tariff_standing_charge*result.days;
     var vat = (result.cost.total+standing_charge)*0.05;
     var total_cost = result.cost.total + standing_charge + vat;
 
     $(".household_totalkwh").html(result.demand.total.toFixed(2));
     $(".household_elec_cost").html("£"+result.cost.total.toFixed(2));
     $(".household_standing_charge").html("£"+standing_charge.toFixed(2));
+    $(".tariff_standing_charge").html((tariff_standing_charge*100).toFixed(2));
     $(".household_vat").html("£"+vat.toFixed(2));
     $(".household_total_cost").html("£"+result.cost.total.toFixed(2));
     $(".household_days").html(result.days);
@@ -267,6 +283,7 @@ function household_bargraph_load() {
             success: function(result) {
                 if (!result || result===null || result==="" || result.constructor!=Array || result.length === 0) {
                     console.log("ERROR","invalid household-daily-summary response: ", result);
+                    household_draw_summary_range();
                 } else {
                     household_result = result;
                     

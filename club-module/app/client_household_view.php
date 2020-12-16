@@ -175,7 +175,7 @@
                     <div style="text-align:left; color:#333; font-size:14px; padding:0px 15px 15px 15px;">
                       <table style="width:100%">
                       <tr>
-                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span class="household_totalkwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span class="household_days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%</td>
+                        <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span class="household_totalkwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span class="household_days"></span> <?php echo t("days at");?> <span class="tariff_standing_charge"></span>p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%</td>
                         <td style="background-color:#f0f0f0; border:2px #fff solid; padding:10px"><span class="household_elec_cost"></span><br><span class="household_standing_charge"></span><br><span class="household_vat"></span></td>
                       </tr>
                       <tr>

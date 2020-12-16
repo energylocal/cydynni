@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 36;
+$v = 38;
 
 $app_path = $path."Modules/club/app/";
 
@@ -80,9 +80,14 @@ var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
-var is_hub = <?php echo $is_hub ? 'true':'false'; ?>;
+var is_hub = false;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
+
+var tariff_standing_charge = 0.178;
+if (club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge!=undefined) {
+    tariff_standing_charge = club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge*0.01;
+}
 var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
 
 var available_reports = <?php echo json_encode($available_reports); ?>;

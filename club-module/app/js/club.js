@@ -245,7 +245,10 @@ function club_bargraph_load() {
     }
 
     club_summary_load();
-
+    
+    view.start = Math.floor(view.start / intervalms)*intervalms
+    view.end = Math.ceil(view.end / intervalms)*intervalms
+    
     var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
     var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
 
