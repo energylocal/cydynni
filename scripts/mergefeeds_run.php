@@ -6,23 +6,7 @@ require "lib/common.php";
 require "lib/merge2feeds.php";
 require "lib/merge3feeds.php";
 
-// ------------------------------------------------
-define('EMONCMS_EXEC', 1);
-chdir("/var/www/emoncms");
-require "process_settings.php";
-require "Lib/EmonLogger.php";
-$mysqli = @new mysqli(
-    $settings["sql"]["server"],
-    $settings["sql"]["username"],
-    $settings["sql"]["password"],
-    $settings["sql"]["database"],
-    $settings["sql"]["port"]
-);
-$redis = new Redis();
-$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$settings["feed"]);
-// ------------------------------------------------
+require "lib/load_emoncms.php";
 
 $result_users = $mysqli->query("SELECT * FROM cydynni ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 

@@ -6,22 +6,7 @@ $recalc_club = false;
 require "/opt/emoncms/modules/postprocess/common.php";
 require "/opt/emoncms/modules/postprocess/processes/powertohh.php";
 require "lib/merge2feeds.php";
-// ----------------------------------------------------------------
-define('EMONCMS_EXEC', 1);
-chdir("/var/www/emoncms");
-require "process_settings.php";
-require "Lib/EmonLogger.php";
-$mysqli = @new mysqli(
-    $settings["sql"]["server"],
-    $settings["sql"]["username"],
-    $settings["sql"]["password"],
-    $settings["sql"]["database"],
-    $settings["sql"]["port"]
-);
-$redis = new Redis();
-$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$settings["feed"]);
+require "lib/load_emoncms.php";
 // ------------------------------------------------------------------------------------------
 // Bethesda
 // ------------------------------------------------------------------------------------------

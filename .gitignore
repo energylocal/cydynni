@@ -5,4 +5,12 @@ scripts-hub/cydynnimqtt.log
 scripts-hub/mosquitto-repo.gpg.key
 scripts-hub/mqtt.log
 scripts-hub/provisionkey.php
+scripts-hub/metermqttclient-req-lock
+scripts-hub/metermqttclient-req-v2-lock
+
+scripts/demandshapers/config.php
+scripts/data_sources/octopus/config.php
+scripts/data_sources/tma/config.php
+scripts/data_sources/CR/config.php
+
 *.log

@@ -27,6 +27,11 @@ $club_id = $club_settings[$club]['consumption_feed'];
 // DemandShaper
 // -------------------------------------------------
 
+// Load hydro forecast
+require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
+$hydro_forecast = hydro_forecast($feed);
+
+
 // Force cache reload
 $redis->hdel("feed:$gen_id",'time');
 $timevalue = $feed->get_timevalue($gen_id);
@@ -109,17 +114,31 @@ for ($time=$start; $time<$end; $time+=1800) {
     
     $date->setTimestamp($time+1800);
     $row['valid_to'] = $date->format("Y-m-d\TH:i:s\Z");
-
     
+    $use = $sum[$hm] / $count[$hm];
+    if (isset($hydro_forecast[$time])) $gen = $hydro_forecast[$time];
+    
+    $balance = $gen - $use;
+    if ($balance>0) {
+       $from_hydro = $use;
+       $import = 0;
+    } else {
+       $from_hydro = $gen;
+       $import = -1*$balance;
+    }
 
-    $hydro_price = 0.0;
-    if ($h>=20.0 || $h<7.0) $hydro_price = 0.058;
-    if ($h>=7.0 && $h<16.0) $hydro_price = 0.104;
-    if ($h>=16.0 && $h<20.0) $hydro_price = 0.127;
+    $hydro_price = 0.0; $import_price = 0.0;
+    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.058; $import_price = 0.105; }
+    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.104; $import_price = 0.189; }
+    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.127; $import_price = 0.231; }
+    
+    $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
+    $unitprice = $cost / $use;
+    
+    $modified_unitprice = ($unitprice*0.88) + ($use*0.0005);
 
-    $average = $sum[$hm] / $count[$hm];
-    $row['value_exc_vat'] = number_format($average*$hydro_price,2)*1;
-    $row['value_inc_vat'] = number_format($average*$hydro_price,2)*1;
+    $row['value_exc_vat'] = number_format(100*$modified_unitprice,2)*1;
+    $row['value_inc_vat'] = number_format(100*$modified_unitprice,2)*1;
     
     $rows[] = $row;
 }
@@ -151,20 +170,37 @@ $forecast->optimise = 0;
 $date = new DateTime();
 $date->setTimezone(new DateTimeZone("Europe/London"));
 
+$gen = 0;
+
 for ($time=$start; $time<$end; $time+=$interval) {
 
     $date->setTimestamp($time);
     $hm = $date->format('H:i');
     $h = $date->format('H')*1;
-    $average = $sum[$hm] / $count[$hm];
+    
+    $use = $sum[$hm] / $count[$hm];
+    if (isset($hydro_forecast[$time])) $gen = $hydro_forecast[$time];
+    
+    $balance = $gen - $use;
+    if ($balance>0) {
+       $from_hydro = $use;
+       $import = 0;
+    } else {
+       $from_hydro = $gen;
+       $import = -1*$balance;
+    }
 
-    $hydro_price = 0.0;
-    if ($h>=20.0 || $h<7.0) $hydro_price = 0.058;
-    if ($h>=7.0 && $h<16.0) $hydro_price = 0.104;
-    if ($h>=16.0 && $h<20.0) $hydro_price = 0.127;
+    $hydro_price = 0.0; $import_price = 0.0;
+    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.058; $import_price = 0.105; }
+    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.104; $import_price = 0.189; }
+    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.127; $import_price = 0.231; }
 
-    $forecast->profile[] = number_format($average*$hydro_price,2)*1;
+    $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
+    $unitprice = $cost / $use;
+    
+    // $cost = ($unitprice*0.88) + ($use*0.0005);
+
+    $forecast->profile[] = number_format($cost,3)*1;
 }
 
 $redis->set("energylocal:forecast:bethesda",json_encode($forecast));
-

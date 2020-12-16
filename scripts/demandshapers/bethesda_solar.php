@@ -5,7 +5,8 @@
 // --------------------------------------------------------------------------------
 define("MAX",1); 
 define("MIN",0);
-require "lib/solcast.php";
+require "/opt/emoncms/modules/cydynni/scripts/lib/solcast.php";
+require "config.php";
 
 define('EMONCMS_EXEC', 1);
 chdir("/var/www/emoncms");
@@ -20,8 +21,8 @@ $params->timezone = "Europe/London";
 $params->interval = 1800;
 $params->start = floor(time()/$params->interval)*$params->interval;
 $params->end = $params->start + (3600*24);
-$params->siteid = "";
-$params->api_key = "";
+$params->siteid = $solcast_siteid;
+$params->api_key = $solcast_api_key;
 
 $solcast = get_forecast_solcast($redis,$params);
 
@@ -31,5 +32,5 @@ for ($time=$params->start; $time<$params->end; $time+=$params->interval) {
     $td++;
 }
 
-$redis->set("energylocal:forecast:FORECAST_NAME",json_encode($solcast));
+$redis->set("energylocal:forecast:bethesda_solar",json_encode($solcast));
 
