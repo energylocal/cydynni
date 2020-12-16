@@ -1,4 +1,5 @@
 <?php
+$recalc_club = false;
 // ----------------------------------------------------------------
 // Process power data in half hourly data
 // ----------------------------------------------------------------
@@ -24,14 +25,19 @@ $feed = new Feed($mysqli,$redis,$settings["feed"]);
 // ------------------------------------------------------------------------------------------
 // Bethesda
 // ------------------------------------------------------------------------------------------
-$result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=1 ORDER BY userid ASC");
+$result_users = $mysqli->query("SELECT * FROM cydynni ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
     // ----------------------------------------------------------------
     $userid = $row->userid;
+    $clubid = $row->clubs_id;
+    
     $feedA = $feed->exists_tag_name($userid,"meter","meter_power");
+    if (!$feedA) $feedA = $feed->exists_tag_name($userid,"user","meter_power");
     $feedB = $feed->exists_tag_name($userid,"smartmeter","W");
     
+    $feedD = false;
+    print "user: ".$userid."\n";
     // If these is either a MQTT meter_power feed or uploaded smartmeter feed create an output half hourly feed
     if ($feedA || $feedB) {
         print $userid." ".$feedA." ".$feedB."\n";
@@ -45,7 +51,7 @@ while ($row = $result_users->fetch_object())
         $processitem = new stdClass();
         $processitem->output = $feedD;
     }
-    // $feed->clear($feedD);
+    if ($recalc_club && $clubid==$recalc_club) $feed->clear($feedD);
     
     // ----------------------------------------------------------------
     
@@ -85,10 +91,12 @@ while ($row = $result_users->fetch_object())
         powertohh("/var/lib/phpfina/",$processitem);   
     }
 
-    $redis->hdel("feed:$feedD",'time');
-    $timevalue = $feed->get_timevalue($feedD);
+    if ($feedD) {
+        $redis->hdel("feed:$feedD",'time');
+        $timevalue = $feed->get_timevalue($feedD);
+    }
 }
-
+/*
 // ------------------------------------------------------------------------------------------
 // Repower
 // ------------------------------------------------------------------------------------------
@@ -116,4 +124,4 @@ while ($row = $result_users->fetch_object())
         $timevalue = $feed->get_timevalue($use_hh);
     }
    
-}
+}*/
