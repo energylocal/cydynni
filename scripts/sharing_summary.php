@@ -1,26 +1,8 @@
 <?php
 /*
     // TEST
-
-    define('EMONCMS_EXEC', 1);
-    chdir("/var/www/emoncms");
-    require "process_settings.php";
-    require_once "Lib/EmonLogger.php";
-
-    $mysqli = @new mysqli(
-        $settings["sql"]["server"],
-        $settings["sql"]["username"],
-        $settings["sql"]["password"],
-        $settings["sql"]["database"],
-        $settings["sql"]["port"]
-    );
-    $redis = new Redis();
-    $connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-
-    // Feed model
-    require_once "Modules/feed/feed_model.php";
-    $feed = new Feed($mysqli,$redis,$settings["feed"]);
-
+    require "lib/load_emoncms.php";
+    
     $use_id = $feed->get_id($userid,"use_hh_est");
     $gen_id = $feed->get_id($userid,"gen_hh");
 
