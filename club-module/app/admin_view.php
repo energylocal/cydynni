@@ -22,6 +22,7 @@ input {
 <div class="input-prepend input-append" style="float:right">
     <span class="add-on">Add user:</span>
     <input type="text" id="add_user_username" style="width:150px" placeholder="Username"/>
+    <input type="text" id="add_user_password" style="width:150px" placeholder="Password"/>
     <input type="text" id="add_user_email" style="width:150px" placeholder="Email"/>
     <input type="text" id="add_user_mpan" style="width:150px" placeholder="MPAN"/>
     <button class="btn" id="add_user">Add</button>
@@ -36,12 +37,14 @@ input {
 
 <table class="table" style="table-layout: fixed; width: 100%">
   <tr>
-    <th>User</th>
-    <th style="width:250px">Username</th>
-    <th style="width:260px">Email <span style="font-size:12px">(Click to edit)</span></th>
+    <th style="width:40px">User</th>
+    <th style="width:165px">Username</th>
+    <th style="width:185px">Email <span style="font-size:12px">(Click to edit)</span></th>
     <th>MPAN</th>
-    <th>Welcome Email</th>
-    <th>Report Email</th>
+    <th>Serial No</th>
+    <th>GUID</th>
+    <th style="width:120px">Welcome Email</th>
+    <th style="width:120px">Report Email</th>
     <th>Feeds</th>
     <th>Hits</th>
     <th>Graph</th>
@@ -53,21 +56,26 @@ input {
 var path = "<?php echo $path; ?>";
 var session = <?php echo json_encode($session); ?>;
 
+var selected_club = localStorage.getItem('selected_club');
+if (selected_club==null) selected_club = 1; else selected_club *= 1;
+
 var users = [];
 
 var clubs = <?php echo json_encode($clubs); ?>;
+console.log(clubs)
 var out = "";
 for (var z in clubs) {
-    out += "<option value='"+z+"'>"+clubs[z]+"</option>";
+    var selected = "";
+    if (selected_club==z) selected = "selected";
+    out += "<option value='"+z+"' "+selected+">"+clubs[z]+"</option>";
 }
 $("#select_club").html(out);
-var club_id = 1;
 
 load();
 function load() {
 
     $.ajax({
-        url: path+"club/admin-users?club_id="+club_id,
+        url: path+"club/admin-users?club_id="+selected_club,
         dataType: 'json',
         success: function(result) {
             users = result;
@@ -75,20 +83,38 @@ function load() {
             var out = "";
             for (var z in result) {
                 out += "<tr>";
-                var admin = ""; if (result[z].admin==1) admin = " (admin)";
+                var admin = ""; if (result[z].admin==1) admin = " (A)";
                 out += "<td><a href='"+path+"club/admin-switchuser?userid="+result[z].userid+"'>"+result[z].userid+"</a>"+admin+"</td>";
 
                 out += "<td class='td-username'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].username+"' class='edit-input' style='width:180px' key='username' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='username' userid='"+result[z].userid+"'>Save</button></div>";
+                  out += "<div class='input-append'><input type='text' value='"+result[z].username+"' class='edit-input' style='width:160px' key='username' userid='"+result[z].userid+"'>";
+                  out += "<button class='btn edit-save hide' key='username' userid='"+result[z].userid+"'>S</button></div>";
                 out += "</td>";
                 
                 out += "<td class='td-email'>";
                   out += "<div class='input-append'><input type='text' value='"+result[z].email+"' class='edit-input' style='width:180px' key='email' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='email' userid='"+result[z].userid+"'>Save</button></div>";
+                  out += "<button class='btn edit-save hide' key='email' userid='"+result[z].userid+"'>S</button></div>";
                 out += "</td>";
+                
+                out += "<td class='td-mpan'>";
+                  out += "<div class='input-append'><input type='text' value='"+result[z].mpan+"' class='edit-input' style='width:120px' key='mpan' userid='"+result[z].userid+"'>";
+                  out += "<button class='btn edit-save hide' key='mpan' userid='"+result[z].userid+"'>S</button></div>";
+                out += "</td>";
+
+                out += "<td class='td-serial'>";
+                  out += "<div class='input-append'><input type='text' value='"+result[z].serial+"' class='edit-input' style='width:100px' key='serial' userid='"+result[z].userid+"'>";
+                  out += "<button class='btn edit-save hide' key='serial' userid='"+result[z].userid+"'>S</button></div>";
+                out += "</td>";
+                
+                out += "<td class='td-guid'>";
+                  out += "<div class='input-append'><input type='text' value='"+result[z].guid+"' class='edit-input' style='width:100px' key='guid' userid='"+result[z].userid+"'>";
+                  out += "<button class='btn edit-save hide' key='guid' userid='"+result[z].userid+"'>S</button></div>";
+                out += "</td>";
+                
                 // text-wrap:normal;word-wrap:break-word
-                out += "<td><div style=''>"+result[z].mpan+"</div></td>";
+                // out += "<td><div style=''>"+result[z].mpan+"</div></td>";
+                //out += "<td><div style=''>"+result[z].serial+"</div></td>";
+                //out += "<td><div style=''>"+result[z].guid+"</div></td>";
                 /*out += "<td><div style='overflow:hidden'>"+result[z].token+"</div></td>";
                 out += "<td><div style='overflow:hidden'>"+result[z].apikey_read+"</div></td>";*/
                 
@@ -104,7 +130,17 @@ function load() {
 
                 out += "<td><div style=''>"+result[z].feeds+"</div></td>";
                 out += "<td>"+result[z].hits+"</td>";
-                out += "<td><a href='/graph/"+result[z].meter_power+"'>"+result[z].meter_power+"</a></td>";
+                
+                var now = (new Date()).getTime()*0.001;
+                var last_updated_ago = (now - result[z].last_updated)/(3600*24)
+                var last_updated_ago_str = last_updated_ago.toFixed(1)+" days"
+                if (result[z].last_updated==0) last_updated_ago_str = ""
+                
+                var color = "#d4edda";
+                if (last_updated_ago>7) color = "#fff3cd"
+                if (last_updated_ago>30) color = "#f8d7da"
+                
+                out += "<td style='background-color:"+color+"'><a href='/graph/"+result[z].use_hh_est+"'>"+last_updated_ago_str+"</a></td>";
                 //out += "<td style='overflow:hidden'><pre>"+JSON.stringify(result[z].testdata)+"</pre></td>";
                 out += "</tr>";
             }
@@ -114,19 +150,21 @@ function load() {
 }
 
 $("#select_club").change(function(){
-    club_id = $(this).val();
+    selected_club = $(this).val();
+    localStorage.setItem('selected_club',selected_club);
     load();
 });
 
 $("#add_user").click(function(){
     var username = $("#add_user_username").val();
+    var password = $("#add_user_password").val();
     var email = $("#add_user_email").val();
     var mpan = $("#add_user_mpan").val();
     
     $.ajax({
         type: 'POST',
         url: path+"club/admin-add-user",
-        data: "club_id="+club_id+"&username="+username+"&email="+email+"&mpan="+mpan,
+        data: "club_id="+selected_club+"&username="+username+"&password="+password+"&email="+email+"&mpan="+mpan,
         dataType: 'json',
         success: function(result) {
             if (!result.success) alert(result.message);
