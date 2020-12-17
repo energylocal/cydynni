@@ -1,39 +1,28 @@
 <?php
 $recalc_club = false;
 
-$clubs = array(
-
-);
-
 // -------------------------------------------------------------------------------------------------
 // Sharing algorithm
 // - Shares generator production between multiple households
 // - Allocates an equall share per half hour
 // -------------------------------------------------------------------------------------------------
-
-define('EMONCMS_EXEC', 1);
-
 require "lib/common.php";
 require "lib/accumulator.php";
-
-chdir("/var/www/emoncms");
-require "process_settings.php";
-require_once "Lib/EmonLogger.php";
-
-$mysqli = @new mysqli(
-    $settings["sql"]["server"],
-    $settings["sql"]["username"],
-    $settings["sql"]["password"],
-    $settings["sql"]["database"],
-    $settings["sql"]["port"]
-);
-$redis = new Redis();
-$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-
-// Feed model
-require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$settings["feed"]);
+require "lib/load_emoncms.php";
 $dir = "/var/lib/phpfina/";
+
+foreach ($club_settings as $club) {
+    if (isset($club['share']) && $club['share']) {
+        $c = array(
+            "clubid"=>$club['club_id'], 
+            "gen_id"=>$club['generation_feed'], 
+            "gen_scale"=>$club['gen_scale'], 
+            "skip_users"=>$club['skip_users']
+        );
+        if (isset($club['gen_limit'])) $c['gen_limit'] = $club['gen_limit'];
+        $clubs[] = $c;
+    }
+}
 
 foreach ($clubs as $club)
 {
