@@ -1,5 +1,11 @@
 <?php
+
+print "---------------------------------------------------------------------\n";
+print "CALCULATE ESTIMATE\n";
+print "---------------------------------------------------------------------\n";
+
 $recalc_club = false;
+$recalc_all = false;
 
 require "lib/load_emoncms.php";
 $dir = "/var/lib/phpfina/";
@@ -21,7 +27,7 @@ while ($row = $result_users->fetch_object())
         }
 
         // copy("/var/lib/phpfina/$source.dat","/var/lib/phpfina/$output.dat");
-        if ($recalc_club && $clubid==$recalc_club) $feed->clear($output);
+        if (($recalc_club && $clubid==$recalc_club) || $recalc_all) $feed->clear($output);
         copy("/var/lib/phpfina/$source.meta","/var/lib/phpfina/$output.meta");
         
         //die;

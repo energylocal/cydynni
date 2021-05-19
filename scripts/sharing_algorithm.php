@@ -1,39 +1,34 @@
 <?php
+
+print "---------------------------------------------------------------------\n";
+print "SHARING ALGORITHM\n";
+print "---------------------------------------------------------------------\n";
+
 $recalc_club = false;
-
-$clubs = array(
-
-);
+$recalc_all = false;
 
 // -------------------------------------------------------------------------------------------------
 // Sharing algorithm
 // - Shares generator production between multiple households
 // - Allocates an equall share per half hour
 // -------------------------------------------------------------------------------------------------
-
-define('EMONCMS_EXEC', 1);
-
 require "lib/common.php";
 require "lib/accumulator.php";
-
-chdir("/var/www/emoncms");
-require "process_settings.php";
-require_once "Lib/EmonLogger.php";
-
-$mysqli = @new mysqli(
-    $settings["sql"]["server"],
-    $settings["sql"]["username"],
-    $settings["sql"]["password"],
-    $settings["sql"]["database"],
-    $settings["sql"]["port"]
-);
-$redis = new Redis();
-$connected = $redis->connect($settings['redis']['host'], $settings['redis']['port']);
-
-// Feed model
-require_once "Modules/feed/feed_model.php";
-$feed = new Feed($mysqli,$redis,$settings["feed"]);
+require "lib/load_emoncms.php";
 $dir = "/var/lib/phpfina/";
+
+foreach ($club_settings as $club) {
+    if (isset($club['share']) && $club['share']) {
+        $c = array(
+            "clubid"=>$club['club_id'], 
+            "gen_id"=>$club['generation_feed'], 
+            "gen_scale"=>$club['gen_scale'], 
+            "skip_users"=>$club['skip_users']
+        );
+        if (isset($club['gen_limit'])) $c['gen_limit'] = $club['gen_limit'];
+        $clubs[] = $c;
+    }
+}
 
 foreach ($clubs as $club)
 {
@@ -70,7 +65,7 @@ foreach ($clubs as $club)
                         $gen_hh_id = $result['feedid'];
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     }
-                    if ($recalc_club && $clubid==$recalc_club) {
+                    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
                         $feed->clear($gen_hh_id);
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     }
@@ -99,7 +94,7 @@ foreach ($clubs as $club)
         $club_use_hh_id = $result['feedid'];
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]); // given same meta as gen feed
     }
-    if ($recalc_club && $clubid==$recalc_club) {
+    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
         $feed->clear($club_use_hh_id);
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]);
     }
@@ -113,7 +108,7 @@ foreach ($clubs as $club)
     $now = floor(time()/1800)*1800;
     $start_time = $now - 3600*24*7;
     
-    if ($recalc_club && $clubid==$recalc_club) {
+    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
         $start_time = 0;
     }
 

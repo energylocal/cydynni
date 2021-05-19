@@ -186,6 +186,14 @@
                     </div>  
                 </div>
             </div>
+            
+            <?php if ($club_settings["club_id"]==1) { ?>
+            <div class="block">
+                <div class="block-title bg-household2" style="text-align:center;">
+                Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
+                </div>
+            </div>
+            <?php } ?>
                         
             <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>

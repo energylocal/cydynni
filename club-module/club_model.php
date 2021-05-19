@@ -40,57 +40,30 @@ class Club{
         }
     }
     
-    public function change_user_serial($uid,$serial) {
+    public function change_user_cad_serial($uid,$cad_serial) {
         // filter and check userid
         $uid = (int) $uid;
         if (!$uid) return false;
-        // filter and check serial
-        $serial = trim($serial);
-        if (!ctype_alnum($serial)) return false;
+        // filter and check cad_serial
+        $cad_serial = trim($cad_serial);
+        if (!ctype_alnum($cad_serial)) return false;
         
         // check if serial already set by another user
-        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE serial = ?");
-        $stmt->bind_param("s", $serial);
+        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE cad_serial = ?");
+        $stmt->bind_param("s", $cad_serial);
         $stmt->execute();
         $stmt->bind_result($userid);
         $stmt->fetch();
         $stmt->close();
         
-        if ($userid==null || $serial==0) {
-            $stmt = $this->mysqli->prepare("UPDATE cydynni SET serial = ? WHERE userid = ?");
-            $stmt->bind_param("si", $serial, $uid);
+        if ($userid==null || $cad_serial==0) {
+            $stmt = $this->mysqli->prepare("UPDATE cydynni SET cad_serial = ? WHERE userid = ?");
+            $stmt->bind_param("si", $cad_serial, $uid);
             $stmt->execute();
             $stmt->close();
-            return "Serial updated";
+            return "cad_serial updated";
         } else {
-            return "Serial already in use";
-        }
-    }
-    
-    public function change_user_guid($uid,$guid) {
-        // filter and check userid
-        $uid = (int) $uid;
-        if (!$uid) return false;
-        // filter and check guid
-        $guid = trim($guid);
-        if (!ctype_alnum($guid)) return false;
-        
-        // check if guid already set by another user
-        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE guid = ?");
-        $stmt->bind_param("s", $guid);
-        $stmt->execute();
-        $stmt->bind_result($userid);
-        $stmt->fetch();
-        $stmt->close();
-        
-        if ($userid==null || $guid==0) {
-            $stmt = $this->mysqli->prepare("UPDATE cydynni SET guid = ? WHERE userid = ?");
-            $stmt->bind_param("si", $guid, $uid);
-            $stmt->execute();
-            $stmt->close();
-            return "GUID updated";
-        } else {
-            return "GUID already in use";
+            return "cad_serial already in use";
         }
     }
     

@@ -19,7 +19,7 @@ include "Modules/feed/feed_model.php";
 $feed = new Feed($mysqli,$redis, $settings['feed']);
 // -------------------------------------------------
 
-$club = "bethesda";
+$club = "corwen";
 $gen_id = $club_settings[$club]['generation_feed'];
 $club_id = $club_settings[$club]['consumption_feed'];
 
@@ -30,17 +30,17 @@ $club_id = $club_settings[$club]['consumption_feed'];
 // Load hydro forecast
 require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
 $hydro_forecast = hydro_forecast($feed,array(
-    "gen_id"=>1,
+    "gen_id"=>1691,
     "precipIntensity_id"=>816,
     "precipIntensity_limit"=>5.0,
-    "precipIntensity_scale"=>16,
+    "precipIntensity_scale"=>4.0,
     "interval_scale"=>0.2,
-    "hydro_max"=>49.0,
+    "hydro_max"=>27.2,
     "hydro_min"=>10.0,
     "elements"=>array(
-        array("conductivity"=>300, "capacity"=>8000000.0),
-        array("conductivity"=>400, "capacity"=>5000000.0),
-        array("conductivity"=>500, "capacity"=>1000000.0)
+        array("conductivity"=>120, "capacity"=>15000000.0),
+        array("conductivity"=>200, "capacity"=>5000000.0),
+        array("conductivity"=>300, "capacity"=>5000000.0)
     )
 ));
 
@@ -208,9 +208,9 @@ for ($time=$start; $time<$end; $time+=$interval) {
     }
 
     $hydro_price = 0.0; $import_price = 0.0;
-    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.058; $import_price = 0.105; }
-    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.104; $import_price = 0.189; }
-    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.127; $import_price = 0.231; }
+    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.075; $import_price = 0.10; }
+    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.075; $import_price = 0.18; }
+    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.075; $import_price = 0.22; }
 
     $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
     $unitprice = $cost / $use;
@@ -224,27 +224,28 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $generator_timeseries[] = array($time,$gen);
 }
 
-$redis->set("energylocal:forecast:bethesda",json_encode($forecast));
+$redis->set("energylocal:forecast:$club",json_encode($forecast));
 
 // --------------------------------------------------------------------------------
 // Save forecast to feeds
 // --------------------------------------------------------------------------------
 $admin_userid = 1;
+$club_id = $club_settings[$club]['club_id'];
 
-if (!$demandshaper_feedid = $feed->get_id($admin_userid,"club1_demandshaper")) {
-    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper",1,5,json_decode('{"interval":1800}'));
+if (!$demandshaper_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper")) {
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper",1,5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_feedid = $result['feedid'];
 }
 
-if (!$demandshaper_gen_feedid = $feed->get_id($admin_userid,"club1_demandshaper_gen")) {
-    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper_gen",1,5,json_decode('{"interval":1800}'));
+if (!$demandshaper_gen_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper_gen")) {
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_gen",1,5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_gen_feedid = $result['feedid'];
 }
 
-if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,"club1_demandshaper_use")) {
-    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper_use",1,5,json_decode('{"interval":1800}'));
+if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper_use")) {
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_use",1,5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_use_feedid = $result['feedid'];
 }

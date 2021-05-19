@@ -129,15 +129,17 @@ function draw_summary(result) {
 
     // Create aggregated legend item for hydro
     var legend = "";
-    legend += '<tr>'
-    legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
-    legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
-    legend += result.generation.total.toFixed(2)+" kWh "
-    if (result.generation.total>0) legend += "@"+(100*result.generation_cost.total/result.generation.total).toFixed(2)+" p/kWh"
-    legend += "<br>"
-    legend += t("Costing")+" £"+result.generation_cost.total.toFixed(2)+'</td>'
-    legend += '</tr>'
-
+    
+    if (result.generation.total!=undefined) {
+        legend += '<tr>'
+        legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+        legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
+        legend += result.generation.total.toFixed(2)+" kWh "
+        if (result.generation.total>0) legend += "@"+(100*result.generation_cost.total/result.generation.total).toFixed(2)+" p/kWh"
+        legend += "<br>"
+        legend += t("Costing")+" £"+result.generation_cost.total.toFixed(2)+'</td>'
+        legend += '</tr>'
+    }
     // CHART KEY VALUES FOR EACH TARIFF:
     // populate tariff totals for club in pie chart key
     for (var tariff_name in result.import) {
@@ -208,7 +210,7 @@ function draw_summary(result) {
     var vat = (result.cost.total+standing_charge)*0.05;
     var total_cost = result.cost.total + standing_charge + vat;
 
-    $(".household_totalkwh").html(result.demand.total.toFixed(2));
+    if (result.demand.total!=undefined) $(".household_totalkwh").html(result.demand.total.toFixed(2));
     $(".household_elec_cost").html("£"+result.cost.total.toFixed(2));
     $(".household_standing_charge").html("£"+standing_charge.toFixed(2));
     $(".tariff_standing_charge").html((tariff_standing_charge*100).toFixed(2));

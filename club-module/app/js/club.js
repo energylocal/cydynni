@@ -36,6 +36,7 @@ $.ajax({
     url: path+club+"/club-summary?start="+view.start+"&end="+view.end,
     dataType: 'json',
         success: function(result) {
+            if (result.generation_cost==undefined) return false;
             
             var generation_value = result.generation_cost.total;
             var total_day_cost = result.cost.total;           
@@ -131,14 +132,17 @@ $.ajax({
             
             // Create aggregated legend item for hydro
             var legend = "";
-            legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
-            legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
-            legend += result.generation.total.toFixed(2)+" kWh "
-            if (result.generation.total>0) legend += "@"+(100*generation_value/result.generation.total).toFixed(2)+" p/kWh"
-            legend += "<br>"
-            legend += t("Costing")+" £"+generation_value.toFixed(2)+'</td>'
-            legend += '</tr>'
+            
+            if (result.generation.total!=undefined) {
+                legend += '<tr>'
+                legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
+                legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
+                legend += result.generation.total.toFixed(2)+" kWh "
+                if (result.generation.total>0) legend += "@"+(100*generation_value/result.generation.total).toFixed(2)+" p/kWh"
+                legend += "<br>"
+                legend += t("Costing")+" £"+generation_value.toFixed(2)+'</td>'
+                legend += '</tr>'
+            }
             
             // CHART KEY VALUES FOR EACH TARIFF:
             // populate tariff totals for club in pie chart key
@@ -174,12 +178,12 @@ $.ajax({
             $("#club_pie_legend").html(legend);  
             // GENERATION TARIFF:
             // populate aggrigated totals for club generation
-            $("#club_generation_kwh").html(result.generation.total.toFixed(0));
+            if (result.generation.total!=undefined) $("#club_generation_kwh").html(result.generation.total.toFixed(0));
             $("#club_generation_cost").html(generation_value.toFixed(2));
             // $("#club_generation_unitcost").html('@' + (100*result.cost.total.selfuse/result.kwh.total.selfuse).toFixed(1) + " p/kWh");
             club_pie_draw();
             
-            $(".club_totalkwh").html(result.demand.total.toFixed(2));
+            if (result.demand.total!=undefined) $(".club_totalkwh").html(result.demand.total.toFixed(2));
             $(".club_totalcost").html("£"+result.cost.total.toFixed(2));
                     
             // Saving calculation

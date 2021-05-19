@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 38;
+$v = 40;
 
 $app_path = $path."Modules/club/app/";
 
@@ -17,7 +17,7 @@ $app_path = $path."Modules/club/app/";
 
 <script src="<?php echo $path; ?>Lib/moment.min.js"></script>
 <script> 
-    var _user = {lang:"<?= $_SESSION['lang']; ?>"};
+    var _user = {lang:"<?php isset($_SESSION['lang'])?$_SESSION['lang']:''; ?>"};
 </script>
 <script src="<?php echo $path; ?>Lib/user_locale.js"></script>
 
