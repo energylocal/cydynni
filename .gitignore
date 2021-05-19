@@ -2,6 +2,7 @@ hub_v2/settings.php
 scripts-hub/settings.php
 scripts-hub/ca.crt
 scripts-hub/provisionkey.php
+scripts/sync_string.json
 
 scripts/demandshapers/config.php
 scripts/data_sources/octopus/config.php

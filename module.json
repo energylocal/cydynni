@@ -1,0 +1,7 @@
+{
+    "name"         : "Cydynni",
+    "version"      : "8.2.4",
+    "location"     : "/opt/emoncms/modules",
+    "branches_available": ["stable","master"],
+    "requires": []
+}
