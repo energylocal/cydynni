@@ -42,7 +42,6 @@ input {
     <th style="width:185px">Email <span style="font-size:12px">(Click to edit)</span></th>
     <th>MPAN</th>
     <th>Serial No</th>
-    <th>GUID</th>
     <th style="width:120px">Welcome Email</th>
     <th style="width:120px">Report Email</th>
     <th>Feeds</th>
@@ -101,22 +100,10 @@ function load() {
                   out += "<button class='btn edit-save hide' key='mpan' userid='"+result[z].userid+"'>S</button></div>";
                 out += "</td>";
 
-                out += "<td class='td-serial'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].serial+"' class='edit-input' style='width:100px' key='serial' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='serial' userid='"+result[z].userid+"'>S</button></div>";
+                out += "<td class='td-cad_serial'>";
+                  out += "<div class='input-append'><input type='text' value='"+result[z].cad_serial+"' class='edit-input' style='width:100px' key='cad_serial' userid='"+result[z].userid+"'>";
+                  out += "<button class='btn edit-save hide' key='cad_serial' userid='"+result[z].userid+"'>S</button></div>";
                 out += "</td>";
-                
-                out += "<td class='td-guid'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].guid+"' class='edit-input' style='width:100px' key='guid' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='guid' userid='"+result[z].userid+"'>S</button></div>";
-                out += "</td>";
-                
-                // text-wrap:normal;word-wrap:break-word
-                // out += "<td><div style=''>"+result[z].mpan+"</div></td>";
-                //out += "<td><div style=''>"+result[z].serial+"</div></td>";
-                //out += "<td><div style=''>"+result[z].guid+"</div></td>";
-                /*out += "<td><div style='overflow:hidden'>"+result[z].token+"</div></td>";
-                out += "<td><div style='overflow:hidden'>"+result[z].apikey_read+"</div></td>";*/
                 
                 // Register date
                 var bgcolor = "#ccffcc"; if (result[z].welcomedate=="not sent") bgcolor = "#ffcccc";
