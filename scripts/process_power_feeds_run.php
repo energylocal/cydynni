@@ -1,5 +1,10 @@
 <?php
+print "---------------------------------------------------------------------\n";
+print "PROCESS POWER FEEDS\n";
+print "---------------------------------------------------------------------\n";
+
 $recalc_club = false;
+$recalc_all = false;
 // ----------------------------------------------------------------
 // Process power data in half hourly data
 // ----------------------------------------------------------------
@@ -36,7 +41,7 @@ while ($row = $result_users->fetch_object())
         $processitem = new stdClass();
         $processitem->output = $feedD;
     }
-    if ($recalc_club && $clubid==$recalc_club) $feed->clear($feedD);
+    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) $feed->clear($feedD);
     
     // ----------------------------------------------------------------
     

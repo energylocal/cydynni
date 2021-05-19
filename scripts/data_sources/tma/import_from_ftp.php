@@ -19,6 +19,8 @@ $date->setTime(0,0,0);
 
 print "last:".$start."\n";
 
+//$start = $start - (3600*24*7);
+
 // -----------------------
 
 
@@ -41,7 +43,7 @@ for ($i=2; $i<count($files); $i++) {
                 $line = explode(",",trim($lines[$l]));
                 $mpan = $line[0];
 
-                if ($mpan && count($line)==54) {
+                if (isset($map[$mpan]) && count($line)==54) {
                     $datestr = $line[5];
                     $date_parts = explode("/",$datestr);
                     if (count($date_parts)==3) {
@@ -49,7 +51,6 @@ for ($i=2; $i<count($files); $i++) {
                         $date->setTime(0,0,0);
                         
                         if ($line[4]=="AE") {
-                        
                             $feedid = $map[$mpan];
                         
                             print $mpan." ".$line[4]." ".$line[5]." ".$feedid."\n";
@@ -62,9 +63,39 @@ for ($i=2; $i<count($files); $i++) {
                                 
                                 $feed->insert_data($feedid,$time,$time,$value);
                             }
+                        } else {
+                            print $mpan." not AE\n";
                         }
                     }
                 }
+                
+                // --------------------
+                
+                if (isset($map[$mpan]) && count($line)==99) {
+                    $datestr = $line[1];
+                    $date_parts = explode("/",$datestr);
+                    if (count($date_parts)==3) {
+                        $date->setDate($date_parts[2],$date_parts[1],$date_parts[0]);
+                        $date->setTime(0,0,0);
+                        
+                        if ($line[2]=="AE") {
+                            $feedid = $map[$mpan];
+                            print $mpan." ".$line[2]." ".$line[1]." ".$feedid."\n";
+                            
+                            for ($hh=0; $hh<48; $hh+=2) {
+                                $time = $date->getTimestamp() + $hh*1800;
+                                
+                                $index = ($hh)+3;
+                                $value = trim($line[$index]);
+                                
+                                $feed->insert_data($feedid,$time,$time,$value);
+                            }
+                        } else {
+                            print $mpan." not AE\n";
+                        }
+                    }
+                }
+                
             }
         }
     }

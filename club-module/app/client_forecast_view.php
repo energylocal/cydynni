@@ -1,4 +1,4 @@
-
+<?php global $session; ?>
             <div class="block">
                 <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
@@ -20,7 +20,20 @@
                   </div>
                 </div>
             </div>
-        
+            <?php /* if ($session['admin']) { ?>
+            <div id="electricity_forecast" class="block">
+                <div class="block-title" style="background-color:#088400"><?php echo t("Forecast"); ?></div>
+
+                <div class="block-content">
+                  <div style="background-color:#fff; color:#000">
+                                  
+                    <div id="club_forecast_bound" style="width:100%; height:405px;">
+                      <div id="club_forecast_placeholder" style="height:405px"></div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <?php } */ ?>
             <div id="local_electricity_forecast" class="block">
                 <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity"); ?>
                 
@@ -81,6 +94,14 @@
                   </div>
                 </div>
             </div>
+            
+            <?php if ($club_settings["club_id"]==1) { ?>
+            <div class="block">
+                <div class="block-title" style="background-color:#e6602b; text-align:center;">
+                Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
+                </div>
+            </div>
+            <?php } ?>
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content" style="padding: .6rem">
@@ -106,11 +127,12 @@
                                     <br class="d-sm-none">
                                     <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
                                 </th>
-                                <td style="background-color:<?=$club_settings["generator_color"]?>"><?=$t->generator.t('p')?></td>
-                                <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=$t->import.t('p')?></td>
+                                <td style="background-color:<?=$club_settings["generator_color"]?>"><?=number_format($t->generator*1.05,2).t('p')?></td>
+                                <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=number_format($t->import*1.05,2).t('p')?></td>
                             </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    <div style="padding:10px; color:#888; font-size:14px"><?=t('Unit prices include VAT');?></div>
                 </div>
             </div>

@@ -1,5 +1,11 @@
 <?php
+
+print "---------------------------------------------------------------------\n";
+print "SHARING ALGORITHM\n";
+print "---------------------------------------------------------------------\n";
+
 $recalc_club = false;
+$recalc_all = false;
 
 // -------------------------------------------------------------------------------------------------
 // Sharing algorithm
@@ -59,7 +65,7 @@ foreach ($clubs as $club)
                         $gen_hh_id = $result['feedid'];
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     }
-                    if ($recalc_club && $clubid==$recalc_club) {
+                    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
                         $feed->clear($gen_hh_id);
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     }
@@ -88,7 +94,7 @@ foreach ($clubs as $club)
         $club_use_hh_id = $result['feedid'];
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]); // given same meta as gen feed
     }
-    if ($recalc_club && $clubid==$recalc_club) {
+    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
         $feed->clear($club_use_hh_id);
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]);
     }
@@ -102,7 +108,7 @@ foreach ($clubs as $club)
     $now = floor(time()/1800)*1800;
     $start_time = $now - 3600*24*7;
     
-    if ($recalc_club && $clubid==$recalc_club) {
+    if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
         $start_time = 0;
     }
 

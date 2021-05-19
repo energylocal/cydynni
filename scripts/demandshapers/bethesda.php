@@ -29,7 +29,20 @@ $club_id = $club_settings[$club]['consumption_feed'];
 
 // Load hydro forecast
 require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
-$hydro_forecast = hydro_forecast($feed);
+$hydro_forecast = hydro_forecast($feed,array(
+    "gen_id"=>1,
+    "precipIntensity_id"=>816,
+    "precipIntensity_limit"=>5.0,
+    "precipIntensity_scale"=>16,
+    "interval_scale"=>0.2,
+    "hydro_max"=>49.0,
+    "hydro_min"=>10.0,
+    "elements"=>array(
+        array("conductivity"=>300, "capacity"=>8000000.0),
+        array("conductivity"=>400, "capacity"=>5000000.0),
+        array("conductivity"=>500, "capacity"=>1000000.0)
+    )
+));
 
 
 // Force cache reload
@@ -172,6 +185,10 @@ $date->setTimezone(new DateTimeZone("Europe/London"));
 
 $gen = 0;
 
+$demandshaper_timeseries = array();
+$demand_timeseries = array();
+$generator_timeseries = array();
+
 for ($time=$start; $time<$end; $time+=$interval) {
 
     $date->setTimestamp($time);
@@ -201,6 +218,46 @@ for ($time=$start; $time<$end; $time+=$interval) {
     // $cost = ($unitprice*0.88) + ($use*0.0005);
 
     $forecast->profile[] = number_format($cost,3)*1;
+    
+    $demandshaper_timeseries[] = array($time,$cost);
+    $demand_timeseries[] = array($time,$use);
+    $generator_timeseries[] = array($time,$gen);
 }
 
 $redis->set("energylocal:forecast:bethesda",json_encode($forecast));
+
+// --------------------------------------------------------------------------------
+// Save forecast to feeds
+// --------------------------------------------------------------------------------
+$admin_userid = 1;
+
+if (!$demandshaper_feedid = $feed->get_id($admin_userid,"club1_demandshaper")) {
+    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper",1,5,json_decode('{"interval":1800}'));
+    if (!$result['success']) { echo json_encode($result)."\n"; die; }
+    $demandshaper_feedid = $result['feedid'];
+}
+
+if (!$demandshaper_gen_feedid = $feed->get_id($admin_userid,"club1_demandshaper_gen")) {
+    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper_gen",1,5,json_decode('{"interval":1800}'));
+    if (!$result['success']) { echo json_encode($result)."\n"; die; }
+    $demandshaper_gen_feedid = $result['feedid'];
+}
+
+if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,"club1_demandshaper_use")) {
+    $result = $feed->create($admin_userid,"demandshaper","club1_demandshaper_use",1,5,json_decode('{"interval":1800}'));
+    if (!$result['success']) { echo json_encode($result)."\n"; die; }
+    $demandshaper_use_feedid = $result['feedid'];
+}
+
+foreach ($demandshaper_timeseries as $timevalue) {
+    $feed->insert_data($demandshaper_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+}
+
+foreach ($generator_timeseries as $timevalue) {
+    $feed->insert_data($demandshaper_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+}
+
+foreach ($demand_timeseries as $timevalue) {
+    $feed->insert_data($demandshaper_use_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+}
+

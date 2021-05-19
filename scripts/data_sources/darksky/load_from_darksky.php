@@ -2,10 +2,10 @@
 
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 
-$key = "";
-$lat = 53.156159; 
-$long = -4.027117;
-$feedid = 816;
+$key = $settings["darksky"]["key"];
+$lat = $settings["darksky"]["lat"]; 
+$long = $settings["darksky"]["lon"];
+$feedid = $settings["darksky"]["feedid"];
 
 $date = new DateTime();
 $date->setTimezone(new DateTimeZone("Europe/London"));

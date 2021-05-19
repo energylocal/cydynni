@@ -1,5 +1,4 @@
 <?php
-require "config.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 
 $params = array(
@@ -11,12 +10,24 @@ $params = array(
 // ------------------------------------------------
 // Find users
 // ------------------------------------------------
-foreach ($users as $i=>$user) {
-    // check that the mpan is correct
-    $result = $mysqli->query("SELECT * FROM cydynni WHERE `userid`='".$user['userid']."' AND `mpan`='".$user['mpan']."'");
-    if ($row = $result->fetch_object()) {
-        print "user: ".$row->userid."\n";
+$result = $mysqli->query("SELECT * FROM cydynni");
+while ($row = $result->fetch_object()) {
+
+    $mpan = $row->mpan;
+    $meter_serial = $row->meter_serial;    
+    $octopus_apikey = $row->octopus_apikey;
     
+    $valid_mpan = false;
+    $valid_meter_serial = false;
+    $valid_octopus_apikey = false;
+    
+    if (strlen("$mpan")==13 && $mpan==(int)$mpan) $valid_mpan = true;
+    if (strlen("$meter_serial")==10) $valid_meter_serial = true;
+    if (strlen("$octopus_apikey")==32 && strpos($octopus_apikey,"sk_live_")==0) $valid_octopus_apikey = true;
+
+    if ($valid_mpan && $valid_meter_serial && $valid_octopus_apikey) {
+        print "user: ".$row->userid." ".$row->mpan." ".$row->meter_serial." ".$row->octopus_apikey."\n";
+
         // Get octopus feed id or create feed
         if (!$feedid = $feed->get_id($row->userid,"use_hh_octopus")) {
             $r = $feed->create($row->userid,"user","use_hh_octopus",1,5,json_decode('{"interval":1800}'));
@@ -24,9 +35,17 @@ foreach ($users as $i=>$user) {
             $feedid = $r['feedid'];
         }
 
+        // $feed->clear($feedid);
+
         // Step 2: Fetch feed meta data to find last data point time and value
         $meta = $feed->get_meta($feedid);
         echo "Feed meta data:\t\t".json_encode($meta)."\n";
+
+        $params = array(
+            "page"=>1,
+            "order_by"=>"period",
+            "page_size"=>25000
+        );
 
         if ($meta->npoints>0) {
             $end_time = $meta->start_time + ($meta->interval * $meta->npoints);
@@ -35,25 +54,27 @@ foreach ($users as $i=>$user) {
             $params["period_from"] = $date->format("c");
             echo "Request from:\t\t".$params["period_from"]."\n";
         }
-        
+
         // Step 3: Request history from Octopus
-        $result = http_request("GET","https://api.octopus.energy/v1/electricity-meter-points/".$user['mpan']."/meters/".$user['serial_number']."/consumption/",$params,$user['agile_apikey']);
+        $reply = http_request("GET","https://api.octopus.energy/v1/electricity-meter-points/".$mpan."/meters/".$meter_serial."/consumption/",$params,$octopus_apikey);
 
-        $data = json_decode($result);
-        if ($data==null) die($result."\n");
-        if (!isset($data->results)) die($result."\n");
+        $data = json_decode($reply);
+        if ($data==null || !isset($data->results)) {
+        
+        } else {
 
-        $dp_received = count($data->results);
-        echo "Number of data points:\t$dp_received\n";
+            $dp_received = count($data->results);
+            echo "Number of data points:\t$dp_received\n";
 
-        // Step 4: Process history into data array for emoncms
-        $data_out = array();
-        foreach ($data->results as $i) {
-            $time = strtotime($i->interval_start);
-            $value = $i->consumption;
-            // print "\t\t".$time." ".$value."\n";
-            
-            $feed->insert_data($feedid,$time,$time,$value);
+            // Step 4: Process history into data array for emoncms
+            $data_out = array();
+            foreach ($data->results as $i) {
+                $time = strtotime($i->interval_start);
+                $value = $i->consumption;
+                // print "\t\t".$time." ".$value."\n";
+                
+                $feed->insert_data($feedid,$time,$time,$value);
+            }
         }
     }
 }

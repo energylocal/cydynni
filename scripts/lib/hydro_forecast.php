@@ -1,29 +1,12 @@
 <?php
 
-function hydro_forecast($feed)
+function hydro_forecast($feed, $model_config)
 {
-    $gen_id = 1;
-    $precipIntensity_id = 816;
-    // -------------------------------------------------
-
     $data = array();
     $learn_hh = 24;
     $now = time();
     $first_run = 1;
-
-    $model_config = array(
-        "precipIntensity_limit"=>5.0,
-        "precipIntensity_scale"=>16,
-        "interval_scale"=>0.2,
-        "hydro_max"=>49.0,
-        "hydro_min"=>10.0,
-        "elements"=>array(
-            array("conductivity"=>300, "capacity"=>8000000.0),
-            array("conductivity"=>400, "capacity"=>5000000.0),
-            array("conductivity"=>500, "capacity"=>1000000.0)
-        )
-    );
-
+    
     $end = $now + (3600*48.0);
     $start = $now - (3600*(($learn_hh*0.5)+2));
 
@@ -31,8 +14,8 @@ function hydro_forecast($feed)
     $start = ceil($start/$interval)*$interval;
     $end = ceil($end/$interval)*$interval;
 
-    $gen_tmp = $feed->get_data($gen_id,$start*1000,$end*1000,$interval,0,0);
-    $precipIntensity_tmp = $feed->get_data($precipIntensity_id,$start*1000,$end*1000,$interval,0,0);
+    $gen_tmp = $feed->get_data($model_config['gen_id'],$start*1000,$end*1000,$interval,0,0);
+    $precipIntensity_tmp = $feed->get_data($model_config['precipIntensity_id'],$start*1000,$end*1000,$interval,0,0);
 
     // --------------------------------------------------------------------------------------------------
     $base_level = 0.0;

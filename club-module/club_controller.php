@@ -291,7 +291,7 @@ function club_controller()
                     $format = $_GET['format'];
                 }
                 
-                if (in_array($key,array("bethesda","bethesda_solar","repower"))) {
+                if (in_array($key,array("bethesda","corwen","crickhowell","bethesda_solar","repower"))) {
                     if ($format=="standard") {
                         if ($result = $redis->get("energylocal:forecast:$key")) {
                             return json_decode($result);
@@ -344,7 +344,7 @@ function club_controller()
                     $select_by_club = "WHERE `clubs_id`='$club_id'";
                 }
                 
-                $result = $mysqli->query("SELECT userid,mpan,serial,guid,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
+                $result = $mysqli->query("SELECT userid,mpan,cad_serial,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
                 $users = array();
                 while($row = $result->fetch_object()) {
                     $userid = $row->userid;
@@ -425,7 +425,10 @@ function club_controller()
                 $result = $user->register($username, $password, $email);
                 if ($result["success"]) {
                     $userid = $result["userid"];
-                    $mysqli->query("INSERT INTO cydynni (clubs_id,userid,mpan,token,premisestoken,welcomedate,reportdate) VALUES ('$club_id','$userid','$mpan','','',0,0)");
+                    $mysqli->query("INSERT INTO cydynni (clubs_id,userid,mpan,welcomedate,reportdate) VALUES ('$club_id','$userid','$mpan',0,0)");
+                    
+                    include "Modules/remoteaccess/remoteaccess_userlink.php";
+                    $result = remoteaccess_userlink_existing($mysqli,$userid);
                 }
                 return $result;
             }
@@ -463,17 +466,10 @@ function club_controller()
             }
             break;
 
-        case "admin-change-user-serial":
+        case "admin-change-user-cad_serial":
             $route->format = "json";
-            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['serial'])) {
-                return $club_model->change_user_serial(get("userid"),get("serial"));
-            }
-            break;
-
-        case "admin-change-user-guid":
-            $route->format = "json";
-            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['guid'])) {
-                return $club_model->change_user_guid(get("userid"),get("guid"));
+            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['cad_serial'])) {
+                return $club_model->change_user_cad_serial(get("userid"),get("cad_serial"));
             }
             break;
                     
@@ -501,10 +497,35 @@ function club_controller()
             }
             break;
             
+        case "admin-link":
+            $route->format = "json";
+            if ($session['admin'] && isset($_GET['userid'])) {
+                $userid = (int) $_GET['userid'];
+                include "Modules/remoteaccess/remoteaccess_userlink.php";
+                $result = remoteaccess_userlink_existing($mysqli,$userid);
+                if (!isset($result["success"]) || !$result["success"]) return $result;
+            }
+            break;
+            
         case "setupguide":
             header("Location: https://github.com/energylocal/cydynni/blob/master/docs/userguide.md");
             die;
             break;
+            
+        case "set-passiv-plan":
+            $route->format = "text";
+            if (!isset($_POST['authkey'])) return "missing authkey parameter";
+            if ($_POST['authkey']!=$settings["passivkey"]) return "invalid auth key";
+            if (!isset($_POST['mpan'])) return "missing mpan parameter";
+            if (!isset($_POST['plan'])) return "missing plan parameter";
+            
+            $fh = fopen("/home/cydynni/set-passiv-plan.log","a");
+            fwrite($fh,time()." ".$_POST['mpan']." ".$_POST['plan']."\n");
+            fclose($fh);
+            
+            return "plan received";
+            break;
+            
         break;
     }
     

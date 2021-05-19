@@ -15,6 +15,7 @@ $("#loginform").on("submit",function(event){
       async: false,
       success: function(data_in)
       {
+          console.log(data_in)
           try {
               result = JSON.parse(data_in);
               if (result.success==undefined) result = data_in;
@@ -23,7 +24,13 @@ $("#loginform").on("submit",function(event){
           }
          
           if (result.success) {
-              window.location.href = path+"club/?household";
+              var startingpage = "club/?household";
+          
+              if (result.startingpage!=undefined && result.startingpage=="club\/admin") {
+                  startingpage = "club/admin";
+              }
+              
+              window.location.href = path+startingpage;
           } else {
               $("#alert").html(result.message);
           }
