@@ -18,16 +18,46 @@ include "Modules/remoteaccess/remoteaccess_userlink.php";
 $users_claimed = array();
 
 $lines = explode("\n",$export);
-foreach ($lines as $line) {
-    $p = explode("\t",$line);
+
+$map = array();
+// Map columns
+echo "---------------------------------------------------\n";
+echo "Mapping columns\n";
+echo "---------------------------------------------------\n";
+$p = explode("\t",$lines[0]);
+for ($i=0; $i<count($p); $i++) {
+    $key = trim(strtolower($p[$i]));
+    print $i.": ".$key;
+    if ($key=="email") { $map["email"] = $i; echo " #"; }
+    else if ($key=="mpan") { $map["mpan"] = $i; echo " #"; }
+    else if ($key=="cad serial") { $map["cad_serial"] = $i; echo " #"; }
+    else if ($key=="api key") { $map["octopus_apikey"] = $i; echo " #"; }
+    else if ($key=="meter serial") { $map["meter_serial"] = $i; echo " #"; }
     
-    if (isset($p[9]) && $p[1]!="" && $p[1]!="#N/A") {
+    echo "\n";
+}
+echo "---------------------------------------------------\n";
+
+if (!isset($map["email"])) { die("missing email\n"); }
+if (!isset($map["mpan"])) { die("missing mpan\n"); }
+if (!isset($map["cad_serial"])) { die("missing cad_serial\n"); }
+if (!isset($map["octopus_apikey"])) { die("missing octopus_apikey\n"); }
+if (!isset($map["meter_serial"])) { die("missing meter_serial\n"); }
+
+echo "---------------------------------------------------\n";
+
+$changes = false;
+
+for ($i=1; $i<count($lines); $i++) {
+    $p = explode("\t",$lines[$i]);
     
-        $email = strtolower(trim($p[0]));
-        $mpan = trim($p[1]);
-        $cad_serial = trim($p[2]);
-        $octopus_apikey = trim($p[8]);
-        $meter_serial = trim($p[9]);
+    if (isset($p[$map['mpan']]) && $p[$map['mpan']]!="" && $p[$map['mpan']]!="#N/A") {
+    
+        $email = strtolower(trim($p[$map['email']]));
+        $mpan = trim($p[$map['mpan']]);
+        $cad_serial = trim($p[$map['cad_serial']]);
+        $octopus_apikey = trim($p[$map['octopus_apikey']]);
+        $meter_serial = trim($p[$map['meter_serial']]);
         
         // ---------------------------------------------------------------
         // Validate spreadsheet values
@@ -72,6 +102,7 @@ foreach ($lines as $line) {
                 if ($row->cad_serial!=$cad_serial) {
                     $match_cad_serial = false;
                     if ($valid_cad_serial) {
+                        $changes = true;                 
                         print "-- Updating user=$userid cad_serial=$cad_serial\n";                    
                         if (!$dry_run) $mysqli->query("UPDATE cydynni SET `cad_serial`='$cad_serial' WHERE `userid`='$userid'");
                     }
@@ -80,6 +111,7 @@ foreach ($lines as $line) {
                 if ($row->meter_serial!=$meter_serial) {
                     $match_meter_serial = false;
                     if ($valid_meter_serial) {
+                        $changes = true;      
                         print "-- Updating user=$userid meter_serial=$meter_serial\n";                    
                         if (!$dry_run) $mysqli->query("UPDATE cydynni SET `meter_serial`='$meter_serial' WHERE `userid`='$userid'");
                     }
@@ -88,6 +120,7 @@ foreach ($lines as $line) {
                 if ($row->octopus_apikey!=$octopus_apikey) {
                     $match_octopus_apikey = false;
                     if ($valid_octopus_apikey) {
+                        $changes = true;            
                         print "-- Updating user=$userid octopus_apikey=$octopus_apikey\n";                    
                         if (!$dry_run) $mysqli->query("UPDATE cydynni SET `octopus_apikey`='$octopus_apikey' WHERE `userid`='$userid'");
                     }
@@ -96,13 +129,17 @@ foreach ($lines as $line) {
                 $result2 = $mysqli->query("SELECT * FROM users WHERE `id`='".$row->userid."'");
                 if ($row2 = $result2->fetch_object()) {
                     $local_email = $row2->email;
-                    if ($row2->email!=$email) $match_email = false;
+                    if ($row2->email!=$email) {
+                        $match_email = false;
+                        $changes = true;
+                    }
                 }
             } else {
                 if ($valid_email && $valid_mpan) {
                     // Create user
                     print "-- CREATE USER $email\n";
                     if (!$dry_run) create_user($club_id,$email,$mpan);
+                    $changes = true;
                 }
             }
         } 
@@ -128,11 +165,19 @@ foreach ($lines as $line) {
         
         $out .= str_pad($userid,5);
         
-        if (!$match_email) $out .= "(Local email=$local_email)";
-        if (!$match_cad_serial && $local_cad_serial!="") $out .= "(Local cad_serial=$local_cad_serial)";
-        if (!$match_meter_serial && $local_meter_serial!="") $out .= "(Local meter_serial=$local_meter_serial)";
-        if (!$match_octopus_apikey && $local_octopus_apikey!="") $out .= "(Local octopus_apikey=$local_octopus_apikey)";
+        if (!$match_email && $valid_email) $out .= "(Local email=$local_email)";
+        if (!$match_cad_serial && $valid_cad_serial) $out .= "(Local cad_serial=$local_cad_serial)";
+        if (!$match_meter_serial && $valid_meter_serial) $out .= "(Local meter_serial=$local_meter_serial)";
+        if (!$match_octopus_apikey && $valid_octopus_apikey) $out .= "(Local octopus_apikey=$local_octopus_apikey)";
 
         print "$out\n";
     }   
 }
+echo "---------------------------------------------------\n";
+if (!$changes) {
+    echo "no changes detected\n";
+} else {
+    echo "changes detected\n";
+}
+echo "---------------------------------------------------\n";
+
