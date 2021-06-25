@@ -97,6 +97,14 @@ function club_controller()
                 return view("Modules/club/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
             }
             break;
+
+        case "configure-device":
+            if ($session["write"]) {
+                $userid = (int) $session["userid"];
+                $route->format = "html";
+                return view("Modules/club/app/configure.php",array('session'=>$session));
+            }
+            break;
             
         // -----------------------------------------------------------------------------------------
         // Live
@@ -344,7 +352,7 @@ function club_controller()
                     $select_by_club = "WHERE `clubs_id`='$club_id'";
                 }
                 
-                $result = $mysqli->query("SELECT userid,mpan,cad_serial,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
+                $result = $mysqli->query("SELECT userid,mpan,cad_serial,meter_serial,octopus_apikey,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
                 $users = array();
                 while($row = $result->fetch_object()) {
                     $userid = $row->userid;
@@ -370,6 +378,99 @@ function club_controller()
                         $row->last_updated = 0;
                     }
                     
+                    $users[] = $row;
+                }
+                return $users;
+            }
+            break;
+
+        case "admin-users-list":
+            $route->format = "json";
+            if ($session['admin']) {
+            
+                $select_by_club = "";
+                if (isset($_GET['club_id'])) {
+                    $club_id = (int) $_GET['club_id'];
+                    $select_by_club = "WHERE `clubs_id`='$club_id'";
+                }
+                
+                $result = $mysqli->query("SELECT userid,mpan,cad_serial,meter_serial,octopus_apikey,welcomedate,reportdate,clubs_id FROM cydynni $select_by_club ORDER BY userid ASC");
+                $users = array();
+                while($row = $result->fetch_object()) {
+                    $userid = $row->userid;
+                    
+                    $user_result = $mysqli->query("SELECT username,email,apikey_read,admin FROM users WHERE `id`='$userid'");
+                    $user_row = $user_result->fetch_object();
+                    if ($user_row) {
+                        foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+                    }
+                    
+                    $users[] = $row;
+                }
+                return $users;
+            }
+            break;
+            
+        case "admin-users-data-status":
+            $route->format = "json";
+            if ($session['admin']) {
+
+                require_once "Modules/feed/feed_model.php";
+                $feed = new Feed($mysqli,$redis,$settings["feed"]);
+            
+                $select_by_club = "";
+                if (isset($_GET['club_id'])) {
+                    $club_id = (int) $_GET['club_id'];
+                    $select_by_club = "WHERE `clubs_id`='$club_id'";
+                }
+                
+                $result = $mysqli->query("SELECT userid FROM cydynni $select_by_club ORDER BY userid ASC");
+                $users = array();
+                while($row = $result->fetch_object()) {
+                    $userid = $row->userid;
+                    
+                    $row = array(
+                        'tma'=>array('days'=>0,'updated'=>0),                    
+                        'CR'=>array('days'=>0,'updated'=>0),                    
+                        'octopus'=>array('days'=>0,'updated'=>0),
+                        'W'=>array('days'=>0,'updated'=>0),
+                        'est'=>array('days'=>0,'updated'=>0)                    
+                    );
+
+                    if ($feedid = $feed->get_id($userid,"use_hh_TMA")) {
+                        $meta = $feed->get_meta($feedid);
+                        $row['tma']['days'] = $meta->npoints / 48;
+                        $row['tma']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400; 
+                        $row['tma']['feedid'] = $feedid;  
+                    }
+
+                    if ($feedid = $feed->get_id($userid,"use_hh_CR")) {
+                        $meta = $feed->get_meta($feedid);
+                        $row['CR']['days'] = $meta->npoints / 48;
+                        $row['CR']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                        $row['CR']['feedid'] = $feedid;  
+                    }
+                    
+                    if ($feedid = $feed->get_id($userid,"use_hh_octopus")) {
+                        $meta = $feed->get_meta($feedid);
+                        $row['octopus']['days'] = $meta->npoints / 48;
+                        $row['octopus']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                        $row['octopus']['feedid'] = $feedid;  
+                    }
+
+                    if ($feedid = $feed->get_id($userid,"use_hh_W")) {
+                        $meta = $feed->get_meta($feedid);
+                        $row['W']['days'] = $meta->npoints / 48;
+                        $row['W']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                        $row['W']['feedid'] = $feedid;  
+                    }
+
+                    if ($feedid = $feed->get_id($userid,"use_hh_est")) {
+                        $meta = $feed->get_meta($feedid);
+                        $row['est']['days'] = $meta->npoints / 48;
+                        $row['est']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                        $row['est']['feedid'] = $feedid;  
+                    }                    
                     $users[] = $row;
                 }
                 return $users;
@@ -409,31 +510,39 @@ function club_controller()
         case "admin-add-user":
             $route->format = "json";
             if ($session['admin']) {
+                $u = json_decode(post('user'));
                 
-                $club_id = (int) post('club_id');
-                $username = post('username');
-                $password = post('password');
-                $email = post('email');
-                $mpan = (int) post('mpan');
-            
-                // Generate new random password
-                if ($password==null || $password=="") {
-                    $password = hash('sha256',md5(uniqid(rand(), true)));
-                    $password = substr($password, 0, 10);
+                if (!isset($u->username)) return array("success"=>false, "message"=>"missing username");  
+                if (!isset($u->email)) return array("success"=>false, "message"=>"missing email");  
+                if (!isset($u->clubs_id)) return array("success"=>false, "message"=>"missing clubs_id");  
+                if (!isset($u->mpan)) return array("success"=>false, "message"=>"missing mpan");
+                if (!isset($u->cad_serial)) return array("success"=>false, "message"=>"missing cad_serial");
+                if (!isset($u->octopus_apikey)) return array("success"=>false, "message"=>"missing octopus_apikey");
+                if (!isset($u->meter_serial)) return array("success"=>false, "message"=>"meter_serial email");
+
+                if (!ctype_digit($u->mpan) && $u->mpan!="") return array("success"=>false, "message"=>"invalid mpan");  
+                if (!ctype_alnum($u->cad_serial) && $u->cad_serial!="") return array("success"=>false, "message"=>"invalid cad_serial");  
+                if (!preg_match('/^\w+$/',$u->octopus_apikey) && $u->octopus_apikey!="") return array("success"=>false, "message"=>"invalid octopus_apikey");  
+                if (!ctype_alnum($u->meter_serial) && $u->meter_serial!="") return array("success"=>false, "message"=>"invalid meter_serial");
+                
+                // Generate new random password if not set
+                if (!isset($u->password)) $u->password = "";
+                if ($u->password==null || $u->password=="") {
+                    $u->password = hash('sha256',md5(uniqid(rand(), true)));
+                    $u->password = substr($u->password, 0, 10);
                 }
-            
-                $result = $user->register($username, $password, $email);
+                
+                $result = $user->register($u->username, $u->password, $u->email, "Europe/London");
                 if ($result["success"]) {
                     $userid = $result["userid"];
-                    $mysqli->query("INSERT INTO cydynni (clubs_id,userid,mpan,welcomedate,reportdate) VALUES ('$club_id','$userid','$mpan',0,0)");
-                    
+                    $result = $club_model->add_user((int)$u->clubs_id,$userid,(int)$u->mpan,$u->cad_serial,$u->octopus_apikey,$u->meter_serial);
                     include "Modules/remoteaccess/remoteaccess_userlink.php";
-                    $result = remoteaccess_userlink_existing($mysqli,$userid);
+                    remoteaccess_userlink_existing($mysqli,$userid);
                 }
                 return $result;
+                
             }
-            break;
-            
+            break;          
             
         case "admin-registeremail":
             $route->format = "text";
@@ -444,34 +553,56 @@ function club_controller()
                 return $club_emails->registeremail(get('userid'));
             }
             break;
-            
-        case "admin-change-user-email":
-            $route->format = "json";
-            if ($session['admin']) {
-                return $user->change_email(get("userid"),get("email"));
-            }
-            break;
 
-        case "admin-change-user-username":
+        case "admin-update-user":
             $route->format = "json";
-            if ($session['admin']) {
-                return $user->change_username(get("userid"),get("username"));
-            }
-            break;
+            if ($session['admin'] && isset($_GET['userid']) && isset($_POST['data'])) {
             
-        case "admin-change-user-mpan":
-            $route->format = "json";
-            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['mpan'])) {
-                return $club_model->change_user_mpan(get("userid"),get("mpan"));
-            }
-            break;
+                $userid = get('userid');
+                $changed = json_decode(post("data"));
 
-        case "admin-change-user-cad_serial":
-            $route->format = "json";
-            if ($session['admin'] && isset($_GET['userid']) && isset($_GET['cad_serial'])) {
-                return $club_model->change_user_cad_serial(get("userid"),get("cad_serial"));
+                if (isset($changed->username)) {
+                    $result = $user->change_username($userid,$changed->username);
+                    if (!$result['success']) return $result;
+                }
+
+                if (isset($changed->email)) {
+                    $result = $user->change_email($userid,$changed->email);
+                    if (!$result['success']) return $result;
+                }
+
+                if (isset($changed->mpan)) {
+                    $changed->mpan = trim($changed->mpan);
+                    if (!ctype_digit($changed->mpan)) return array("success"=>false, "message"=>"invalid mpan");  
+                    $result = $club_model->change_user_prop($userid,"mpan",$changed->mpan);
+                    if (!$result['success']) return $result;
+                }
+
+                if (isset($changed->cad_serial)) {
+                    $changed->cad_serial = trim($changed->cad_serial);
+                    if (!ctype_alnum($changed->cad_serial)) return array("success"=>false, "message"=>"invalid cad_serial");  
+                    $result = $club_model->change_user_prop($userid,"cad_serial",$changed->cad_serial);
+                    if (!$result['success']) return $result;
+                }
+
+                if (isset($changed->octopus_apikey)) {
+                    $changed->mpan = trim($changed->octopus_apikey);
+                    if (!preg_match('/^\w+$/',$changed->octopus_apikey)) return array("success"=>false, "message"=>"invalid octopus_apikey");  
+                    $result = $club_model->change_user_prop($userid,"octopus_apikey",$changed->octopus_apikey);
+                    if (!$result['success']) return $result;
+                }
+                
+                if (isset($changed->meter_serial)) {
+                    $changed->mpan = trim($changed->meter_serial);
+                    if (!ctype_alnum($changed->meter_serial)) return array("success"=>false, "message"=>"invalid meter_serial");  
+                    $result = $club_model->change_user_prop($userid,"meter_serial",$changed->meter_serial);
+                    if (!$result['success']) return $result;
+                }
+
             }
+            return array('success'=>true, 'message'=>'User updated');
             break;
+                    
                     
         case "admin-switchuser":
             $route->format = "text";

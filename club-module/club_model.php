@@ -12,59 +12,40 @@ class Club{
         $this->mysqli = $mysqli;
         $this->redis = $redis;
     }
-    
-    public function change_user_mpan($uid,$mpan) {
-        // filter and check userid
-        $uid = (int) $uid;
-        if (!$uid) return false;
-        // filter and check mpan
-        $mpan = trim($mpan);
-        if (!ctype_alnum($mpan)) return false;
+
+    public function add_user($club_id,$userid,$mpan,$cad_serial,$octopus_apikey,$meter_serial) {    
+        $club_id = (int) $club_id;
+        $userid = (int) $userid;
         
-        // check if mpan already set by another user
-        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE mpan = ?");
-        $stmt->bind_param("s", $mpan);
+        $stmt = $this->mysqli->prepare("INSERT INTO cydynni (clubs_id,userid,mpan,cad_serial,octopus_apikey,meter_serial,welcomedate,reportdate) VALUES (?,?,?,?,?,?,0,0)");
+        $stmt->bind_param("iiisss", $club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial);
         $stmt->execute();
-        $stmt->bind_result($userid);
-        $stmt->fetch();
         $stmt->close();
         
-        if ($userid==null || $mpan==0) {
-            $stmt = $this->mysqli->prepare("UPDATE cydynni SET mpan = ? WHERE userid = ?");
-            $stmt->bind_param("si", $mpan, $uid);
-            $stmt->execute();
-            $stmt->close();
-            return "MPAN updated";
-        } else {
-            return "MPAN already in use";
-        }
+        return array("success"=>true, "userid"=>$userid, "message"=>"user created");
     }
     
-    public function change_user_cad_serial($uid,$cad_serial) {
+    public function change_user_prop($uid,$prop,$value) {    
         // filter and check userid
         $uid = (int) $uid;
-        if (!$uid) return false;
-        // filter and check cad_serial
-        $cad_serial = trim($cad_serial);
-        if (!ctype_alnum($cad_serial)) return false;
-        
-        // check if serial already set by another user
-        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE cad_serial = ?");
-        $stmt->bind_param("s", $cad_serial);
+        if (!$uid) return array("success"=>false, "message"=>"invalid userid");
+                
+        // check if already set by another user
+        $stmt = $this->mysqli->prepare("SELECT userid FROM cydynni WHERE $prop = ?");
+        $stmt->bind_param("s", $value);
         $stmt->execute();
         $stmt->bind_result($userid);
         $stmt->fetch();
         $stmt->close();
-        
-        if ($userid==null || $cad_serial==0) {
-            $stmt = $this->mysqli->prepare("UPDATE cydynni SET cad_serial = ? WHERE userid = ?");
-            $stmt->bind_param("si", $cad_serial, $uid);
-            $stmt->execute();
-            $stmt->close();
-            return "cad_serial updated";
-        } else {
-            return "cad_serial already in use";
+        if ($userid!=null && $uid!=$userid) {
+            return array("success"=>false, "message"=>"$prop already in use");
         }
+        
+        $stmt = $this->mysqli->prepare("UPDATE cydynni SET $prop = ? WHERE userid = ?");
+        $stmt->bind_param("si", $value, $uid);
+        $stmt->execute();
+        $stmt->close();
+        return array("success"=>true, "message"=>"$prop updated");
     }
     
     /**
