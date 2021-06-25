@@ -8,213 +8,284 @@ foreach ($club_settings as $club) {
 ?>
 
 <style>
-input {
-    margin:0px !important;
-}
-
-.input-append {
-    margin:0px !important;
-}
+.label {cursor:pointer; }
 </style>
+
+<script src="<?php echo $path; ?>Lib/vue.min.js"></script>
 
 <h3>User list</h3>
 
-<div class="input-prepend input-append" style="float:right">
-    <span class="add-on">Add user:</span>
-    <input type="text" id="add_user_username" style="width:150px" placeholder="Username"/>
-    <input type="text" id="add_user_password" style="width:150px" placeholder="Password"/>
-    <input type="text" id="add_user_email" style="width:150px" placeholder="Email"/>
-    <input type="text" id="add_user_mpan" style="width:150px" placeholder="MPAN"/>
-    <button class="btn" id="add_user">Add</button>
+<div id="app">
+
+    <button class="btn" style="float:right" @click="add_user"><i class="icon-plus"></i> Add new user</button>
+
+    <div class="input-prepend">
+        <span class="add-on">Select Club:</span>
+        <select v-model="selected_club" @change="load">
+          <option v-for="(key,id) in clubs" :value="id">{{ key }}</option>
+        </select>
+    </div>
+
+    <table class="table table-striped">
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>MPAN</th>
+        <th>CAD Serial</th>
+        <th>Octopus</th>
+        <th style="width:100%">Meter Serial</th>
+        <th>TMA</th>
+        <th title="Connected response export">CRE</th>
+        <th title="Octopus data">OCT</th>
+        <th title="Connected response meter data (MQTT route)">PWR</th>
+        <th tital="Estimated">EST</th>
+        <th>Emails</th>
+      </tr>
+      <tr v-for="(user,index) in users" style="font-size:14px; cursor:pointer">
+        <td><a :href="'admin-switchuser?userid='+user.userid">{{ user.userid }}</a></td>
+        <td @click="edit(index)">{{ user.username }}</td>
+        <td @click="edit(index)">{{ user.email }}</td>
+        <td @click="edit(index)">{{ user.mpan }}</td>
+        <td @click="edit(index)">{{ user.cad_serial }}</td>
+        <td @click="edit(index)"><span style="font-size:12px">{{ user.octopus_apikey }}</span></td>
+        <td @click="edit(index)">{{ user.meter_serial }}</td>
+
+        <td v-for="source in data_status[index]">
+          <span v-if="source.days">
+            <span class="label label-success" v-if="source.updated<7" :title="source.days | toFixed(0) + ' days of data'" @click="graph(source.feedid)" >
+            {{ source.updated | toFixed(0) }}d ago</span>
+            <span class="label label-warning" v-else-if="source.updated<31" :title="source.days | toFixed(0) + ' days of data'" @click="graph(source.feedid)" >
+            {{ source.updated | toFixed(0) }}d ago</span>
+            <span class="label label-important" v-else :title="source.days | toFixed(0) + ' days of data'" @click="graph(source.feedid)">
+            {{ source.updated | toFixed(0) }}d ago</span>
+          </span>
+          <span v-else class="label">no data</span>
+        </td>
+        <td v-if="!data_status[index]"><span class="label">loading</span></td>
+        <td v-if="!data_status[index]"><span class="label">loading</span></td>
+        <td v-if="!data_status[index]"><span class="label">loading</span></td>
+        <td v-if="!data_status[index]"><span class="label">loading</span></td>
+        <td v-if="!data_status[index]"><span class="label">loading</span></td>
+        <td @click="edit(index)">
+          <span :title="'Welcome email sent:\n'+user.welcomedate"><i class="icon-ok-circle" v-if="user.welcomedate!=0"></i></span>
+          <span :title="'Report email sent:\n'+user.reportdate"><i class="icon-book" v-if="user.reportdate!=0"></i></span>        
+        </td>
+      </tr>
+    </table>
+
+    <div id="editUserModal" class="modal hide keyboard" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-header">
+            <button type="button" class="close" @click="edit_close">×</button>
+            <h3 id="editUserModalLabel"><?php echo _('Edit User'); ?></h3>
+        </div>
+        <div class="modal-body" v-if="selected_user!==false">
+        
+        
+        <div class="row-fluid">
+          <div class="span7">
+            <label>Username</label>
+            <input type="text" v-model="users[selected_user].username" style="width:260px" />
+            
+            <label v-if="new_user">Password</label>
+            <input v-if="new_user" type="password" autocomplete="new-password" v-model="new_user_password" style="width:260px" />
+            
+            <label>Email</label>
+            <input type="text" v-model="users[selected_user].email" style="width:260px" />
+
+            <label>MPAN</label>
+            <input type="text" v-model="users[selected_user].mpan" style="width:260px" />
+            
+            <label>CAD Serial</label>
+            <input type="text" v-model="users[selected_user].cad_serial" style="width:260px" />
+
+            <label>Octopus API Key</label>
+            <input type="text" v-model="users[selected_user].octopus_apikey" style="width:260px" />
+
+            <label>Meter Serial</label>
+            <input type="text" v-model="users[selected_user].meter_serial" style="width:260px" />
+          </div>
+          <div class="span5">
+            <div v-if="users[selected_user].user>0">
+              <p>Welcome email <div class="input-append"><span class="add-on">{{ users[selected_user].welcomedate }}</span>
+              <button class="btn" @click="send_welcome">Send</button></div></p>
+
+              <p>Report email <div class="input-append"><span class="add-on">{{ users[selected_user].reportdate }}</span>
+              <button class="btn" @click="send_report">Send</button></div></p>
+            </div>
+          </div>
+        </div>
+        
+        </div>
+        <div class="modal-footer">
+            <button class="btn" @click="edit_close"><?php echo _('Cancel'); ?></button>
+            <button class="btn btn-primary" @click="save"><?php echo _('Save'); ?></button>
+        </div>
+    </div>
+
 </div>
 
-<div class="input-prepend">
-    <span class="add-on">Select Club:</span>
-    <select id="select_club"></select>
-</div>
-
-
-
-<table class="table" style="table-layout: fixed; width: 100%">
-  <tr>
-    <th style="width:40px">User</th>
-    <th style="width:165px">Username</th>
-    <th style="width:185px">Email <span style="font-size:12px">(Click to edit)</span></th>
-    <th>MPAN</th>
-    <th>Serial No</th>
-    <th style="width:120px">Welcome Email</th>
-    <th style="width:120px">Report Email</th>
-    <th>Feeds</th>
-    <th>Hits</th>
-    <th>Graph</th>
-  </tr>
-  <tbody id="users"></tbody>
-</table>
 
 <script>
-var path = "<?php echo $path; ?>";
-var session = <?php echo json_encode($session); ?>;
 
-var selected_club = localStorage.getItem('selected_club');
-if (selected_club==null) selected_club = 1; else selected_club *= 1;
-
-var users = [];
+var selected_club = 1;
+var users = {}
+var original = {}
+var data_status = {}
 
 var clubs = <?php echo json_encode($clubs); ?>;
-console.log(clubs)
-var out = "";
-for (var z in clubs) {
-    var selected = "";
-    if (selected_club==z) selected = "selected";
-    out += "<option value='"+z+"' "+selected+">"+clubs[z]+"</option>";
-}
-$("#select_club").html(out);
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        clubs: clubs,
+        selected_club: selected_club,
+        users:users,
+        data_status:data_status,
+        selected_user: false,
+        new_user: false,
+        new_user_password: ""
+    },
+    methods: {
+        graph: function(feedid) {
+            window.location = "/graph/"+feedid
+        },
+        add_user: function() {
+            this.users.push({
+                userid:-1,
+                username:"",
+                email:"",
+                clubs_id:1,         
+                mpan:"",
+                cad_serial:"",
+                octopus_apikey:"",       
+                meter_serial:"",
+                welcomedate:0,
+                reportdate:0,
+                admin:0
+            });
+            this.selected_user = this.users.length-1;
+            this.new_user = this.selected_user;
+            $("#editUserModalLabel").html("Add user");
+            $("#editUserModal").modal("show");
+        },
+        edit: function(index){
+            this.selected_user = index
+            $("#editUserModalLabel").html("Edit user");
+            $("#editUserModal").modal("show");            
+        },
+        edit_close: function() {
+            $("#editUserModal").modal("hide");
+            if (this.new_user!==false) {
+                this.selected_user = false;
+                this.new_user = false;
+                this.users.pop()
+            }         
+        },
+        save: function() {
+            if (this.new_user==false) {
+                var changed = {};
+                // Find changed properties
+                for (var z in this.users[this.selected_user]) {
+                    if (this.users[this.selected_user][z]!=original[this.selected_user][z]) {
+                        changed[z] = this.users[this.selected_user][z];
+                    }
+                }
+                update_user(this.users[this.selected_user].userid,changed);
+            } else {
+                add_user(this.users[this.selected_user],this.new_user_password);
+            }
+        },
+        send_welcome: function() {
+            $.ajax({
+                url: path+"club/admin-registeremail",
+                data: "userid="+this.users[this.selected_user].userid,
+                dataType: 'text',
+                success: function(result) {
+                    alert(result)
+                }
+            });        
+        },
+        send_report: function() {
+            $.ajax({
+                url: path+"club/admin-sendreport",
+                data: "userid="+this.users[this.selected_user].userid,
+                dataType: 'text',
+                success: function(result) {
+                    alert(result)
+                }
+            });   
+        }
+    },
+    filters: {
+        toFixed: function(val,dp) {
+            return val.toFixed(dp)
+        }
+    }
+});
 
 load();
 function load() {
 
     $.ajax({
-        url: path+"club/admin-users?club_id="+selected_club,
+        url: path+"club/admin-users-list?club_id="+app.selected_club,
+        dataType: 'json',
+        async:true,
+        success: function(result) {
+            app.users = result;
+            original = JSON.parse(JSON.stringify(result));
+            data_status = {}
+        }
+    });
+    
+    setTimeout(function(){
+    $.ajax({
+        url: path+"club/admin-users-data-status?club_id="+app.selected_club,
+        dataType: 'json',
+        async:true,
+        success: function(result) {
+            app.data_status = result;
+        }
+    });
+    },100);
+}
+
+function add_user(user,password) {
+    user.password = password;
+    $.ajax({
+        type: 'POST',
+        url: path+"club/admin-add-user",
+        data: "user="+JSON.stringify(user),
         dataType: 'json',
         success: function(result) {
-            users = result;
-        
-            var out = "";
-            for (var z in result) {
-                out += "<tr>";
-                var admin = ""; if (result[z].admin==1) admin = " (A)";
-                out += "<td><a href='"+path+"club/admin-switchuser?userid="+result[z].userid+"'>"+result[z].userid+"</a>"+admin+"</td>";
-
-                out += "<td class='td-username'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].username+"' class='edit-input' style='width:160px' key='username' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='username' userid='"+result[z].userid+"'>S</button></div>";
-                out += "</td>";
-                
-                out += "<td class='td-email'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].email+"' class='edit-input' style='width:180px' key='email' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='email' userid='"+result[z].userid+"'>S</button></div>";
-                out += "</td>";
-                
-                out += "<td class='td-mpan'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].mpan+"' class='edit-input' style='width:120px' key='mpan' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='mpan' userid='"+result[z].userid+"'>S</button></div>";
-                out += "</td>";
-
-                out += "<td class='td-cad_serial'>";
-                  out += "<div class='input-append'><input type='text' value='"+result[z].cad_serial+"' class='edit-input' style='width:100px' key='cad_serial' userid='"+result[z].userid+"'>";
-                  out += "<button class='btn edit-save hide' key='cad_serial' userid='"+result[z].userid+"'>S</button></div>";
-                out += "</td>";
-                
-                // Register date
-                var bgcolor = "#ccffcc"; if (result[z].welcomedate=="not sent") bgcolor = "#ffcccc";
-                out += "<td><span style='font-size:12px; background-color:"+bgcolor+"'>"+result[z].welcomedate+"</span> ";
-                out += "<button class='btn registeremail' userid='"+result[z].userid+"' style='font-size:12px'>Send</button></td>";
-                
-                // Report date
-                var bgcolor = "#ccffcc"; if (result[z].reportdate=="not sent") bgcolor = "#ffcccc";
-                out += "<td><span style='font-size:12px; background-color:"+bgcolor+"'>"+result[z].reportdate+"</span> ";
-                out += "<button class='btn reportemail' userid='"+result[z].userid+"' style='font-size:12px'>Send</button></td>";
-
-                out += "<td><div style=''>"+result[z].feeds+"</div></td>";
-                out += "<td>"+result[z].hits+"</td>";
-                
-                var now = (new Date()).getTime()*0.001;
-                var last_updated_ago = (now - result[z].last_updated)/(3600*24)
-                var last_updated_ago_str = last_updated_ago.toFixed(1)+" days"
-                if (result[z].last_updated==0) last_updated_ago_str = ""
-                
-                var color = "#d4edda";
-                if (last_updated_ago>7) color = "#fff3cd"
-                if (last_updated_ago>30) color = "#f8d7da"
-                
-                out += "<td style='background-color:"+color+"'><a href='/graph/"+result[z].use_hh_est+"'>"+last_updated_ago_str+"</a></td>";
-                //out += "<td style='overflow:hidden'><pre>"+JSON.stringify(result[z].testdata)+"</pre></td>";
-                out += "</tr>";
+            alert(result.message);
+            if (result.success) {
+                $("#editUserModal").modal("hide");
+                app.users[app.selected_user].userid = result.userid;
             }
-            $("#users").html(out);
         }
     });
 }
 
-$("#select_club").change(function(){
-    selected_club = $(this).val();
-    localStorage.setItem('selected_club',selected_club);
-    load();
-});
-
-$("#add_user").click(function(){
-    var username = $("#add_user_username").val();
-    var password = $("#add_user_password").val();
-    var email = $("#add_user_email").val();
-    var mpan = $("#add_user_mpan").val();
-    
+function update_user(userid,changed) {
     $.ajax({
         type: 'POST',
-        url: path+"club/admin-add-user",
-        data: "club_id="+selected_club+"&username="+username+"&password="+password+"&email="+email+"&mpan="+mpan,
+        url: path+"club/admin-update-user?userid="+userid,
+        data: "data="+JSON.stringify(changed),
         dataType: 'json',
-        success: function(result) {
-            if (!result.success) alert(result.message);
-            load();
-        }
-    });
-});
-
-$("body").on("click",".registeremail",function(){
-    var userid = $(this).attr("userid");
-    $.ajax({
-        url: path+"club/admin-registeremail",
-        data: "userid="+userid,
-        dataType: 'text',
-        success: function(result) {
-            alert(result)
-        }
-    });
-});
-
-$("body").on("click",".reportemail",function(){
-    var userid = $(this).attr("userid");
-    $.ajax({
-        url: path+"club/admin-sendreport",
-        data: "userid="+userid,
-        dataType: 'text',
-        success: function(result) {
-            alert(result)
-        }
-    });
-});
-
-$("body").on("keyup",".edit-input",function(){
-    $(this).parent().find(".edit-save").show();
-});
-
-$("body").on("click",".edit-save",function(){
-    var key = $(this).attr("key");
-    var userid = $(this).attr("userid");
-    var value = $(".edit-input[key="+key+"][userid="+userid+"]").val();
-    
-    $.ajax({
-        url: path+"club/admin-change-user-"+key,
-        data: "userid="+userid+"&"+key+"="+value,
         async:true,
-        dataType: 'text',
         success: function(result) {
-           alert(result);
-        }
-    });
-    $(".edit-save[key="+key+"][userid="+userid+"]").hide();
-});
-
-function logout() {
-    $.ajax({
-        url: path+"logout",
-        dataType: 'text',
-        success: function(result) {
-            $("#login-block").show();
-            $("#welcome-block").hide();
-            $("#admin-block").hide();
-            $(".logout").hide();
+            alert(result.message)
+            if (result.success) {
+                $("#editUserModal").modal("hide");
+                // apply changes back to original copy
+                for (var z in changed) {
+                    original[app.selected_user][z] = changed[z] 
+                }
+            }
         }
     });
 }
 </script>
+
+
