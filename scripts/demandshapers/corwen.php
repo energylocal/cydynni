@@ -1,4 +1,5 @@
 <?php
+$enable_turndown = false;
 // -------------------------------------------------
 // Create demandshaper
 // -------------------------------------------------
@@ -77,94 +78,6 @@ for ($i=0; $i<count($data); $i++) {
     }
 }
 
-$demandshaper = array();
-for ($i=0; $i<48; $i++) {
-
-    $h = floor($i*0.5);
-    $m = ($i*0.5 - $h) * 60;
-    
-    $hydro_price = 0.0;
-    if ($h>=20.0 || $h<7.0) $hydro_price = 0.058;
-    if ($h>=7.0 && $h<16.0) $hydro_price = 0.104;
-    if ($h>=16.0 && $h<20.0) $hydro_price = 0.127;
-    
-    if ($h<10) $h = "0".$h;
-    if ($m<10) $m = "0".$m; 
-    $hm = $h.":".$m;
-    
-    $average = $sum[$hm] / $count[$hm];
-    $demandshaper[] = number_format($average*$hydro_price,2)*1; 
-}
-
-// print json_encode($demandshaper)."\n";
-
-//                       0am     1am     2am     3am     4am     5am     6am     7am     8am     9am     10am    11am    noon    1pm     2pm     3pm     4pm     5pm     6pm     7pm     8pm     9pm     10pm    11pm    12am
-// $result->DATA[0]=array(1,0.2,0.15,0.1,0.1,0.1,0.05,0.1,0.1,0.1,0.1,0.1,0.15,0.2,0.3,0.4,0.45,0.5,0.5,0.5,0.5,0.5,0.45,0.4,0.4,0.4,0.35,0.3,0.3,0.3,0.3,0.4,0.5,1.0,1.0,1.0,1.0,1.0,1.0,0.5,0.5,0.4,0.4,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.1);
-
-$result = new stdClass();
-$result->DATA = array();
-$result->DATA[0] = $demandshaper;
-$redis->set("$club:club:demandshaper",json_encode($result));
-
-// --------------------------------------------------------------------------------
-// Octopus format
-// --------------------------------------------------------------------------------
-$start = floor(time()/1800)*1800;
-$end = $start + (3600*24);
-
-$date = new DateTime();
-$date->setTimezone(new DateTimeZone("UTC"));
-
-$rows = array();
-
-for ($time=$start; $time<$end; $time+=1800) {
-    $row = array();
-    
-    $date->setTimestamp($time);
-    $row['valid_from'] = $date->format("Y-m-d\TH:i:s\Z");
-    $hm = $date->format('H:i');
-    $h = $date->format('H')*1;
-    
-    $date->setTimestamp($time+1800);
-    $row['valid_to'] = $date->format("Y-m-d\TH:i:s\Z");
-    
-    $use = $sum[$hm] / $count[$hm];
-    if (isset($hydro_forecast[$time])) $gen = $hydro_forecast[$time];
-    
-    $balance = $gen - $use;
-    if ($balance>0) {
-       $from_hydro = $use;
-       $import = 0;
-    } else {
-       $from_hydro = $gen;
-       $import = -1*$balance;
-    }
-
-    $hydro_price = 0.0; $import_price = 0.0;
-    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.058; $import_price = 0.105; }
-    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.104; $import_price = 0.189; }
-    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.127; $import_price = 0.231; }
-    
-    $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
-    $unitprice = $cost / $use;
-    
-    $modified_unitprice = ($unitprice*0.88) + ($use*0.0005);
-
-    $row['value_exc_vat'] = number_format(100*$modified_unitprice,2)*1;
-    $row['value_inc_vat'] = number_format(100*$modified_unitprice,2)*1;
-    
-    $rows[] = $row;
-}
-
-$demandshaper = array(
-    "count"=>0,
-    "next"=>null,
-    "previous"=>null,
-    "results"=>$rows
-);
-
-$redis->set("$club:club:demandshaper-octopus",json_encode($demandshaper));
-
 // --------------------------------------------------------------------------------
 // Forecast v2 format
 // starts at current time and extends forwards for 24h
@@ -183,11 +96,16 @@ $forecast->optimise = 0;
 $date = new DateTime();
 $date->setTimezone(new DateTimeZone("Europe/London"));
 
+// Octopus UTC
+$octopus_date = new DateTime();
+$octopus_date->setTimezone(new DateTimeZone("UTC"));
+
 $gen = 0;
 
 $demandshaper_timeseries = array();
 $demand_timeseries = array();
 $generator_timeseries = array();
+$octopus_rows = array();
 
 for ($time=$start; $time<$end; $time+=$interval) {
 
@@ -222,9 +140,35 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $demandshaper_timeseries[] = array($time,$cost);
     $demand_timeseries[] = array($time,$use);
     $generator_timeseries[] = array($time,$gen);
+    
+    // Octopus format
+    $octopus_row = array();
+    $octopus_date->setTimestamp($time);
+    $octopus_row['valid_from'] = $octopus_date->format("Y-m-d\TH:i:s\Z");
+    $octopus_date->setTimestamp($time+1800);
+    $octopus_row['valid_to'] = $octopus_date->format("Y-m-d\TH:i:s\Z");    
+    $modified_unitprice = ($unitprice*0.88) + ($use*0.0005);    
+    $octopus_row['value_exc_vat'] = number_format(100*$modified_unitprice,2)*1;
+    $octopus_row['value_inc_vat'] = number_format(100*$modified_unitprice,2)*1;
+    $octopus_rows[] = $octopus_row;
 }
 
 $redis->set("energylocal:forecast:$club",json_encode($forecast));
+
+// Original format
+$result = new stdClass();
+$result->DATA = array();
+$result->DATA[0] = $forecast->profile;
+$redis->set("$club:club:demandshaper",json_encode($result));
+
+// Octopus format
+$octopus_demandshaper = array(
+    "count"=>0,
+    "next"=>null,
+    "previous"=>null,
+    "results"=>$octopus_rows
+);
+$redis->set("$club:club:demandshaper-octopus",json_encode($octopus_demandshaper));
 
 // --------------------------------------------------------------------------------
 // Save forecast to feeds
