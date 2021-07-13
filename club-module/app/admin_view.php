@@ -106,7 +106,7 @@ foreach ($club_settings as $club) {
             <input type="text" v-model="users[selected_user].meter_serial" style="width:260px" />
           </div>
           <div class="span5">
-            <div v-if="users[selected_user].user>0">
+            <div v-if="users[selected_user].userid>0">
               <p>Welcome email <div class="input-append"><span class="add-on">{{ users[selected_user].welcomedate }}</span>
               <button class="btn" @click="send_welcome">Send</button></div></p>
 
