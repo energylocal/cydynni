@@ -9,7 +9,7 @@
 // email	mpan	cad_serial	guid	install_code	requested_pairing	crl_server	confirmed_plugged_in	octopus_apikey 	meter_serial	dash_id
 
 // -------------------------------------------------------------------------
-$export = file_get_contents("export"); $club_id = 1; $dry_run = true;
+$export = file_get_contents("export"); $club_id = 1; $dry_run = false;
 
 require "create_user.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
@@ -124,7 +124,7 @@ for ($i=1; $i<count($lines); $i++) {
                         print "-- Updating user=$userid octopus_apikey=$octopus_apikey\n";                    
                         if (!$dry_run) $mysqli->query("UPDATE cydynni SET `octopus_apikey`='$octopus_apikey' WHERE `userid`='$userid'");
                     }
-                }    
+                }
                 
                 $result2 = $mysqli->query("SELECT * FROM users WHERE `id`='".$row->userid."'");
                 if ($row2 = $result2->fetch_object()) {
@@ -132,6 +132,7 @@ for ($i=1; $i<count($lines); $i++) {
                     if ($row2->email!=$email) {
                         $match_email = false;
                         $changes = true;
+                        //if (!$dry_run) $mysqli->query("UPDATE users SET `email`='$email' WHERE `id`='$userid'");
                     }
                 }
             } else {

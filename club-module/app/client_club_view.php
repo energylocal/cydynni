@@ -127,9 +127,10 @@
                 </div>
             </div>
             <?php if ($club_settings["club_id"]==1) { ?>
+            <!--
             <div class="block">
                 <div class="block-title bg-club2" style="text-align:center;">
                 Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
                 </div>
-            </div>
+            </div>-->
             <?php } ?>

@@ -43,7 +43,7 @@ foreach ($club_settings as $club) {
         <th>Emails</th>
       </tr>
       <tr v-for="(user,index) in users" style="font-size:14px; cursor:pointer">
-        <td><a :href="'admin-switchuser?userid='+user.userid">{{ user.userid }}</a></td>
+        <td><a :href="'/club/admin-switchuser?userid='+user.userid">{{ user.userid }}</a></td>
         <td @click="edit(index)">{{ user.username }}</td>
         <td @click="edit(index)">{{ user.email }}</td>
         <td @click="edit(index)">{{ user.mpan }}</td>
@@ -155,7 +155,7 @@ var app = new Vue({
                 userid:-1,
                 username:"",
                 email:"",
-                clubs_id:1,         
+                clubs_id:app.selected_club,         
                 mpan:"",
                 cad_serial:"",
                 octopus_apikey:"",       

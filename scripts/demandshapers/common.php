@@ -193,6 +193,10 @@ foreach ($generator_timeseries as $timevalue) {
     $feed->insert_data($demandshaper_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }
 
+//foreach ($hydro_forecast as $time=>$value) {
+//    $feed->insert_data($demandshaper_gen_feedid,$time,$time,$value);
+//}
+
 foreach ($demand_timeseries as $timevalue) {
     $feed->insert_data($demandshaper_use_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }

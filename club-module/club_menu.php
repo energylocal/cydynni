@@ -2,7 +2,7 @@
     global $session, $redis, $path, $club;
     
     if ($session["admin"]) {
-        $menu["setup"]["l2"]['clubs'] = array("name"=>"Clubs","href"=>"club/admin", "order"=>12, "icon"=>"format_list_bulleted");
+        // $menu["setup"]["l2"]['clubs'] = array("name"=>"Clubs","href"=>"club/admin", "order"=>12, "icon"=>"format_list_bulleted");
     }
 
     $apikeystr = "";

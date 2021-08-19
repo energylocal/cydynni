@@ -27,7 +27,7 @@ $("#loginform").on("submit",function(event){
               var startingpage = "club/?household";
           
               if (result.startingpage!=undefined && result.startingpage=="club\/admin") {
-                  startingpage = "club/admin";
+                  startingpage = "admin/clubs";
               }
               
               window.location.href = path+startingpage;

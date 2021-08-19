@@ -3,7 +3,7 @@
 function hydro_forecast($feed, $model_config)
 {
     $data = array();
-    $learn_hh = 24;
+    $learn_hh = 96;
     $now = time();
     $first_run = 1;
     
@@ -16,7 +16,14 @@ function hydro_forecast($feed, $model_config)
 
     $gen_tmp = $feed->get_data($model_config['gen_id'],$start*1000,$end*1000,$interval,0,0);
     $precipIntensity_tmp = $feed->get_data($model_config['precipIntensity_id'],$start*1000,$end*1000,$interval,0,0);
-
+    
+    $last_gen_time = 0;
+    foreach ($gen_tmp as $dp) {
+        if ($dp[1]!=null) $last_gen_time = $dp[0]*0.001;
+    }
+    
+    if ($last_gen_time==0) $last_gen_time = $now;
+    
     // --------------------------------------------------------------------------------------------------
     $base_level = 0.0;
 
@@ -72,7 +79,9 @@ function hydro_forecast($feed, $model_config)
         if ($z<$learn_hh) {
             for ($i=0; $i<$wlen; $i++) {
                 $scale = 0.7+0.3*(($i+1)/$wlen);
-                $e[$i] = ($gen_tmp[$z][1] + $model_config["hydro_min"]) * $k[$i] * $scale;
+                if ($gen_tmp[$z][1]!=null) {
+                    $e[$i] = ($gen_tmp[$z][1] + $model_config["hydro_min"]) * $k[$i] * $scale;
+                }
             }
         }
         
@@ -80,11 +89,12 @@ function hydro_forecast($feed, $model_config)
         if ($hydro_sim>$model_config["hydro_max"]) $hydro_sim = $model_config["hydro_max"];
         if ($hydro_sim<0) $hydro_sim = 0;
         
-        if (($time)>=($now-1800)) {
+        if (($time)>=($last_gen_time-1800)) {
             // echo $time." ".number_format($hydro_sim,1)."\n";
             $forecast[$time] = $hydro_sim;
         }
     }
+
 
     return $forecast;  
 }

@@ -613,7 +613,7 @@ function club_controller()
                 if ($row = $result->fetch_object()) {
                     $_SESSION['userid'] = $userid;
                     $_SESSION['username'] = $row->username;
-                    header("Location: ../graph");
+                    header("Location: ../feed/view");
                 }
             }
             break;
@@ -654,6 +654,21 @@ function club_controller()
             fwrite($fh,time()." ".$_POST['mpan']." ".$_POST['plan']."\n");
             fclose($fh);
             
+            // -----------------------------------------------------------
+            $plan = [];
+            $json = json_decode($_POST['plan']);
+            if (isset($json->source) && $json->source=="/hubs/25354") {
+                foreach ($json->payload as $payload) {
+                    if ($payload->energyType=="electricity" && $payload->assetType=="heatpump") {
+                       foreach($payload->planEvents as $slot) {
+                           $date = new DateTime($slot->startDateTime);
+                           $plan[$date->getTimestamp()] = $slot->value;
+                       }
+                    }
+                }
+                $redis->set("passivplan:85",json_encode($plan));
+            }
+            // -----------------------------------------------------------
             return "plan received";
             break;
             

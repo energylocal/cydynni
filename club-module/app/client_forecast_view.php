@@ -96,11 +96,13 @@
             </div>
             
             <?php if ($club_settings["club_id"]==1) { ?>
+            <!--
             <div class="block">
                 <div class="block-title" style="background-color:#e6602b; text-align:center;">
                 Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
                 </div>
             </div>
+            -->
             <?php } ?>
             <div class="block">
                 <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
