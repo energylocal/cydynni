@@ -6,7 +6,7 @@ Household page
 
 var household_power_end = +new Date;
 var household_power_start = household_power_end - (3600000*12.0);
-var household_power_feedid = 0;
+var household_power_feedid = false;
 var household_updater = false;
 
 var household_pie_data_cost = [];
@@ -17,6 +17,7 @@ var householdpowerseries = [];
 
 var household_tariff_data = {};
 
+var household_realtime_data = {};
 var household_data = [];
 var household_result = [];
 
@@ -27,25 +28,19 @@ var household_firstload = true;
 function household_summary_load()
 {
   if (session.feeds.hub_use!=undefined) {
-
       household_power_feedid = session.feeds.hub_use
-      household_powergraph_load();
-      
-      household_realtime();
-      clearInterval(household_updater);
-      household_updater = setInterval(household_realtime,5000);
-      
   } else if (session.feeds.meter_power!=undefined) {
-      
       household_power_feedid = session.feeds.meter_power
-      household_powergraph_load();
-      
-      household_realtime();
+  }
+  
+  if (household_power_feedid) {
+      household_realtime(function(){
+          household_powergraph_load();
+      });
       clearInterval(household_updater);
       household_updater = setInterval(household_realtime,5000);
-  
   } else {
-      $("#realtime-power").hide(); 
+      $("#realtime-power").hide();
   }
 }
 
@@ -153,7 +148,7 @@ function draw_summary(result) {
             legend += '<tr>'
             legend += '<td><div class="key" style="background-color:'+tariff_colors[tariff_name]+'"></div></td>'
             legend += '<td><b>'+t(ucfirst(tariff_name))+'</b><br>'
-            legend += tariff_kwh.toFixed(0)+" kWh";
+            legend += tariff_kwh.toFixed(2)+" kWh";
             if (tariff_unitcost!==false) legend += " @"+(100*tariff_unitcost).toFixed(1)+" p/kWh<br>"; else legend += "<br>";
             legend += t("Costing")+" £"+tariff_cost.toFixed(2)+'</td>'
             legend += '</tr>'
@@ -215,7 +210,7 @@ function draw_summary(result) {
     $(".household_standing_charge").html("£"+standing_charge.toFixed(2));
     $(".tariff_standing_charge").html((tariff_standing_charge*100).toFixed(2));
     $(".household_vat").html("£"+vat.toFixed(2));
-    $(".household_total_cost").html("£"+result.cost.total.toFixed(2));
+    $(".household_total_cost").html("£"+total_cost.toFixed(2));
     $(".household_days").html(result.days);
 
 
@@ -277,15 +272,17 @@ function household_bargraph_load() {
         $(".household-daily").hide();
         $("#household-daily-note").show();
         
-        $.ajax({                                      
-            //url: path+"feed/data.json?id="+session.feeds["use_kwh"]+"&start="+view.start+"&end="+view.end+"&mode=daily&apikey="+session['apikey_read'],
+        $.ajax({
             url: path+club+"/household-daily-summary?start="+view.start+"&end="+view.end+"&apikey="+session['apikey_read'],
             dataType: 'json',
             async: true,                      
             success: function(result) {
                 if (!result || result===null || result==="" || result.constructor!=Array || result.length === 0) {
                     console.log("ERROR","invalid household-daily-summary response: ", result);
-                    household_draw_summary_range();
+                    // Hide household dashboard and show missing data block
+                    $('#missing-data-block').show();
+                    $("#your-score").hide();
+                    $("#your-usage").hide();
                 } else {
                     household_result = result;
                     
@@ -577,7 +574,7 @@ $(".household-daily").click(function(event) {
 // ----------------------------------------------------------------------------------
 // Power graph
 // ----------------------------------------------------------------------------------
-function household_realtime() {
+function household_realtime(callback=false) {
   $.ajax({                  
     url: path+'feed/timevalue.json',             
     data: "id="+household_power_feedid+"&apikey="+session['apikey_read'],
@@ -586,36 +583,46 @@ function household_realtime() {
     success: function(data) {  
 	      household_realtime_data = data;
         $("#power_value").html(data.value);
+        if (callback) callback();
     }
   });
 }
 
 function household_powergraph_load() {
 
+  if (household_power_start>household_realtime_data.time*1000) household_power_start = household_realtime_data.time*1000 - (3600*24*7*1000);
+
   var npoints = 1200;
   var household_power_interval = ((household_power_end - household_power_start) * 0.001) / npoints;  
-  household_power_interval = Math.round(household_power_interval/10)*10;
-  if (household_power_interval<10) household_power_interval = 10;
-    
-  $.ajax({                  
-    url: path+'feed/data.json',             
-    data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+household_power_interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
-    dataType: 'json',               
-    async: true,
-    success: function(data) {
-        householdpowerseries = [];
-        var t = 0;
-        var kwh_in_window = 0.0;
-        for (var z=1; z<data.length; z++) {
-            t = (data[z][0] - data[z-1][0])*0.001
-            kwh_in_window += (data[z][1] * t) / 3600000.0;
-            if (data[z][1]!=null) householdpowerseries.push(data[z])
+  household_power_interval = view.round_interval(household_power_interval);
+      
+  if (club_settings.club_id==2 && household_power_interval<60) household_power_interval = 60; 
+      
+  if (household_realtime_data.time*1000>=household_power_start) {
+      // ------------------------------------------------------------------   
+      $.ajax({                  
+        url: path+'feed/average.json',             
+        data: "id="+household_power_feedid+"&start="+household_power_start+"&end="+household_power_end+"&interval="+household_power_interval+"&skipmissing=1&limitinterval=0&apikey="+session['apikey_read'],
+        dataType: 'json',               
+        async: true,
+        success: function(data) {
+            householdpowerseries = [];
+            var t = 0;
+            var kwh_in_window = 0.0;
+            for (var z=1; z<data.length; z++) {
+                t = (data[z][0] - data[z-1][0])*0.001
+                kwh_in_window += (data[z][1] * t) / 3600000.0;
+                if (data[z][1]!=null) householdpowerseries.push(data[z])
+            }
+            if (householdpowerseries.length>0) $("#realtime-power").show();
+            $("#kwh_in_window").html(kwh_in_window.toFixed(2));
+            household_powergraph_draw();
         }
-        if (householdpowerseries.length>0) $("#realtime-power").show();
-        $("#kwh_in_window").html(kwh_in_window.toFixed(2));
-        household_powergraph_draw();
-    }
-  });
+      });
+      // ------------------------------------------------------------------   
+  } else {
+      $('#missing-data-block').show();
+  }
 }
 
 function household_powergraph_draw() {

@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 42;
+$v = 48;
 
 $app_path = $path."Modules/club/app/";
 
@@ -27,7 +27,7 @@ $app_path = $path."Modules/club/app/";
 <div class="app">
     <ul class="navigation">
         <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
-        <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Score"); ?></div></div></li>
+        <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Household"); ?></div></div></li>
         <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
     </ul>
@@ -211,13 +211,6 @@ function show_page(page) {
         household_pie_draw();
         household_bargraph_resize();
         household_powergraph_draw();
-
-        var combined_data = [].concat(household_result, household_data);
-       // console.log([].concat(household_result, household_data, householdpowerseries));
-        var data_available = combined_data.length > 0;
-//	console.log(household_result, household_data);
-        // $('#your-score, #your-usage, #your-usage-price').toggleClass('hide', !data_available);
-        $('#missing-data-block').toggleClass('hide', session.admin !== 1 || data_available);
     }
 }
 

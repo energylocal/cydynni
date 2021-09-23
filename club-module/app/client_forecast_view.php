@@ -9,9 +9,9 @@
 
                 
                     <div class="trafficlight-body">
-                    <div class="tl3"><div id="tl-red" class="trafficlight tl-red-off"><div class="trafficlight-inner"></div></div></div>
-                    <div class="tl3"><div id="tl-amber" class="trafficlight tl-amber-off"><div class="trafficlight-inner"></div></div></div>
-                    <div class="tl3"><div id="tl-green" class="trafficlight tl-green-off"><div class="trafficlight-inner"></div></div></div>
+                    <div class="tl3"><div id="tl-red" class="trafficlight tl-red-off"></div></div>
+                    <div class="tl3"><div id="tl-amber" class="trafficlight tl-amber-off"></div></div>
+                    <div class="tl3"><div id="tl-green" class="trafficlight tl-green-off"></div></div>
                     </div>
                     <!--<img id="status-img" src="<?php echo $app_path; ?>images/new-tick.png"/>-->
                     <!--<div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>-->

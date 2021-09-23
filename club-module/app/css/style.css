@@ -258,7 +258,6 @@ a:visited {
 
 .trafficlight {
     margin: 10px auto 10px auto;
-	  border-radius: 50%;
 	  width: 50px;
 	  height: 50px;
 }
@@ -268,14 +267,32 @@ a:visited {
 	  font-weight:bold;
 }
 
-.tl-green-on {background-color:#57e530;}
-.tl-green-off {background-color:rgba(87,229,48,0.2);}
+.tl-green-on {
+  background-image: url("../images/green.png");
+  background-size: 50px 50px;
+}
+.tl-green-off {
+  background-image: url("../images/green_off.png");
+  background-size: 50px 50px;
+}
 
-.tl-amber-on {background-color:#ffb401;}
-.tl-amber-off {background-color:rgba(255,180,0,0.2);}
+.tl-amber-on {
+  background-image: url("../images/yellow.png");
+  background-size: 50px 50px;
+}
+.tl-amber-off {
+  background-image: url("../images/yellow_off.png");
+  background-size: 50px 50px;
+}
 
-.tl-red-on {background-color:#c20000;}
-.tl-red-off {background-color:rgba(194,0,0,0.2);}
+.tl-red-on {
+  background-image: url("../images/red.png");
+  background-size: 50px 50px;
+}
+.tl-red-off {
+  background-image: url("../images/red_off.png");
+  background-size: 50px 50px;
+}
 
 .tl3 {
     width:33.333%;
