@@ -168,19 +168,19 @@ $admin_userid = 1;
 $club_id = $club_settings[$club]['club_id'];
 
 if (!$demandshaper_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper")) {
-    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper",1,5,json_decode('{"interval":1800}'));
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper",5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_feedid = $result['feedid'];
 }
 
 if (!$demandshaper_gen_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper_gen")) {
-    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_gen",1,5,json_decode('{"interval":1800}'));
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_gen",5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_gen_feedid = $result['feedid'];
 }
 
 if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,"club".$club_id."_demandshaper_use")) {
-    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_use",1,5,json_decode('{"interval":1800}'));
+    $result = $feed->create($admin_userid,"demandshaper","club".$club_id."_demandshaper_use",5,json_decode('{"interval":1800}'));
     if (!$result['success']) { echo json_encode($result)."\n"; die; }
     $demandshaper_use_feedid = $result['feedid'];
 }

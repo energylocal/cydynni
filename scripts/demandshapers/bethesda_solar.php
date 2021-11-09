@@ -8,9 +8,7 @@ define("MIN",0);
 require "/opt/emoncms/modules/cydynni/scripts/lib/solcast.php";
 require "config.php";
 
-define('EMONCMS_EXEC', 1);
-chdir("/var/www/emoncms");
-require "process_settings.php";
+require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 require "core.php";
 
 $redis = new Redis();
@@ -26,11 +24,19 @@ $params->api_key = $solcast_api_key;
 
 $solcast = get_forecast_solcast($redis,$params);
 
+
+$feedid = 2767;
+
 $td = 0;
 for ($time=$params->start; $time<$params->end; $time+=$params->interval) {
+
+    $feed->insert_data($feedid,$time,$time,$solcast->profile[$td]);
+
     $solcast->profile[$td] *= -1; // flip forecast around
     $td++;
 }
 
 $redis->set("energylocal:forecast:bethesda_solar",json_encode($solcast));
+
+
 
