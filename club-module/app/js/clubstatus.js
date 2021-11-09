@@ -45,10 +45,14 @@ function clubstatus_update() {
           // if (tariff_name=="DAYTIME") tariff_name = "DAY TIME";
           // $("#status-title").html(t(tariff_name));
           
-          if (prc_gen>=1.0) {
-              $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+": <b>~"+prc_gen+"%</b> "+t("of club consumption."));
+          if (live.club>0) {
+              if (prc_gen>=1.0) {
+                  $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+": <b>~"+prc_gen+"%</b> "+t("of club consumption."));
+              } else {
+                  $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+              }
           } else {
-              $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+              $("#gen-prc").html("");
           }
           
           var tariff_end = 1*current_tariff.end.split(":")[0];

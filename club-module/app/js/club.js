@@ -24,7 +24,7 @@ var club_height = 0;
 var showClubPrice = false;
 
 // Initial view range 24 hours
-view.end = +new Date;
+view.end = (+new Date) + (3600000*24.0);
 view.start = view.end - (3600000*24.0*12);
 
 // var tariffs = club_settings.tariffs;
@@ -253,8 +253,17 @@ function club_bargraph_load() {
     view.start = Math.floor(view.start / intervalms)*intervalms
     view.end = Math.ceil(view.end / intervalms)*intervalms
     
-    var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,1,1);
-    var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,1,1);
+    var generation_data = feed.getaverage(generation_feed,view.start,view.end,interval,0,0);
+    var club_data = feed.getaverage(consumption_feed,view.start,view.end,interval,0,0);
+    
+    var gen_forecast_data = [];
+    var demand_forecast_data = [];
+    
+    if (club_settings.generation_forecast_feed!=undefined && club_settings.consumption_forecast_feed!=undefined) {
+        gen_forecast_data = feed.getaverage(club_settings.generation_forecast_feed,view.start,view.end,interval,0,0);
+        demand_forecast_data = feed.getaverage(club_settings.consumption_forecast_feed,view.start,view.end,interval,0,0);    
+    }
+    
 
     if (generation_data.success!=undefined) $("#local_electricity_forecast").hide();
 
@@ -275,21 +284,47 @@ function club_bargraph_load() {
     data.selfuse = [];
     data.price = [];
     data.standard = [];
+    
+    data.gen_forecast = [];
+    data.demand_forecast = [];
+    
+    last_actual_reading_time = 0;
 
     for (var z in club_data) {
         var time = club_data[z][0];
         var d = new Date(time);
         var hour = d.getHours();
-
+        
+        // ------------------------------------------------
+        var gen_forecast = null;
+        if (gen_forecast_data[z]!=undefined) {
+            gen_forecast = gen_forecast_data[z][1] * scale;
+        }
+        var demand_forecast = null;
+        if (demand_forecast_data[z]!=undefined) {
+            demand_forecast = demand_forecast_data[z][1] * scale;
+        }
+        // ------------------------------------------------
+        
         var generation = 0;
-        if (generation_data[z]!=undefined) generation = generation_data[z][1] * scale;
+        if (generation_data[z]!=undefined && generation_data[z][1]!=null) {
+            generation = generation_data[z][1] * scale;
+        } else if (gen_forecast!=null) {
+            generation = gen_forecast
+        }
         
         if (generation_feed==1471) {
             if (generation>40.0) generation = 40.0;
             generation *= 0.5;
         }
         
-        var consumption = club_data[z][1] * scale;
+        var consumption = 0;
+        if (club_data[z][1]!=null) {
+            consumption = club_data[z][1] * scale;
+            last_actual_reading_time = club_data[z][0]
+        } else if (demand_forecast!=null) {
+            consumption = demand_forecast
+        }
         
         var exported_generation = 0;
         var used_generation = 0;
@@ -321,6 +356,8 @@ function club_bargraph_load() {
         data.export[z] = [time,exprt];
         data.selfuse[z] = [time,selfuse];
         data.price[z] = [time,unit_price];
+        
+
     }
     
     clubseries = [];
@@ -345,7 +382,7 @@ function club_bargraph_load() {
         stack: true, data: data.export, color: export_color, label: t("Exported "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
-
+    
     if(showClubPrice) {
 
         clubseries.push({
@@ -415,11 +452,35 @@ function club_bargraph_draw() {
             clickable: true
         }
     }
+    
+    var markings = [
+        { color: "#f0f0f0", xaxis: { from: last_actual_reading_time+900000 } },
+
+        { color: "#666", lineWidth: 2, xaxis: { from: last_actual_reading_time+900000, to: last_actual_reading_time+900000 } }
+    ];
+    
+    options.grid.markings = markings;
 
     // if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
 
     if ($("#club_bargraph_placeholder").width()>0) {
-        $.plot("#club_bargraph_placeholder",clubseries, options);
+        var plot = $.plot("#club_bargraph_placeholder",clubseries, options);
+        
+        o = plot.pointOffset({ x: last_actual_reading_time+900000, y: 0});
+        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 20) + "px;top:13px;color:#666;font-size:smaller'>"+t("Forecast")+"</div>");
+        // $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left - 6) + "px;top:15px;color:#666;font-size:smaller'>Actual</div>");
+
+
+        var ctx = plot.getCanvas().getContext("2d");
+        ctx.beginPath();
+        o.left += 6;
+        o.top = 26
+        ctx.moveTo(o.left, o.top);
+        ctx.lineTo(o.left, o.top - 10);
+        ctx.lineTo(o.left + 10, o.top - 5);
+        ctx.lineTo(o.left, o.top);
+        ctx.fillStyle = "#000";
+        ctx.fill();
     }
 }
 

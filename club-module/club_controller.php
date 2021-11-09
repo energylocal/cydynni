@@ -111,18 +111,35 @@ function club_controller()
         // -----------------------------------------------------------------------------------------
         case "live":
             $route->format = "json";
-            
+            $this_hh = floor(time()/1800)*1800;
+                
             $live = new stdClass();
 
             require_once "Modules/feed/feed_model.php";
             $feed = new Feed($mysqli,$redis,$settings["feed"]);
+            
+            $gen_last_actual = $feed->get_timevalue($club_settings[$club]['generation_feed']);
+            $use_last_actual = $feed->get_timevalue($club_settings[$club]['consumption_feed']);
 
-            $live->generation = number_format($feed->get_value($club_settings[$club]['generation_feed']),3)*2.0;
-            $live->club = number_format($feed->get_value($club_settings[$club]['consumption_feed']),3)*2.0;
+            $live->generation = number_format($gen_last_actual['value'],3)*2.0;
+            $live->club = number_format($use_last_actual['value'],3)*2.0;
+            
+            // Use generation and consumption prediction from forecast if actual data is old
+            if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
+                if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club]['consumption_forecast_feed'])) {
+                    $gen_forecast = $feed->get_value($club_settings[$club]['generation_forecast_feed'],$this_hh);
+                    $use_forecast = $feed->get_value($club_settings[$club]['consumption_forecast_feed'],$this_hh);
+                    
+                    if ($gen_forecast!=null && $use_forecast!=null) {
+                        $live->generation = number_format($gen_forecast,3)*2.0;
+                        $live->club = number_format($use_forecast,3)*2.0;
+                    }
+                }
+            }
             
             $date = new DateTime();
             $date->setTimezone(new DateTimeZone("Europe/London"));
-            $date->setTimestamp(time());
+            $date->setTimestamp($this_hh);
             $hour = $date->format("H");
            
             $hydro_price = 0.0;
@@ -152,7 +169,11 @@ function club_controller()
             }
             $hydro_cost = $selfuse * $live->generator_price;
             $import_cost = $imprt * $live->import_price;
-            $live->unit_price = number_format(($import_cost + $hydro_cost) / $live->club,2)*1;
+            if ($live->club>0) {
+                $live->unit_price = number_format(($import_cost + $hydro_cost) / $live->club,2)*1;
+            } else {
+                $live->unit_price = 0;
+            }
 
             return $live;
             break;
