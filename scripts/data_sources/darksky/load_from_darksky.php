@@ -43,3 +43,24 @@ for ($i=0; $i<3; $i++) {
     sleep(1);
 }
 
+// --------------------------------------------------------------------------------
+// Brid port wind turbine
+// --------------------------------------------------------------------------------
+$lat = 50.763124; $long = -2.763423; $feedid = 2768;
+
+$date->setTimestamp(time());
+$date->modify("midnight");
+
+for ($i=0; $i<3; $i++) {
+    echo $date->format("c")."\n";
+    echo "-------------------------\n";
+    $time = $date->getTimestamp();
+    $data = json_decode(file_get_contents("https://api.darksky.net/forecast/$key/$lat,$long,$time?units=si&exclude=currently,minutely,daily,alerts,flags"));
+    foreach ($data->hourly->data as $hour) {
+        print $hour->time." ".$hour->precipProbability." ".$hour->precipIntensity." ".$hour->humidity."\n";
+        $feed->insert_data($feedid,$hour->time,$hour->time,$hour->windSpeed);
+    }
+    echo "\n";
+    $date->modify("+1 day");
+    sleep(1);
+}
