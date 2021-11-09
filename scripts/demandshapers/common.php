@@ -92,6 +92,19 @@ $demand_timeseries = array();
 $generator_timeseries = array();
 $octopus_rows = array();
 
+$tariff_history = $club_settings[$club]['tariff_history'];
+// translate tariff object to format required by sharing algorithm
+for ($h=0; $h<count($tariff_history); $h++) {                     // for each history index
+    for ($t=0; $t<count($tariff_history[$h]['tariffs']); $t++) {  // for each tariff band 
+        $tmp = explode(":",$tariff_history[$h]['tariffs'][$t]["start"]);
+        $tariff_history[$h]['tariffs'][$t]["start"] = 1*$tmp[0]+($tmp[1]/60);
+        $tmp = explode(":",$tariff_history[$h]['tariffs'][$t]["end"]);
+        $tariff_history[$h]['tariffs'][$t]["end"] = 1*$tmp[0]+($tmp[1]/60);
+        $tariff_history[$h]['tariffs'][$t]["generator"] *= 0.01;
+        $tariff_history[$h]['tariffs'][$t]["import"] *= 0.01;
+    }
+}
+
 for ($time=$start; $time<$end; $time+=$interval) {
 
     $date->setTimestamp($time);
@@ -109,11 +122,41 @@ for ($time=$start; $time<$end; $time+=$interval) {
        $from_hydro = $gen;
        $import = -1*$balance;
     }
-
-    $hydro_price = 0.0; $import_price = 0.0;
-    if ($h>=20.0 || $h<7.0) { $hydro_price = 0.058; $import_price = 0.105; }
-    if ($h>=7.0 && $h<16.0) { $hydro_price = 0.104; $import_price = 0.189; }
-    if ($h>=16.0 && $h<20.0) { $hydro_price = 0.127; $import_price = 0.231; }
+    
+    // -------------------------------------------------------
+    // Work out which tariff version we are on
+    $history_index = 0;
+    if (count($tariff_history)>1) {
+        for ($t=0; $t<count($tariff_history); $t++) {
+            $s = $tariff_history[$t]['start'];
+            $e = $tariff_history[$t]['end'];
+            if ($time>=$s && $time<$e) $history_index = $t;
+        }
+    }
+    $tariffs = $tariff_history[$history_index]["tariffs"];
+    $tcount = count($tariffs);
+    
+    for ($t=0; $t<$tcount; $t++) {        
+        // Standard daytime tariffs
+        if ($tariffs[$t]["start"]<$tariffs[$t]["end"]) {
+            if ($h>=$tariffs[$t]["start"] && $h<$tariffs[$t]["end"]) {
+                $hydro_price = $tariffs[$t]['generator'];
+                $import_price = $tariffs[$t]['import'];
+            }
+        }
+        // Tariffs that cross midnight
+        if ($tariffs[$t]["start"]>$tariffs[$t]["end"]) {
+            if ($h<$tariffs[$t]["end"] || $h>=$tariffs[$t]["start"]) {
+                $hydro_price = $tariffs[$t]['generator'];
+                $import_price = $tariffs[$t]['import'];
+            }
+        }
+        // Standard daytime tariffs
+        if ($tariffs[$t]["start"]==$tariffs[$t]["end"]) {
+            $hydro_price = $tariffs[$t]['generator'];
+            $import_price = $tariffs[$t]['import'];
+        }
+    }
 
     $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
     $unitprice = $cost / $use;
@@ -192,10 +235,6 @@ foreach ($demandshaper_timeseries as $timevalue) {
 foreach ($generator_timeseries as $timevalue) {
     $feed->insert_data($demandshaper_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }
-
-//foreach ($hydro_forecast as $time=>$value) {
-//    $feed->insert_data($demandshaper_gen_feedid,$time,$time,$value);
-//}
 
 foreach ($demand_timeseries as $timevalue) {
     $feed->insert_data($demandshaper_use_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
