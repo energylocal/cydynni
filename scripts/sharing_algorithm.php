@@ -17,9 +17,12 @@ require "lib/accumulator.php";
 require "lib/load_emoncms.php";
 $dir = "/var/lib/phpfina/";
 
-foreach ($club_settings as $club) {
+$clubs = array();
+
+foreach ($club_settings as $key=>$club) {
     if (isset($club['share']) && $club['share']) {
         $c = array(
+            "name"=>$key, 
             "clubid"=>$club['club_id'], 
             "gen_id"=>$club['generation_feed'], 
             "gen_scale"=>$club['gen_scale'], 
@@ -88,8 +91,8 @@ foreach ($clubs as $club)
 
     // Create club aggregation feed
     $admin_userid = 1;
-    if (!$club_use_hh_id = $feed->get_id($admin_userid,"club".$club["clubid"]."_use_hh")) {
-        $result = $feed->create($admin_userid,"","club".$club["clubid"]."_use_hh",1,5,json_decode('{"interval":1800}'));
+    if (!$club_use_hh_id = $feed->exists_tag_name($admin_userid,"Demand",$club["name"])) {
+        $result = $feed->create($admin_userid,"Demand",$club["name"],1,5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $club_use_hh_id = $result['feedid'];
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]); // given same meta as gen feed
