@@ -428,5 +428,6 @@
 "Custom":"Chwstwm",
 "Unit prices include VAT":"Mae prisiau yma yn cynnwys TAW",
 "The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff":"Nid yw tariff hydro a amser defnyddio Bethesda yn fyw ar hyn o bryd. Mae bilio yn seiliedig ar dariff gwastad",
-"Forecast":"Rhagolwg"
+"Forecast":"Rhagolwg",
+"Actual readings are %s days behind.\n\nBlack line and grey section indicates\nforecasted generation and consumption.\n\nRed line indicates the current time.":"Mae data gwirioneddol %s diwrnod ar ôl.\n\nMae llinell ddu a rhan lwyd yn dynodi\nrhagolwg cynhyrchiant a defnydd.\n\nMaer llinell goch yn nodir amser presenol."
 }

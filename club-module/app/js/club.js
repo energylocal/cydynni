@@ -453,13 +453,17 @@ function club_bargraph_draw() {
         }
     }
     
+    var current_hh = Math.floor((new Date()).getTime()/1800000)*1800000;
+    
     var markings = [
         { color: "#f0f0f0", xaxis: { from: last_actual_reading_time+900000 } },
-
-        { color: "#666", lineWidth: 2, xaxis: { from: last_actual_reading_time+900000, to: last_actual_reading_time+900000 } }
+        { color: "#666", lineWidth: 2, xaxis: { from: last_actual_reading_time+900000, to: last_actual_reading_time+900000 } },
+        { color: "#ff0000", lineWidth: 2, xaxis: { from: current_hh-900000, to: current_hh-900000 } }
     ];
     
     options.grid.markings = markings;
+    
+    var days_behind = ((current_hh - last_actual_reading_time)/86400000).toFixed(1);
 
     // if (units=="kW" && generation_feed==1) options.yaxis.max = 100;
 
@@ -467,7 +471,8 @@ function club_bargraph_draw() {
         var plot = $.plot("#club_bargraph_placeholder",clubseries, options);
         
         o = plot.pointOffset({ x: last_actual_reading_time+900000, y: 0});
-        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 20) + "px;top:13px;color:#666;font-size:smaller'>"+t("Forecast")+"</div>");
+        var forecast_text = t("Actual readings are %s days behind.\n\nBlack line and grey section indicates\nforecasted generation and consumption.\n\nRed line indicates the current time.").replace("%s",days_behind);
+        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 20) + "px;top:13px;color:#666;font-size:smaller; cursor:pointer' title='"+forecast_text+"'>"+t("Forecast")+"</div>");
         // $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left - 6) + "px;top:15px;color:#666;font-size:smaller'>Actual</div>");
 
 

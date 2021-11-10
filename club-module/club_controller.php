@@ -34,7 +34,7 @@ function club_controller()
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
     
-    if ($club=="repower") {
+    if ($club=="repower" || $club=="bridport") {
         $session['lang'] = "en_GB";
         $lang = $session["lang"];
     }

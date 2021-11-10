@@ -76,7 +76,7 @@ $app_path = $path."Modules/club/app/";
 </div>
 
 <script>
-menu.hide_l2();
+// menu.hide_l2();
 var path = "<?php echo $path; ?>";
 var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
