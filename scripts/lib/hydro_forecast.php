@@ -14,8 +14,8 @@ function hydro_forecast($feed, $model_config)
     $start = ceil($start/$interval)*$interval;
     $end = ceil($end/$interval)*$interval;
 
-    $gen_tmp = $feed->get_data($model_config['gen_id'],$start*1000,$end*1000,$interval,0,0);
-    $precipIntensity_tmp = $feed->get_data($model_config['precipIntensity_id'],$start*1000,$end*1000,$interval,0,0);
+    $gen_tmp = $feed->get_data($model_config['gen_id'],$start*1000,$end*1000,$interval);
+    $precipIntensity_tmp = $feed->get_data($model_config['precipIntensity_id'],$start*1000,$end*1000,$interval);
     
     $last_gen_time = 0;
     foreach ($gen_tmp as $dp) {

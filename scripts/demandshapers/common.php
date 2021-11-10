@@ -29,7 +29,7 @@ $club_id = $club_settings[$club]['consumption_feed'];
 
 // Load hydro forecast
 require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
-$hydro_forecast = hydro_forecast($feed,$hydro_forecast_settings);
+$gen_forecast = hydro_forecast($feed,$hydro_forecast_settings);
 
 // Force cache reload
 $redis->hdel("feed:$gen_id",'time');
@@ -40,7 +40,7 @@ $timevalue = $feed->get_timevalue($club_id);
 $end = $timevalue["time"]*1000;
 $start = $end - (3600*24.0*7*1000);
 
-$data = $feed->get_data($club_id,$start,$end,1800,0,1);
+$data = $feed->get_data($club_id,$start,$end,1800);
 
 $sum = array();
 $count = array();
@@ -112,14 +112,14 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $h = $date->format('H')*1;
     
     $use = $sum[$hm] / $count[$hm];
-    if (isset($hydro_forecast[$time])) $gen = $hydro_forecast[$time];
+    if (isset($gen_forecast[$time])) $gen = $gen_forecast[$time];
     
     $balance = $gen - $use;
     if ($balance>0) {
-       $from_hydro = $use;
+       $from_generator = $use;
        $import = 0;
     } else {
-       $from_hydro = $gen;
+       $from_generator = $gen;
        $import = -1*$balance;
     }
     
@@ -140,25 +140,25 @@ for ($time=$start; $time<$end; $time+=$interval) {
         // Standard daytime tariffs
         if ($tariffs[$t]["start"]<$tariffs[$t]["end"]) {
             if ($h>=$tariffs[$t]["start"] && $h<$tariffs[$t]["end"]) {
-                $hydro_price = $tariffs[$t]['generator'];
+                $generator_price = $tariffs[$t]['generator'];
                 $import_price = $tariffs[$t]['import'];
             }
         }
         // Tariffs that cross midnight
         if ($tariffs[$t]["start"]>$tariffs[$t]["end"]) {
             if ($h<$tariffs[$t]["end"] || $h>=$tariffs[$t]["start"]) {
-                $hydro_price = $tariffs[$t]['generator'];
+                $generator_price = $tariffs[$t]['generator'];
                 $import_price = $tariffs[$t]['import'];
             }
         }
         // Standard daytime tariffs
         if ($tariffs[$t]["start"]==$tariffs[$t]["end"]) {
-            $hydro_price = $tariffs[$t]['generator'];
+            $generator_price = $tariffs[$t]['generator'];
             $import_price = $tariffs[$t]['import'];
         }
     }
 
-    $cost = ($from_hydro*$hydro_price) + ($import*$import_price);
+    $cost = ($from_generator*$generator_price) + ($import*$import_price);
     $unitprice = $cost / $use;
 
     if ($enable_turndown) {
