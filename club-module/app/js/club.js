@@ -307,9 +307,9 @@ function club_bargraph_load() {
         // ------------------------------------------------
         
         var generation = 0;
-        if (generation_data[z]!=undefined && generation_data[z][1]!=null) {
+        if (generation_data[z]!=undefined && generation_data[z][1]!==null) {
             generation = generation_data[z][1] * scale;
-        } else if (gen_forecast!=null) {
+        } else if (gen_forecast!==null) {
             generation = gen_forecast
         }
         
@@ -319,10 +319,10 @@ function club_bargraph_load() {
         }
         
         var consumption = 0;
-        if (club_data[z][1]!=null) {
+        if (club_data[z][1]!==null) {
             consumption = club_data[z][1] * scale;
             last_actual_reading_time = club_data[z][0]
-        } else if (demand_forecast!=null) {
+        } else if (demand_forecast!==null) {
             consumption = demand_forecast
         }
         

@@ -63,7 +63,7 @@ foreach ($clubs as $club)
                     
                     // Create feeds to hold half hourly shared generation
                     if (!$gen_hh_id = $feed->get_id($userid,"gen_hh")) {
-                        $result = $feed->create($userid,"user","gen_hh",1,5,json_decode('{"interval":1800}'));
+                        $result = $feed->create($userid,"user","gen_hh",5,json_decode('{"interval":1800}'));
                         if (!$result['success']) { echo json_encode($result)."\n"; die; }
                         $gen_hh_id = $result['feedid'];
                         createmeta($dir,$gen_hh_id,$meta_tmp);
@@ -92,7 +92,7 @@ foreach ($clubs as $club)
     // Create club aggregation feed
     $admin_userid = 1;
     if (!$club_use_hh_id = $feed->exists_tag_name($admin_userid,"Demand",$club["name"])) {
-        $result = $feed->create($admin_userid,"Demand",$club["name"],1,5,json_decode('{"interval":1800}'));
+        $result = $feed->create($admin_userid,"Demand",$club["name"],5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $club_use_hh_id = $result['feedid'];
         createmeta($dir,$club_use_hh_id,$meta[$gen_id]); // given same meta as gen feed

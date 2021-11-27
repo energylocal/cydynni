@@ -6,13 +6,16 @@ print "---------------------------------------------------------------------\n";
 
 $recalc_club = false;
 $recalc_all = false;
+$userid = false;
 
 require "lib/common.php";
 require "lib/merge4feeds.php";
 
 require "lib/load_emoncms.php";
 
-$result_users = $mysqli->query("SELECT * FROM cydynni ORDER BY userid ASC");
+$user_select = "";
+if ($userid) $user_select = "WHERE userid=$userid ";
+$result_users = $mysqli->query("SELECT * FROM cydynni ".$user_select."ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
     $userid = $row->userid;
@@ -26,7 +29,7 @@ while ($row = $result_users->fetch_object())
     
     if (count($feeds)>0) {
         if (!$output = $feed->get_id($userid,"use_hh")) {
-            $result = $feed->create($userid,"cydynni","use_hh",1,5,json_decode('{"interval":1800}'));
+            $result = $feed->create($userid,"cydynni","use_hh",5,json_decode('{"interval":1800}'));
             if (!$result['success']) { echo json_encode($result)."\n"; die; }
             $output = $result['feedid'];
         }

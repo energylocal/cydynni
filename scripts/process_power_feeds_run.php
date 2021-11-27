@@ -5,6 +5,7 @@ print "---------------------------------------------------------------------\n";
 
 $recalc_club = false;
 $recalc_all = false;
+$userid = false;
 // ----------------------------------------------------------------
 // Process power data in half hourly data
 // ----------------------------------------------------------------
@@ -15,7 +16,9 @@ require "lib/load_emoncms.php";
 // ------------------------------------------------------------------------------------------
 // Bethesda
 // ------------------------------------------------------------------------------------------
-$result_users = $mysqli->query("SELECT * FROM cydynni ORDER BY userid ASC");
+$user_select = "";
+if ($userid) $user_select = "WHERE userid=$userid ";
+$result_users = $mysqli->query("SELECT * FROM cydynni ".$user_select."ORDER BY userid ASC");
 while ($row = $result_users->fetch_object()) 
 {
     // ----------------------------------------------------------------
@@ -33,7 +36,7 @@ while ($row = $result_users->fetch_object())
         print $userid." ".$feedA." ".$feedB."\n";
         
         if (!$feedD = $feed->get_id($userid,"use_hh_W")) {
-            $result = $feed->create($userid,"cydynni","use_hh_W",1,5,json_decode('{"interval":1800}'));
+            $result = $feed->create($userid,"cydynni","use_hh_W",5,json_decode('{"interval":1800}'));
             if (!$result['success']) { echo json_encode($result)."\n"; die; }
             $feedD = $result['feedid'];
         }
@@ -50,7 +53,7 @@ while ($row = $result_users->fetch_object())
         print $userid." ".$feedA." ".$feedB."\n";
 
         if (!$feedC = $feed->get_id($userid,"use")) {
-            $result = $feed->create($userid,"cydynni","use",1,5,json_decode('{"interval":10}'));
+            $result = $feed->create($userid,"cydynni","use",5,json_decode('{"interval":10}'));
             if (!$result['success']) { echo json_encode($result)."\n"; die; }
             $feedC = $result['feedid'];
         }
