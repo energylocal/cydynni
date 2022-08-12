@@ -35,11 +35,11 @@ for ($i=1; $i<count($lines); $i++) {
             // Uncomment to insert extra half hour when missing 
             if (($timestamp_hh-$last_timestamp_hh)==3600) {
                  if ($average==0) $average = $sum / $count;
-                 $feed->insert_data($hydro_feedid,$last_timestamp_hh-1800,$last_timestamp_hh-1800,$average);
+                 $feed->post($hydro_feedid,$last_timestamp_hh-1800,$last_timestamp_hh-1800,$average);
             }
         
             $average = $sum / $count;
-            $feed->insert_data($hydro_feedid,$last_timestamp_hh,$last_timestamp_hh,$average);
+            $feed->post($hydro_feedid,$last_timestamp_hh,$last_timestamp_hh,$average);
             $sum = 0;
             $count = 0;
         }

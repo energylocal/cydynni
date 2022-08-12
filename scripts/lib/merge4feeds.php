@@ -32,8 +32,10 @@ function mergefeeds4($dir,$processitem)
         }
         print "feed:$feed start_time=".$meta[$feed]->start_time." interval=".$meta[$feed]->interval."\n";  
         
-        if ($meta[$feed]->start_time<$start_time) $start_time = (int) $meta[$feed]->start_time;
-        if ($meta[$feed]->end_time>$end_time) $end_time = (int) $meta[$feed]->end_time;
+        if ($meta[$feed]->start_time>0) {
+            if ($meta[$feed]->start_time<$start_time) $start_time = (int) $meta[$feed]->start_time;
+            if ($meta[$feed]->end_time>$end_time) $end_time = (int) $meta[$feed]->end_time;
+        }
     }
     
     $start_time = floor($start_time / $interval) * $interval;

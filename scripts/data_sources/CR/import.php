@@ -35,7 +35,7 @@ foreach ($f1 as $l1) {
                         $time = strtotime($dp[1])-1800;
                         $value = $dp[3];
                         // echo strtotime($time)." ".$value."\n";
-                        $feed->insert_data($feedid,$time,$time,$value);
+                        $feed->post($feedid,$time,$time,$value);
                     }
                 }
             }

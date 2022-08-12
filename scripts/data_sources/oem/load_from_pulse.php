@@ -24,6 +24,6 @@ for ($i=1; $i<count($data); $i++) {
         if ($diff<0) $diff = 0;
         print $data[$i-1][0]." ".$data[$i][1]." ".$diff."\n";
         $timestamp = $data[$i-1][0]*0.001;
-        $feed->insert_data(1,$timestamp,$timestamp,$diff);
+        $feed->post(1,$timestamp,$timestamp,$diff);
     }
 }

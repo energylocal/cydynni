@@ -33,7 +33,7 @@ while ($row = $result_users->fetch_object())
     print "user: ".$userid."\n";
     // If these is either a MQTT meter_power feed or uploaded smartmeter feed create an output half hourly feed
     if ($feedA || $feedB) {
-        print $userid." ".$feedA." ".$feedB."\n";
+        print "u:".$userid." A:".$feedA." B:".$feedB."\n";
         
         if (!$feedD = $feed->get_id($userid,"use_hh_W")) {
             $result = $feed->create($userid,"cydynni","use_hh_W",5,json_decode('{"interval":1800}'));
@@ -50,7 +50,8 @@ while ($row = $result_users->fetch_object())
     
     // If both meter_power and smartmeter feeds exist combine into a single feed
     if ($feedA && $feedB) {
-        print $userid." ".$feedA." ".$feedB."\n";
+        print "feedA && feedB\n";
+        print "u:".$userid." A:".$feedA." B:".$feedB."\n";
 
         if (!$feedC = $feed->get_id($userid,"use")) {
             $result = $feed->create($userid,"cydynni","use",5,json_decode('{"interval":10}'));
@@ -72,12 +73,14 @@ while ($row = $result_users->fetch_object())
         powertohh("/var/lib/phpfina/",$processitem);
         
     } else if ($feedA) {
+        print "Processing based on feedA only\n";
         // If only MQTT meter power create half hourly feed from this
         $processitem->input = $feedA;
         $processitem->recalc = 3600;
         powertohh("/var/lib/phpfina/",$processitem);   
          
     } else if ($feedB) {
+        print "Processing based on feedB only\n";
         // If only smartmeter create half hourly feed from this
         $processitem->input = $feedB;
         $processitem->recalc = 3600*24*2;
@@ -85,6 +88,7 @@ while ($row = $result_users->fetch_object())
     }
 
     if ($feedD) {
+        print "reloading use_hh_W\n";
         $redis->hdel("feed:$feedD",'time');
         $timevalue = $feed->get_timevalue($feedD);
     }

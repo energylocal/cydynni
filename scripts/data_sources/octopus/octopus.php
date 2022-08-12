@@ -30,7 +30,7 @@ while ($row = $result->fetch_object()) {
 
         // Get octopus feed id or create feed
         if (!$feedid = $feed->get_id($row->userid,"use_hh_octopus")) {
-            $r = $feed->create($row->userid,"user","use_hh_octopus",1,5,json_decode('{"interval":1800}'));
+            $r = $feed->create($row->userid,"user","use_hh_octopus",5,json_decode('{"interval":1800}'));
             if (!$r['success']) { echo json_encode($r)."\n"; die; }
             $feedid = $r['feedid'];
         }
@@ -73,7 +73,7 @@ while ($row = $result->fetch_object()) {
                 $value = $i->consumption;
                 // print "\t\t".$time." ".$value."\n";
                 
-                $feed->insert_data($feedid,$time,$time,$value);
+                $feed->post($feedid,$time,$time,$value);
             }
         }
     }
