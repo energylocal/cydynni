@@ -30,7 +30,7 @@ $feedid = 2767;
 $td = 0;
 for ($time=$params->start; $time<$params->end; $time+=$params->interval) {
 
-    $feed->insert_data($feedid,$time,$time,$solcast->profile[$td]);
+    $feed->post($feedid,$time,$time,$solcast->profile[$td]);
 
     $solcast->profile[$td] *= -1; // flip forecast around
     $td++;

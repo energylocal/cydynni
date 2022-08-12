@@ -125,6 +125,11 @@ else if (isset($wind_forecast_settings)) {
         $gen_profile[] = $gen;
         $i++;
     }
+} else if (isset($flat_output)) {
+    $gen = 0;
+    for ($time=$start; $time<$end; $time+=$interval) {
+        $gen_profile[] = $flat_output; 
+    }
 }
 // ----------------------------------------------------------------
 
@@ -237,15 +242,15 @@ if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,$club."_forecast_use
 }
 
 foreach ($demandshaper_timeseries as $timevalue) {
-    $feed->insert_data($demandshaper_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+    $feed->post($demandshaper_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }
 
 foreach ($generator_timeseries as $timevalue) {
-    $feed->insert_data($demandshaper_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+    $feed->post($demandshaper_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }
 
 foreach ($demand_timeseries as $timevalue) {
-    $feed->insert_data($demandshaper_use_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
+    $feed->post($demandshaper_use_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
 }
 
 // Might be worth putting the following inside it's own library
