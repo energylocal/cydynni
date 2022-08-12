@@ -23,11 +23,13 @@ while ($row = $result_users->fetch_object())
              
     $feeds = array();                                                               // priority
     if ($feed_tma = $feed->get_id($userid,"use_hh_TMA")) $feeds[] = $feed_tma;      // 4
-    if ($feed_W = $feed->get_id($userid,"use_hh_W") && $userid!=152) $feeds[] = $feed_W;            // 3
+    if ($feed_W = $feed->get_id($userid,"use_hh_W")) { if ($userid!=152) {$feeds[] = $feed_W;}}            // 3
     if ($feed_CR = $feed->get_id($userid,"use_hh_CR")) $feeds[] = $feed_CR;         // 2
     if ($feed_oct = $feed->get_id($userid,"use_hh_octopus")) $feeds[] = $feed_oct;  // 1
     
+    
     if (count($feeds)>0) {
+    
         if (!$output = $feed->get_id($userid,"use_hh")) {
             $result = $feed->create($userid,"cydynni","use_hh",5,json_decode('{"interval":1800}'));
             if (!$result['success']) { echo json_encode($result)."\n"; die; }
