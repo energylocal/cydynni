@@ -47,7 +47,7 @@ function clubstatus_update() {
           
           if (live.club>0) {
               if (prc_gen>=1.0) {
-                  $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+": <b>~"+prc_gen+"%</b> "+t("of club consumption."));
+                  $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+" "+t("approx")+" <b>"+prc_gen+"%</b> "+t("of club consumption."));
               } else {
                   $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
               }
@@ -74,8 +74,14 @@ function clubstatus_update() {
               towerpower: {high:3,medium:1,low:0.5},
               corwen: {high:50,medium:30,low:10},
               crickhowell: {high:50,medium:30,low:10},
+              machynlleth: {high:50,medium:30,low:10},
               repower: {high:50,medium:30,low:10},
-              redress: {high:50,medium:30,low:10}
+              roupellpark: {high:50,medium:30,low:10},
+              redress: {high:50,medium:30,low:10},
+              bridport: {high:40,medium:20,low:10},
+              llandysul: {high:40,medium:20,low:10},
+              test: {high:40,medium:20,low:10},
+              dyffrynbanw: {high:8,medium:6,low:4}
           }
          
           if (live.generation>=levels[club].high) {

@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 48;
+$v = 49;
 
 $app_path = $path."Modules/club/app/";
 
@@ -28,7 +28,7 @@ $app_path = $path."Modules/club/app/";
     <ul class="navigation">
         <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Household"); ?></div></div></li>
-        <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Club<br>Score"); ?></div></div></li>
+        <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Your<br>Club"); ?></div></div></li>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
     </ul>
 

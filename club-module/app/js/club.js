@@ -72,7 +72,7 @@ $.ajax({
 
             setTimeout(function() {
             if (score<30) {
-                $("#club_statusmsg").html(t("We are using power in a very expensive way"));
+                $("#club_statusmsg").html(t("We are not using much "+club_settings.generator+" at the moment"));
             }
             if (score>=30 && score<70) {
                 $("#club_statusmsg").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
@@ -298,7 +298,7 @@ function club_bargraph_load() {
         // ------------------------------------------------
         var gen_forecast = null;
         if (gen_forecast_data[z]!=undefined) {
-            gen_forecast = gen_forecast_data[z][1] * scale;
+            gen_forecast = gen_forecast_data[z][1] * scale * club_settings['gen_scale'];
         }
         var demand_forecast = null;
         if (demand_forecast_data[z]!=undefined) {
@@ -308,7 +308,7 @@ function club_bargraph_load() {
         
         var generation = 0;
         if (generation_data[z]!=undefined && generation_data[z][1]!==null) {
-            generation = generation_data[z][1] * scale;
+            generation = generation_data[z][1] * scale * club_settings['gen_scale'];
         } else if (gen_forecast!==null) {
             generation = gen_forecast
         }
@@ -379,7 +379,7 @@ function club_bargraph_load() {
     }
     
     clubseries.push({
-        stack: true, data: data.export, color: export_color, label: t("Exported "+ucfirst(club_settings.generator)),
+        stack: true, data: data.export, color: export_color, label: t("Unused "+ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
     });
     
@@ -472,13 +472,16 @@ function club_bargraph_draw() {
         
         o = plot.pointOffset({ x: last_actual_reading_time+900000, y: 0});
         var forecast_text = t("Actual readings are %s days behind.\n\nBlack line and grey section indicates\nforecasted generation and consumption.\n\nRed line indicates the current time.").replace("%s",days_behind);
-        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 20) + "px;top:13px;color:#666;font-size:smaller; cursor:pointer' title='"+forecast_text+"'>"+t("Forecast")+"</div>");
+        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 18) + "px;top:13px;color:#666;font-size:smaller; cursor:pointer' title='"+forecast_text+"'>"+t("Estimate")+"</div>");
+;
+
         // $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left - 6) + "px;top:15px;color:#666;font-size:smaller'>Actual</div>");
+
 
 
         var ctx = plot.getCanvas().getContext("2d");
         ctx.beginPath();
-        o.left += 6;
+        o.left += 4;
         o.top = 26
         ctx.moveTo(o.left, o.top);
         ctx.lineTo(o.left, o.top - 10);
@@ -486,6 +489,22 @@ function club_bargraph_draw() {
         ctx.lineTo(o.left, o.top);
         ctx.fillStyle = "#000";
         ctx.fill();
+
+
+        o = plot.pointOffset({ x: current_hh+900000, y: 0});  
+        $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 18) + "px;top:33px;color:#ff6666;font-size:smaller; cursor:pointer' title='"+forecast_text+"'>"+t("Forecast")+"</div>")
+        
+        var ctx = plot.getCanvas().getContext("2d");
+        ctx.beginPath();
+        o.left += 4;
+        o.top = 46
+        ctx.moveTo(o.left, o.top);
+        ctx.lineTo(o.left, o.top - 10);
+        ctx.lineTo(o.left + 10, o.top - 5);
+        ctx.lineTo(o.left, o.top);
+        ctx.fillStyle = "#ff0000";
+        ctx.fill(); 
+        
     }
 }
 
@@ -574,8 +593,8 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
 
                         if(/^Used/.test(translated_label)) {
                             translated_label = t('Used %s').replace('%s', club_settings.generator);
-                        } else if(/^Exported/.test(translated_label)) {
-                            translated_label = t('Exported %s').replace('%s', club_settings.generator);
+                        } else if(/^Unused/.test(translated_label)) {
+                            translated_label = t('Unused %s').replace('%s', club_settings.generator);
                         } else if(/Tariff$/.test(translated_label)) {
                             translated_label = t('%s tariff').replace('%s', t(selected_tariff_name).toLowerCase());
                         }
@@ -585,7 +604,7 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                             } else {
                                 out += ucfirst(translated_label) + ": "+(series.data[z][1]*1).toFixed(1)+" p/kWh<br>";
                             }
-                            if (series.label!=t("Exported "+ucfirst(club_settings.generator))) total_consumption += series.data[z][1]*1;
+                            if (series.label!=t("Unused "+ucfirst(club_settings.generator))) total_consumption += series.data[z][1]*1;
                         }
                     }
                 }

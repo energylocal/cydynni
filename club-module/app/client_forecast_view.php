@@ -35,7 +35,7 @@
             </div>
             <?php } */ ?>
             <div id="local_electricity_forecast" class="block">
-                <div class="block-title" style="background-color:#088400"><?php echo t("Local Electricity"); ?>
+                <div class="block-title" style="background-color:#088400"><?php echo t("Local generator output"); ?>
                 
                 <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                 <div class="visnav-block">
@@ -50,7 +50,7 @@
                 <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
-                    <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("HIGH"); ?></div>
+                    <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("---"); ?></div>
                     <?php echo t("Generating"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
                   </div>
                   

@@ -87,8 +87,8 @@ foreach ($club_settings as $club) {
             <label>Username</label>
             <input type="text" v-model="users[selected_user].username" style="width:260px" />
             
-            <label v-if="new_user">Password</label>
-            <input v-if="new_user" type="password" autocomplete="new-password" v-model="new_user_password" style="width:260px" />
+            <label v-if="new_user!==false">Password</label>
+            <input v-if="new_user!==false" type="password" autocomplete="new-password" v-model="new_user_password" style="width:260px" />
             
             <label>Email</label>
             <input type="text" v-model="users[selected_user].email" style="width:260px" />
@@ -128,7 +128,8 @@ foreach ($club_settings as $club) {
 
 <script>
 
-var selected_club = 1;
+var selected_club = localStorage.getItem('selected_club');
+if (selected_club==null) selected_club = 1;
 var users = {}
 var original = {}
 var data_status = {}
@@ -183,7 +184,8 @@ var app = new Vue({
             }         
         },
         save: function() {
-            if (this.new_user==false) {
+            console.log("new user: "+this.new_user);
+            if (this.new_user===false) {
                 var changed = {};
                 // Find changed properties
                 for (var z in this.users[this.selected_user]) {
@@ -227,6 +229,9 @@ var app = new Vue({
 load();
 function load() {
 
+    localStorage.setItem('selected_club',app.selected_club);
+
+    app.data_status = {};
     $.ajax({
         url: path+"club/admin-users-list?club_id="+app.selected_club,
         dataType: 'json',

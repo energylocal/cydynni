@@ -1,5 +1,5 @@
 <?php
-    global $session, $redis, $path, $club, $available_clubs_menu;
+    global $session, $redis, $path, $club, $available_clubs_menu, $club_settings;
     
     if ($session["admin"]) {
         // $menu["setup"]["l2"]['clubs'] = array("name"=>"Clubs","href"=>"club/admin", "order"=>12, "icon"=>"format_list_bulleted");
@@ -22,7 +22,7 @@
         
         foreach ($available_clubs_menu as $i=>$club_name) {
             $menu["cydynni"]['l2'][$club_name] = array(
-                "name"=>ucfirst($club_name),
+                "name"=>$club_settings[$club_name]["name"],
                 "href"=>$club_name, 
                 "icon"=>"star", 
                 "order"=>$i

@@ -34,7 +34,7 @@ function club_controller()
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
     
-    if ($club=="repower" || $club=="bridport") {
+    if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
         $lang = $session["lang"];
     }
@@ -459,38 +459,43 @@ function club_controller()
                     );
 
                     if ($feedid = $feed->get_id($userid,"use_hh_TMA")) {
-                        $meta = $feed->get_meta($feedid);
-                        $row['tma']['days'] = $meta->npoints / 48;
-                        $row['tma']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400; 
-                        $row['tma']['feedid'] = $feedid;  
+                        if ($meta = $feed->get_meta($feedid)) {
+                            $row['tma']['days'] = $meta->npoints / 48;
+                            $row['tma']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400; 
+                            $row['tma']['feedid'] = $feedid;  
+                        }
                     }
 
                     if ($feedid = $feed->get_id($userid,"use_hh_CR")) {
-                        $meta = $feed->get_meta($feedid);
-                        $row['CR']['days'] = $meta->npoints / 48;
-                        $row['CR']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
-                        $row['CR']['feedid'] = $feedid;  
+                        if ($meta = $feed->get_meta($feedid)) {
+                            $row['CR']['days'] = $meta->npoints / 48;
+                            $row['CR']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                            $row['CR']['feedid'] = $feedid;  
+                        }
                     }
                     
                     if ($feedid = $feed->get_id($userid,"use_hh_octopus")) {
-                        $meta = $feed->get_meta($feedid);
-                        $row['octopus']['days'] = $meta->npoints / 48;
-                        $row['octopus']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
-                        $row['octopus']['feedid'] = $feedid;  
+                        if ($meta = $feed->get_meta($feedid)) {
+                            $row['octopus']['days'] = $meta->npoints / 48;
+                            $row['octopus']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                            $row['octopus']['feedid'] = $feedid;
+                        }
                     }
 
                     if ($feedid = $feed->get_id($userid,"use_hh_W")) {
-                        $meta = $feed->get_meta($feedid);
-                        $row['W']['days'] = $meta->npoints / 48;
-                        $row['W']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
-                        $row['W']['feedid'] = $feedid;  
+                        if ($meta = $feed->get_meta($feedid)) {
+                            $row['W']['days'] = $meta->npoints / 48;
+                            $row['W']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                            $row['W']['feedid'] = $feedid;
+                        }  
                     }
 
                     if ($feedid = $feed->get_id($userid,"use_hh_est")) {
-                        $meta = $feed->get_meta($feedid);
-                        $row['est']['days'] = $meta->npoints / 48;
-                        $row['est']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
-                        $row['est']['feedid'] = $feedid;  
+                        if ($meta = $feed->get_meta($feedid)){
+                            $row['est']['days'] = $meta->npoints / 48;
+                            $row['est']['updated'] = (time() - ($meta->start_time + ($meta->npoints*$meta->interval)))/86400;   
+                            $row['est']['feedid'] = $feedid;  
+                        }
                     }                    
                     $users[] = $row;
                 }
