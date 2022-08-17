@@ -2,7 +2,7 @@
 
 $enable_turndown = false;
 
-$flat_output = 3.0;
+$flat_output = 237.5; // kWh per half hour
 
 $club = "dyffrynbanw";
 
