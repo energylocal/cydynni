@@ -175,8 +175,8 @@ for ($time=$start; $time<$end; $time+=$interval) {
 
     if ($enable_turndown) {
         $turndown = 1.0;
-        if ($hour>=2.0 && $hour<3.0) $turndown = 10;
-        if ($hour>=14.0 && $hour<16.0) $turndown = 10;
+        // if ($hour>=2.0 && $hour<3.0) $turndown = 10;
+        if ($hour>=16.0 && $hour<20.0) $turndown = 10;
         $cost *= $turndown;
     }
 

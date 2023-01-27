@@ -22,3 +22,9 @@ $schema['cydynni_clubs'] = array(
     'color' => array('type' => 'varchar(11)'),
     'slug'=> array('type'=>'varchar(24)')
 );
+
+$schema['energylocal_clubs'] = array(
+    'id' => array('type' => 'int(11)'),
+    'name' => array('type' => 'varchar(32)'),
+    'settings' => array('type' => 'text')
+);

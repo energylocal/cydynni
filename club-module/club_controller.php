@@ -698,7 +698,8 @@ function club_controller()
             return "plan received";
             break;
             
-        break;
+        break;   
+        
     }
     
     return array("content"=>$result);   
