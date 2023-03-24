@@ -99,7 +99,7 @@ var tariff_colors = {
     "midday": "#ffb401",
     "daytime": "#ffb401",
     "evening": "#e6602b",
-    "standard": "#ffb401"
+    "standard": "#c20000" //"#ffb401"
 }
 
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];

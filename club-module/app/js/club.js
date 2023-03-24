@@ -103,7 +103,7 @@ $.ajax({
                 "midday": "#ffb401",
                 "daytime": "#ffb401",
                 "evening": "#e6602b",
-                "standard": "#ffb401"
+                "standard": "#c20000" //"#ffb401"
             }
 
             // COST

@@ -4,10 +4,7 @@ print "---------------------------------------------------------------------\n";
 print "CALCULATE ESTIMATE\n";
 print "---------------------------------------------------------------------\n";
 
-$recalc_club = false;
-$recalc_all = false;
-$userid = false;
-
+require "config.php";
 require "lib/load_emoncms.php";
 $dir = "/var/lib/phpfina/";
 
@@ -66,7 +63,7 @@ while ($row = $result_users->fetch_object())
         $o_end_time = $output_meta->start_time + ($output_meta->npoints * $output_meta->interval);
 
         $start_time = $source_meta->start_time;
-        $start_time = $o_end_time - 3600*24*2;
+        $start_time = $o_end_time - $recalc_period;
         if ($start_time<$source_meta->start_time) $start_time=$source_meta->start_time;
 
         // $start_time = 1585474200;

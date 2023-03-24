@@ -200,7 +200,7 @@ function load()
         $("#estimated_days").html("");
     }
     
-    var tariff_colors = {morning:"#ffdc00",midday:"#ffb401",daytime:"#ffb401",evening:"#e6602b",overnight:"#014c2d",standard:"#ffb401"};
+    var tariff_colors = {morning:"#ffdc00",midday:"#ffb401",daytime:"#ffb401",evening:"#e6602b",overnight:"#014c2d",standard:"#c20000"};
     
     // household pie chart
     household_pie3_data_cost = []

@@ -4,8 +4,7 @@ print "---------------------------------------------------------------------\n";
 print "SHARING ALGORITHM\n";
 print "---------------------------------------------------------------------\n";
 
-$recalc_club = false;
-$recalc_all = false;
+require "config.php";
 
 // -------------------------------------------------------------------------------------------------
 // Sharing algorithm
@@ -22,10 +21,10 @@ $clubs = array();
 foreach ($club_settings as $key=>$club) {
     if (isset($club['share']) && $club['share']) {
         $c = array(
-            "name"=>$key, 
-            "clubid"=>$club['club_id'], 
-            "gen_id"=>$club['generation_feed'], 
-            "gen_scale"=>$club['gen_scale'], 
+            "name"=>$key,
+            "clubid"=>$club['club_id'],
+            "gen_id"=>$club['generation_feed'],
+            "gen_scale"=>$club['gen_scale'],
             "skip_users"=>$club['skip_users']
         );
         if (isset($club['gen_limit'])) $c['gen_limit'] = $club['gen_limit'];
@@ -109,7 +108,7 @@ foreach ($clubs as $club)
     echo "2. Sharing Algorithm\n";
     // ----------------------------------------------------------------
     $now = floor(time()/1800)*1800;
-    $start_time = $now - 3600*24*7;
+    $start_time = $now - $recalc_period;
     
     if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
         $start_time = 0;

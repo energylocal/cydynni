@@ -3,11 +3,7 @@
 print "---------------------------------------------------------------------\n";
 print "MERGE FEEDS RUN\n";
 print "---------------------------------------------------------------------\n";
-
-$recalc_club = false;
-$recalc_all = false;
-$userid = false;
-
+require "config.php";
 require "lib/common.php";
 require "lib/merge4feeds.php";
 
@@ -40,7 +36,7 @@ while ($row = $result_users->fetch_object())
         $processitem = new stdClass();
         $processitem->feeds = $feeds;
         $processitem->output = $output;
-        $processitem->recalc = 3600*24*2;        
+        $processitem->recalc = $recalc_period; 
         mergefeeds4("/var/lib/phpfina/",$processitem);
         
         $redis->hdel("feed:$output",'time');

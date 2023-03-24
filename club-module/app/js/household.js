@@ -378,7 +378,7 @@ function household_bargraph_load() {
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                     });   
                     householdseries.push({
-                        stack: true, data: household_tariff_data['standard'], color: "#ffb401",
+                        stack: true, data: household_tariff_data['standard'], color: "#c20000",
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth:0}
                     });
                     household_bargraph_resize();
