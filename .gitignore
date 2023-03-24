@@ -14,3 +14,4 @@ scripts/data_sources/CR/mqtt_v2_conf.php
 scripts/data_sources/CR/mosquitto-repo.gpg.key
 *.lock
 *.log
+*.csv
