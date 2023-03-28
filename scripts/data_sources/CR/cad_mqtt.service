@@ -1,0 +1,55 @@
+# Systemd unit file for cad_mqtt script
+
+# INSTALL:
+# sudo ln -s /opt/emoncms/modules/cydynni/scripts/data_sources/CR/cad_mqtt.service /lib/systemd/system
+
+# RUN AT STARTUP
+# sudo systemctl daemon-reload
+# sudo systemctl enable cad_mqtt.service
+
+# START / STOP With:
+# sudo systemctl start cad_mqtt
+# sudo systemctl stop cad_mqtt    
+
+# VIEW STATUS / LOG
+# If Using Syslog:
+# sudo systemctl status cad_mqtt -n50
+# where -nX is the number of log lines to view 
+# sudo journalctl -f -u cad_mqtt
+# Otherwise:
+# Specify
+#StandardOutput=file:/var/log/cad_mqtt.log
+# tail -f /var/log/cad_mqtt.log
+
+
+[Unit]
+Description=Emoncms cad_mqtt script
+Wants=mosquitto.service mysql.service redis-server.service
+After=mosquitto.service mysql.service redis-server.service
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/php /opt/emoncms/modules/cydynni/scripts/data_sources/CR/cad_mqtt.php
+
+# Setup log folder if it does not exist
+# To be loaded from EnvironmentFile in future
+Environment='USER=root'
+Environment='LOG_PATH=/var/log/emoncms'
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p ${LOG_PATH}
+ExecStartPre=/bin/chown ${USER} ${LOG_PATH}
+ExecStartPre=/bin/touch ${LOG_PATH}/cad_mqtt.log
+ExecStartPre=/bin/chmod 666 ${LOG_PATH}/cad_mqtt.log
+
+# Restart script if stopped on a failure. Will not restart if not configured correctly
+Restart=on-failure
+# Wait 60s before restart
+RestartSec=60
+
+# Tag things in the log
+# If you want to use the journal instead of the file above, uncomment SyslogIdentifier below
+# View with: sudo journalctl -f -u feedwriter -o cat
+SyslogIdentifier=cad_mqtt
+
+[Install]
+WantedBy=multi-user.target

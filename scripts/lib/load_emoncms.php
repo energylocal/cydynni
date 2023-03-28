@@ -1,7 +1,8 @@
 <?php
 
 define('EMONCMS_EXEC', 1);
-chdir("/var/www/emoncms");
+$emoncms_dir = getenv("EMONCMS_DIR") ?: "/var/www/emoncms";
+chdir($emoncms_dir);
 require "process_settings.php";
 require "Lib/EmonLogger.php";
 $mysqli = @new mysqli(

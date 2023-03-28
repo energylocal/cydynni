@@ -8,9 +8,7 @@ scripts/demandshapers/config.php
 scripts/data_sources/octopus/config.php
 scripts/data_sources/tma/config.php
 
-scripts/data_sources/CR/import_conf.php
-scripts/data_sources/CR/mqtt_v1_conf.php
-scripts/data_sources/CR/mqtt_v2_conf.php
+scripts/data_sources/CR/config.php
 scripts/data_sources/CR/mosquitto-repo.gpg.key
 *.lock
 *.log
