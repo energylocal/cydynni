@@ -14,7 +14,6 @@ $schema['cydynni_clubs'] = array(
     'id' => array('type' => 'int(11)', 'Null'=>'NO', 'Key'=>'PRI', 'Extra'=>'auto_increment'),    
     'name' => array('type' => 'varchar(128)'),
     'generator' => array('type' => 'varchar(128)'),
-    'root_token' => array('type' => 'varchar(128)'),
     'api_prefix' => array('type' => 'int(11)'),
     'languages' => array('type' => 'text'),
     'generation_feed' => array('type' => 'int(11)'),
