@@ -60,6 +60,11 @@ while ($row = $result_users->fetch_object())
             return false;
         }
 
+
+        if ($source_meta->interval==0) {
+            echo "User $userid Feed $source interval is 0\n"; 
+        }
+
         $o_end_time = $output_meta->start_time + ($output_meta->npoints * $output_meta->interval);
 
         $start_time = $source_meta->start_time;
@@ -74,7 +79,7 @@ while ($row = $result_users->fetch_object())
         if ($source_duration>(3600*24*14)) $average_over = 7; else $average_over = 1;
         
         $i=0;
-        if ($source_meta->npoints>0) {
+        if ($source_meta->npoints>0 && $source_meta->interval>0) {
             for ($time=$start_time; $time<$end_time; $time+=1800) {
 
                 $pos = floor(($time - $source_meta->start_time) / $source_meta->interval);

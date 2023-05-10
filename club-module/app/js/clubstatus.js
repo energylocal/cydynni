@@ -15,11 +15,11 @@ function clubstatus_update() {
       success: function(result) {
           live = result;
           
-          if (live.unit_price<13.0) {
+          if (live.unit_price<23.0) {
               trafficlight('green');
               $("#status-pre").html(t("Yes! Low cost electricity available"));
               // $("#status-pre").html(t("Now is a good time to use electricity"));
-          } else if (live.unit_price<19.0) {
+          } else if (live.unit_price<31.0) {
               trafficlight('amber');
               $("#status-pre").html(t("Medium cost electricity"));
           } else {
