@@ -531,7 +531,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                         out += "<tr><td><div class='legend-label-box' style='background-color:"+tariff_bands[tr].color+"'></div> "+t(ucfirst(tariff_bands[tr].name))+":</td><td>"+household_result[z][2][tr].toFixed(2)+" kWh</td></tr>";
                     }                    
                     
-                    household_draw_summary_day(household_result[z]);
+                    // household_draw_summary_day(household_result[z]);
                     
                     out += "</table>";
                     tooltip(item.pageX, item.pageY, out, "#fff");
@@ -547,10 +547,12 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
 });
 
 $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, item) {
+/*
     if (item) {
         view.start = item.datapoint[0];
         view.end = view.start + (3600*24*1000);
         mode = "halfhourly";
+        
         household_bargraph_load();
         
         if (session.feeds.meter_power!=undefined) {
@@ -558,7 +560,7 @@ $('#household_bargraph_placeholder').bind("plotclick", function (event, pos, ite
             household_power_end = view.end
             household_powergraph_load()
         }
-    }
+    }*/
 });
 
 $(".household-daily").click(function(event) {

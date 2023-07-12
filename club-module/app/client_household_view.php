@@ -197,7 +197,7 @@
                         
             <div id="your-usage" class="block household-block">
                 <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
-                   <div class="visnav-block"><select id="household_daily_period_select" class="period-select"></select><div class="visnav-household household-daily"><?php echo t("DAILY");?></div></div>
+                   <div class="visnav-block"><!--<select id="household_daily_period_select" class="period-select"></select>--><div class="visnav-household household-daily"><?php echo t("DAILY");?></div></div>
                 </div>
                 
                 <div class="block-content">
