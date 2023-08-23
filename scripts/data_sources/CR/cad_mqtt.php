@@ -270,9 +270,15 @@ function process_json($cad_serial,$json) {
             if (isset($feed_last_update[$power_feed])) {
                 step($feed,$power_feed,$time,$feed_last_update[$power_feed]);
             }
-            $feed->post($power_feed,$time,$time,$json->reads[0]->rate);
-            $feed_last_update[$power_feed] = array("time"=>$time,"value"=>$json->reads[0]->rate);
-            $log->info("Power feed $power_feed updated: ".$json->reads[0]->rate."W");
+            if ($json->reads[0]->rate<120000) { // 120 kW 3-phase max
+                $feed->post($power_feed,$time,$time,$json->reads[0]->rate); 
+                $feed_last_update[$power_feed] = array("time"=>$time,"value"=>$json->reads[0]->rate);
+                $log->info("Power feed $power_feed updated: ".$json->reads[0]->rate."W");
+            } else {
+                $fh = fopen("/home/cydynni/cad_power_value_error.log","a");
+                fwrite($fh,$power_feed.",".$time.",".$json->reads[0]->rate."\n");
+                fclose($fh);
+            }
         } else {
             $log->error("Power feed not created");
         }

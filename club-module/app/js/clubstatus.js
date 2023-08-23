@@ -15,11 +15,11 @@ function clubstatus_update() {
       success: function(result) {
           live = result;
           
-          if (live.unit_price<23.0) {
+          if (live.status=="green") {
               trafficlight('green');
               $("#status-pre").html(t("Yes! Low cost electricity available"));
               // $("#status-pre").html(t("Now is a good time to use electricity"));
-          } else if (live.unit_price<31.0) {
+          } else if (live.status=="amber") {
               trafficlight('amber');
               $("#status-pre").html(t("Medium cost electricity"));
           } else {
@@ -83,6 +83,7 @@ function clubstatus_update() {
               llandysul: {high:40,medium:20,low:10},
               test: {high:40,medium:20,low:10},
               dyffrynbanw: {high:8,medium:6,low:4}
+              //economy7: {high:8,medium:6,low:4}
           }
          
           if (live.generation>=levels[club].high) {

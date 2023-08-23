@@ -11,8 +11,6 @@ http://openenergymonitor.org
 
 */
 
-
-
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
@@ -33,17 +31,17 @@ function club_controller()
     
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
+
+    require "Modules/club/tariff_model.php";
+    $tariff_model = new Tariff($mysqli,$redis, $club_settings);
     
     if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
         $lang = $session["lang"];
     }
     
-    $tariff_history = $club_settings[$club]['tariff_history'];
-    $tariffs = $tariff_history[count($tariff_history)-1]["tariffs"];
-    
-	  global $translation;
-	  $translation = new stdClass();
+	global $translation;
+	$translation = new stdClass();
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
 
     if ($session["read"]) {
@@ -77,6 +75,8 @@ function club_controller()
             }
 
             $route->format = "html";
+
+            $tariffs = $tariff_model->get_club_tariff($club);
 
             $content = view("Modules/club/app/client_view.php", array(
                 'session' => $session,'club' => $club,
@@ -136,44 +136,13 @@ function club_controller()
                     }
                 }
             }
-            
-            $date = new DateTime();
-            $date->setTimezone(new DateTimeZone("Europe/London"));
-            $date->setTimestamp($this_hh);
-            $hour = $date->format("H");
-           
-            $hydro_price = 0.0;
-            $import_price = 0.0;
-            
-            $imprt = 0.0;
-            if ($live->generation<=$live->club) $imprt = $live->club - $live->generation;
-            $selfuse = $live->club - $imprt;
-            
-            foreach ($tariffs as $tariff) {
-                $start = explode(":",$tariff["start"])[0];
-                $end = explode(":",$tariff["end"])[0];
-                
-                if ($start<$end) {
-                    if ($hour>=$start && $hour<$end) {
-                        $live->tariff = $tariff["name"];
-                        $live->generator_price = $tariff["generator"];
-                        $live->import_price = $tariff["import"];
-                    }
-                } else {
-                    if ($hour>=$start || $hour<$end) {
-                        $live->tariff = $tariff["name"];
-                        $live->generator_price = $tariff["generator"];
-                        $live->import_price = $tariff["import"];
-                    }
-                }
-            }
-            $hydro_cost = $selfuse * $live->generator_price;
-            $import_cost = $imprt * $live->import_price;
-            if ($live->club>0) {
-                $live->unit_price = number_format(($import_cost + $hydro_cost) / $live->club,2)*1;
-            } else {
-                $live->unit_price = 0;
-            }
+
+            $period = $tariff_model->get_club_tariff_period($club);
+            $live->tariff = $period["name"];
+            $live->generator_price = $period["generator"];
+            $live->import_price = $period["import"];
+            $live->unit_price = $tariff_model->get_unit_price($live->club,$live->generation);
+            $live->status = $tariff_model->get_status($live->unit_price);
 
             return $live;
             break;
