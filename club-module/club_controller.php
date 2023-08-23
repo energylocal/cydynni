@@ -182,6 +182,10 @@ function club_controller()
             $route->format = "json";
             if ($session["read"]) {
                 $userid = $session["userid"];
+                $format = "index";
+                if (isset($_GET['format']) && $_GET['format']=="keys") {
+                    $format = "keys";
+                }
                 
                 if (isset($_GET['start']) && isset($_GET['end'])) {
                     $start = $_GET['start']*0.001;
@@ -194,7 +198,7 @@ function club_controller()
                     if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
                         
                     require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                    return get_daily_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"index");
+                    return get_daily_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,$format);
                 }
             } else {
                 return "session not valid";
@@ -696,6 +700,49 @@ function club_controller()
             }
             // -----------------------------------------------------------
             return "plan received";
+            break;
+            
+        case "list":
+            $route->format = "json";
+            
+            require_once "Modules/feed/feed_model.php";
+            $feed = new Feed($mysqli,$redis,$settings["feed"]);
+                
+            global $available_clubs_menu;
+            $club_list = array();
+            $this_hh = floor(time()/1800)*1800;
+            
+            foreach ($available_clubs_menu as $i=>$club_name) {
+            
+                $gen_last_actual = $feed->get_timevalue($club_settings[$club_name]['generation_feed']);
+                $use_last_actual = $feed->get_timevalue($club_settings[$club_name]['consumption_feed']);
+
+                $generation = number_format($gen_last_actual['value'],3)*2.0;
+                $consumption = number_format($use_last_actual['value'],3)*2.0;
+                
+                // Use generation and consumption prediction from forecast if actual data is old
+                if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
+                    if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club_name]['consumption_forecast_feed'])) {
+                        $gen_forecast = $feed->get_value($club_settings[$club_name]['generation_forecast_feed'],$this_hh);
+                        $use_forecast = $feed->get_value($club_settings[$club_name]['consumption_forecast_feed'],$this_hh);
+                        
+                        if ($gen_forecast!=null && $use_forecast!=null) {
+                            $generation = number_format($gen_forecast,3)*2.0;
+                            $consumption = number_format($use_forecast,3)*2.0;
+                        }
+                    }
+                }
+            
+            
+                $club_list[$club_name] = array(
+                    "name"=>$club_settings[$club_name]["name"],
+                    "generator"=>$club_settings[$club_name]["generator"],
+                    "generation"=>$generation,
+                    "consumption"=>$consumption
+                );
+            }
+            return $club_list;
+            
             break;
             
         break;   

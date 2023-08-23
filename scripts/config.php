@@ -18,7 +18,7 @@ CLUB IDS
 
 */
 
-$recalc_club = false;
+$recalc_club = false;  // false or ID of club as above/in settings.php
 $recalc_all = false;
 $recalc_period = 3600*24*7;
 $userid = false;

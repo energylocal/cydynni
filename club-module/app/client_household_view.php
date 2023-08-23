@@ -207,7 +207,7 @@
                         </div>
                     </div>
                     
-                    <p style="font-size:12px" id="household-daily-note"><?php echo t("Click on a day to see half hourly consumption"); ?></p><br>
+                    <!--<p style="font-size:12px" id="household-daily-note"><?php echo t("Click on a day to see half hourly consumption"); ?></p><br>-->
                     
                     <div style="padding:10px; background-color:#eee; color: #666; font-size:14px">
                         <?php echo t("Electricity use in window");?>: <b><span id="household_use_history_stats">---</span></b>

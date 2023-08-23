@@ -69,6 +69,7 @@ function clubstatus_update() {
           
           $("#status-until").html(t("until")+" <b>"+tariff_end+"<span style='font-size:12px'>"+am_pm+"</span></b> <span style='font-size:12px'>("+time_to_wait+")</span>");
           
+	  // TODO move to config	
           var levels = {
               bethesda: {high:50,medium:30,low:10},
               towerpower: {high:3,medium:1,low:0.5},
