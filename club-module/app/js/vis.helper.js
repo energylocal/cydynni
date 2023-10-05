@@ -153,8 +153,9 @@ function tooltip(x, y, contents, bgColour)
         padding: '2px',
         'background-color': bgColour,
         opacity: '0.8',
-        "text-align": 'left'
-    }).appendTo("body").fadeIn(00);
+        "text-align": 'left',
+        "z-index": "2000"
+    }).appendTo("body").fadeIn(0);
 
     var elemY = y - elem.height() - offset;
     var elemX = x - elem.width()  - offset;
