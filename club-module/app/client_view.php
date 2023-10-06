@@ -185,7 +185,7 @@ $(".navigation li").click(function() {
     History.pushState({}, page, "?"+page);  
 });
 
-$(".block-title").click(function() {
+$(".block-title.hideable-block").click(function() {
     $(this).parent().find(".block-content").slideToggle("slow");
     $(this).find(".triangle-dropdown").toggle();
     $(this).find(".triangle-pushup").toggle();

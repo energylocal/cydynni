@@ -1,5 +1,5 @@
             <div class="block">
-                <div class="block-title" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
+                <div class="block-title hideable-block" style="background-color:#ffb401"><?php echo t("Club score and savings"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                   <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="block">
-                <div class="block-title bg-club2"><?php echo t("Club breakdown"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
+                <div class="block-title hideable-block bg-club2"><?php echo t("Club breakdown"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                 <div class="visnav-block"><select class="period-select"></select></div>
                 </div>
                 <div class="block-content" style="color:#ff7900">
@@ -129,7 +129,7 @@
             <?php if ($club_settings["club_id"]==1) { ?>
             <!--
             <div class="block">
-                <div class="block-title bg-club2" style="text-align:center;">
+                <div class="block-title hideable-block bg-club2" style="text-align:center;">
                 Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
                 </div>
             </div>-->

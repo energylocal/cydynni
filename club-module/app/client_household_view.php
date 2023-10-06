@@ -22,7 +22,7 @@
             </div>
 
             <div id="missing-data-block" class="block hide">
-                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                     
                     <div class="bg-household" style="padding:20px">
@@ -34,8 +34,8 @@
             </div>
 
             <div id="passwordreset-block" class="block" style="display:none">
-                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
-                <div class="block-content">                    
+                <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
                     <div class="bg-household" style="padding:20px">
                         <p id="passwordreset-title"></p>
                         <p>
@@ -76,7 +76,7 @@
             </div>
 
             <div id="your-score" class="block household-block">
-              <div class="block-title bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div>
+              <div class="block-title hideable-block bg-household"><?php echo t("Your Score and Savings"); ?><div class="triangle-dropdown hide" style="margin-left:10px"></div><div class="triangle-pushup show" style="margin-left:10px"></div>
               <div class="visnav-block"><select class="period-select"></select></div>
               </div>
               
@@ -123,7 +123,7 @@
             </div>
 
             <div id="your-usage-price" class="block household-block">
-                <div class="block-title bg-household2"><?php echo t("Your usage by price"); ?>: <span class="household_date"></span><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title hideable-block bg-household2"><?php echo t("Your usage by price"); ?>: <span class="household_date"></span><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                 -->
                     <!--
@@ -189,14 +189,14 @@
             
             <?php if ($club_settings["club_id"]==1) { ?>
             <!--<div class="block">
-                <div class="block-title bg-household2" style="text-align:center;">
+                <div class="block-title hideable-block bg-household2" style="text-align:center;">
                 Please note: <span style="font-weight:normal"><?php echo t("The Bethesda club match tariff and time of use tariff is not currently live. Billing is based on a flat tariff"); ?></span>
                 </div>
             </div>-->
             <?php } ?>
                         
             <div id="your-usage" class="block household-block">
-                <div class="block-title bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
+                <div class="block-title hideable-block bg-household3"><?php echo t("Your usage over time"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                    <div class="visnav-block"><!--<select id="household_daily_period_select" class="period-select"></select>--><div class="visnav-household household-daily"><?php echo t("DAILY");?></div></div>
                 </div>
                 
