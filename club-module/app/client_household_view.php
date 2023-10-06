@@ -58,7 +58,7 @@
                                     
                     <div class="bg-household">
                         <div class="visnav-block-household">
-                        <div class="visnav-household household-power-left"><</div><div class="visnav-household household-power-right">></div><div class="visnav-household household-power-day"><?php echo t("DAY");?></div><div class="visnav-household household-power-week"><?php echo t("WEEK");?></div><div class="visnav-household household-power-month"><?php echo t("MONTH");?></div>
+                        <div class="visnav-household household-power-left"></div><div class="visnav-household household-power-right">></div><div class="visnav-household household-power-day"><?php echo t("DAY");?></div><div class="visnav-household household-power-week"><?php echo t("WEEK");?></div><div class="visnav-household household-power-month"><?php echo t("MONTH");?></div>
                         </div>
                         <div style="clear:both"></div>
                     </div>
