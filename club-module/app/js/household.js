@@ -32,7 +32,11 @@ function household_summary_load()
   } else if (session.feeds.meter_power!=undefined) {
       household_power_feedid = session.feeds.meter_power
   }
-  
+
+  $("#realtime-power").hide();
+}
+
+function household_realtime_load() {
   if (household_power_feedid) {
       household_realtime(function(){
           household_powergraph_load();

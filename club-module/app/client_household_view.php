@@ -47,6 +47,15 @@
                 </div>
             </div>
 
+            <div id="context-selection" class="block household-block">
+              <div class="block-title bg-household">
+                <div class="btn-group household-view-scope" data-toggle="buttons-radio">
+                  <button class="btn active" value="historic">Historic</button>
+                  <button class="btn" value="live">Live</button>
+                </div>
+              </div>
+            </div>
+
             <div id="realtime-power" class="block" style="display:none">
                 <div class="block-title bg-household"><?php echo t("Realtime Power Data"); ?></div>
                 

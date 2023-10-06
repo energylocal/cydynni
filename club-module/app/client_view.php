@@ -295,6 +295,26 @@ $(".period-select").click(function(event) {
     event.stopPropagation();
 });
 
+document.querySelectorAll('.household-view-scope button').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const currentDate = new Date();
+    switch (button.value) {
+    case "historic":
+      $("#your-score").show();
+      $("#your-usage").show();
+      $("#realtime-power").hide();
+      break;
+    case "live":
+      household_realtime_load();
+      $("#your-score").hide();
+      $("#your-usage").hide();
+      break;
+    default:
+      alert("Household view scope '"+button.value+"' not supported.");
+    }
+  })
+})
+
 $(".period-select").change(function(event) {
     event.stopPropagation();
     
