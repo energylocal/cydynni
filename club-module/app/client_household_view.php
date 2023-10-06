@@ -82,6 +82,7 @@
               
               <div class="block-content" style="color:#c20000">
               
+                <?php if ($club_settings["has_generator"]) { ?>
                 <div class="bg-household">
                   <b><span class="household_date"></span></b>
                   <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100</div>
@@ -95,7 +96,9 @@
                     </div>
                   </div>
                 </div>
+                <? } ?>
                 
+                <?php if ($club_settings["has_generator"]) { ?>
                 <br>
                 <img id="household_star1" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <img id="household_star2" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
@@ -104,6 +107,7 @@
                 <img id="household_star5" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <br><br>
                 <p class="household_score_description"></p>
+                <? } ?>
                 <!--<br><br><div class="household_status" style="height:40px"></div><br>-->
                 <!--<br>
                 <p><?php echo t("In total you used"); ?> <span class="household_totalkwh"></span> kWh, <?php echo t("costing"); ?>:</p>
@@ -162,8 +166,14 @@
                     </div>
                     
                     <div class="box3">
+
+                      <?php if ($club_settings["has_generator"]) { ?>
                       <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("SAVING"); ?></div>
                       <div style="font-size:22px" class="household_saving"></div>
+                      <? } else { ?>
+                      <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("UNIT PRICES"); ?></div>
+                      <div style="font-size:22px" class="">&nbsp;</div>
+                      <? } ?>
                       <div class="hrdiv"></div>
                       <div style="padding:15px; text-align:left; margin: 20px auto; max-width:270px; color:#333">
                         <table id="household_pie_legend" class="keytable"></table>

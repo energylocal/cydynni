@@ -99,11 +99,12 @@ function draw_summary(result) {
     household_pie_data_energy = [];
     
     // COST
+    let generationCost = club_settings.has_generator ? result.generation_cost[tariff_name]: 0;
     for (var tariff_name in result.cost) {
         if (tariff_name!='total') {
             household_pie_data_cost.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation_cost[tariff_name],
+                generation: generationCost,
                 import: result.import_cost[tariff_name],
                 color: tariff_colors[tariff_name]
             });
@@ -111,11 +112,12 @@ function draw_summary(result) {
     }
 
     // ENERGY
+    let generationValue = club_settings.has_generator ? result.generation[tariff_name]: 0;
     for (var tariff_name in result.demand) {
         if (tariff_name!='total') {
             household_pie_data_energy.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation[tariff_name],
+                generation: generationValue,
                 import: result.import[tariff_name],
                 color: tariff_colors[tariff_name]
             });
@@ -124,8 +126,7 @@ function draw_summary(result) {
 
     // Create aggregated legend item for hydro
     var legend = "";
-    
-    if (result.generation.total!=undefined) {
+    if (club_settings.has_generator && result.generation.total != undefined) {
         legend += '<tr>'
         legend += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
         legend += '<td><b>'+t(ucfirst(club_settings.generator))+'</b><br>'
@@ -321,7 +322,6 @@ function household_bargraph_load() {
                         for (var tr=0; tr<tariff_bands.length; tr++) {
                             var name = tariff_bands[tr].name;
                             hh[name] = result[z][2][tr];
-                            
                             if (import_totals[name]==undefined) import_totals[name] = 0;
                             import_totals[name] += result[z][2][tr];
                             if (use_totals[name]==undefined) use_totals[name] = 0;
@@ -336,7 +336,9 @@ function household_bargraph_load() {
                         household_tariff_data.standard.push([time*1000,hh.standard]);
                         
                         var generation = result[z][1][tariff_bands.length] - result[z][2][tariff_bands.length]
-                        household_tariff_data.generation.push([time*1000,generation]);
+                        if (club_settings.has_generator) {
+                          household_tariff_data.generation.push([time*1000,generation]);
+                        }
                         
                         kwh_in_window += result[z][1][result[z][1].length-1];
                         cost_in_window += result[z][6][result[z][6].length-1];
@@ -526,7 +528,9 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                     out += "<tr><td>"+days[d.getDay()]+", "+months[d.getMonth()]+" "+d.getDate()+"</td></tr>";
                     out += "<tr><td>Tariff version: "+(history_index+1)+"</td></tr>";
                     out += "<tr><td>"+t("Total")+":</td><td>"+household_result[z][1][tariff_bands.length].toFixed(2)+" kWh</td></tr>";
-                    out += "<tr><td><div class='legend-label-box' style='background-color:"+club_settings.generator_color+"'></div> "+t(club_settings.generator)+":</td><td>"+(household_result[z][1][tariff_bands.length]-household_result[z][2][tariff_bands.length]).toFixed(2)+" kWh</td></tr>"; 
+                    if (club_settings.has_generator) {
+                      out += "<tr><td><div class='legend-label-box' style='background-color:"+club_settings.generator_color+"'></div> "+t(club_settings.generator)+":</td><td>"+(household_result[z][1][tariff_bands.length]-household_result[z][2][tariff_bands.length]).toFixed(2)+" kWh</td></tr>"; 
+                    }
                     for (var tr=0; tr<tariff_bands.length; tr++) {
                         out += "<tr><td><div class='legend-label-box' style='background-color:"+tariff_bands[tr].color+"'></div> "+t(ucfirst(tariff_bands[tr].name))+":</td><td>"+household_result[z][2][tr].toFixed(2)+" kWh</td></tr>";
                     }                    

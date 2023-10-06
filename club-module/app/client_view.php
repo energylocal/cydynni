@@ -26,20 +26,27 @@ $app_path = $path."Modules/club/app/";
 
 <div class="app">
     <ul class="navigation">
-        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
+        <?php if ($club_settings["has_generator"]) { ?>
+          <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
+        <?php } ?>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Household"); ?></div></div></li>
-        <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Your<br>Club"); ?></div></div></li>
+        <?php if ($club_settings["has_generator"]) { ?>
+          <li name="club" ><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Your<br>Club"); ?></div></div></li>
+        <?php } ?>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
     </ul>
 
+
+    <?php if ($club_settings["has_generator"]) { ?>
     <div class="page" name="forecast">
         <?php echo view("Modules/club/app/client_forecast_view.php", array(
-            'app_path'=>$app_path, 
+            'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
             'tariffs_table'=>$tariffs_table
         )); ?>
     </div>
+    <?php } ?>
 
     <div class="page" name="household">
         <?php echo view("Modules/club/app/client_household_view.php", array(
@@ -172,9 +179,22 @@ if (url.searchParams!=undefined) {
     page = url.search.replace("?","");
 }
 
-if (page=="") page = "forecast";
+if (page=="") {
+  if (club_settings.has_generator) {
+    page = "forecast";
+  } else {
+    page = "household";
+  }
+}
 
-if (page=="forecast") show_page("forecast");
+
+if (page=="forecast") {
+  if (club_settings.has_generator) {
+    show_page("forecast");
+  } else {
+    show_page("household");
+  }
+}
 else if (page=="household") show_page("household");
 else if (page=="club") show_page("club");
 else if (page=="tips") show_page("tips");
