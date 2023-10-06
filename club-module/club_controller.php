@@ -14,18 +14,56 @@ http://openenergymonitor.org
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
+function chooseLanguage() {
+    global $club_settings, $club;
+
+    // Language of last resort    
+    $lang = "en";
+
+    // First lang code in settings used as default if available
+    if ($club == "") {
+        $log = new EmonLogger(__FILE__);
+        $log->error("Club unknown, defaulting to en_GB");
+        return "en_GB";
+    }
+    if (count($club_settings[$club]["languages"]) > 0) {
+      $lang = $club_settings[$club]["languages"][0];
+    }
+
+    // Prioritise query iaith then lang params if available
+    if (isset($_GET['lang'])) {
+      $lang = $_GET['lang'];
+    }
+    if (isset($_GET['iaith'])) {
+      $lang = $_GET['iaith'];
+    }
+
+    // Convert 2-letter code to full locale
+    switch($lang) {
+	  case 'en':
+	    return "en_GB";	    
+      case 'cy':
+        return "cy_GB";	    
+      default:
+        $log = new EmonLogger(__FILE__);
+	    $log->error("Language code '".$lang."' unsupported, defaulting to en_GB");
+        return "en_GB";
+    }
+    return $lang;
+}
+
 function club_controller()
 {
     global $mysqli, $redis, $session, $route, $user, $settings, $available_clubs;
     global $club_settings, $club;
     global $lang;
-
-    if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
-    if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $session['lang'] = "cy_GB";
-    if (isset($_GET['lang']) && $_GET['lang']=="en") $session['lang'] = "en_GB";
-    if (isset($_GET['iaith']) && $_GET['iaith']=="en") $session['lang'] = "en_GB";
-    $lang = $session["lang"];
     
+    $log = new EmonLogger(__FILE__);
+    $log->info('club route: '.json_encode($route));
+
+    $session['lang'] = chooseLanguage();
+    $lang = $session['lang']; // Why?
+
     $result = false;
     $route->format = "json";
     
@@ -35,10 +73,8 @@ function club_controller()
     require "Modules/club/tariff_model.php";
     $tariff_model = new Tariff($mysqli,$redis, $club_settings);
     
-    if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
-        $session['lang'] = "en_GB";
-        $lang = $session["lang"];
-    }
+
+
     
 	global $translation;
 	$translation = new stdClass();
