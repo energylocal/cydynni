@@ -133,15 +133,6 @@ if (session.read) {
 
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
-// Language selection top-right
-
-if (languages.length>1) {
-    if (lang=="cy_GB") {
-        $("#togglelang").html("English");
-    } else {
-        $("#togglelang").html("Cymraeg");
-    }
-}
 
 if (!session.read) {
   $("#login-block").show();
@@ -198,6 +189,9 @@ function show_page(page) {
     // Show relevant page
     $(".page").hide();
     $(".page[name="+page+"]").show();
+
+    $("#lang-link-cy").attr("href", "?lang=cy&"+page);
+    $("#lang-link-en").attr("href", "?lang=en&"+page);
 
     if (page=="forecast") {
         club_pie_draw();
@@ -323,23 +317,6 @@ $(".period-select").change(function(event) {
     
     // Copy to household
     household_bargraph_load()
-});
-
-// ----------------------------------------------------------------------
-// Translation
-// ----------------------------------------------------------------------
-
-// Language selection
-$("#togglelang").click(function(){
-    var ilang = $(this).html();
-    if (ilang=="Cymraeg") {
-        $(this).html("English");
-        window.location = "?lang=cy";
-    } else {
-        $(this).html("Cymraeg");
-        lang="cy_GB";
-        window.location = "?lang=en";
-    }
 });
 
 // ----------------------------------------------------------------------
