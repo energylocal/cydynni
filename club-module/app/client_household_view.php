@@ -1,5 +1,5 @@
             <div id="login-block" class="block">
-                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
                     
                     <div class="bg-household" style="padding:20px">
@@ -48,7 +48,7 @@
             </div>
 
             <div id="realtime-power" class="block" style="display:none">
-                <div class="block-title bg-household"><?php echo t("Realtime Power Data"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title bg-household"><?php echo t("Realtime Power Data"); ?></div>
                 
                 <div class="block-content">
 
