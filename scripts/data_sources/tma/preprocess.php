@@ -188,6 +188,7 @@ function write_feed_data($feed, $map, $mpan_data, $days=7) {
                 // if rebuild is true or the time value is newer than the last time value
                 if ($days=='all' || $time>($timevalue['time']-($days*24*3600))) {  
                     $data[] = array($time,$value);
+		    print($mpan." - ".$time." - ".$value."\n");
                     $npoints ++;
                 }
             }
