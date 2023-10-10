@@ -154,9 +154,9 @@ function get_daily_summary($tariff_history,$use_id,$gen_id,$start_time,$end_time
                 foreach ($use_t as $key=>$val) $use_t[$key] = 1*number_format($val,3);
                 foreach ($imp_t as $key=>$val) $imp_t[$key] = 1*number_format($val,3);
                 foreach ($gen_t as $key=>$val) $gen_t[$key] = 1*number_format($val,3);
-                foreach ($gen_cost_t as $key=>$val) $gen_cost_t[$key] = 1*number_format($val,2);
-                foreach ($imp_cost_t as $key=>$val) $imp_cost_t[$key] = 1*number_format($val,2);
-                foreach ($cost_t as $key=>$val) $cost_t[$key] = 1*number_format($val,2);
+                foreach ($gen_cost_t as $key=>$val) $gen_cost_t[$key] = 1*number_format($val,3);
+                foreach ($imp_cost_t as $key=>$val) $imp_cost_t[$key] = 1*number_format($val,3);
+                foreach ($cost_t as $key=>$val) $cost_t[$key] = 1*number_format($val,3);
             }
             
             $result = array();

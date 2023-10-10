@@ -35,34 +35,20 @@ function data_controller()
 
     require "Modules/data/account_data_model.php";
     $account_data = new AccountData($feed, $club, $tariff);
-
+    
     // Daily consumption, time of use and use of generation data for a user
     // returns multiple days between start and end
     // url: /data/daily?userid=2&start=1695164400&end=1695942000
     if ($route->action == 'daily') {
         $route->format = "json";
+        $start = get('start',true);
+        $end = get('end',true);
 
-        if (!isset($_GET['start']) || !isset($_GET['end'])) {
-            // get midnight of today
-            // using datetime
-            $date = new DateTime();
-            $date->setTime(0,0,0);
-            $end = $date->getTimestamp();
-    
-            // get midnight of 7 days ago
-            $date->modify('-7 days');
-            $start = $date->getTimestamp();        
-        } else {
-            $start = get('start',true);
-            $end = get('end',true);
-        }
-
-        if (isset($_GET['userid'])) {
-            $userid = get('userid',true);
-            return $account_data->daily_summary($userid,$start,$end, 'user');
-        } elseif (isset($_GET['clubid'])) {
+        if (isset($_GET['clubid'])) {
             $clubid = get('clubid',true);
-            return $account_data->daily_summary($clubid,$start,$end, 'club');
+            return $account_data->club_daily_summary($clubid,$start,$end);
+        } else if ($session['read']) {
+            return $account_data->user_daily_summary($session['userid'],$start,$end);
         } else {
             return array("success"=>false, "message"=>"Missing userid or clubid");
         }
@@ -82,21 +68,18 @@ function data_controller()
         $start = get('start',true);
         $end = get('end',true);
 
-        if (isset($_GET['userid'])) {
-            $userid = get('userid',true);
-            return $account_data->custom_summary($userid,$start,$end, 'user');
-
-        } elseif (isset($_GET['clubid'])) {
+        if (isset($_GET['clubid'])) {
             $clubid = get('clubid',true);
-            return $account_data->custom_summary($clubid,$start,$end, 'club');
+            return $account_data->club_custom_summary($clubid,$start,$end);
+        } else if ($session['read']) {
+            return $account_data->user_custom_summary($session['userid'],$start,$end);
         }
     }
 
     // Return list of reports available
-    if ($route->action == 'available_reports') {
+    if ($route->action == 'available_reports' && $session['read']) {
         $route->format = "json";
-        $userid = get('userid',true);
-        return $account_data->get_available_reports($userid);
+        return $account_data->get_available_reports($session['userid']);
     }
 
     return array('content'=>false);

@@ -250,7 +250,7 @@ class Tariff
         if (!$start) $start = time();
 
         // Check if user exists
-        $result = $this->mysqli->query("SELECT userid FROM club_accounts WHERE userid=$userid");
+        $result = $this->mysqli->query("SELECT userid FROM cydynni WHERE userid=$userid");
         if (!$row = $result->fetch_object()) {
             return array("success"=>false,"message"=>"User does not exist");
         }
