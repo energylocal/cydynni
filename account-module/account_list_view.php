@@ -13,7 +13,7 @@ foreach ($club_settings as $club) {
 
 <script src="<?php echo $path; ?>Lib/vue.min.js"></script>
 
-<h3>User list</h3>
+<h3>Account list</h3>
 
 <div id="app">
 
@@ -233,7 +233,7 @@ function load() {
 
     app.data_status = {};
     $.ajax({
-        url: path+"club/admin-users-list?club_id="+app.selected_club,
+        url: path+"account/list.json?clubid="+app.selected_club,
         dataType: 'json',
         async:true,
         success: function(result) {
@@ -259,7 +259,7 @@ function add_user(user,password) {
     user.password = password;
     $.ajax({
         type: 'POST',
-        url: path+"club/admin-add-user",
+        url: path+"account/add",
         data: "user="+JSON.stringify(user),
         dataType: 'json',
         success: function(result) {
@@ -275,7 +275,7 @@ function add_user(user,password) {
 function update_user(userid,changed) {
     $.ajax({
         type: 'POST',
-        url: path+"club/admin-update-user?userid="+userid,
+        url: path+"account/update?userid="+userid,
         data: "data="+JSON.stringify(changed),
         dataType: 'json',
         async:true,
