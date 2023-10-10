@@ -385,7 +385,7 @@
 "Realtime Power Data":"Data Pŵer Byw",
 "Electricity use in window":"Defnydd trydan yn y ffenestr",
 "This means that":"Mae hyn yn golygu bod",
-"of your electricity came from local or low-cost power":"o'ch trydan yn dod o bŵer lleol neu gost isel",
+"of your electricity came from local or overnight power":"o'ch trydan yn dod o bŵer lleol neu gost isel",
 "This means that %s% of your electricity came from hydro or low-cost power":"Mae hyn yn golygu bod %s% o'ch trydan yn dod o bŵer hydro neu gost isel",
 "This means that %s% of your electricity came from solar or low-cost power":"Mae hyn yn golygu bod %s% o'ch trydan yn dod o bŵer solar neu gost isel",
 "Click on a day to see half hourly consumption":"Cliciwch ar ddiwrnod i weld defnydd bob hanner awr",

@@ -172,7 +172,7 @@ function draw_summary(result) {
     var total_low_cost_demand = result.generation.total;
     if (result.import.overnight!=undefined) {
         total_low_cost_demand += result.import.overnight
-        household_score_description += " or low-cost power";
+        household_score_description += " or overnight power";
     }
     var score = 100;
     if (result.demand.total>0) {
@@ -189,11 +189,11 @@ function draw_summary(result) {
         star_icon_off = "sun20yellow";
     }
 
-    if (score>=20) star1 = star_icon_on; else star1 = star_icon_off;
-    if (score>=40) star2 = star_icon_on; else star2 = star_icon_off;
-    if (score>=60) star3 = star_icon_on; else star3 = star_icon_off;
-    if (score>=80) star4 = star_icon_on; else star4 = star_icon_off;
-    if (score>=90) star5 = star_icon_on; else star5 = star_icon_off;
+    star1 = star_icon_on;
+    if (score>=20) star2 = star_icon_on; else star2 = star_icon_off;
+    if (score>=40) star3 = star_icon_on; else star3 = star_icon_off;
+    if (score>=60) star4 = star_icon_on; else star4 = star_icon_off;
+    if (score>=80) star5 = star_icon_on; else star5 = star_icon_off;
     
     $("#household_star1").attr("src",app_path+"images/"+star1+".png");
     setTimeout(function() { $("#household_star2").attr("src",app_path+"images/"+star2+".png"); }, 100);
