@@ -31,9 +31,6 @@ function club_controller()
     
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
-
-    //require "Modules/club/tariff_model.php";
-    //$tariff_model = new Tariff($mysqli,$redis, $club_settings);
     
     if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
@@ -61,8 +58,8 @@ function club_controller()
             require_once "Modules/tariff/tariff_model.php";
             $tariff_class = new Tariff($mysqli);
         
-            $tariffid = $tariff_class->get_user_tariff(2);
-            $tariffs = $tariff_class->list_periods($tariffid);
+            $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
+            $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
         
             if ($session["read"]) {
@@ -171,125 +168,6 @@ function club_controller()
             $live->status = $tariff_class->get_status($live->unit_price,$bands);
 
             return $live;
-            break;
-        
-        case "household-daily-summary":
-            $route->format = "json";
-            if ($session["read"]) {
-                $userid = $session["userid"];
-                $format = "index";
-                if (isset($_GET['format']) && $_GET['format']=="keys") {
-                    $format = "keys";
-                }
-                
-                if (isset($_GET['start']) && isset($_GET['end'])) {
-                    $start = $_GET['start']*0.001;
-                    $end = $_GET['end']*0.001;
-                    
-                    require_once "Modules/feed/feed_model.php";
-                    $feed = new Feed($mysqli,$redis,$settings["feed"]);
-
-                    if (!$use_id = $feed->get_id($userid,"use_hh_est")) return "Could not find consumption feed";
-                    if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
-                        
-                    require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                    return get_daily_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,$format);
-                }
-            } else {
-                return "session not valid";
-            }
-            break;
-
-        case "household-summary-monthly":
-            $format = "json";
-            if ($session["read"]) {
-                $userid = (int) $session["userid"];
-                
-                $end = floor(time()/1800)*1800;
-                $start = $end-3600*24*365;
-                
-                $d = new DateTime();
-                $d->setTimezone(new DateTimeZone("Europe/London"));
-                $d->setTimestamp($start);
-                $d->setDate($d->format("Y"),$d->format("m"),1);
-                $d->setTime(0,0,0);
-                $start = $d->getTimestamp();
-
-                require_once "Modules/feed/feed_model.php";
-                $feed = new Feed($mysqli,$redis,$settings["feed"]);
-                
-                if (!$use_id = $feed->get_id($userid,"use_hh_est")) return "Could not find consumption feed";
-                if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
-
-                require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                return get_monthly_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"keys");
-
-
-
-            } else {
-                return "session not valid";
-            }
-            break;
-
-        case "household-summary":
-            $format = "json";
-            if ($session["read"]) {
-                $userid = (int) $session["userid"];
-                
-                if (!isset($_GET['start'])) return false;
-                if (!isset($_GET['end'])) return false;
-                $end = (int) ($_GET['end'] * 0.001);
-                $start = (int) ($_GET['start'] * 0.001);
-                
-                require_once "Modules/feed/feed_model.php";
-                $feed = new Feed($mysqli,$redis,$settings["feed"]);
-                
-                if (!$use_id = $feed->get_id($userid,"use_hh_est")) return "Could not find consumption feed";
-                if (!$gen_id = $feed->get_id($userid,"gen_hh")) return "Could not find generation share feed";
-
-                require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-                return get_summary($club_settings[$club]["tariff_history"],$use_id,$gen_id,$start,$end,"keys");
-                
-            } else {
-                return "session not valid";
-            }
-            break;
-
-        case "club-summary-monthly":
-            $format = "json";
-            
-            $end = floor(time()/1800)*1800;
-            $start = $end-3600*24*365;
-            
-            $d = new DateTime();
-            $d->setTimezone(new DateTimeZone("Europe/London"));
-            $d->setTimestamp($start);
-            $d->setDate($d->format("Y"),$d->format("m"),1);
-            $d->setTime(0,0,0);
-            $start = $d->getTimestamp();
-
-            $gen_id = $club_settings[$club]['generation_feed'];
-            $club_id = $club_settings[$club]['consumption_feed'];
-
-            require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-            return get_monthly_summary($club_settings[$club]["tariff_history"],$club_id,$gen_id,$start,$end,"keys");
-
-            break;
-
-        case "club-summary":
-            $format = "json";
-            
-            if (!isset($_GET['start'])) return false;
-            if (!isset($_GET['end'])) return false;
-            $end = (int) ($_GET['end'] * 0.001);
-            $start = (int) ($_GET['start'] * 0.001);
-
-            $gen_id = $club_settings[$club]['generation_feed'];
-            $club_id = $club_settings[$club]['consumption_feed'];
-
-            require_once "/opt/emoncms/modules/cydynni/scripts/sharing_summary.php";
-            return get_summary($club_settings[$club]["tariff_history"],$club_id,$gen_id,$start,$end,"keys");
-
             break;
 
         case "demandshaper":
