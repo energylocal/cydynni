@@ -72,8 +72,8 @@ class AccountData
         
         foreach ($club_settings as $club) {
             if ($club['club_id']==$clubid) {
-                $gen_id = $club['generation_feed'];
-                $club_id = $club['consumption_feed'];
+                $gen_feedid = $club['generation_feed'];
+                $use_feedid = $club['consumption_feed'];
                 break;
             }
         }
@@ -345,7 +345,8 @@ class AccountData
         return false;
     }
 
-    public function fixed($value,$dp) {
-        return number_format($value,$dp)*1;
+    public function fixed($value, $dp) {
+        $formatted = number_format($value, $dp, '.', ''); // Use '.' as decimal point and remove thousands separator
+        return (float) $formatted; // Cast the formatted string to a float
     }
 }

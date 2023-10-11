@@ -32,8 +32,8 @@ function club_controller()
     require "Modules/club/club_model.php";
     $club_model = new Club($mysqli,$redis);
 
-    require "Modules/club/tariff_model.php";
-    $tariff_model = new Tariff($mysqli,$redis, $club_settings);
+    //require "Modules/club/tariff_model.php";
+    //$tariff_model = new Tariff($mysqli,$redis, $club_settings);
     
     if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
@@ -96,7 +96,8 @@ function club_controller()
                 'club_settings' => $club_settings[$club],
                 'tariffs_table' => $tariffs_table,
                 'tariffs' => $tariffs,
-                'available_reports'=>$available_reports
+                'available_reports'=>$available_reports,
+                'clubid'=>$club_settings[$club]['club_id']
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
@@ -128,6 +129,9 @@ function club_controller()
                 
             $live = new stdClass();
 
+            require_once "Modules/tariff/tariff_model.php";
+            $tariff_class = new Tariff($mysqli);
+            
             require_once "Modules/feed/feed_model.php";
             $feed = new Feed($mysqli,$redis,$settings["feed"]);
             
@@ -150,12 +154,12 @@ function club_controller()
                 }
             }
 
-            $period = $tariff_model->get_club_tariff_period($club);
+            $period = $tariff_class->get_club_tariff_period($club);
             $live->tariff = $period["name"];
             $live->generator_price = $period["generator"];
             $live->import_price = $period["import"];
-            $live->unit_price = $tariff_model->get_unit_price($live->club,$live->generation);
-            $live->status = $tariff_model->get_status($live->unit_price);
+            $live->unit_price = $tariff_class->get_unit_price($live->club,$live->generation);
+            $live->status = $tariff_class->get_status($live->unit_price);
 
             return $live;
             break;
