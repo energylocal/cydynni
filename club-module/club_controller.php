@@ -57,13 +57,28 @@ function club_controller()
     {
         case "":
             $available_reports = array();
+            
+            require_once "Modules/tariff/tariff_model.php";
+            $tariff_class = new Tariff($mysqli);
+        
+            $tariffid = $tariff_class->get_user_tariff(2);
+            $tariffs = $tariff_class->list_periods($tariffid);
+            $tariffs_table = $tariff_class->getTariffsTable($tariffs);
         
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
                 
+                $tariffid = $tariff_class->get_user_tariff($userid);
+                $tariffs = $tariff_class->list_periods($tariffid);
+                $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+                
                 require_once "Modules/feed/feed_model.php";
                 $feed = new Feed($mysqli,$redis,$settings["feed"]);
-                $available_reports = $club_model->get_available_reports($feed,$feed->get_id($userid,"use_hh_est"));
+
+                require "Modules/data/account_data_model.php";
+                $account_data = new AccountData($feed, false, $tariff_class);
+                
+                $available_reports = $account_data->get_available_reports($userid);
                 
                 $tmp = $feed->get_user_feeds($userid);
                 
@@ -76,12 +91,10 @@ function club_controller()
 
             $route->format = "html";
 
-            $tariffs = $tariff_model->get_club_tariff($club);
-
             $content = view("Modules/club/app/client_view.php", array(
                 'session' => $session,'club' => $club,
                 'club_settings' => $club_settings[$club],
-                'tariffs_table' => $club_model->getTariffsTable($tariffs),
+                'tariffs_table' => $tariffs_table,
                 'tariffs' => $tariffs,
                 'available_reports'=>$available_reports
             ));
