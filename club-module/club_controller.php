@@ -153,13 +153,22 @@ function club_controller()
                     }
                 }
             }
-
-            $period = $tariff_class->get_club_tariff_period($club);
-            $live->tariff = $period["name"];
-            $live->generator_price = $period["generator"];
-            $live->import_price = $period["import"];
-            $live->unit_price = $tariff_class->get_unit_price($live->club,$live->generation);
-            $live->status = $tariff_class->get_status($live->unit_price);
+            
+            $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
+            $bands = $tariff_class->list_periods($current_tariff->tariffid);
+            
+            $date = new DateTime();
+            $date->setTimezone(new DateTimeZone("Europe/London"));
+            $hour = (int) $date->format("H");
+            
+            $band = $tariff_class->get_tariff_band($bands,$hour);
+            
+            $live->tariff = $band->name;
+            $live->hour = $hour;
+            $live->generator_price = $band->generator*1;
+            $live->import_price = $band->import*1;
+            $live->unit_price = $tariff_class->get_unit_price($live->club,$live->generation,$band);
+            $live->status = $tariff_class->get_status($live->unit_price,$bands);
 
             return $live;
             break;

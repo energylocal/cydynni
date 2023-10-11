@@ -331,6 +331,19 @@ class Tariff
         return $history;
     }
 
+    // Get club tariff with return limit 1 desc
+    public function get_club_latest_tariff($clubid) {
+        $clubid = (int) $clubid;
+        $result = $this->mysqli->query("SELECT id,name FROM tariffs WHERE clubid='$clubid' ORDER BY id DESC LIMIT 1");
+        $row = $result->fetch_object();
+        $t = new stdClass();
+        $t->tariffid = (int) $row->id;
+        $t->tariff_name = $row->name;
+        // $t->start = $this->first_assigned($row->id);
+        return $t;
+    }
+    
+
     // Replace with client side pre-processing?
     public function getTariffsTable($tariffs) {
         global $lang;
@@ -372,4 +385,110 @@ class Tariff
         }
         return $tariffs;
     }
+
+    // Get tariff bands for a given time
+    public function get_tariff_bands($tariff_history,$time) {
+        $bands = array();
+        foreach ($tariff_history as $tariff) {
+            if ($time>=$tariff->start) {
+                $bands = $tariff->bands;
+            }
+        }
+        return $bands;
+    }
+
+    // Get tariff band for a given hour
+    public function get_tariff_band($bands,$hour) {
+
+        // Work out which tariff period this hour falls into
+        for ($i=0; $i<count($bands); $i++) {
+            $start = (float) $bands[$i]->start;
+
+            // calculate end
+            $next = $i+1;
+            if ($next==count($bands)) $next=0;
+            $end = (float) $bands[$next]->start;
+
+            // if start is less than end then period is within a day
+            if ($start<$end) {
+                if ($hour>=$start && $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is greater than end then period is over midnight
+            } else if ($end<$start) {
+                if ($hour>=$start || $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is equal to end then period is 24 hours
+            // flat rate tariff
+            } else if ($start==$end) {
+                return $bands[$i];
+            }
+        }
+        return false;
+    }
+
+    // Calculate unit price 
+    public function get_unit_price($consumption, $generation, $band) {
+
+        // calculate self consumption and import
+        $import = 0.0;
+        if ($generation<=$consumption) $import = $consumption - $generation;
+        $self_consumption = $consumption - $import;
+
+        // calculate unit price
+        $unit_price = 0.0;
+        $generation_cost = $self_consumption * $band->generator;
+        $import_cost = $import * $band->import;
+        if ($consumption>0) {
+            $unit_price = number_format(($import_cost + $generation_cost) / $consumption,2)*1;
+        }
+        return $unit_price;
+    }
+
+    // find min and max import and generator prices
+    public function get_min_max_prices($periods) {
+
+        $min_import = 1000;
+        $max_import = 0;
+
+        $min_generator = 1000;
+        $max_generator = 0;
+
+        foreach ($periods as $period) {
+            if ($period->import < $min_import) $min_import = $period->import;
+            if ($period->import > $max_import) $max_import = $period->import;
+
+            if ($period->generator < $min_generator) $min_generator = $period->generator;
+            if ($period->generator > $max_generator) $max_generator = $period->generator;
+        }
+
+        return array(
+            "min_import" => $min_import,
+            "max_import" => $max_import,
+            "min_generator" => $min_generator,
+            "max_generator" => $max_generator,
+            "min" => min($min_import,$min_generator),
+            "max" => max($max_import,$max_generator)
+        );
+    }
+
+    // get green, amber, red status based on unit price in range of min and max
+    public function get_status($unit_price,$periods) {
+        $range = $this->get_min_max_prices($periods);
+
+        // split range into 3 equal parts
+        $step = ($range['max'] - $range['min']) / 3;
+
+        // calculate green, amber, red thresholds
+        $green = $range['min'] + $step;
+        $amber = $range['min'] + $step*2;
+        $red = $range['max'];
+
+        // calculate status
+        if ($unit_price<$green) return "green";
+        if ($unit_price<$amber) return "amber";
+        return "red";
+    }
+
 }
