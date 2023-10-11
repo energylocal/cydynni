@@ -239,6 +239,17 @@ class Tariff
             return false;
         }
     }
+    
+    // Get tariff standing charge
+    public function get_tariff_standing_charge($tariffid) {
+        $tariffid = (int) $tariffid;
+        $result = $this->mysqli->query("SELECT standing_charge FROM tariffs WHERE id=$tariffid");
+        if ($row = $result->fetch_object()) {
+            return $row->standing_charge*0.01;
+        } else {
+            return false;
+        }
+    }
 
     // User tariff methods
 
@@ -317,12 +328,13 @@ class Tariff
         $clubid = (int) $clubid;
 
         // get tariff list for club
-        $result = $this->mysqli->query("SELECT id,name FROM tariffs WHERE clubid='$clubid'");
+        $result = $this->mysqli->query("SELECT id,name,standing_charge FROM tariffs WHERE clubid='$clubid'");
         $history = array();
         while ($row = $result->fetch_object()) {
             $t = new stdClass();
             $t->tariffid = (int) $row->id;
             $t->tariff_name = $row->name;
+            $t->standing_charge = $row->standing_charge;
             
             $t->start = $this->first_assigned($row->id);
 
@@ -334,11 +346,12 @@ class Tariff
     // Get club tariff with return limit 1 desc
     public function get_club_latest_tariff($clubid) {
         $clubid = (int) $clubid;
-        $result = $this->mysqli->query("SELECT id,name FROM tariffs WHERE clubid='$clubid' ORDER BY id DESC LIMIT 1");
+        $result = $this->mysqli->query("SELECT id,name,standing_charge FROM tariffs WHERE clubid='$clubid' ORDER BY id DESC LIMIT 1");
         $row = $result->fetch_object();
         $t = new stdClass();
         $t->tariffid = (int) $row->id;
         $t->tariff_name = $row->name;
+        $t->standing_charge = $row->standing_charge;
         // $t->start = $this->first_assigned($row->id);
         return $t;
     }

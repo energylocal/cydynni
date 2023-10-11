@@ -6,7 +6,8 @@ $schema['tariffs'] = array(
     'name' => array('type' => 'varchar(32)', "default"=>""),
     'created' => array('type' => 'int(10)'),
     'first_assigned' => array('type' => 'int(10)'),
-    'last_assigned' => array('type' => 'int(10)')
+    'last_assigned' => array('type' => 'int(10)'),
+    'standing_charge' => array('type' => 'float')
 );
 
 $schema['tariff_periods'] = array(

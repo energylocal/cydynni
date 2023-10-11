@@ -26,6 +26,7 @@ $v = 1;
 		<tr>
 			<th>ID</th>
 			<th>Name</th>
+			<th>Standing Charge</th>
 			<th>Created</th>
 			<th>First assigned</th>
 			<th>Last used</th>
@@ -35,6 +36,7 @@ $v = 1;
 		<tr v-for="(tariff,index) in tariffs">
 			<td>{{tariff.id}}</td>
 			<td>{{ tariff.name }}</td>
+			<td>{{ tariff.standing_charge }}</td>
 			<td>{{tariff.created}}</th>
 			<td>{{tariff.first_assigned}}</th>
 			<td>{{tariff.last_assigned}}</td>

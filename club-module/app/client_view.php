@@ -86,7 +86,7 @@ var clubid = <?php echo $clubid; ?>;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
 
-var tariff_standing_charge = 0.178;
+var tariff_standing_charge = <?php echo $standing_charge; ?>;
 var tariffs = <?php echo json_encode($tariffs); ?>;
 
 var available_reports = <?php echo json_encode($available_reports); ?>;

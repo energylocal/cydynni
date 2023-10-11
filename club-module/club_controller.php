@@ -61,6 +61,7 @@ function club_controller()
             $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
             $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+            $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
         
             if ($session["read"]) {
                 $userid = (int) $session["userid"];
@@ -68,6 +69,8 @@ function club_controller()
                 $tariffid = $tariff_class->get_user_tariff($userid);
                 $tariffs = $tariff_class->list_periods($tariffid);
                 $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+                
+                $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
                 
                 require_once "Modules/feed/feed_model.php";
                 $feed = new Feed($mysqli,$redis,$settings["feed"]);
@@ -94,7 +97,8 @@ function club_controller()
                 'tariffs_table' => $tariffs_table,
                 'tariffs' => $tariffs,
                 'available_reports'=>$available_reports,
-                'clubid'=>$club_settings[$club]['club_id']
+                'clubid'=>$club_settings[$club]['club_id'],
+                'standing_charge' => $standing_charge
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
