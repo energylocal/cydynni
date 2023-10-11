@@ -300,6 +300,12 @@ function club_bargraph_load() {
     data.demand_forecast = [];
 
     last_actual_reading_time = 0;
+    
+    for (x in tariffs) {
+        if (data[tariffs[x].name] == undefined) {
+            data[tariffs[x].name] = [];
+        }
+    }
 
     for (var z in club_data) {
         var time = club_data[z][0];
@@ -346,33 +352,21 @@ function club_bargraph_load() {
         var selfuse = consumption - imprt;
 
         var unit_price = 0.0;
-
-        for (var x in tariffs) {
-            var on_tariff = false;
-            var sh = 1 * tariffs[x].start;
-            var eh = 1 * tariffs[x].end;
-
-            if (sh < eh && (hour >= sh && hour < eh)) on_tariff = true;
-            if (sh > eh && (hour >= sh || hour < eh)) on_tariff = true;
-            if (sh == eh) on_tariff = true;
-
-            if (data[tariffs[x].name] == undefined) {
-                data[tariffs[x].name] = [];
-            }
-
-            if (on_tariff) {
-                unit_price = (tariffs[x].import * imprt + tariffs[x].generator * selfuse) / consumption
-
-                data[tariffs[x].name][z] = [time, imprt];
-            } else {
-                data[tariffs[x].name][z] = [time, 0];
-            }
+        
+        for (x in tariffs) {
+            data[tariffs[x].name][z] = [time, 0];
         }
+        
+        // var bands = get_tariff_bands(tariff_history,time*0.001);
+        var band = get_tariff_band(tariffs,hour);
+        if (band) {
+            unit_price = (band.import * imprt + band.generator * selfuse) / consumption
+            data[band.name][z] = [time, imprt];
+        }
+            
         data.export[z] = [time, exprt];
         data.selfuse[z] = [time, selfuse];
-        data.price[z] = [time, unit_price];
-
-
+        data.price[z] = [time, unit_price]; // unit_price
     }
 
     clubseries = [];
@@ -386,6 +380,7 @@ function club_bargraph_load() {
     });
 
     // add series data for each tariff
+    
     for (x in tariffs) {
         clubseries.push({
             stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
@@ -408,6 +403,47 @@ function club_bargraph_load() {
 
     club_bargraph_draw();
 }
+
+function get_tariff_bands(tariff_history,time) {
+    var bands = []
+    for (var i in tariff_history) {
+        if (time>=tariff_history[i].start) {
+            bands = tariff_history[i].bands;
+        }
+    }
+    return bands;
+} 
+
+function get_tariff_band(bands, hour) {
+    // Work out which tariff period this hour falls into
+    for (let i = 0; i < bands.length; i++) {
+        const start = parseFloat(bands[i].start);
+
+        // Calculate end
+        let next = i + 1;
+        if (next === bands.length) next = 0;
+        const end = parseFloat(bands[next].start);
+
+        // If start is less than end, then the period is within a day
+        if (start < end) {
+            if (hour >= start && hour < end) {
+                return bands[i];
+            }
+        }
+        // If start is greater than end, then the period is over midnight
+        else if (end < start) {
+            if (hour >= start || hour < end) {
+                return bands[i];
+            }
+        }
+        // If start is equal to end, then the period is 24 hours (flat rate tariff)
+        else if (start === end) {
+            return bands[i];
+        }
+    }
+    return false;
+}
+
 
 function club_bargraph_resize() {
 
