@@ -92,7 +92,8 @@ function club_controller()
             $route->format = "html";
 
             $content = view("Modules/club/app/client_view.php", array(
-                'session' => $session,'club' => $club,
+                'session' => $session,
+                'club' => $club,
                 'club_settings' => $club_settings[$club],
                 'tariffs_table' => $tariffs_table,
                 'tariffs' => $tariffs,
@@ -350,11 +351,6 @@ function club_controller()
                 $result = remoteaccess_userlink_existing($mysqli,$userid);
                 if (!isset($result["success"]) || !$result["success"]) return $result;
             }
-            break;
-            
-        case "setupguide":
-            header("Location: https://github.com/energylocal/cydynni/blob/master/docs/userguide.md");
-            die;
             break;
             
         case "set-passiv-plan":
