@@ -7,7 +7,7 @@
 <div id="app">
 
     <div class="alert alert-warning" v-if="clubs.length == 0">
-        <p><b>Hello!</b></p><p>Looks like no clubs have been created yet. Create your first club to get started.</p><button class="btn">Create a new club</button>.
+        <p><b>Hello!</b></p><p>Looks like no clubs have been created yet. Create your first club to get started.<!--</p><button class="btn">Create a new club</button>.-->
     </div>
 
     <table class="table table-striped">
