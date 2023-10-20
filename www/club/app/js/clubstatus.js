@@ -39,6 +39,7 @@ function clubstatus_update() {
              if (live.tariff==tariffs[z].name) current_tariff = tariffs[z];
           }
           
+          
           var prc_gen = (100*(live.generation / live.club)).toFixed(0);
 
           // var tariff_name = live.tariff.toUpperCase()
@@ -55,7 +56,7 @@ function clubstatus_update() {
               $("#gen-prc").html("");
           }
           
-          var tariff_end = 1*current_tariff.end.split(":")[0];
+          var tariff_end = 0; // 1*current_tariff.end.split(":")[0];
           var hours_to_wait = tariff_end - (hour+1);
           if (hours_to_wait<0) hours_to_wait += 24;
 

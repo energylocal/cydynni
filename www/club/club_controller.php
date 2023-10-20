@@ -30,7 +30,7 @@ function club_controller()
     $route->format = "json";
     
     require "Modules/club/club_model.php";
-    $club_model = new Club($mysqli,$redis);
+    $club_model = new Club($mysqli,$user);
     
     if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
