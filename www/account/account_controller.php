@@ -13,7 +13,8 @@ function account_controller() {
             return $account->list($clubid);
         } else {
             unset($session["token"]);
-            return view("Modules/account/account_list_view.php",array('session'=>$session));
+            $clubid = get('clubid',false);
+            return view("Modules/account/account_list_view.php",array('session'=>$session, 'clubid'=>$clubid));
         }
     }
     

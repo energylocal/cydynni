@@ -128,8 +128,10 @@ foreach ($club_settings as $club) {
 
 <script>
 
-var selected_club = localStorage.getItem('selected_club');
+var selected_club = <?php echo $clubid; ?>;
+if (selected_club==null) selected_club = localStorage.getItem('selected_club');
 if (selected_club==null) selected_club = 1;
+
 var users = {}
 var original = {}
 var data_status = {}
