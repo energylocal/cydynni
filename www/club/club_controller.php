@@ -451,7 +451,6 @@ function club_controller()
         $id = get('id', true);
         return $club->delete($id);
     }
-
     
     return false;  
 }
