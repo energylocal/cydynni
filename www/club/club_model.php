@@ -115,10 +115,22 @@ class Club
         if (!$this->exists($id)) {
             return array("success"=>false,"message"=>"Club does not exist");
         }
+
+        // Get club userid
+        $result = $this->mysqli->query("SELECT userid FROM club WHERE id=$id");
+        $row = $result->fetch_object();
+        $club_userid = $row->userid;
+
+        // Delete club
         $stmt = $this->mysqli->prepare("DELETE FROM club WHERE id=?");
         $stmt->bind_param("i",$id);
         $stmt->execute();
         $stmt->close();
+
+        // Delete club user
+        $this->mysqli->query("DELETE FROM users WHERE `id`='$club_userid'");
+        // Note this does not delete feeds or inputs
+
         return array("success"=>true);
     }
 
@@ -142,5 +154,33 @@ class Club
         $id = (int) $id;
         $result = $this->mysqli->query("SELECT * FROM club WHERE id=$id");
         return $result->fetch_object();
+    }
+
+    public function set($id, $settings) {
+
+        // Limit to listed keys
+        $settings = array_intersect_key($settings,array_flip(array('share','generator','generator_color','export_color','languages','generation_feed','consumption_feed','generation_forecast_feed','consumption_forecast_feed','unitprice_comparison','gen_scale','gen_limit','skip_users')));
+
+        // Convert languages array to csv
+        if (isset($settings['languages'])) $settings['languages'] = implode(",",$settings['languages']);
+
+        // Convert skip_users array to csv
+        if (isset($settings['skip_users'])) $settings['skip_users'] = implode(",",$settings['skip_users']);
+
+        // Build query dynamically
+        $query = "UPDATE club SET ";
+        $params = array();
+        foreach ($settings as $key=>$value) {
+            $query .= "$key=?,";
+            $params[] = $value;
+        }
+        $query = rtrim($query,",");
+        $query .= " WHERE id=?";
+        $params[] = $id;
+
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param(str_repeat("s",count($params)),...$params);
+        $stmt->execute();
+        $stmt->close();
     }
 }
