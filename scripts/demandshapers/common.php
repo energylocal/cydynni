@@ -23,13 +23,18 @@ $tariff_class = new Tariff($mysqli);
 // ----------------------------------------------------------------
 // 1. Demand forecast based on average over the last 7 days
 // ----------------------------------------------------------------
-$use_id = $club_settings[$club]['consumption_feed'];
+$result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
+$club_settings = $result->fetch_array();
+$use_id = $club_settings['consumption_feed'];
+
 // Force cache reload
 $redis->hdel("feed:$use_id",'time');
+
 // Get time period for last 7 days of demand data
 $timevalue = $feed->get_timevalue($use_id);
 $end = $timevalue["time"]*1000;
 $start = $end - (3600*24.0*7*1000);
+
 // Fetch demand data
 $data = $feed->get_data($use_id,$start,$end,1800);
 
@@ -87,7 +92,7 @@ $gen_profile = array();
 // ----------------------------------------------------------------
 // 2. Generation forecast
 // ----------------------------------------------------------------
-$gen_id = $club_settings[$club]['generation_feed'];
+$gen_id = $club_settings['generation_feed'];
 // Force cache reload
 $redis->hdel("feed:$gen_id",'time');
 $timevalue = $feed->get_timevalue($gen_id);
@@ -152,7 +157,7 @@ $octopus_rows = array();
 
 
 
-$current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
+$current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
 $bands = $tariff_class->list_periods($current_tariff->tariffid);
 
 $td = 0;
