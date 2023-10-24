@@ -1,11 +1,4 @@
-<?php global $path, $session, $club_settings; 
-
-$clubs = array();
-foreach ($club_settings as $club) {
-    $clubs["".$club["club_id"]] = $club["name"];
-}
-
-?>
+<?php global $path; ?>
 
 <style>
 .label {cursor:pointer; }
