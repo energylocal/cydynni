@@ -11,10 +11,21 @@
     </div>
 
     <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Menu</th>
+            <th>Share</th>
+            <th>Generator</th>
+            <th></th>
+        </tr>
         <tr v-for="(club,index) in clubs">
+            <td>{{ club.id }}</td>
             <td><a :href="'<?php echo $path; ?>account/list?clubid='+club.id">{{ club.name }}</a></td>
             <td>{{ club.created }}</td>
-            <td>{{ club.share }}</td>
+            <td><input type="checkbox" v-model="club.menu" disabled></td>
+            <td><input type="checkbox" v-model="club.share" disabled></td>
             <td><span class="label">{{ club.generator }}</span></td>
             <td><button class="btn btn-mini btn-danger" @click="remove(index)">Delete</button></td>
         </tr>

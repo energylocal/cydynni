@@ -148,6 +148,11 @@ class Club
             $date->setTimestamp($row->created);
             // Format date 14th Jan 2014
             $row->created = $date->format('jS M Y');
+            $row->share = (bool) $row->share;
+            $row->menu = (bool) $row->menu;
+            $row->languages = explode(",",$row->languages);
+            $row->skip_users = explode(",",$row->skip_users);
+            
             $clubs[] = $row;
         }
         return $clubs;

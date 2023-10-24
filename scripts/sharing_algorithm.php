@@ -18,18 +18,26 @@ $dir = "/var/lib/phpfina/";
 
 $clubs = array();
 
-foreach ($club_settings as $key=>$club) {
-    if (isset($club['share']) && $club['share']) {
-        $c = array(
-            "name"=>$key,
-            "clubid"=>$club['club_id'],
-            "gen_id"=>$club['generation_feed'],
-            "gen_scale"=>$club['gen_scale'],
-            "skip_users"=>$club['skip_users']
-        );
-        if (isset($club['gen_limit'])) $c['gen_limit'] = $club['gen_limit'];
-        $clubs[] = $c;
+$result = $mysqli->query("SELECT * FROM club WHERE share=1");
+while($row = $result->fetch_array()) {
+
+    $c = array(
+        "name"=>$row['key'],
+        "clubid"=>$row['id'],
+        "gen_id"=>$row['generation_feed'],
+        "gen_scale"=>$row['gen_scale']
+    );
+
+    if ($row['skip_users']!="") {
+        $c["skip_users"] = explode(",",$row['skip_users']);
+        // cast skip users to int
+        foreach ($c["skip_users"] as &$userid) $userid = (int) $userid;
+    } else {
+        $c["skip_users"] = array();
     }
+
+    if ($row['gen_limit']>0) $c['gen_limit'] = $row['gen_limit'];
+    $clubs[] = $c;
 }
 
 foreach ($clubs as $club)
