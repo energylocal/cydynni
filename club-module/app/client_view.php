@@ -14,9 +14,11 @@ $app_path = $path."Modules/club/app/";
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 
 <script src="<?php echo $path; ?>Lib/moment.min.js"></script>
-<script> 
+<script>
     var _user = {lang:"<?php isset($_SESSION['lang'])?$_SESSION['lang']:''; ?>"};
 </script>
 <script src="<?php echo $path; ?>Lib/user_locale.js"></script>
@@ -50,10 +52,11 @@ $app_path = $path."Modules/club/app/";
 
     <div class="page" name="household">
         <?php echo view("Modules/club/app/client_household_view.php", array(
-            'app_path'=>$app_path, 
+            'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
-            'tariffs'=>$tariffs
+            'tariffs'=>$tariffs,
+            'user_attributes'=>$user_attributes,
         )); ?>
     </div>
    
@@ -113,14 +116,21 @@ var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov",
 var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 
+var session = <?php echo json_encode($session); ?>;
+var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : 0; ?>;
+var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : 0; ?>;
+
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/comparison.js?v=<?php echo $v; ?>"></script>
+
 
 <script>
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
@@ -150,7 +160,7 @@ if (!session.read) {
   $("#reports").hide();
 } else {
   $("#login-block").hide();
-  $(".household-block").show();
+  $(".historic-block").show();
   
   $("#logout").show();
   $("#account").show();
@@ -278,6 +288,7 @@ club_bargraph_load();
 if (session.read) {
     household_summary_load();
     household_bargraph_load();
+    household_comparison_bargraph_load();
 }
 
 resize();
@@ -295,13 +306,33 @@ document.querySelectorAll('.household-view-scope button').forEach(button => {
     switch (button.value) {
     case "historic":
       $("#your-score").show();
+      $("#historic-period-select").show();
       $("#your-usage").show();
       $("#realtime-power").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").hide();
       break;
     case "live":
       household_realtime_load();
+      $("#historic-period-select").hide();
       $("#your-score").hide();
       $("#your-usage").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").hide();
+      break;
+    case "comparison":
+      $("#historic-period-select").show();
+      $(".historic-block").hide();
+      $("#realtime-power").hide();
+      $("#tariff-settings").hide();
+      $("#comparison").show();
+      break;
+    case 'tariff-settings':
+      $("#historic-period-select").hide();
+      $("#your-usage").hide();
+      $("#realtime-power").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").show();
       break;
     default:
       alert("Household view scope '"+button.value+"' not supported.");
@@ -356,7 +387,8 @@ $(".period-select").change(function(event) {
     $(".household_date").html(household_date_text);
     
     // Copy to household
-    household_bargraph_load()
+    household_bargraph_load();
+    household_comparison_bargraph_load();
 });
 
 // ----------------------------------------------------------------------

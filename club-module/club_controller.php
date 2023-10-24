@@ -115,7 +115,9 @@ function club_controller()
             $tariffs = $tariff_model->get_club_tariff($club);
 
             $content = view("Modules/club/app/client_view.php", array(
-                'session' => $session,'club' => $club,
+                'session' => $session,
+                'club' => $club,
+                'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
                 'club_settings' => $club_settings[$club],
                 'tariffs_table' => $club_model->getTariffsTable($tariffs),
                 'tariffs' => $tariffs,
@@ -123,7 +125,6 @@ function club_controller()
             ));
 
             return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
-            break;
 
         case "report":
             if ($session["read"]) {

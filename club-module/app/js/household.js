@@ -33,7 +33,7 @@ function household_summary_load()
       household_power_feedid = session.feeds.meter_power
   }
 
-  $("#realtime-power").hide();
+//   $("#realtime-power").hide();
 }
 
 function household_realtime_load() {
