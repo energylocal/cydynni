@@ -59,26 +59,10 @@ class AccountData
         foreach ($tariff_history as $tariff) {
             $tariff->bands = $this->tariff->list_periods($tariff->tariffid);
         }
-
-        // $club_userid = $this->club->get_userid($clubid);
-        // Check if user has consumption feed
-        // Load half hourly data between start and end times
-        // if (!$use_feedid = $this->feed->get_id($club_userid,"club_demand_hh")) {
-        //    return array("success"=>false, "message"=>"Missing consumption feed");
-        //}
-
-        // $gen_feedid = $this->feed->get_id($club_userid,"club_gen_hh");
-        global $club_settings;
         
-        foreach ($club_settings as $club) {
-            if ($club['club_id']==$clubid) {
-                $gen_feedid = $club['generation_feed'];
-                $use_feedid = $club['consumption_feed'];
-                break;
-            }
-        }
+        $club = $this->club->get($clubid);
         
-        return $this->daily_summary($tariff_history, $use_feedid, $gen_feedid ,$start, $end);
+        return $this->daily_summary($tariff_history, $club->consumption_feed, $club->generation_feed, $start, $end);
     }
 
     public function daily_summary($tariff_history, $use_feedid, $gen_feedid ,$start, $end) 
@@ -276,7 +260,7 @@ class AccountData
         $userid = (int) $userid;
 
         // Get feedid of consumption feed
-        if (!$use_feedid = $this->feed->get_id($userid,"use_hh_octopus")) {
+        if (!$use_feedid = $this->feed->get_id($userid,"use_hh_est")) {
             return array("success"=>false, "message"=>"Missing consumption feed");
         }
         // Get meta data for consumption feed

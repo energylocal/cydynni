@@ -17,7 +17,7 @@ defined('EMONCMS_EXEC') or die('Restricted access');
 function club_controller()
 {
     global $mysqli, $redis, $session, $route, $user, $settings, $available_clubs;
-    global $club_settings, $club;
+    global $club;
     global $lang;
 
     if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
@@ -25,6 +25,11 @@ function club_controller()
     if (isset($_GET['lang']) && $_GET['lang']=="en") $session['lang'] = "en_GB";
     if (isset($_GET['iaith']) && $_GET['iaith']=="en") $session['lang'] = "en_GB";
     $lang = $session["lang"];
+
+    $result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
+    $row = $result->fetch_array();
+    $club_settings = array();
+    $club_settings[$club] = $row;
     
     if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
         $session['lang'] = "en_GB";
@@ -53,7 +58,7 @@ function club_controller()
         require_once "Modules/tariff/tariff_model.php";
         $tariff_class = new Tariff($mysqli);
     
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
+        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
         $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
         $tariffs_table = $tariff_class->getTariffsTable($tariffs);
         $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
@@ -91,7 +96,7 @@ function club_controller()
             'tariffs_table' => $tariffs_table,
             'tariffs' => $tariffs,
             'available_reports'=>$available_reports,
-            'clubid'=>$club_settings[$club]['club_id'],
+            'clubid'=>$club_settings[$club]['id'],
             'standing_charge' => $standing_charge
         ));
 
@@ -148,7 +153,7 @@ function club_controller()
             }
         }
         
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["club_id"]);
+        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
         $bands = $tariff_class->list_periods($current_tariff->tariffid);
         
         $date = new DateTime();
@@ -225,7 +230,7 @@ function club_controller()
     // Password reset
     if ($route->action == "passwordreset") {
         $route->format = "json";
-        $user->appname = "Cydynni"; 
+        $user->appname = "Cydynni";
         $users = $user->get_usernames_by_email(get('email'));
         if ($users && count($users)) return $user->passwordreset($users[0]["username"],get('email'));
         else return array("success"=>false, "message"=>"User not found");

@@ -1,9 +1,10 @@
 <?php
+
+require "club_settings.php";
+
 chdir("/var/www/emoncms");
 require "Lib/load_emoncms.php";
 require "core.php";
-
-
 
 require_once "Modules/club/club_model.php";
 $club_class = new Club($mysqli,$user);
@@ -16,8 +17,8 @@ foreach ($clubs as $club) {
 $mysqli->query("TRUNCATE TABLE `club`");
 
 // Create clubs
-foreach ($club_settings as $club_name=>$club) {
-    echo "- creating club: $club_name\n";
+foreach ($club_settings as $club_key=>$club) {
+    echo "- creating club: $club_key\n";
     $result = $club_class->create($club['name']);
     if ($result["success"]) {
         $clubid = $result['id'];

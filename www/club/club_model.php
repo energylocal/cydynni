@@ -78,9 +78,12 @@ class Club
             return array("success"=>false,"message"=>"Club name already exists");
         }
 
+        // Create lowercase key without spaces
+        $key = strtolower(str_replace(" ","",$name));
+
         // Create club
-        $stmt = $this->mysqli->prepare("INSERT INTO club (name,created,userid) VALUES (?,?,0)");
-        $stmt->bind_param("si",$name,$time);
+        $stmt = $this->mysqli->prepare("INSERT INTO club (`key`,`name`,created,userid) VALUES (?,?,?,0)");
+        $stmt->bind_param("ssi",$key,$name,$time);
         $stmt->execute();
         $stmt->close();
         $clubid = $this->mysqli->insert_id;
@@ -159,7 +162,7 @@ class Club
     public function set($id, $settings) {
 
         // Limit to listed keys
-        $settings = array_intersect_key($settings,array_flip(array('share','generator','generator_color','export_color','languages','generation_feed','consumption_feed','generation_forecast_feed','consumption_forecast_feed','unitprice_comparison','gen_scale','gen_limit','skip_users')));
+        $settings = array_intersect_key($settings,array_flip(array('menu','share','generator','generator_color','export_color','languages','generation_feed','consumption_feed','generation_forecast_feed','consumption_forecast_feed','unitprice_comparison','gen_scale','gen_limit','skip_users')));
 
         // Convert languages array to csv
         if (isset($settings['languages'])) $settings['languages'] = implode(",",$settings['languages']);

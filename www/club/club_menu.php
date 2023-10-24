@@ -1,7 +1,10 @@
 <?php
-global $session, $redis, $path, $club, $available_clubs_menu, $club_settings;
+global $session, $redis, $mysqli, $path, $club;
 
-
+$result = $mysqli->query("SELECT `key`,`name` FROM club WHERE menu=1");
+while($row = $result->fetch_array()) {
+    $available_clubs_menu[$row['key']] = $row['name'];
+}
 
 $apikeystr = "";
 if (isset($_GET['apikey'])) $apikeystr = "?apikey=".$_GET['apikey'];
@@ -18,10 +21,10 @@ $menu["cydynni"] = array(
 if (!$session["read"]) {
     $menu["cydynni"]['l2'] = array();
     
-    foreach ($available_clubs_menu as $i=>$club_name) {
-        $menu["cydynni"]['l2'][$club_name] = array(
-            "name"=>$club_settings[$club_name]["name"],
-            "href"=>$club_name, 
+    foreach ($available_clubs_menu as $key=>$name) {
+        $menu["cydynni"]['l2'][$name] = array(
+            "name"=>$name,
+            "href"=>$key, 
             "icon"=>"star", 
             "order"=>$i
         );

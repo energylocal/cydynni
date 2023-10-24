@@ -14,6 +14,8 @@
         <tr v-for="(club,index) in clubs">
             <td><a :href="'<?php echo $path; ?>account/list?clubid='+club.id">{{ club.name }}</a></td>
             <td>{{ club.created }}</td>
+            <td>{{ club.share }}</td>
+            <td><span class="label">{{ club.generator }}</span></td>
             <td><button class="btn btn-mini btn-danger" @click="remove(index)">Delete</button></td>
         </tr>
     </table>
