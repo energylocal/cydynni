@@ -40,10 +40,14 @@ function tariff_controller()
             if (!$club_info = $club->get($clubid)) {
                 return "Club not found";
             }*/
+            
+            require "Modules/club/club_model.php";
+            $club_class = new Club($mysqli, $user);
+            $clubs = $club_class->list_assoc();
 
             return view("Modules/tariff/tariffs_view.php", array(
                 "clubid"=>$clubid,
-                "club_name"=>"Test" //$club_info->name
+                "clubs"=>$clubs
             ));
         }
     }

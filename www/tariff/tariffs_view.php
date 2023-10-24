@@ -1,20 +1,25 @@
 <?php
-defined('EMONCMS_EXEC') or die('Restricted access');
+  defined('EMONCMS_EXEC') or die('Restricted access');
 
-global $path;
-$v = 1;
+  global $path;
+  $v = 1;
 ?>
 <script src="<?php echo $path; ?>Lib/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
 
 <div id="app">
 
-	<h3><?php echo $club_name; ?>: Tariffs</h3>
+	<h3>Tariffs</h3>
 
-	<ul class="nav nav-tabs">
-		<li><a href="<?php echo $path; ?>account/list?clubid=<?php echo $clubid; ?>">Accounts</a></li>
-		<li class="active"><a href="<?php echo $path; ?>tariff/list?clubid=<?php echo $clubid; ?>">Tariffs</a></li>
-	</ul>
+  <p>	
+  <div class="input-prepend">
+    <span class="add-on">Select Club:</span>
+    <select v-model="selected_club" @change="list_tariffs">
+      <option v-for="(key,id) in clubs" :value="id">{{ key }}</option>
+    </select>
+  </div>
+  </p>
+
 
 	<div class="input-prepend input-append">
 		<span class="add-on">New tariff</span>
@@ -132,7 +137,11 @@ $v = 1;
 </div>
 
 <script>
-	var clubid = <?php echo $clubid; ?>;
+  var selected_club = <?php echo $clubid; ?>;
+  if (!selected_club) selected_club = localStorage.getItem('selected_club');
+  if (selected_club==null) selected_club = 1;
+  
+  var clubs = <?php echo json_encode($clubs); ?>;
 
 	app = new Vue({
 		el: '#app',
@@ -143,14 +152,16 @@ $v = 1;
 			new_tariff_name: "",
 			selected_tariff: false,
 			tariff_periods: [],
-			edit_period_index: false
+			edit_period_index: false,
+			selected_club: selected_club,
+			clubs: clubs
 		},
 		methods: {
 			add_tariff: function() {
 				// url encode post body
 				// club/tariff/create
 				$.post(path + "tariff/create", {
-						club: clubid,
+						club: app.selected_club,
 						name: app.new_tariff_name
 					})
 					.done(function(data) {
@@ -162,7 +173,9 @@ $v = 1;
 					});
 			},
 			list_tariffs: function() {
-				$.get(path + "tariff/list.json?clubid=" + clubid)
+			  localStorage.setItem('selected_club',app.selected_club);
+			  
+				$.get(path + "tariff/list.json?clubid=" + app.selected_club)
 					.done(function(data) {
 						app.tariffs = data;
 					});
