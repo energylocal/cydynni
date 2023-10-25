@@ -33,7 +33,6 @@ function household_comparison_bargraph_load() {
 function unixTimeToDay(unixTimestamp) {
   const date = new Date(unixTimestamp * 1000); // Convert to milliseconds
   const options = { month: 'short', day: 'numeric', daySuffix: 'numeric' };
-  console.log(unixTimestamp+ " - "+date.toLocaleDateString('en-GB', options));
   return date.toLocaleDateString('en-GB', options);
 }
 
