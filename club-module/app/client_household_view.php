@@ -1,3 +1,5 @@
+ 
+            <!-------------- Login section ----------------->
             <div id="login-block" class="block">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>
                 <div class="block-content">
@@ -21,6 +23,7 @@
                 </div>
             </div>
 
+            <!----------------- Missing data section ---------------------->
             <div id="missing-data-block" class="block hide">
                 <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
@@ -139,7 +142,7 @@
                 </div>
             </div>
 
-
+            <!-------------------- Comparison section --------------------->
             <div id="comparison" class="block household-block" style="display:none;">
                 <div class="block-title hideable-block bg-household">
                   <?php echo t("Previous usage comparison"); ?>
@@ -167,7 +170,8 @@
                     </div>
                 </div>
             </div>
-            
+          
+            <!------------------ Score and savings section -------------------->
             <div id="your-score" class="block household-block historic-block">
               <div class="block-title hideable-block bg-household">
                 <?php echo t("Your Score and Savings"); ?>
@@ -321,4 +325,7 @@
             </div>
 
             
+
+
+
 
