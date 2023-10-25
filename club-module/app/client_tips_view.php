@@ -1,5 +1,5 @@
 <div class="block">
-                <div class="block-title hideable-block bg-tips"><?php echo t("Tips"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title bg-tips"><?php echo t("Tips"); ?></div>
                 <div class="block-content bg-tips" style="padding:20px">
                     <figure class="tips-appliance show-fig">
                         <img src="<?php echo $app_path; ?>images/dishwasher.png">
