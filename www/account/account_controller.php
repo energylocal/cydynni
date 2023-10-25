@@ -14,7 +14,12 @@ function account_controller() {
         } else {
             unset($session["token"]);
             $clubid = get('clubid',false,0);
-            return view("Modules/account/account_list_view.php",array('session'=>$session, 'clubid'=>$clubid));
+            
+            require "Modules/club/club_model.php";
+            $club_class = new Club($mysqli, $user);
+            $clubs = $club_class->list_assoc();
+            
+            return view("Modules/account/account_list_view.php",array('session'=>$session, 'clubid'=>$clubid, 'clubs'=>$clubs));
         }
     }
     

@@ -151,9 +151,23 @@ class Club
             $row->share = (bool) $row->share;
             $row->menu = (bool) $row->menu;
             $row->languages = explode(",",$row->languages);
-            $row->skip_users = explode(",",$row->skip_users);
+            
+            if ($row->skip_users) {
+                $row->skip_users = explode(",",$row->skip_users);
+            } else {
+                $row->skip_users = array();
+            }
             
             $clubs[] = $row;
+        }
+        return $clubs;
+    }
+    
+    public function list_assoc() {
+        $result = $this->mysqli->query("SELECT `id`,`name` FROM club ORDER BY created ASC");
+        $clubs = array();
+        while ($row = $result->fetch_object()) {
+            $clubs[$row->id] = $row->name;
         }
         return $clubs;
     }
