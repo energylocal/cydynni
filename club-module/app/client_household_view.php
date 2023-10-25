@@ -50,17 +50,18 @@
             <!------------------------- Household context / period selection ------------------------->
             <div id="context-selection" class="block household-block">
               <div class="block-title bg-household" style="padding-right: 0px;">
-              <div class="btn-toolbar household-view-scope"" data-toggle="buttons-radio">
-                <div class="btn-group">
-                  <button class="btn active" value="historic">Historic</button>
-                  <button class="btn" value="live">Live</button>
-                  <button class="btn" value="comparison">Comparison</button>
-                </div>
-                <div class="btn-group">
-                  <button class="btn" value="tariff-settings">Tariff settings</button>
-                </div>
-                <div class="visnav-block" style="margin-top: 0px;">
-                  <select id="historic-period-select" class="btn-select period-select" style="height: 38px; margin-top: 0px;"></select>
+                <div class="btn-toolbar household-view-scope"" data-toggle="buttons-radio">
+                  <div class="btn-group">
+                    <button class="btn active" value="historic">Historic</button>
+                    <button class="btn" value="live">Live</button>
+                    <button class="btn" value="comparison">Comparison</button>
+                  </div>
+                  <div class="btn-group">
+                    <button class="btn" value="tariff-settings">Tariff settings</button>
+                  </div>
+                  <div class="visnav-block" style="margin-top: 0px;">
+                    <select id="historic-period-select" class="btn-select period-select" style="height: 38px; margin-top: 0px;"></select>
+                  </div>
                 </div>
               </div>
             </div>
