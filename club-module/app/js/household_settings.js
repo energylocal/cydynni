@@ -1,11 +1,12 @@
 function updateTargetMin() {
     targetMin = $("#dailyTargetMin").val();
     setUserAttribute("targetMin", parseFloat(targetMin));
+    // TODO redraw any graphs
 }
 function updateTargetMax() {
     targetMax = $("#dailyTargetMax").val();
     setUserAttribute("targetMax", parseFloat(targetMax));
-    // Todo redraw any graphs
+    // TODO redraw any graphs
 }
 function updateTariff() {
     const tariff = $("#tariff").val();
