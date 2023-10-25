@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 52;
+$v = 61;
 
 $app_path = $path."Modules/club/app/";
 
@@ -82,14 +82,12 @@ var app_path = "<?php echo $app_path; ?>";
 var club = "<?php echo $club; ?>";
 var club_path = [path, club, '/'].join('');
 var is_hub = false;
+var clubid = <?php echo $clubid; ?>;
 
 var club_settings = <?php echo json_encode($club_settings);?>;
 
-var tariff_standing_charge = 0.178;
-if (club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge!=undefined) {
-    tariff_standing_charge = club_settings.tariff_history[club_settings.tariff_history.length-1].standing_charge*0.01;
-}
-var tariffs = club_settings.tariff_history[club_settings.tariff_history.length-1]['tariffs'];
+var tariff_standing_charge = <?php echo $standing_charge; ?>;
+var tariffs = <?php echo json_encode($tariffs); ?>;
 
 var available_reports = <?php echo json_encode($available_reports); ?>;
 
@@ -227,7 +225,7 @@ function resize() {
 // Fetch start time of consumption data
 date_selected = "fortnight";
 var out = '<option value="custom" style="display:none">'+t("Custom")+'</option>';
-var period_select_options = ["day","week","fortnight","month","year"];
+var period_select_options = ["week","fortnight","month","year"];
 for (var z in period_select_options) {
     out += '<option value="'+period_select_options[z]+'">'+t(ucfirst(period_select_options[z]))+'</option>';
 }

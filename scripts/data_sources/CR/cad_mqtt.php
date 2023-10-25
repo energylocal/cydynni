@@ -102,6 +102,9 @@ while(true) {
         while ($row = $result->fetch_object()) {
             $userid = $row->userid;
             $cad_serial = $row->cad_serial;
+            if (strlen("$cad_serial") > 0 && strlen("$cad_serial") < 10 ) {
+		$log->error("Invalid cad serial for user $userid: $topic");
+	    }
             if (strlen("$cad_serial")==10) {
                 $meters[$cad_serial] = array("userid"=>$userid, "power_feed"=>false, "volt_feed"=>false, "reply"=>true);
                 
@@ -235,7 +238,6 @@ function message($message)
 
 function process_json($cad_serial,$json) {
     global $log,$meters,$feed,$feed_last_update;
-
     $time = time();
     if (isset($json->ts)) {
         $time = strtotime($json->ts);
