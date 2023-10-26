@@ -14,18 +14,14 @@ http://openenergymonitor.org
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
-function chooseLanguage($club, $languages) {
-    global $club_settings, $club;
+function chooseLanguage(string $languages) { // e.g. "cy,en"
+
+    $languages = explode(",", $languages);
 
     // Language of last resort    
     $lang = "en";
 
-    // First lang code in settings used as default if available
-    if ($club == "") {
-        $log = new EmonLogger(__FILE__);
-        $log->error("Club unknown, defaulting to en_GB");
-        return "en_GB";
-    }
+    // First lang code in settings used as default if available    
     if (count($languages) > 0) {
       $lang = $languages[0];
     }
