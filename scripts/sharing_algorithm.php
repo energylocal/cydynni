@@ -18,18 +18,24 @@ $dir = "/var/lib/phpfina/";
 
 $clubs = array();
 
-foreach ($club_settings as $key=>$club) {
-    if (isset($club['share']) && $club['share']) {
-        $c = array(
-            "name"=>$key,
-            "clubid"=>$club['club_id'],
-            "gen_id"=>$club['generation_feed'],
-            "gen_scale"=>$club['gen_scale'],
-            "skip_users"=>$club['skip_users']
-        );
-        if (isset($club['gen_limit'])) $c['gen_limit'] = $club['gen_limit'];
-        $clubs[] = $c;
+$result = $mysqli->query("SELECT * FROM club WHERE share=1");
+while($row = $result->fetch_array()) {
+
+    $c = array(
+        "name"=>$row['key'],
+        "clubid"=>$row['id'],
+        "gen_id"=>$row['generation_feed'],
+        "gen_scale"=>$row['gen_scale']
+    );
+
+    if ($row['skip_users']!="") {
+        $c["skip_users"] = explode(",",$row['skip_users']);
+    } else {
+        $c["skip_users"] = array();
     }
+
+    if ($row['gen_limit']>0) $c['gen_limit'] = $row['gen_limit'];
+    $clubs[] = $c;
 }
 
 foreach ($clubs as $club)
@@ -37,7 +43,9 @@ foreach ($clubs as $club)
     // ----------------------------------------------------------------
     // 1. Start by finding out the start time of the feeds to aggregate
     // ----------------------------------------------------------------
-    echo "1. Prepare and open generation and consumption feeds\n";
+    echo "\n";
+    echo "1. Club ".$club["name"]."\n";
+    echo "2. Prepare and open generation and consumption feeds\n";
 
     $start_time = 2000000000; // sufficiently large 2033
 
@@ -45,12 +53,15 @@ foreach ($clubs as $club)
     $meta = array();
     $fh = array();
     $buffer = array();
+    
 
     $result_users = $mysqli->query("SELECT * FROM cydynni WHERE clubs_id=".$club["clubid"]." ORDER BY userid ASC");
     while ($row = $result_users->fetch_object()) {
         $userid = $row->userid;
         $clubid = $row->clubs_id;
+  
         if (!in_array($userid,$club["skip_users"])) {
+        
             if ($use_hh_id = $feed->get_id($userid,"use_hh_est")) {
                 $meta_tmp = getmeta($dir,$use_hh_id);
                 if ($meta_tmp->start_time>0) {
@@ -81,7 +92,7 @@ foreach ($clubs as $club)
             }
         }
     }
-
+    
     // Load hydro feed meta data
     $gen_id = $club["gen_id"];
     $meta[$gen_id] = getmeta($dir,$gen_id);

@@ -1,4 +1,9 @@
 <?php
+
+/*
+	Luke has turned this off, as it it was stopping any estimate for recent unobtained data.
+	Forecast is still a bit clunky mind...
+*/
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 // -----------------------
 $date = new DateTime();
