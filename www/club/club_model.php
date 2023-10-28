@@ -150,19 +150,20 @@ class Club
             $row->created = $date->format('jS M Y');
             $row->share = (bool) $row->share;
             $row->menu = (bool) $row->menu;
+            $row->has_generator = (bool) $row->has_generator;
             $row->languages = explode(",",$row->languages);
-            
+
             if ($row->skip_users) {
                 $row->skip_users = explode(",",$row->skip_users);
             } else {
                 $row->skip_users = array();
             }
-            
+
             $clubs[] = $row;
         }
         return $clubs;
     }
-    
+
     public function list_assoc() {
         $result = $this->mysqli->query("SELECT `id`,`name` FROM club ORDER BY created ASC");
         $clubs = array();

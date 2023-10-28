@@ -56,9 +56,9 @@ function club_controller()
     $log = new EmonLogger(__FILE__);
     $log->info('club route: '.json_encode($route));
 
-
     $result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
     $row = $result->fetch_array();
+    $row["has_generator"] = (bool) $row["has_generator"];
     $club_settings = array();
     $club_settings[$club] = $row;
 
