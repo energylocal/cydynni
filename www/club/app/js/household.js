@@ -32,6 +32,10 @@ function household_summary_load() {
     } else if (session.feeds.meter_power != undefined) {
         household_power_feedid = session.feeds.meter_power
     }
+}
+
+
+function household_realtime_load() {
 
     if (household_power_feedid) {
         household_realtime(function () {
@@ -85,11 +89,12 @@ function draw_summary(result) {
     household_pie_data_energy = [];
 
     // COST
+    let generationCost = club_settings.has_generator ? result.generation_cost[tariff_name]: 0;
     for (var tariff_name in result.cost) {
         if (tariff_name != 'total') {
             household_pie_data_cost.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation_cost[tariff_name],
+                generation: generationCost,
                 import: result.import_cost[tariff_name],
                 color: tariff_colors[tariff_name.toLowerCase()]
             });
@@ -97,21 +102,21 @@ function draw_summary(result) {
     }
 
     // ENERGY
+    let generationValue = club_settings.has_generator ? result.generation[tariff_name]: 0;
     for (var tariff_name in result.demand) {
         if (tariff_name != 'total') {
             household_pie_data_energy.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation[tariff_name],
+                generation: generationValue,
                 import: result.import[tariff_name],
-                color: tariff_colors[tariff_name.toLowerCase()]
+                color: tariff_colors[tariff_name]
             });
         }
     }
 
     // Create aggregated legend item for hydro
     var legend = "";
-
-    if (result.generation.total != undefined) {
+    if (club_settings.has_generator && result.generation.total != undefined) {
         legend += '<tr>'
         legend += '<td><div class="key" style="background-color:' + club_settings.generator_color + '"></div></td>'
         legend += '<td><b>' + t(ucfirst(club_settings.generator)) + '</b><br>'
@@ -301,8 +306,9 @@ function household_bargraph_load() {
                             series_data[c].push([time, result[z].import[c]]);
                         }
                     }
-                    series_data['generation'].push([time, result[z].generation.total]);
-
+                    if (club_settings.has_generator) {
+                    	series_data['generation'].push([time, result[z].generation.total]);
+		    }
                     household_daily_index_map[time] = z;
                 }
 
