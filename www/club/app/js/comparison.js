@@ -4,7 +4,7 @@ let previous_household_comparison_data = [];
 
 function household_comparison_bargraph_load() {
   $.ajax({
-    url: path+club+"/household-daily-summary?start="+view.start+"&end="+view.end+"&apikey="+session['apikey_read'],
+    url: path+"/data/daily?start="+(view.start/1000)+"&end="+(view.end/1000)+"&apikey="+session['apikey_read'],
     dataType: 'json',
     async: true,                      
     success: function(result) {
@@ -16,10 +16,10 @@ function household_comparison_bargraph_load() {
 
 
   // alert(JSON.stringify(view));
-  const start = view.start - (1000*60*60*24*7);
-  const end = view.end+(1000*60*60*7);
+  const start = view.start - (60*60*24*7);
+  const end = view.end+(60*60*7);
   $.ajax({
-    url: path+club+"/household-daily-summary?start="+start+"&end="+end+"&apikey="+session['apikey_read'],
+    url: path+"/data/daily?start="+start+"&end="+end+"&apikey="+session['apikey_read'],
     dataType: 'json',
     async: true,                      
     success: function(result) {
