@@ -102,7 +102,7 @@
                           <input type="number" step="0.5" id="dailyTargetMin" placeholder="kWh/day" value="<?php echo $user_attributes->targetMin; ?>" onchange="updateTargetMin()">
                         </div>
                       </div>
-                      <p><i>Setting daily target usage may hel you understand where your electricity is being used.</i></p>
+                      <p><i>Setting a daily target usage may help you to understand where your electricity is being used.</i></p>
                     </fieldset>
                   </form>
                 </div>
