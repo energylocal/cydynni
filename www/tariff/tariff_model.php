@@ -13,6 +13,8 @@
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
+require "missing_tariff_exception.php";
+
 class Tariff
 {
     private $mysqli;
@@ -35,7 +37,7 @@ class Tariff
             }
             $active_user_count[$row->tariffid]++;
         }
-        
+
         $result = $this->mysqli->query("SELECT * FROM tariffs WHERE clubid='$clubid'");
         $tariffs = array();
         while ($row = $result->fetch_object()) {
@@ -47,7 +49,7 @@ class Tariff
             } else {
                 $row->active_users = 0;
             }
-            
+
             if ($first_assigned = $this->first_assigned($row->id)) {
                 $row->last_assigned = date("jS F Y",$first_assigned);
             } else {
@@ -68,7 +70,7 @@ class Tariff
         if (preg_match('/[^a-zA-Z0-9\s\-_\.]/', $name)) {
             return array("success"=>false, "message"=>"Tariff name can only contain a-z A-Z 0-9 whitespace and - _ .");
         }
-        
+
         $time = time();
         $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created) VALUES (?,?,?)");
         $stmt->bind_param("isi",$clubid,$name,$time);
@@ -335,7 +337,7 @@ class Tariff
             $t->tariffid = (int) $row->id;
             $t->tariff_name = $row->name;
             $t->standing_charge = $row->standing_charge;
-            
+
             $t->start = $this->first_assigned($row->id);
 
             $history[] = $t;
@@ -349,13 +351,16 @@ class Tariff
         $result = $this->mysqli->query("SELECT id,name,standing_charge FROM tariffs WHERE clubid='$clubid' ORDER BY id DESC LIMIT 1");
         $row = $result->fetch_object();
         $t = new stdClass();
+        if (mysqli_num_rows($result) == 0) {
+          throw new MissingTariffException("No tariff for club id $clubid");
+        }
         $t->tariffid = (int) $row->id;
         $t->tariff_name = $row->name;
         $t->standing_charge = $row->standing_charge;
         // $t->start = $this->first_assigned($row->id);
         return $t;
     }
-    
+
 
     // Replace with client side pre-processing?
     public function getTariffsTable($tariffs) {
