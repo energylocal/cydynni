@@ -211,8 +211,8 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $octopus_date->setTimestamp($time+1800);
     $octopus_row['valid_to'] = $octopus_date->format("Y-m-d\TH:i:s\Z");    
     $modified_unitprice = ($unitprice*0.88) + ($use*0.0005);    
-    $octopus_row['value_exc_vat'] = number_format(100*$modified_unitprice,2,'.', '')*1;
-    $octopus_row['value_inc_vat'] = number_format(100*$modified_unitprice,2,'.', '')*1;
+    $octopus_row['value_exc_vat'] = number_format($modified_unitprice,2,'.', '')*1;
+    $octopus_row['value_inc_vat'] = number_format($modified_unitprice,2,'.', '')*1;
     $octopus_rows[] = $octopus_row;
     
     $td++;
