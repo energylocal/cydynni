@@ -118,7 +118,7 @@
                                     <span class="d-sm-inline d-lg-none" style="color:<?=$t->color?>"><?=t(ucfirst($t->name))?></span>
                                     <span class="d-none d-md-inline d-lg-inline" style="color:<?=$t->color?>"> <?=t(ucfirst($t->name)." Price")?></span> 
                                     <br class="d-sm-none">
-                                    <?
+                                    <?php
                                     $start = date('g', strtotime($t->start)) . ($t->start < 12 ? t('am'): t('pm'));
                                     $end = date('g', strtotime($t->end)) . ($t->end < 12 ? t('am'): t('pm'));
                                     ?>
