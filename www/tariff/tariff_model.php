@@ -364,10 +364,12 @@ class Tariff
         // add properties and format strings...
         for ($i=0; $i<count($tariffs); $i++) {
             $t = $tariffs[$i];
-
             $next = $i+1;
-            if ($next<count($tariffs)) $t->end = $tariffs[$next]->start;
-            else $t->end = $tariffs[0]->start;
+            if ($next<count($tariffs)) {
+              $t->end = $tariffs[$next]->start;
+            } else {
+              $t->end = $tariffs[0]->start;
+            }
 
             $t->start = (int) $t->start;
             // convert 6.5 to 06:30
@@ -389,10 +391,7 @@ class Tariff
             $end = intval(date('G', strtotime($t->end)));
             $now = intval(date('G'));
             $t->isCurrent = $now >= $start && $now < $end;
-            // add 12hr times with am/pm
-            $t->start = date('g', strtotime($t->start)) . ($t->start < 12 ? translate('am', $lang): translate('pm', $lang));
-            $t->end = date('g', strtotime($t->end)) . ($t->end < 12 ? translate('am', $lang): translate('pm', $lang));
-            // add css class names to style the title column
+            // add css class names to style the title column // TODO - this would be better as a flag for the frontend to resolve
             $t->css = 'text-' . $t->name;
             $t->rowClass = $t->isCurrent ? ' class="current"': '';
         }
