@@ -16,11 +16,13 @@ class Club
 {
     private $mysqli;
     private $user;
+    private $feed;
 
-    public function __construct($mysqli,$user = false)
+    public function __construct($mysqli,$user = false,$feed = false)
     {
         $this->mysqli = $mysqli;
         $this->user = $user;
+        $this->feed = $feed;
         $this->log = new EmonLogger(__FILE__);
     }
 
@@ -204,5 +206,19 @@ class Club
         $stmt->bind_param(str_repeat("s",count($params)),...$params);
         $stmt->execute();
         $stmt->close();
+    }
+    
+    public function get_settings($key) {
+        
+        $result = $this->mysqli->query("SELECT * FROM club WHERE `key`='$key'");
+        $club_settings = $result->fetch_array();
+        
+        // Automatic population of feedids
+        $club_settings['generation_feed'] = $this->feed->exists_tag_name(1,"Generation",$key);
+        $club_settings['consumption_feed'] = $this->feed->exists_tag_name(1,"Demand",$key);
+        $club_settings['generation_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_gen");
+        $club_settings['consumption_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_use");
+    
+        return $club_settings;
     }
 }
