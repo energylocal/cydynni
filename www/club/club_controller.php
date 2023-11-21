@@ -80,48 +80,48 @@ function club_controller()
         $session["email"] = $row->email;
         $session["apikey_read"] = $row->apikey_read;
     }
-    
+
     // Load the main dashboard view
     // /club
     if ($route->action == "") {
         $route->format = "html";
         $available_reports = array();
-        
-        require_once "Modules/tariff/tariff_model.php";
-        $tariff_class = new Tariff($mysqli);
-    
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
-        $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
-        $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-        $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
-    
-        if ($session["read"]) {
+
+        try {
+          require_once "Modules/tariff/tariff_model.php";
+          $tariff_class = new Tariff($mysqli);
+
+          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
+          $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
+          $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+          $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+          if ($session["read"]) {
             $userid = (int) $session["userid"];
-            
+
             $tariffid = $tariff_class->get_user_tariff($userid);
             $tariffs = $tariff_class->list_periods($tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-            
+
             $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
-            
+
             require_once "Modules/feed/feed_model.php";
             $feed = new Feed($mysqli,$redis,$settings["feed"]);
 
             require "Modules/data/account_data_model.php";
             $account_data = new AccountData($feed, false, $tariff_class);
-            
+
             $available_reports = $account_data->get_available_reports($userid);
-            
+
             $tmp = $feed->get_user_feeds($userid);
-            
+
             $session["feeds"] = array();
             foreach ($tmp as $f) {
-                $session["feeds"][$f["name"]] = (int) $f["id"];
+              $session["feeds"][$f["name"]] = (int) $f["id"];
             }
             if (!$session["admin"]) $redis->incr("userhits:$userid");
-        }
+          }
 
-        $content = view("Modules/club/app/client_view.php", array(
+          $content = view("Modules/club/app/client_view.php", array(
             'session' => $session,
             'club' => $club,
             'club_settings' => $club_settings[$club],
@@ -131,9 +131,13 @@ function club_controller()
             'available_reports'=>$available_reports,
             'clubid'=>$club_settings[$club]['id'],
             'standing_charge' => $standing_charge
-        ));
+          ));
 
-        return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
+          return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
+
+        } catch (MissingTariffException $e) {
+          return array('content'=>t('The tariff has not been correctly set for this club. Please contact your club advisor who will rectify this.'));
+        }
     }
 
     // Returns the report view
