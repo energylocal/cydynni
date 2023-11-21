@@ -177,7 +177,15 @@ class Club
     public function get($id) {
         $id = (int) $id;
         $result = $this->mysqli->query("SELECT * FROM club WHERE id=$id");
-        return $result->fetch_object();
+        $row = $result->fetch_object();
+        
+        // Automatic population of feedids
+        $row->generation_feed = $this->feed->exists_tag_name(1,"Generation",$row->key);
+        $row->consumption_feed = $this->feed->exists_tag_name(1,"Demand",$row->key);
+        $row->generation_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_gen");
+        $row->consumption_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_use");
+        
+        return $row;
     }
 
     public function set($id, $settings) {
@@ -221,6 +229,12 @@ class Club
     
         if ($club_settings['gen_scale']==null) {
             $club_settings['gen_scale'] = 1;
+        }
+    
+        if ($club_settings['skip_users']) {
+            $club_settings['skip_users'] = explode(",",$club_settings['skip_users']);
+        } else {
+            $club_settings['skip_users'] = array();
         }
     
         return $club_settings;

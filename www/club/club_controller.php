@@ -61,10 +61,7 @@ function club_controller()
     
     require "Modules/club/club_model.php";
     $club_class = new Club($mysqli,$user,$feed);
-    
-    $club_settings = array();
     $club_settings = $club_class->get_settings($club);
-    
     
 	  global $translation;
 	  $translation = new stdClass();
