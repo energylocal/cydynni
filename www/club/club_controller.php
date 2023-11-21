@@ -69,7 +69,7 @@ function club_controller()
 	  global $translation;
 	  $translation = new stdClass();
 	  
-	    $session['lang'] = chooseLanguage($club, $club_settings["languages"]);
+	  $session['lang'] = chooseLanguage($club, $club_settings["languages"]);
     $lang = $session['lang']; // Why?
 	  
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));

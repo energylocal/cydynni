@@ -219,6 +219,10 @@ class Club
         $club_settings['generation_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_gen");
         $club_settings['consumption_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_use");
     
+        if ($club_settings['gen_scale']==null) {
+            $club_settings['gen_scale'] = 1;
+        }
+    
         return $club_settings;
     }
 }

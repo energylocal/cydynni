@@ -348,7 +348,14 @@ function club_bargraph_load() {
 
         var imprt = 0.0;
         var exprt = 0.0;
-        if (generation <= consumption) imprt = consumption - generation; else exprt = generation - consumption;
+        
+        if (generation <= consumption) {
+            imprt = consumption - generation; 
+        } else {
+            exprt = generation - consumption;
+        
+        }
+        
         var selfuse = consumption - imprt;
 
         var unit_price = 0.0;
