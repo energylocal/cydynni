@@ -21,17 +21,17 @@ function data_controller()
 {
     global $mysqli, $redis, $session, $route, $settings;
 
-    require_once "Modules/club/club_model.php";
-    $club = new Club($mysqli, false);
-
-    require_once "Modules/tariff/tariff_model.php";
-    $tariff = new Tariff($mysqli);
-    
     // Feed model is used to access feed meta data
     // Enough for 1 year of half hourly data
     require "Modules/feed/feed_model.php";
     $settings['feed']['max_datapoints'] = 20000;
     $feed = new Feed($mysqli,$redis,$settings['feed']);
+
+    require_once "Modules/club/club_model.php";
+    $club = new Club($mysqli, false, $feed);
+
+    require_once "Modules/tariff/tariff_model.php";
+    $tariff = new Tariff($mysqli);
 
     require "Modules/data/account_data_model.php";
     $account_data = new AccountData($feed, $club, $tariff);

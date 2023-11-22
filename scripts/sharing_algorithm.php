@@ -24,8 +24,9 @@ while($row = $result->fetch_array()) {
     $c = array(
         "name"=>$row['key'],
         "clubid"=>$row['id'],
-        "gen_id"=>$row['generation_feed'],
-        "gen_scale"=>$row['gen_scale']
+        "gen_id"=>$feed->exists_tag_name(1,"Generation",$row['key']),
+        "gen_scale"=>$row['gen_scale'],
+        "gen_limit"=> (int) $row['gen_limit']
     );
 
     if ($row['skip_users']!="") {
@@ -33,8 +34,7 @@ while($row = $result->fetch_array()) {
     } else {
         $c["skip_users"] = array();
     }
-
-    if ($row['gen_limit']>0) $c['gen_limit'] = $row['gen_limit'];
+    
     $clubs[] = $c;
 }
 
@@ -143,7 +143,7 @@ foreach ($clubs as $club)
         fseek($fh[$gen_id],$pos*4);
         $val = unpack("f",fread($fh[$gen_id],4));
         if (!is_nan($val[1])) $hydro = $val[1]*1.0*$club["gen_scale"];  
-        if (isset($club["gen_limit"]) && $hydro>$club["gen_limit"]) $hydro = $club["gen_limit"];
+        if ($club["gen_limit"]>0 && $hydro>$club["gen_limit"]) $hydro = $club["gen_limit"];
 
         // Create an array that holds the current half hour consumption value for each user
         $use_hh = array();

@@ -55,21 +55,20 @@ function club_controller()
     
     $log = new EmonLogger(__FILE__);
     $log->info('club route: '.json_encode($route));
-
-    $result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
-    $row = $result->fetch_array();
-    $row["has_generator"] = (bool) $row["has_generator"];
-    $club_settings = array();
-    $club_settings[$club] = $row;
-
-    $session['lang'] = chooseLanguage($club, $club_settings[$club]["languages"]);
+        
+    require_once "Modules/feed/feed_model.php";
+    $feed = new Feed($mysqli,$redis,$settings["feed"]);
+    
+    require "Modules/club/club_model.php";
+    $club_class = new Club($mysqli,$user,$feed);
+    $club_settings = $club_class->get_settings($club);
+    
+	  global $translation;
+	  $translation = new stdClass();
+	  
+	  $session['lang'] = chooseLanguage($club, $club_settings["languages"]);
     $lang = $session['lang']; // Why?
-
-    
-
-    
-	global $translation;
-	$translation = new stdClass();
+	  
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
 
     if ($session["read"]) {
@@ -91,7 +90,7 @@ function club_controller()
           require_once "Modules/tariff/tariff_model.php";
           $tariff_class = new Tariff($mysqli);
 
-          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
+          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
           $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
           $tariffs_table = $tariff_class->getTariffsTable($tariffs);
           $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
@@ -103,9 +102,6 @@ function club_controller()
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
 
             $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
-
-            require_once "Modules/feed/feed_model.php";
-            $feed = new Feed($mysqli,$redis,$settings["feed"]);
 
             require "Modules/data/account_data_model.php";
             $account_data = new AccountData($feed, false, $tariff_class);
@@ -124,12 +120,12 @@ function club_controller()
           $content = view("Modules/club/app/client_view.php", array(
             'session' => $session,
             'club' => $club,
-            'club_settings' => $club_settings[$club],
+            'club_settings' => $club_settings,
             'tariffs_table' => $tariffs_table,
             'tariffs' => $tariffs,
             'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
             'available_reports'=>$available_reports,
-            'clubid'=>$club_settings[$club]['id'],
+            'clubid'=>$club_settings['id'],
             'standing_charge' => $standing_charge
           ));
 
@@ -147,7 +143,7 @@ function club_controller()
         $route->format = "html";
         $userid = (int) $session["userid"];
         if (!$session["admin"]) $redis->incr("userhits:$userid");
-        return view("Modules/club/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+        return view("Modules/club/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings));
     }
 
     // Configure device (review, is this still needed?)
@@ -168,20 +164,17 @@ function club_controller()
         require_once "Modules/tariff/tariff_model.php";
         $tariff_class = new Tariff($mysqli);
         
-        require_once "Modules/feed/feed_model.php";
-        $feed = new Feed($mysqli,$redis,$settings["feed"]);
-        
-        $gen_last_actual = $feed->get_timevalue($club_settings[$club]['generation_feed']);
-        $use_last_actual = $feed->get_timevalue($club_settings[$club]['consumption_feed']);
+        $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
+        $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
         $live->generation = number_format($gen_last_actual['value'],3)*2.0;
         $live->club = number_format($use_last_actual['value'],3)*2.0;
         
         // Use generation and consumption prediction from forecast if actual data is old
         if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
-            if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club]['consumption_forecast_feed'])) {
-                $gen_forecast = $feed->get_value($club_settings[$club]['generation_forecast_feed'],$this_hh);
-                $use_forecast = $feed->get_value($club_settings[$club]['consumption_forecast_feed'],$this_hh);
+            if (isset($club_settings['generation_forecast_feed']) && isset($club_settings['consumption_forecast_feed'])) {
+                $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
+                $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                 
                 if ($gen_forecast!=null && $use_forecast!=null) {
                     $live->generation = number_format($gen_forecast,3)*2.0;
@@ -190,7 +183,7 @@ function club_controller()
             }
         }
         
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
+        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
         $bands = $tariff_class->list_periods($current_tariff->tariffid);
         
         $date = new DateTime();
@@ -278,9 +271,6 @@ function club_controller()
     // ----------------------------------------------------------------------
     if ($route->action == "admin-users-data-status" && $session['admin']) {
         $route->format = "json";
-
-        require_once "Modules/feed/feed_model.php";
-        $feed = new Feed($mysqli,$redis,$settings["feed"]);
     
         $select_by_club = "";
         if (isset($_GET['club_id'])) {
@@ -430,17 +420,19 @@ function club_controller()
         
         foreach ($available_clubs_menu as $i=>$club_name) {
         
-            $gen_last_actual = $feed->get_timevalue($club_settings[$club_name]['generation_feed']);
-            $use_last_actual = $feed->get_timevalue($club_settings[$club_name]['consumption_feed']);
+            $club_settings = 
+        
+            $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
+            $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
             $generation = number_format($gen_last_actual['value'],3)*2.0;
             $consumption = number_format($use_last_actual['value'],3)*2.0;
             
             // Use generation and consumption prediction from forecast if actual data is old
             if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
-                if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club_name]['consumption_forecast_feed'])) {
-                    $gen_forecast = $feed->get_value($club_settings[$club_name]['generation_forecast_feed'],$this_hh);
-                    $use_forecast = $feed->get_value($club_settings[$club_name]['consumption_forecast_feed'],$this_hh);
+                if (isset($club_settings['generation_forecast_feed']) && isset($club_settings['consumption_forecast_feed'])) {
+                    $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
+                    $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                     
                     if ($gen_forecast!=null && $use_forecast!=null) {
                         $generation = number_format($gen_forecast,3)*2.0;
@@ -450,8 +442,8 @@ function club_controller()
             }
         
             $club_list[$club_name] = array(
-                "name"=>$club_settings[$club_name]["name"],
-                "generator"=>$club_settings[$club_name]["generator"],
+                "name"=>$club_settings["name"],
+                "generator"=>$club_settings["generator"],
                 "generation"=>$generation,
                 "consumption"=>$consumption
             );
@@ -463,8 +455,7 @@ function club_controller()
     break;   
     */
 
-    require "Modules/club/club_model.php";
-    $club = new Club($mysqli,$user);
+
 
     // API
     // List all clubs, Public
@@ -472,7 +463,7 @@ function club_controller()
     // /club/list (returns html list of clubs)
     if ($route->action == 'list') {
         if ($route->format == "json") {
-            return $club->list();
+            return $club_class->list();
         } else if ($session['admin']) {
             return view("Modules/club/club_admin_view.php", array());
         }
@@ -483,7 +474,7 @@ function club_controller()
     if ($route->action == 'create' && $session['admin']) {
         $route->format = "json";
         $name = get('name', true);
-        return $club->create($name);
+        return $club_class->create($name);
     }
 
     // Delete club, admin only
@@ -491,7 +482,7 @@ function club_controller()
     if ($route->action == 'delete' && $session['admin']) {
         $route->format = "json";
         $id = get('id', true);
-        return $club->delete($id);
+        return $club_class->delete($id);
     }
     
     return false;  
