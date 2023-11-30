@@ -60,7 +60,7 @@
                     <button class="btn" value="comparison">Comparison</button>
                   </div>
                   <div class="btn-group">
-                    <button class="btn" value="tariff-settings">Tariff settings</button>
+                    <button class="btn" value="tariff-settings">Settings</button>
                   </div>
                   <div class="visnav-block" style="margin-top: 0px;">
                     <select id="historic-period-select" class="btn-select period-select" style="height: 38px; margin-top: 0px;"></select>
@@ -73,6 +73,7 @@
             <div id="tariff-settings" class="block" style="display:none; background-color: white;">
               <div class="block-title bg-household">Tariff & Target Settings</div>
               <div class="block-content">
+                <?php if ($club_settings["has_generator"]) { ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
@@ -80,12 +81,13 @@
                       <div class="control-group">
                         <label class="control-label" for="tariff">Tariff:</label>
                         <div class="controls">
-                          <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo $user_attributes->tariff; ?>" onchange="updateTariff()">
+                          <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->tariff) ? $user_attributes->tariff: ''; ?>" onchange="updateTariff()">
                         </div>
                       </div>
                       <p><i>The unit cost of your electricity, e.g. 30.7p/kWh</i></p>                      
                   </form>
                 </div>
+                <? } ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
@@ -99,7 +101,7 @@
                       <div class="control-group">
                         <label class="control-label" for="dailyTargetMin">Min. daily usage target (kWh/day):</label>
                         <div class="controls">
-                          <input type="number" step="0.5" id="dailyTargetMin" placeholder="kWh/day" value="<?php echo $user_attributes->targetMin; ?>" onchange="updateTargetMin()">
+                          <input type="number" step="0.5" id="dailyTargetMin" placeholder="kWh/day" value="<?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : ''; ?>" onchange="updateTargetMin()">
                         </div>
                       </div>
                       <p><i>Setting a daily target usage may help you to understand where your electricity is being used.</i></p>
