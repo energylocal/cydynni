@@ -78,12 +78,12 @@ var feed = {
         });
         return data;
     },
-    
+
     getaverage: function(id,start,end,interval,skipmissing,limitinterval)
     {
         var apikeystr = "";
         if (apikey!="") apikeystr = "?apikey="+apikey;
-        
+
         var data = [];
         $.ajax({                                      
             url: path+"feed/average.json"+apikeystr,                         
@@ -99,7 +99,7 @@ var feed = {
         });
         return data;
     },
-    
+
     getdataDMY: function(id,start,end,mode)
     {
         var apikeystr = "";

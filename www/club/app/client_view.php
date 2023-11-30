@@ -340,15 +340,15 @@ document.querySelectorAll('.household-view-scope button').forEach(button => {
 
 $(".period-select").change(function(event) {
     event.stopPropagation();
-    
+
     date_selected = $(this).val();
     view.end = +new Date;
-    
+
     var period_length = 3600000*24.0*30;
-    
+
     var club_date_text = t("In the last %s, we scored:").replace('%s', t(date_selected));
     var household_date_text = t("In the last %s, you scored:").replace('%s', t(date_selected));
-    
+
     switch (date_selected) {
         case "day": view.start = view.end - (3600000*24.0*1); break;
         case "week": view.start = view.end - (3600000*24.0*7); break;
@@ -359,7 +359,7 @@ $(".period-select").change(function(event) {
             var parts = date_selected.split('-');
             var month = (parts[1]*1)-1;
             var year = parts[0]*1;
-            
+
             var date = new Date();
             date.setHours(0);
             date.setMinutes(0);
@@ -369,14 +369,14 @@ $(".period-select").change(function(event) {
             date.setMonth(month);
             date.setYear(year);
             view.start = date.getTime();
-            
+
             date.setDate(days_in_month[month]);
             view.end = date.getTime();
-            
+
             club_date_text = t("In %s, we scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
             household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
     }
-        
+
     club_bargraph_load();
     club_bargraph_draw();
     $(".period-select").val(date_selected);

@@ -66,7 +66,7 @@ class Club
         $row = $result->fetch_object();
         return $row->userid;
     }
-    
+
 
     // Create a new club
     public function create($name) {
@@ -179,13 +179,13 @@ class Club
         $id = (int) $id;
         $result = $this->mysqli->query("SELECT * FROM club WHERE id=$id");
         $row = $result->fetch_object();
-        
+
         // Automatic population of feedids
         $row->generation_feed = $this->feed->exists_tag_name(1,"Generation",$row->key);
         $row->consumption_feed = $this->feed->exists_tag_name(1,"Demand",$row->key);
         $row->generation_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_gen");
         $row->consumption_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_use");
-        
+
         return $row;
     }
 

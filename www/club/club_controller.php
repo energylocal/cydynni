@@ -52,23 +52,23 @@ function club_controller()
     global $mysqli, $redis, $session, $route, $user, $settings, $available_clubs;
     global $club;
     global $lang;
-    
+
     $log = new EmonLogger(__FILE__);
     $log->info('club route: '.json_encode($route));
-        
+
     require_once "Modules/feed/feed_model.php";
     $feed = new Feed($mysqli,$redis,$settings["feed"]);
-    
+
     require "Modules/club/club_model.php";
     $club_class = new Club($mysqli,$user,$feed);
     $club_settings = $club_class->get_settings($club);
-    
+
 	  global $translation;
 	  $translation = new stdClass();
 	  
 	  $session['lang'] = chooseLanguage($club, $club_settings["languages"]);
     $lang = $session['lang']; // Why?
-	  
+
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
 
     if ($session["read"]) {
