@@ -264,13 +264,24 @@ function club_bargraph_load() {
     view.start = Math.floor(view.start / intervalms) * intervalms
     view.end = Math.ceil(view.end / intervalms) * intervalms
 
-    var generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
-    var club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+    var generation_data = {};
+    if (generation_feed) {
+      feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
+    }
+    var club_data = {};
+    if (consumption_feed) {
+      feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+    }
 
     var gen_forecast_data = [];
     var demand_forecast_data = [];
 
-    if (club_settings.generation_forecast_feed != undefined && club_settings.consumption_forecast_feed != undefined) {
+    if (
+      club_settings.generation_forecast_feed != undefined &&
+      club_settings.generation_forecast_feed !== false &&
+      club_settings.consumption_forecast_feed != undefined &&
+      club_settings.consumption_forecast_feed !== false
+    ) {
         gen_forecast_data = feed.getaverage(club_settings.generation_forecast_feed, view.start, view.end, interval, 0, 0);
         demand_forecast_data = feed.getaverage(club_settings.consumption_forecast_feed, view.start, view.end, interval, 0, 0);
     }
