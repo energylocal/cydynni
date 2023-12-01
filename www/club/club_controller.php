@@ -18,10 +18,10 @@ function chooseLanguage(string $languages) { // e.g. "cy,en"
 
     $languages = explode(",", $languages);
 
-    // Language of last resort    
+    // Language of last resort
     $lang = "en";
 
-    // First lang code in settings used as default if available    
+    // First lang code in settings used as default if available
     if (count($languages) > 0) {
       $lang = $languages[0];
     }
@@ -37,9 +37,9 @@ function chooseLanguage(string $languages) { // e.g. "cy,en"
     // Convert 2-letter code to full locale
     switch($lang) {
 	  case 'en':
-	    return "en_GB";	    
+	    return "en_GB";
       case 'cy':
-        return "cy_GB";	    
+        return "cy_GB";
       default:
         $log = new EmonLogger(__FILE__);
 	    $log->error("Language code '".$lang."' unsupported, defaulting to en_GB");
@@ -65,8 +65,8 @@ function club_controller()
 
 	  global $translation;
 	  $translation = new stdClass();
-	  
-	  $session['lang'] = chooseLanguage($club, $club_settings["languages"]);
+
+	  $session['lang'] = chooseLanguage($club_settings["languages"]);
     $lang = $session['lang']; // Why?
 
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
