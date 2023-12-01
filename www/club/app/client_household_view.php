@@ -1,4 +1,10 @@
- 
+
+<script>
+  const tariffsTable = <?php echo(json_encode($tariffs_table)); ?>;
+  const tariffColorMap = {};
+  tariffsTable.forEach((entry)=> (tariffColorMap[entry.name] = entry.color));
+</script>
+
             <!-------------- Login section ----------------->
             <div id="login-block" class="block">
                 <div class="block-title bg-household"><div class="triangle-dropdown hide"></div></div>

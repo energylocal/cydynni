@@ -57,6 +57,7 @@ $app_path = $path."Modules/club/app/";
             'club_settings'=>$club_settings,
             'tariffs'=>$tariffs,
             'user_attributes'=>$user_attributes,
+            'tariffs_table'=>$tariffs_table
         )); ?>
     </div>
    
@@ -185,7 +186,6 @@ if (page=="") {
     page = "household";
   }
 }
-
 
 if (page=="forecast") {
   if (club_settings.has_generator) {
