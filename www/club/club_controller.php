@@ -82,26 +82,37 @@ function club_controller()
 
     // Load the main dashboard view
     // /club
+    $tariffs = array();
+    $standing_charge = 0;
+
     if ($route->action == "") {
         $route->format = "html";
         $available_reports = array();
+
+        $tariffs_table = array();
 
         try {
           require_once "Modules/tariff/tariff_model.php";
           $tariff_class = new Tariff($mysqli);
 
-          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
-          $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
-          $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-          $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+          if ($club_settings["has_generator"]) {
+            $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
+            $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
+            $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+            $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+          }
           if ($session["read"]) {
             $userid = (int) $session["userid"];
 
-            $tariffid = $tariff_class->get_user_tariff($userid);
-            $tariffs = $tariff_class->list_periods($tariffid);
-            $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+            $tariffs_table = array();
+            $standing_charge = 0;
+          if ($club_settings["has_generator"]) {
+              $tariffid = $tariff_class->get_user_tariff_id($userid);
+              $tariffs = $tariff_class->list_periods($tariffid);
+              $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+              $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
+          }
 
-            $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
 
             require "Modules/data/account_data_model.php";
             $account_data = new AccountData($feed, false, $tariff_class);
@@ -131,8 +142,14 @@ function club_controller()
 
           return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
 
+        } catch (MissingUserTariffException $e) {
+          $log = new EmonLogger(__FILE__);
+          $log->error($e);
+          return array('content'=>t('The tariff has not been correctly set for this user.'));
         } catch (MissingTariffException $e) {
-          return array('content'=>t('The tariff has not been correctly set for this club. Please contact your club advisor who will rectify this.'));
+          $log = new EmonLogger(__FILE__);
+          $log->error($e);
+          return array('content'=>t('The tariff has not been correctly set for this club.'));
         }
     }
 

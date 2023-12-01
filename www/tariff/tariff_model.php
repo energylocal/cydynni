@@ -14,6 +14,7 @@
 defined('EMONCMS_EXEC') or die('Restricted access');
 
 require "missing_tariff_exception.php";
+require "missing_user_tariff_exception.php";
 
 class Tariff
 {
@@ -297,9 +298,14 @@ class Tariff
     }
 
     // Get user tariff
-    public function get_user_tariff($userid) {
+    public function get_user_tariff_id($userid) {
         $userid = (int) $userid;
         $result = $this->mysqli->query("SELECT tariffid FROM user_tariffs WHERE userid=$userid ORDER BY start DESC LIMIT 1");
+
+        if (mysqli_num_rows($result) == 0) {
+          throw new MissingUserTariffException("No user tariff for user id $userid.");
+        }
+
         if ($row = $result->fetch_object()) {
             return $row->tariffid;
         } else {
