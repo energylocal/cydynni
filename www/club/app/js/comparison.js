@@ -1,33 +1,43 @@
 
-let household_comparison_data = [];
-let previous_household_comparison_data = [];
+let household_comparison_data = {};
+let previous_household_comparison_data = {};
 
 function household_comparison_bargraph_load() {
+  const url = path+"data/daily?start="+(view.start/1000)+"&end="+(view.end/1000)+"&apikey="+session['apikey_read'];
   $.ajax({
-    url: path+"/data/daily?start="+(view.start/1000)+"&end="+(view.end/1000)+"&apikey="+session['apikey_read'],
+    url: url,
     dataType: 'json',
-    async: true,                      
+    async: true,
     success: function(result) {
-      // alert(JSON.stringify(result))
+      if (result.success === false) {
+        console.log("Failed to load household comparison data from "+url+": "+result.message);
+        alert(result.message);
+        return;
+      }
       household_comparison_data = result;
       household_comparison_bargraph_draw();
     }
-  })
+  });
 
 
   // alert(JSON.stringify(view));
-  const start = view.start - (60*60*24*7);
-  const end = view.end+(60*60*7);
+  const start = (view.start/1000) - (60*60*24*7);
+  const end = (view.end/1000)- (60*60*24*7);
+  const previousURL = path+"data/daily?start="+start+"&end="+end+"&apikey="+session['apikey_read']+"&previousluke";
   $.ajax({
-    url: path+"/data/daily?start="+start+"&end="+end+"&apikey="+session['apikey_read'],
+    url: previousURL,
     dataType: 'json',
-    async: true,                      
+    async: true,
     success: function(result) {
-      // alert(JSON.stringify(result)
+      if (result.success === false) {
+        console.log("Failed to load household comparison previous data from "+previousURL+": "+result.message);
+        alert(result.message);
+        return;
+      }
       previous_household_comparison_data = result;
       household_comparison_bargraph_draw();
     }
-  })
+  });
 }
 
 function unixTimeToDay(unixTimestamp) {
