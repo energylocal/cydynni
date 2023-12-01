@@ -60,6 +60,9 @@ var feed = {
     
     getdata: function(id,start,end,interval,skipmissing,limitinterval)
     {
+        if (id === false) {
+          throw new Error("Feed ID not specified");
+        }
         var apikeystr = "";
         if (apikey!="") apikeystr = "?apikey="+apikey;
         
