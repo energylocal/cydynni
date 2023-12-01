@@ -254,6 +254,7 @@ function household_pie_draw() {
 
 function household_bargraph_load() {
 
+    console.log("Loading household bargraph data...")
     var npoints = 800;
     interval = ((view.end - view.start) * 0.001) / npoints;
     interval = round_interval(interval);

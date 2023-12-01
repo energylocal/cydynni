@@ -3,6 +3,7 @@ let household_comparison_data = {};
 let previous_household_comparison_data = {};
 
 function household_comparison_bargraph_load() {
+  console.log("Loading household comparrison bargraph data...")
   const url = path+"data/daily?start="+(view.start/1000)+"&end="+(view.end/1000)+"&apikey="+session['apikey_read'];
   $.ajax({
     url: url,
