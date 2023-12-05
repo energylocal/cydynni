@@ -313,16 +313,6 @@ function household_bargraph_load() {
                     household_daily_index_map[time] = z;
                 }
 
-                // Colours
-                var category_colors = {
-                    "morning": "#ffdc00",
-                    "midday": "#ffb401",
-                    "daytime": "#ffb401",
-                    "evening": "#e6602b",
-                    "overnight": "#014c2d",
-                    "generation": club_settings.generator_color
-                }
-
                 householdseries = [];
                 barwidth = 3600 * 24 * 1000 * 0.75;
 
