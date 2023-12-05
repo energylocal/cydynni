@@ -83,7 +83,7 @@
             <div id="tariff-settings" class="block" style="display:none; background-color: white;">
               <div class="block-title bg-household">Tariff & Target Settings</div>
               <div class="block-content">
-                <?php if ($club_settings["has_generator"]) { ?>
+                <?php if (!$club_settings["has_generator"]) { ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
