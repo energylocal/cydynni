@@ -93,7 +93,7 @@
                       <p><i>The unit cost of your electricity, e.g. 30.7p/kWh</i></p>                      
                   </form>
                 </div>
-                <? } ?>
+                <?php } ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
@@ -203,7 +203,7 @@
                     </div>
                   </div>
                 </div>
-                <? } ?>
+                <?php } ?>
                 
                 <?php if ($club_settings["has_generator"]) { ?>
                 <br>
@@ -214,7 +214,7 @@
                 <img id="household_star5" src="<?php echo $app_path; ?>images/star20red.png" style="width:45px">
                 <br><br>
                 <p class="household_score_description"></p>
-                <? } ?>
+                <?php } ?>
                 <!--<br><br><div class="household_status" style="height:40px"></div><br>-->
                 <!--<br>
                 <p><?php echo t("In total you used"); ?> <span class="household_totalkwh"></span> kWh, <?php echo t("costing"); ?>:</p>
@@ -277,10 +277,10 @@
                       <?php if ($club_settings["has_generator"]) { ?>
                       <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("SAVING"); ?></div>
                       <div style="font-size:22px" class="household_saving"></div>
-                      <? } else { ?>
+                      <?php } else { ?>
                       <div style="font-size:26px; font-weight:bold;" class="household_saving_title"><?php echo t("UNIT PRICES"); ?></div>
                       <div style="font-size:22px" class="">&nbsp;</div>
-                      <? } ?>
+                      <?php } ?>
                       <div class="hrdiv"></div>
                       <div style="padding:15px; text-align:left; margin: 20px auto; max-width:270px; color:#333">
                         <table id="household_pie_legend" class="keytable"></table>
