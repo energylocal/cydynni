@@ -89,9 +89,9 @@ function draw_summary(result) {
     household_pie_data_energy = [];
 
     // COST
-    let generationCost = club_settings.has_generator ? result.generation_cost[tariff_name]: 0;
     for (var tariff_name in result.cost) {
         if (tariff_name != 'total') {
+            let generationCost = club_settings.has_generator ? result.generation_cost[tariff_name]: 0;
             household_pie_data_cost.push({
                 name: t(ucfirst(tariff_name)),
                 generation: generationCost,
@@ -102,9 +102,9 @@ function draw_summary(result) {
     }
 
     // ENERGY
-    let generationValue = club_settings.has_generator ? result.generation[tariff_name]: 0;
     for (var tariff_name in result.demand) {
         if (tariff_name != 'total') {
+            let generationValue = club_settings.has_generator ? result.generation[tariff_name]: 0;
             household_pie_data_energy.push({
                 name: t(ucfirst(tariff_name)),
                 generation: generationValue,
