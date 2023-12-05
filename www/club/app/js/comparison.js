@@ -47,21 +47,103 @@ function unixTimeToDay(unixTimestamp) {
   return date.toLocaleDateString('en-GB', options);
 }
 
+function household_comparison_graph_series(days, group) {
+  const tariffPeriods = new Map();
+  for (const day of days) {
+    for (const [tariffPeriod,value] of Object.entries(day.demand)) {
+      if (tariffPeriod != 'total') {
+        if (!tariffPeriods.has(tariffPeriod)) {
+          tariffPeriods.set(tariffPeriod, []);
+        }
+        tariffPeriods.get(tariffPeriod).push(value);
+      }
+    }
+  }
+
+  const series = [];
+  const colors = [];
+  for (const [tariffPeriod,data] of tariffPeriods) {
+    series.push({
+      name: tariffPeriod+" ("+group+")",
+      group: group,
+      data: data
+    });
+    colors.push(tariffColorMap[tariffPeriod]);
+    console.log(colors);
+  }
+  return [series, colors]
+}
+
 function household_comparison_bargraph_draw() {
 
-  const overnight = household_comparison_data.map((day) => day[1][0]);
-  const daytime = household_comparison_data.map((day) => day[1][1]);
-  const evening = household_comparison_data.map((day) => day[1][2]);
-  const previousOvernight = previous_household_comparison_data.map((day) => day[1][0]);
-  const previousDaytime = previous_household_comparison_data.map((day) => day[1][1]);
-  const previousEvening = previous_household_comparison_data.map((day) => day[1][2]);
+  const compareNum = (a, b) => (a - b);
 
+  // alert(JSON.stringify(household_comparison_data));
+  const days = Object.values(household_comparison_data).sort(compareNum);
+  const previousDays = Object.values(previous_household_comparison_data).sort(compareNum);
 
-  previous_household_comparison_data = previous_household_comparison_data.slice(0, household_comparison_data.length);
-  const labels = household_comparison_data.map((day, i) => {
+  if (days.length == 0 || previousDays.length == 0) {
+    return;
+  }
+
+  console.log(JSON.stringify(days));
+  console.log(days);
+
+  const [currentSeries, currentColors] = household_comparison_graph_series(days, "current");
+  console.log("c:");
+  console.log(currentSeries);
+  const [prevSeries, prevColors] = household_comparison_graph_series(previousDays, "previous");
+  console.log("p:");
+  console.log(prevSeries);
+  const series = currentSeries.concat(prevSeries);
+  const colors = currentColors.concat(prevColors);
+  console.log("s:");
+  console.log(series);
+  console.log(colors);
+ 
+
+  /*
+  const tariffPeriods = new Map();
+  for (const day of days) {
+    for (const [tariffPeriod,value] of Object.entries(day.demand)) {
+      if (tariffPeriod != 'total') {
+        if (!tariffPeriods.has(tariffPeriod)) {
+          tariffPeriods.set(tariffPeriod, []);
+        }
+        console.log(tariffPeriods);
+        console.log(tariffPeriod);
+        console.log(value);
+        tariffPeriods.get(tariffPeriod).push(value);
+      }
+    }
+  }
+  console.log(tariffPeriods);
+  const series = [];
+  const colors = [];
+  for (const [tariffPeriod,data] of tariffPeriods) {
+    series.push({
+      name: tariffPeriod,
+      group: 'current',
+      data: data
+    });
+    colors.push(tariffColorMap[tariffPeriod]);
+    console.log(colors);
+  }*/
+
+ /* const overnight = days.map((day) => day.demand.overnight);
+  const daytime = days.map((day) => day.demand.daytime);
+  const evening = days.map((day) => day.demand.evening);
+  console.log(previousDays);
+  const previousOvernight = previousDays.map((day) => day.demand.overnight);
+  const previousDaytime = previousDays.map((day) => day.demand.daytime);
+  const previousEvening = previousDays.map((day) => day.demand.evening);
+*/
+
+  const somePrevious = previousDays.slice(0, days.length);
+  const labels = days.map((day, i) => {
     let previous = "";
     let current = "";
-    if (previous_household_comparison_data.length >= i && previous_household_comparison_data.length > 0) {  
+    if (previous_household_comparison_data.length >= i && previous_household_comparison_data.length > 0) {
       previous = unixTimeToDay(previous_household_comparison_data[i][0]);
     }
     if (day.length > 0) {
@@ -72,7 +154,7 @@ function household_comparison_bargraph_draw() {
     }
     return previous + ' / ' + current;
   });
-  
+
   // alert(JSON.stringify(overnight));
 
   var options = {
@@ -89,7 +171,7 @@ function household_comparison_bargraph_draw() {
         }
       ]
     },
-    series: [
+    series: /*[
       {
         name: 'Overnight (previous week)',
         group: 'previous',
@@ -120,7 +202,8 @@ function household_comparison_bargraph_draw() {
         group: 'current',
         data: evening,
       },
-    ],
+    ]*/
+    series,
     chart: {
       type: 'bar',
       height: 400,
@@ -154,7 +237,8 @@ function household_comparison_bargraph_draw() {
     fill: {
       opacity: 1
     },
-    colors: ['#029C5C', '#BF9A41', '#BC4B2D', '#014C2D', '#FFB401', '#E6602B'],
+    colors: colors,
+    //colors: ['#029C5C', '#BF9A41', '#BC4B2D', '#014C2D', '#FFB401', '#E6602B'],
     yaxis: {
       labels: {
         formatter: (val) => {
@@ -175,5 +259,7 @@ function household_comparison_bargraph_draw() {
   chart.render();
 }
 
-household_comparison_bargraph_load();
-household_comparison_bargraph_draw();
+if (session.read) {
+//  household_comparison_bargraph_load();
+//  household_comparison_bargraph_draw();
+}
