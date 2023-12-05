@@ -1,7 +1,11 @@
 
 <script>
   const tariffsTable = <?php echo(json_encode($tariffs_table)); ?>;
-  const tariffColorMap = {};
+  const tariffColorMap = {
+    <?php if ($club_settings["has_generator"]) { ?>
+    "generation": "<?php echo $club_settings["generator_color"]; ?>"
+    <?php } ?>
+  };
   tariffsTable.forEach((entry)=> (tariffColorMap[entry.name] = entry.color));
 </script>
 
