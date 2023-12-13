@@ -266,11 +266,11 @@ function club_bargraph_load() {
 
     var generation_data = {};
     if (generation_feed) {
-      feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
+      generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
     }
     var club_data = {};
     if (consumption_feed) {
-      feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+      club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
     }
 
     var gen_forecast_data = [];
