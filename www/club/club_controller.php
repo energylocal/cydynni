@@ -73,7 +73,7 @@ function club_controller()
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
-                
+
         $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
         $row = $result->fetch_object();
         $session["email"] = $row->email;
@@ -95,23 +95,21 @@ function club_controller()
           require_once "Modules/tariff/tariff_model.php";
           $tariff_class = new Tariff($mysqli);
 
-          if ($club_settings["has_generator"]) {
-            $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
-            $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
-            $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-            $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
-          }
+          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
+          $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
+          $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+          $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+
           if ($session["read"]) {
             $userid = (int) $session["userid"];
 
             $tariffs_table = array();
             $standing_charge = 0;
-          if ($club_settings["has_generator"]) {
-              $tariffid = $tariff_class->get_user_tariff_id($userid);
-              $tariffs = $tariff_class->list_periods($tariffid);
-              $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-              $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
-          }
+
+            $tariffid = $tariff_class->get_user_tariff_id($userid);
+            $tariffs = $tariff_class->list_periods($tariffid);
+            $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+            $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
 
 
             require "Modules/data/account_data_model.php";
