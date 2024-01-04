@@ -233,6 +233,15 @@ function club_controller()
         }
     }
 
+    if ($route->action == "set_fixed_user_tariff") { // used for clubless users who set their own rates
+        $body = put_json();
+        $result = $user->set_attribute($session['userid'], $body['name'], $body['value']);
+        require_once "Modules/tariff/tariff_model.php";
+        $tariff_class = new Tariff($mysqli);
+        $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['value']);
+        return $result;
+    }
+
     // Demandshaper v2: renamed to forecast (review, not all clubs listed here)
     // multiple forecasts per club e.g with and without solar
     // format matches latest format used by demandshaper module

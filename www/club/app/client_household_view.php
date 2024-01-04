@@ -89,7 +89,7 @@
                     <fieldset>
                       <legend>Tariff</legend>
                       <div class="control-group">
-                        <label class="control-label" for="tariff">Tariff:</label>
+                        <label class="control-label" for="tariff">Tariff (p/kWh):</label>
                         <div class="controls">
                           <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->tariff) ? $user_attributes->tariff: ''; ?>" onchange="updateTariff()">
                         </div>
