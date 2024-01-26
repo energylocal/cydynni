@@ -94,7 +94,7 @@ class Account {
 
         if (isset($changed->owl_id)) {
             $changed->owl_id = trim($changed->owl_id);
-            if (!ctype_digit($changed->owl_id)) return array("success"=>false, "message"=>"invalid owl_id");
+            // if (!ctype_digit($changed->owl_id)) return array("success"=>false, "message"=>"invalid owl_id");
             $result = $this->change_user_prop($userid,"owl_id",$changed->owl_id);
             if (!$result['success']) return $result;
         }
