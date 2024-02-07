@@ -171,10 +171,21 @@ var url_string = location.href
 var url = new URL(url_string);
 
 var page = "";
+var token = "";
 
 if (url.searchParams!=undefined) {
     var entries = url.searchParams.entries();
-    for(var entry of entries) { if(entry[0]!=="lang") page = entry[0]; }
+    // for each param/value pair
+    for (var entry of entries) { 
+        // if param name isn't language or reset, must be page
+        if (entry[0]!=="lang" && entry[0]!=="reset") {
+            page = entry[0]; 
+        }
+        // if param name is reset, set reset token value
+        if (entry[0]=="reset" && entry[1]) {
+            token = entry[1];
+        }
+    }
 } else {
     page = url.search.replace("?","");
 }
@@ -195,9 +206,40 @@ if (page=="forecast") {
   }
 }
 else if (page=="household") show_page("household");
+else if (page=="reset") show_page("password-reset");
 else if (page=="club") show_page("club");
 else if (page=="tips") show_page("tips");
 else show_page("forecast");
+
+// if a password reset token is detected in the url:
+if (token!=="") {
+    // check that token is valid
+    $.ajax({                                      
+        url: path+"cydynni/passwordreset_check_token",                         
+        data: "token="+token,
+        dataType: 'json',
+        success: function(result) {
+            // if token exists and hasn't expired
+            if (result['success'] == true) {
+                $("#login-block").hide();
+                $("#passwordreset-block-new").show(); 
+                user_id = result['user_id']
+            // if token has expired
+            } else if (result.token_expired) {
+                    $("#login-block").hide();
+                    $("#passwordreset-block-new").show(); 
+                    $("#passwordreset-new-input").hide();
+                    $("#passwordreset-new-title").html(t("Password reset link has expired. Please repeat the password reset process to receive a new one."));
+            // if token does not exist
+            } else if (!result.token_exists) {
+                $("#login-block").hide();
+                $("#passwordreset-block-new").show(); 
+                $("#passwordreset-new-input").hide();
+                $("#passwordreset-new-title").html(t("Incorrect password reset link. Please verify that you have copied this link correctly."));
+            }
+        }
+    }) 
+}
 
 $(".navigation li").click(function() {
     var page = $(this).attr("name");

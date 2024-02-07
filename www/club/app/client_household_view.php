@@ -60,6 +60,21 @@
                 </div>
             </div>
 
+            <div id="passwordreset-block-new" class="block" style="display:none">
+                <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-content">
+                    <div class="bg-household" style="padding:20px">
+                        <p id="passwordreset-new-title">Please enter your new password</p>
+                        <p id="passwordreset-new-input">
+                          <input id="passwordreset-new-password" type="password" placeholder="New password..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <input id="passwordreset-new-confirm" type="password" placeholder="Confirm new password..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <button id="passwordreset-new" class="btn"><?php echo t("Change password");?></button> <button id="passwordreset-new-cancel" class="btn"><?php echo t("Cancel");?></button><br>
+                        </p>
+                        <div id="passwordreset-new-alert"></div>
+                    </div>
+                </div>
+            </div>
+
             <!------------------------- Household context / period selection ------------------------->
             <div id="context-selection" class="block household-block">
               <div class="block-title bg-household" style="padding-right: 0px;">

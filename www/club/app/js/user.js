@@ -82,6 +82,8 @@ $("#logout").click(function(event) {
     });
 });
 
+// Start of password reset - 
+// displays necessary HTML elements for the user to enter their recovery email
 $("#passwordreset-start").click(function() {
     $("#login-block").hide();
     $("#passwordreset-block").show();
@@ -89,11 +91,14 @@ $("#passwordreset-start").click(function() {
     $("#passwordreset-cancel").html(t("Cancel"));
 });
 
-$("#passwordreset-cancel").click(function() {
+$("#passwordreset-new-cancel").click(function() {
     $("#passwordreset-block").hide();
     $("#login-block").show();
 });
 
+// Second stage of password reset -
+// takes users recovery email, 
+// then sends an ajax request to generate a password reset token and supply this token via email
 $("#passwordreset").click(function() {
     var email = $("#passwordreset-email").val();
     $("#passwordreset").hide();
@@ -101,31 +106,65 @@ $("#passwordreset").click(function() {
     $("#passwordreset-alert").html("");
     $("#passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
-        url: path+"cydynni/passwordreset",                         
+        // routes are laid out in club_controller.php
+        // this ajax request is then routed to the 'passwordreset_generation' function in user_model.php
+        type: "POST",
+        url: path+"cydynni/passwordreset_generation",                         
         data: "email="+email,
         dataType: 'json',
         success: function(result) {
-            if (result.success!=undefined) {
-                if (result.success) {
-                    if (result.message!="Password recovery email sent!") {
-                        $("#passwordreset").show();
-                        $("#passwordreset-email").show();
-                        $("#passwordreset-alert").html(result.message);
-                        $("#passwordreset-title").html(t("Please enter email address to reset password"));
-                    } else {
-                        $("#passwordreset-title").html(t("Password recovery email sent! please check your email inbox"));
-                        $("#passwordreset-cancel").html(t("Return to Login"));
-                    }
-                } else {
-                    $("#passwordreset-alert").html(result.message);
-                }
-            } else {
+            if (result.success===undefined) {
                 $("#passwordreset-alert").html(result);
+                return;
             }
-            
+            if (!result.success) {
+                $("#passwordreset-alert").html(result.message);
+                return;
+            }
+            $("#passwordreset-title").html(t("Password recovery email sent! Please check your email inbox."));
+            $("#passwordreset-cancel").html(t("Return to Login"));
+                    
+        },
+        error: function(result) {
+            alert("An error has occured when resetting the password. Please try again later or contact Energy Local.")
+            console.log(JSON.stringify(result));
         }
     });
 });
+
+// Final stage of password reset - 
+// takes users new password, checks that they have entered it correctly twice
+// then sends an ajax request to change their password.
+$("#passwordreset-new").click(function() {
+    var new_password = $("#passwordreset-new-password").val();
+    var new_password_confirm = $("#passwordreset-new-confirm").val();
+    if (new_password == new_password_confirm) {
+        $.ajax({                                 
+            // routes are laid out in club_controller.php
+           // this ajax request is then routed to the 'passwordreset_reset' function in user_model.php
+            type: "POST",
+            url: path+"cydynni/passwordreset_reset",                         
+            data: {
+		    "token": token,
+		    "new_password": new_password,
+	    },
+            dataType: 'json',
+            success: function(result) {
+                if (result.success == true) {
+                    $("#passwordreset-new-input").hide();
+                    $("#passwordreset-new-title").html(t("Password successfully changed!"));
+                } else if (result.duplicate) {
+                    $("#passwordreset-new-title").html(t("Please enter a password that isn't the same as your current password."));
+                } else if (!result.duplicate) {
+                    $("#passwordreset-new-title").html(t("Password reset token cannot be found - it may have expired. Please restart the password reset process."));
+                }
+            }
+        })
+    } else {
+        // if user has not correctly entered the same password twice - alert them, and let them try again
+        $("#passwordreset-new-title").html(t("Passwords do not match. Please try again."));
+    }
+})
 
 $(".myaccount").click(function() {
   page = "myaccount";

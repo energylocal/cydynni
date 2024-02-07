@@ -281,14 +281,50 @@ function club_controller()
         }
     }
 
-    // Password reset
-    if ($route->action == "passwordreset") {
+    // new password reset routes - START
+    if ($route->action == "passwordreset_generation") {
+        try {
+        $base_url = $_SERVER['HTTP_REFERER'];
         $route->format = "json";
         $user->appname = "Cydynni";
-        $users = $user->get_usernames_by_email(get('email'));
-        if ($users && count($users)) return $user->passwordreset($users[0]["username"],get('email'));
-        else return array("success"=>false, "message"=>"User not found");
+        $data = $_POST['email'];
+        // checking if username or email has been supplied
+        // if email:
+        if (strpos($data, "@")) {
+            $email = $data;
+            $users = $user->get_usernames_by_email($email);
+            $username = $users[0]["username"];
+        // if username:
+        } else {
+            $username = $data;
+            $email = $user->get_email_by_username($username);
+            error_log($email);
+        }
+        return $user->passwordreset_generation($username, $email, $base_url);
+    } catch(InvalidUserException $e) {
+        return array('success'=>false, 'message'=>"Invalid username or email.", 'reset_disabled'=>false, 'invalid_user_email'=>true);
     }
+    }
+
+    if ($route->action == "passwordreset_check_token") {
+        $route->format = "json";
+        $user->appname = "Cydynni";
+        $token = get('token');
+        if ($token) {
+            return $user->passwordreset_check_token($token);
+        }
+    }
+
+    if ($route->action == "passwordreset_reset") {
+        $route->format = "json";
+        $user->appname = "Cydynni";
+        $token = $_POST['token'];
+        $new_password = $_POST['new_password'];
+        if ($token) {
+            return $user->passwordreset_reset($token, $new_password);
+        }
+    }
+    // new password reset routes - END
     
     // ----------------------------------------------------------------------
     // Administration functions 
