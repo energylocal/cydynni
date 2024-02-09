@@ -44,6 +44,8 @@ $mpan_data = array();
 // load processed files (not needed)
 // $already_processed = get_processed_files($output_dir);
 
+$ftp_dir = getenv("TMA_FTP_DIR") ?: "/home/tmaftp/data";
+
 $files = scandir($ftp_dir);
 for ($i=2; $i<count($files); $i++) {
     $filename = $files[$i];
