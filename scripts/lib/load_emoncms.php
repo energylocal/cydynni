@@ -18,10 +18,4 @@ require("Modules/user/user_model.php");
 $user = new User($mysqli,$redis);
 require_once "Modules/feed/feed_model.php";
 $feed = new Feed($mysqli,$redis,$settings["feed"]);
-require_once "Modules/club/club_model.php";
-$club = new Club($mysqli, $user, $feed);
-require_once "Modules/tariff/tariff_model.php";
-$tariff = new Tariff($mysqli);
-require_once "Modules/data/account_data_model.php";
-$data = new AccountData($feed, $club, $tariff);
 
