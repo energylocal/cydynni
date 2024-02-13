@@ -216,7 +216,7 @@
                       // Replace this with your export matched power logic
                       console.log('Exporting matched power data from ' + startMillis + ' to ' + endMillis);
                       $.ajax({
-                        url: 'export-csv',
+                        url: '<?php echo $club?>/export-csv',
                         type: 'GET',
                         data: {
                           start: startMillis,
