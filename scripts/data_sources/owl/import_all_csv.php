@@ -21,7 +21,7 @@ foreach($users as $u) {
     
     foreach ($months as $month) {
         // csv file name
-        $filename = strtoupper($u["username"])." ".$month.$year".csv";
+        $filename = strtoupper($u["username"])." ".$month.$year.".csv";
         if (file_exists($dir.$filename)) {
             print $filename."\n";
  

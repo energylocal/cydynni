@@ -10,8 +10,8 @@ $hydro_forecast_settings = array(
     "precipIntensity_limit"=>5.0,
     "precipIntensity_scale"=>16,
     "interval_scale"=>0.2,
-    "hydro_max"=>49.0,
-    "hydro_min"=>10.0,
+    "hydro_max"=>49.0,  # kWh / 30min
+    "hydro_min"=>10.0,  # kWh / 30min
     "elements"=>array(
         array("conductivity"=>300, "capacity"=>8000000.0),
         array("conductivity"=>400, "capacity"=>5000000.0),
