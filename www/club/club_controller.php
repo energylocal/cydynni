@@ -212,8 +212,13 @@ function club_controller()
         $live->generator_price = $band->generator*1;
         $live->import_price = $band->import*1;
         $live->unit_price = $tariff_class->get_unit_price($live->club,$live->generation,$band);
-        $live->status = $tariff_class->get_status($live->unit_price,$bands);
-
+        // call for traffic lights
+        // old call
+        //$live->status = $tariff_class->get_status($live->unit_price,$bands);
+        // new call
+        if ($result = $redis->get("$club:club:demandshaper")) {
+            $live->demandshaper_data_raw = json_decode($result);
+        }
         return $live;
     }
 

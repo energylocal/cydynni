@@ -496,7 +496,7 @@ class Tariff
         );
     }
 
-    // get green, amber, red status based on unit price in range of min and max
+    // get traffic light (green, amber, red) status based on unit price in range of min and max
     public function get_status($unit_price,$periods) {
         $range = $this->get_min_max_prices($periods);
 
