@@ -293,12 +293,13 @@ function club_controller()
         if (strpos($data, "@")) {
             $email = $data;
             $users = $user->get_usernames_by_email($email);
-            $username = $users[0]["username"];
-        // if username:
+	    // A single email can be associated with multiple accounts (usernames cannot).
+	    // If such an email is used to login, the first username is used.
+       	// Likewise, take the first when resetting the password.
+	    $username = $users[0]["username"];	
         } else {
             $username = $data;
             $email = $user->get_email_by_username($username);
-            error_log($email);
         }
         return $user->passwordreset_generation($username, $email, $base_url);
     } catch(InvalidUserException $e) {
