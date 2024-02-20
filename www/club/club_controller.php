@@ -69,7 +69,7 @@ function club_controller()
 	  $session['lang'] = chooseLanguage($club_settings["languages"]);
     $lang = $session['lang']; // Why?
 
-    $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
+    $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB.json"));
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];

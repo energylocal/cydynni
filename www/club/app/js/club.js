@@ -177,7 +177,7 @@ function draw_club_summary(result) {
             $("#club_statusmsg").html(t("We could do more to make the most of the " + club_settings.generator + " power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
         }
         if (score >= 70) {
-            $("#club_statusmsg").html(t("We’re doing really well using the " + club_settings.generator + " and cheaper power"));
+            $("#club_statusmsg").html(t("We're doing really well using the " + club_settings.generator + " and cheaper power"));
         }
     }, 400);
 
@@ -540,9 +540,8 @@ function club_bargraph_draw() {
         var plot = $.plot("#club_bargraph_placeholder", clubseries, options);
 
         o = plot.pointOffset({ x: last_actual_reading_time + 900000, y: 0 });
-        var forecast_text = t("Actual readings are %s days behind.\n\nBlack line and grey section indicates\nforecasted generation and consumption.\n\nRed line indicates the current time.").replace("%s", days_behind);
+        var forecast_text = t("Actual readings are %s days behind.")+"\n\n"+t("Black line and grey section indicates")+"\n"+t("forecasted generation and consumption.")+"\n\n"+t("Red line indicates the current time.").replace("%s", days_behind);
         $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left + 18) + "px;top:13px;color:#666;font-size:smaller; cursor:pointer' title='" + forecast_text + "'>" + t("Estimate") + "</div>");
-        ;
 
         // $("#club_bargraph_placeholder").append("<div style='position:absolute;left:" + (o.left - 6) + "px;top:15px;color:#666;font-size:smaller'>Actual</div>");
 

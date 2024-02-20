@@ -80,12 +80,12 @@
               <div class="block-title bg-household" style="padding-right: 0px;">
                 <div class="btn-toolbar household-view-scope"" data-toggle="buttons-radio">
                   <div class="btn-group">
-                    <button class="btn active" value="historic">Historic</button>
-                    <button class="btn" value="live">Live</button>
-                    <button class="btn" value="comparison">Comparison</button>
+                    <button class="btn active" value="historic"><?php echo t("Historic");?></button>
+                    <button class="btn" value="live"><?php echo t("Live");?></button>
+                    <button class="btn" value="comparison"><?php echo t("Comparison");?></button>
                   </div>
                   <div class="btn-group">
-                    <button class="btn" value="tariff-settings">Settings</button>
+                    <button class="btn" value="tariff-settings"><?php echo t("Settings"); ?></button>
                   </div>
                   <div class="visnav-block" style="margin-top: 0px;">
                     <select id="historic-period-select" class="btn-select period-select" style="height: 38px; margin-top: 0px;"></select>
@@ -96,40 +96,40 @@
 
             <!------------------------- Target & tariff section ------------------------>
             <div id="tariff-settings" class="block" style="display:none; background-color: white;">
-              <div class="block-title bg-household">Tariff & Target Settings</div>
+              <div class="block-title bg-household"><?php echo t("Tariff & Target Settings");?></div>
               <div class="block-content">
                 <?php if (!$club_settings["has_generator"]) { ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
-                      <legend>Tariff</legend>
+                      <legend><?php echo t("Tariff"); ?></legend>
                       <div class="control-group">
-                        <label class="control-label" for="tariff">Tariff (p/kWh):</label>
+                        <label class="control-label" for="tariff"><?php echo t("Tariff (p/kWh)"); ?>:</label>
                         <div class="controls">
                           <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->tariff) ? $user_attributes->tariff: ''; ?>" onchange="updateTariff()">
                         </div>
                       </div>
-                      <p><i>The unit cost of your electricity, e.g. 30.7p/kWh</i></p>                      
+                      <p><i><?php echo t("The unit cost of your electricity, e.g. 30.7p/kWh");?></i></p>                      
                   </form>
                 </div>
                 <?php } ?>
                 <div class="box2">
                   <form class="form-horizontal">
                     <fieldset>
-                      <legend>Daily Target</legend>
+                      <legend><?php echo t("Daily Target");?></legend>
                       <div class="control-group">
-                        <label class="control-label" for="dailyTargetMax">Max. daily usage target (kWh/day):</label>
+                        <label class="control-label" for="dailyTargetMax"><?php echo t("Max. daily usage target (kWh/day):");?></label>
                         <div class="controls">
                           <input type="number" step="0.5" id="dailyTargetMax" placeholder="kWh/day" value="<?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : ''; ?>" onchange="updateTargetMax()">
                         </div>
                       </div>
                       <div class="control-group">
-                        <label class="control-label" for="dailyTargetMin">Min. daily usage target (kWh/day):</label>
+                        <label class="control-label" for="dailyTargetMin"><?php echo t("Min. daily usage target (kWh/day):");?></label>
                         <div class="controls">
                           <input type="number" step="0.5" id="dailyTargetMin" placeholder="kWh/day" value="<?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : ''; ?>" onchange="updateTargetMin()">
                         </div>
                       </div>
-                      <p><i>Setting a daily target usage may help you to understand where your electricity is being used.</i></p>
+                      <p><i><?php echo t("Setting a daily target usage may help you to understand where your electricity is being used."); ?></i></p>
                     </fieldset>
                   </form>
                 </div>
@@ -164,7 +164,7 @@
                     </div>
                     
                     <div style="padding:10px; background-color:#eee; color: #666; font-size:14px">
-                        <?php echo t("Electricity use in window");?>: <b><span id="kwh_in_window">2.1</span> kWh</b>
+                        <?php echo t("Electricity use in window");?>: <b><span id="kwh_in_window">2.1</span> <?php echo t("kWh"); ?></b>
                     </div>
                 </div>
             </div>
@@ -267,7 +267,7 @@
                     
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold;"><?php echo t("ELECTRICITY"); ?></div>
-                      <div style="font-size:22px"><span class="household_totalkwh"></span> kWh</div>
+                      <div style="font-size:22px"><span class="household_totalkwh"></span> <?php echo t("kWh"); ?></div>
                       <div class="hrdiv"></div>
                       <div id="household_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="household_piegraph1_placeholder"></canvas>

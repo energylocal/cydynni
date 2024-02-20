@@ -50,7 +50,7 @@ $app_path = $path."Modules/club/app/";
         <h3><?php echo t("Cost breakdown: ");?><span class="m1-name"></span></h3>
         <table style="width:100%">
         <tr>
-          <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="total_kwh"></span> kWh)<br><?php echo t("Standing charge");?> (<span id="days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
+          <td style="background-color:#eee; border:2px #fff solid; padding:10px"><?php echo t("Electricity charge");?> (<span id="total_kwh"></span> <?php echo t("kWh"); ?>)<br><?php echo t("Standing charge");?> (<span id="days"></span> <?php echo t("days at");?> 17.8p/<?php echo t("day");?>)<br><?php echo t("VAT");?> @ 5%<td>
           <td style="background-color:#eee; border:2px #fff solid; padding:10px">£<span id="elec_cost"></span><br>£<span id="standing_charge"></span><br>£<span id="vat"></span></td>
         </tr>
         <tr>
@@ -212,7 +212,7 @@ function load()
         keytable += '<tr>'
         keytable += '<td><div class="key" style="background-color:'+club_settings.generator_color+'"></div></td>'
         keytable += '<td><b>'+t(ucfirst(club_settings.generator)+" Price")+'</b><br>'
-        keytable += month.generation.total.toFixed(1)+' kWh @ '+(100*month.generation_cost.total/month.generation.total).toFixed(2)+'p/kWh<br>'
+        keytable += month.generation.total.toFixed(1)+' '+t(kWh)+' @ '+(100*month.generation_cost.total/month.generation.total).toFixed(2)+'p/'+t("kWh")+'<br>'
         keytable += t("Costing")+' £'+(month.generation_cost.total).toFixed(2)+'</td>'
         keytable += '</tr>'
     }
@@ -226,7 +226,7 @@ function load()
                 keytable += '<tr>'
                 keytable += '<td><div class="key" style="background-color:'+tariff_colors[name]+'"></div></td>'
                 keytable += '<td><b>'+t(ucfirst(name)+" Price")+'</b><br>'
-                keytable += month.import[name].toFixed(1)+' kWh @ '+(100*month.import_cost[name]/month.import[name]).toFixed(2)+'p/kWh<br>'
+                keytable += month.import[name].toFixed(1)+' '+t("kWh")+' @ '+(100*month.import_cost[name]/month.import[name]).toFixed(2)+'p/'+t("kWh")+'<br>'
                 keytable += t("Costing")+' £'+(month.import_cost[name]).toFixed(2)+'</td>'
                 keytable += '</tr>'
             }
@@ -306,7 +306,7 @@ function load()
         $(".club_message").html(t("We could do more to make the most of the "+club_settings.generator+" power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
     }
     if (score_club>=70) {
-        $(".club_message").html(t("We’re doing really well using the "+club_settings.generator+" and cheaper power"));
+        $(".club_message").html(t("We're doing really well using the "+club_settings.generator+" and cheaper power"));
     }
 
     household_pie_draw();

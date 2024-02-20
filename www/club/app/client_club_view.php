@@ -87,7 +87,7 @@
                     
                     <div class="box3">
                       <div style="font-size:26px; font-weight:bold; color:#ff7900"><?php echo t("ELECTRICITY"); ?></div>
-                      <div style="font-size:22px"><span class="club_totalkwh"></span> kWh</div>
+                      <div style="font-size:22px"><span class="club_totalkwh"></span> <?php echo t("kWh"); ?></div>
                       
                       <div id="club_piegraph1_bound" style="width:100%; height:300px; margin: 0 auto">
                           <canvas id="club_piegraph1_placeholder"></canvas>
