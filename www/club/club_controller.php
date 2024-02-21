@@ -14,93 +14,141 @@ http://openenergymonitor.org
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
+function chooseLanguage(string $languages) { // e.g. "cy,en"
+
+    $languages = explode(",", $languages);
+
+    // Language of last resort
+    $lang = "en";
+
+    // First lang code in settings used as default if available
+    if (count($languages) > 0) {
+      $lang = $languages[0];
+    }
+
+    // Prioritise query iaith then lang params if available
+    if (isset($_GET['lang'])) {
+      $lang = $_GET['lang'];
+    }
+    if (isset($_GET['iaith'])) {
+      $lang = $_GET['iaith'];
+    }
+
+    // Convert 2-letter code to full locale
+    switch($lang) {
+	  case 'en':
+	    return "en_GB";
+      case 'cy':
+        return "cy_GB";
+      default:
+        $log = new EmonLogger(__FILE__);
+	    $log->error("Language code '".$lang."' unsupported, defaulting to en_GB");
+        return "en_GB";
+    }
+}
+
 function club_controller()
 {
     global $mysqli, $redis, $session, $route, $user, $settings, $available_clubs;
     global $club;
     global $lang;
 
-    if (isset($_GET['lang']) && $_GET['lang']=="cy") $session['lang'] = "cy_GB";
-    if (isset($_GET['iaith']) && $_GET['iaith']=="cy") $session['lang'] = "cy_GB";
-    if (isset($_GET['lang']) && $_GET['lang']=="en") $session['lang'] = "en_GB";
-    if (isset($_GET['iaith']) && $_GET['iaith']=="en") $session['lang'] = "en_GB";
-    $lang = $session["lang"];
+    $log = new EmonLogger(__FILE__);
+    $log->info('club route: '.json_encode($route));
 
-    $result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
-    $row = $result->fetch_array();
-    $club_settings = array();
-    $club_settings[$club] = $row;
-    
-    if ($club=="repower" || $club=="bridport" || $club=="roupellpark") {
-        $session['lang'] = "en_GB";
-        $lang = $session["lang"];
-    }
-    
-	global $translation;
-	$translation = new stdClass();
+    require_once "Modules/feed/feed_model.php";
+    $feed = new Feed($mysqli,$redis,$settings["feed"]);
+
+    require "Modules/club/club_model.php";
+    $club_class = new Club($mysqli,$user,$feed);
+    $club_settings = $club_class->get_settings($club);
+
+	  global $translation;
+	  $translation = new stdClass();
+
+	  $session['lang'] = chooseLanguage($club_settings["languages"]);
+    $lang = $session['lang']; // Why?
+
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
 
     if ($session["read"]) {
         $userid = (int) $session["userid"];
-                
+
         $result = $mysqli->query("SELECT email,apikey_read FROM users WHERE `id`='$userid'");
         $row = $result->fetch_object();
         $session["email"] = $row->email;
         $session["apikey_read"] = $row->apikey_read;
     }
-    
+
     // Load the main dashboard view
     // /club
+    $tariffs = array();
+    $standing_charge = 0;
+
     if ($route->action == "") {
         $route->format = "html";
         $available_reports = array();
-        
-        require_once "Modules/tariff/tariff_model.php";
-        $tariff_class = new Tariff($mysqli);
-    
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
-        $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
-        $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-        $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
-    
-        if ($session["read"]) {
+
+        $tariffs_table = array();
+
+        try {
+          require_once "Modules/tariff/tariff_model.php";
+          $tariff_class = new Tariff($mysqli);
+
+          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
+          $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
+          $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+          $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+
+          if ($session["read"]) {
             $userid = (int) $session["userid"];
-            
-            $tariffid = $tariff_class->get_user_tariff($userid);
+
+            $tariffs_table = array();
+            $standing_charge = 0;
+
+            $tariffid = $tariff_class->get_user_tariff_id($userid);
             $tariffs = $tariff_class->list_periods($tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-            
             $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
-            
-            require_once "Modules/feed/feed_model.php";
-            $feed = new Feed($mysqli,$redis,$settings["feed"]);
+
 
             require "Modules/data/account_data_model.php";
             $account_data = new AccountData($feed, false, $tariff_class);
-            
+
             $available_reports = $account_data->get_available_reports($userid);
-            
+
             $tmp = $feed->get_user_feeds($userid);
-            
+
             $session["feeds"] = array();
             foreach ($tmp as $f) {
-                $session["feeds"][$f["name"]] = (int) $f["id"];
+              $session["feeds"][$f["name"]] = (int) $f["id"];
             }
             if (!$session["admin"]) $redis->incr("userhits:$userid");
-        }
+          }
 
-        $content = view("Modules/club/app/client_view.php", array(
+          $content = view("Modules/club/app/client_view.php", array(
             'session' => $session,
             'club' => $club,
-            'club_settings' => $club_settings[$club],
+            'club_settings' => $club_settings,
             'tariffs_table' => $tariffs_table,
             'tariffs' => $tariffs,
+            'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
             'available_reports'=>$available_reports,
-            'clubid'=>$club_settings[$club]['id'],
+            'clubid'=>$club_settings['id'],
             'standing_charge' => $standing_charge
-        ));
+          ));
 
-        return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
+          return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
+
+        } catch (MissingUserTariffException $e) {
+          $log = new EmonLogger(__FILE__);
+          $log->error($e);
+          return array('content'=>t('The tariff has not been correctly set for this user.'));
+        } catch (MissingTariffException $e) {
+          $log = new EmonLogger(__FILE__);
+          $log->error($e);
+          return array('content'=>t('The tariff has not been correctly set for this club.'));
+        }
     }
 
     // Returns the report view
@@ -110,7 +158,7 @@ function club_controller()
         $route->format = "html";
         $userid = (int) $session["userid"];
         if (!$session["admin"]) $redis->incr("userhits:$userid");
-        return view("Modules/club/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings[$club]));
+        return view("Modules/club/app/report_view.php",array('session'=>$session,'club'=>$club,'club_settings'=>$club_settings));
     }
 
     // Configure device (review, is this still needed?)
@@ -131,20 +179,17 @@ function club_controller()
         require_once "Modules/tariff/tariff_model.php";
         $tariff_class = new Tariff($mysqli);
         
-        require_once "Modules/feed/feed_model.php";
-        $feed = new Feed($mysqli,$redis,$settings["feed"]);
-        
-        $gen_last_actual = $feed->get_timevalue($club_settings[$club]['generation_feed']);
-        $use_last_actual = $feed->get_timevalue($club_settings[$club]['consumption_feed']);
+        $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
+        $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
         $live->generation = number_format($gen_last_actual['value'],3)*2.0;
         $live->club = number_format($use_last_actual['value'],3)*2.0;
         
         // Use generation and consumption prediction from forecast if actual data is old
         if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
-            if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club]['consumption_forecast_feed'])) {
-                $gen_forecast = $feed->get_value($club_settings[$club]['generation_forecast_feed'],$this_hh);
-                $use_forecast = $feed->get_value($club_settings[$club]['consumption_forecast_feed'],$this_hh);
+            if (isset($club_settings['generation_forecast_feed']) && isset($club_settings['consumption_forecast_feed'])) {
+                $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
+                $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                 
                 if ($gen_forecast!=null && $use_forecast!=null) {
                     $live->generation = number_format($gen_forecast,3)*2.0;
@@ -153,7 +198,7 @@ function club_controller()
             }
         }
         
-        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings[$club]["id"]);
+        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
         $bands = $tariff_class->list_periods($current_tariff->tariffid);
         
         $date = new DateTime();
@@ -186,6 +231,15 @@ function club_controller()
         if ($result = $redis->get("$club:club:demandshaper-octopus")) {
             return json_decode($result);
         }
+    }
+
+    if ($route->action == "set_fixed_user_tariff") { // used for clubless users who set their own rates
+        $body = put_json();
+        $result = $user->set_attribute($session['userid'], $body['name'], $body['value']);
+        require_once "Modules/tariff/tariff_model.php";
+        $tariff_class = new Tariff($mysqli);
+        $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['value']);
+        return $result;
     }
 
     // Demandshaper v2: renamed to forecast (review, not all clubs listed here)
@@ -241,9 +295,6 @@ function club_controller()
     // ----------------------------------------------------------------------
     if ($route->action == "admin-users-data-status" && $session['admin']) {
         $route->format = "json";
-
-        require_once "Modules/feed/feed_model.php";
-        $feed = new Feed($mysqli,$redis,$settings["feed"]);
     
         $select_by_club = "";
         if (isset($_GET['club_id'])) {
@@ -393,17 +444,19 @@ function club_controller()
         
         foreach ($available_clubs_menu as $i=>$club_name) {
         
-            $gen_last_actual = $feed->get_timevalue($club_settings[$club_name]['generation_feed']);
-            $use_last_actual = $feed->get_timevalue($club_settings[$club_name]['consumption_feed']);
+            $club_settings = 
+        
+            $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
+            $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
             $generation = number_format($gen_last_actual['value'],3)*2.0;
             $consumption = number_format($use_last_actual['value'],3)*2.0;
             
             // Use generation and consumption prediction from forecast if actual data is old
             if (($this_hh-$gen_last_actual['time'])>1800 && ($this_hh-$use_last_actual['time'])>1800) {
-                if (isset($club_settings[$club]['generation_forecast_feed']) && isset($club_settings[$club_name]['consumption_forecast_feed'])) {
-                    $gen_forecast = $feed->get_value($club_settings[$club_name]['generation_forecast_feed'],$this_hh);
-                    $use_forecast = $feed->get_value($club_settings[$club_name]['consumption_forecast_feed'],$this_hh);
+                if (isset($club_settings['generation_forecast_feed']) && isset($club_settings['consumption_forecast_feed'])) {
+                    $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
+                    $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                     
                     if ($gen_forecast!=null && $use_forecast!=null) {
                         $generation = number_format($gen_forecast,3)*2.0;
@@ -413,8 +466,8 @@ function club_controller()
             }
         
             $club_list[$club_name] = array(
-                "name"=>$club_settings[$club_name]["name"],
-                "generator"=>$club_settings[$club_name]["generator"],
+                "name"=>$club_settings["name"],
+                "generator"=>$club_settings["generator"],
                 "generation"=>$generation,
                 "consumption"=>$consumption
             );
@@ -426,8 +479,7 @@ function club_controller()
     break;   
     */
 
-    require "Modules/club/club_model.php";
-    $club = new Club($mysqli,$user);
+
 
     // API
     // List all clubs, Public
@@ -435,7 +487,7 @@ function club_controller()
     // /club/list (returns html list of clubs)
     if ($route->action == 'list') {
         if ($route->format == "json") {
-            return $club->list();
+            return $club_class->list();
         } else if ($session['admin']) {
             return view("Modules/club/club_admin_view.php", array());
         }
@@ -446,7 +498,7 @@ function club_controller()
     if ($route->action == 'create' && $session['admin']) {
         $route->format = "json";
         $name = get('name', true);
-        return $club->create($name);
+        return $club_class->create($name);
     }
 
     // Delete club, admin only
@@ -454,7 +506,7 @@ function club_controller()
     if ($route->action == 'delete' && $session['admin']) {
         $route->format = "json";
         $id = get('id', true);
-        return $club->delete($id);
+        return $club_class->delete($id);
     }
     
     return false;  

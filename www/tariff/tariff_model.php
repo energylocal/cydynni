@@ -13,6 +13,9 @@
 // no direct access
 defined('EMONCMS_EXEC') or die('Restricted access');
 
+require "missing_tariff_exception.php";
+require "missing_user_tariff_exception.php";
+
 class Tariff
 {
     private $mysqli;
@@ -35,7 +38,7 @@ class Tariff
             }
             $active_user_count[$row->tariffid]++;
         }
-        
+
         $result = $this->mysqli->query("SELECT * FROM tariffs WHERE clubid='$clubid'");
         $tariffs = array();
         while ($row = $result->fetch_object()) {
@@ -47,7 +50,7 @@ class Tariff
             } else {
                 $row->active_users = 0;
             }
-            
+
             if ($first_assigned = $this->first_assigned($row->id)) {
                 $row->last_assigned = date("jS F Y",$first_assigned);
             } else {
@@ -68,7 +71,7 @@ class Tariff
         if (preg_match('/[^a-zA-Z0-9\s\-_\.]/', $name)) {
             return array("success"=>false, "message"=>"Tariff name can only contain a-z A-Z 0-9 whitespace and - _ .");
         }
-        
+
         $time = time();
         $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created) VALUES (?,?,?)");
         $stmt->bind_param("isi",$clubid,$name,$time);
@@ -295,9 +298,14 @@ class Tariff
     }
 
     // Get user tariff
-    public function get_user_tariff($userid) {
+    public function get_user_tariff_id($userid) {
         $userid = (int) $userid;
         $result = $this->mysqli->query("SELECT tariffid FROM user_tariffs WHERE userid=$userid ORDER BY start DESC LIMIT 1");
+
+        if (mysqli_num_rows($result) == 0) {
+          throw new MissingUserTariffException("No user tariff for user id $userid.");
+        }
+
         if ($row = $result->fetch_object()) {
             return $row->tariffid;
         } else {
@@ -335,7 +343,7 @@ class Tariff
             $t->tariffid = (int) $row->id;
             $t->tariff_name = $row->name;
             $t->standing_charge = $row->standing_charge;
-            
+
             $t->start = $this->first_assigned($row->id);
 
             $history[] = $t;
@@ -349,13 +357,16 @@ class Tariff
         $result = $this->mysqli->query("SELECT id,name,standing_charge FROM tariffs WHERE clubid='$clubid' ORDER BY id DESC LIMIT 1");
         $row = $result->fetch_object();
         $t = new stdClass();
+        if (mysqli_num_rows($result) == 0) {
+          throw new MissingTariffException("No tariff for club id $clubid");
+        }
         $t->tariffid = (int) $row->id;
         $t->tariff_name = $row->name;
         $t->standing_charge = $row->standing_charge;
         // $t->start = $this->first_assigned($row->id);
         return $t;
     }
-    
+
 
     // Replace with client side pre-processing?
     public function getTariffsTable($tariffs) {
@@ -364,10 +375,12 @@ class Tariff
         // add properties and format strings...
         for ($i=0; $i<count($tariffs); $i++) {
             $t = $tariffs[$i];
-
             $next = $i+1;
-            if ($next<count($tariffs)) $t->end = $tariffs[$next]->start;
-            else $t->end = $tariffs[0]->start;
+            if ($next<count($tariffs)) {
+              $t->end = $tariffs[$next]->start;
+            } else {
+              $t->end = $tariffs[0]->start;
+            }
 
             $t->start = (int) $t->start;
             // convert 6.5 to 06:30
@@ -389,10 +402,7 @@ class Tariff
             $end = intval(date('G', strtotime($t->end)));
             $now = intval(date('G'));
             $t->isCurrent = $now >= $start && $now < $end;
-            // add 12hr times with am/pm
-            $t->start = date('g', strtotime($t->start)) . ($t->start < 12 ? translate('am', $lang): translate('pm', $lang));
-            $t->end = date('g', strtotime($t->end)) . ($t->end < 12 ? translate('am', $lang): translate('pm', $lang));
-            // add css class names to style the title column
+            // add css class names to style the title column // TODO - this would be better as a flag for the frontend to resolve
             $t->css = 'text-' . $t->name;
             $t->rowClass = $t->isCurrent ? ' class="current"': '';
         }
@@ -504,4 +514,26 @@ class Tariff
         return "red";
     }
 
+    public function set_temporary_fixed_tariff($userid, $import): void {
+      // If the current user tariff is called user_tariff_{USERID} then update all period's import rate
+      // Used for non-club dashboards
+
+      $tariffid = $this->get_user_tariff_id($userid);
+      $tariff = $this->get_tariff($tariffid);
+      $tariff_name = "user_tariff_".$userid;
+      if ($tariff->name != "user_tariff_".$userid) {
+        throw new Exception("User tariff is not called '$tariff_name'");
+      }
+
+      $periods = $this->list_periods($tariffid);
+      foreach ($periods as $period) {
+        $currentRate = $period->import;
+        $index = $period->index;
+        $t = $period->tariffid;
+        $stmt = $this->mysqli->prepare("UPDATE tariff_periods SET import=? WHERE tariffid=? AND `index`=?");
+        $stmt->bind_param("dii", $import, $period->tariffid, $period->index);
+        $stmt->execute();
+        $stmt->close();
+      }
+    }
 }

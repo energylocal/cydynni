@@ -20,11 +20,13 @@ require "core.php";
 require_once "Modules/tariff/tariff_model.php";
 $tariff_class = new Tariff($mysqli);
 
+require "Modules/club/club_model.php";
+$club_class = new Club($mysqli,$user,$feed);
+$club_settings = $club_class->get_settings($club);
+
 // ----------------------------------------------------------------
 // 1. Demand forecast based on average over the last 7 days
 // ----------------------------------------------------------------
-$result = $mysqli->query("SELECT * FROM club WHERE `key`='$club'");
-$club_settings = $result->fetch_array();
 $use_id = $club_settings['consumption_feed'];
 
 // Force cache reload
@@ -211,8 +213,8 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $octopus_date->setTimestamp($time+1800);
     $octopus_row['valid_to'] = $octopus_date->format("Y-m-d\TH:i:s\Z");    
     $modified_unitprice = ($unitprice*0.88) + ($use*0.0005);    
-    $octopus_row['value_exc_vat'] = number_format(100*$modified_unitprice,2,'.', '')*1;
-    $octopus_row['value_inc_vat'] = number_format(100*$modified_unitprice,2,'.', '')*1;
+    $octopus_row['value_exc_vat'] = number_format($modified_unitprice,2,'.', '')*1;
+    $octopus_row['value_inc_vat'] = number_format($modified_unitprice,2,'.', '')*1;
     $octopus_rows[] = $octopus_row;
     
     $td++;

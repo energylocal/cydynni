@@ -60,6 +60,9 @@ var feed = {
     
     getdata: function(id,start,end,interval,skipmissing,limitinterval)
     {
+        if (id === false) {
+          throw new Error("Feed ID not specified");
+        }
         var apikeystr = "";
         if (apikey!="") apikeystr = "?apikey="+apikey;
         
@@ -71,35 +74,38 @@ var feed = {
             async: false,                      
             success: function(result) {
                 if (!result || result===null || result==="" || result.constructor!=Array) {
-                    console.log("ERROR","feed.getdata invalid response: "+result);
+                    console.log("ERROR","feed.getdata invalid response for feed "+id+": "+result);
                 }
-                data = result; 
+                data = result;
             }
         });
         return data;
     },
-    
+
     getaverage: function(id,start,end,interval,skipmissing,limitinterval)
     {
+        if (id === false) {
+          throw new Error("Feed ID not specified");
+        }
         var apikeystr = "";
         if (apikey!="") apikeystr = "?apikey="+apikey;
-        
+
         var data = [];
-        $.ajax({                                      
-            url: path+"feed/average.json"+apikeystr,                         
+        $.ajax({
+            url: path+"feed/average.json"+apikeystr,
             data: "id="+id+"&start="+start+"&end="+end+"&interval="+interval,
             dataType: 'json',
-            async: false,                      
+            async: false,
             success: function(result) {
                 if (!result || result===null || result==="" || result.constructor!=Array) {
-                    console.log("ERROR","feed.getdata invalid response: "+result);
+                    console.log("ERROR","feed.getdata invalid response for feed "+id+": "+result);
                 }
-                data = result; 
+                data = result;
             }
         });
         return data;
     },
-    
+
     getdataDMY: function(id,start,end,mode)
     {
         var apikeystr = "";

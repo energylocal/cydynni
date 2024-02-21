@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 61;
+$v = 65;
 
 $app_path = $path."Modules/club/app/";
 
@@ -14,9 +14,11 @@ $app_path = $path."Modules/club/app/";
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/date.format.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 
 <script src="<?php echo $path; ?>Lib/moment.min.js"></script>
-<script> 
+<script>
     var _user = {lang:"<?php isset($_SESSION['lang'])?$_SESSION['lang']:''; ?>"};
 </script>
 <script src="<?php echo $path; ?>Lib/user_locale.js"></script>
@@ -26,27 +28,36 @@ $app_path = $path."Modules/club/app/";
 
 <div class="app">
     <ul class="navigation">
-        <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
+        <?php if ($club_settings["has_generator"]) { ?>
+          <li name="forecast"><div><img src="<?php echo $app_path; ?>images/forecast.png"><div class="nav-text"><?php echo t($club_settings["name"]."<br>Overview"); ?></div></div></li>
+        <?php } ?>
         <li name="household"><div><img src="<?php echo $app_path; ?>images/household.png"><div class="nav-text"><?php echo t("Your<br>Household"); ?></div></div></li>
-        <li name="club"><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Your<br>Club"); ?></div></div></li>
+        <?php if ($club_settings["has_generator"]) { ?>
+          <li name="club" ><div><img src="<?php echo $app_path; ?>images/club.png"><div class="nav-text"><?php echo t("Your<br>Club"); ?></div></div></li>
+        <?php } ?>
         <li name="tips"><div><img src="<?php echo $app_path; ?>images/tips.png"><div class="nav-text" style="padding-top:15px"><?php echo t("Tips"); ?></div></div></li>
     </ul>
 
+
+    <?php if ($club_settings["has_generator"]) { ?>
     <div class="page" name="forecast">
         <?php echo view("Modules/club/app/client_forecast_view.php", array(
-            'app_path'=>$app_path, 
+            'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
             'tariffs_table'=>$tariffs_table
         )); ?>
     </div>
+    <?php } ?>
 
     <div class="page" name="household">
         <?php echo view("Modules/club/app/client_household_view.php", array(
-            'app_path'=>$app_path, 
+            'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
-            'tariffs'=>$tariffs
+            'tariffs'=>$tariffs,
+            'user_attributes'=>$user_attributes,
+            'tariffs_table'=>$tariffs_table
         )); ?>
     </div>
    
@@ -104,14 +115,21 @@ var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov",
 var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 
+var session = <?php echo json_encode($session); ?>;
+var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : 0; ?>;
+var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : 0; ?>;
+
 </script>
 
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/comparison.js?v=<?php echo $v; ?>"></script>
+
 
 <script>
 var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emoncms/";
@@ -131,15 +149,6 @@ if (session.read) {
 
 var translation = <?php echo json_encode($translation,JSON_HEX_APOS);?>;
 var lang = "<?php echo $lang; ?>";
-// Language selection top-right
-
-if (languages.length>1) {
-    if (lang=="cy_GB") {
-        $("#togglelang").html("English");
-    } else {
-        $("#togglelang").html("Cymraeg");
-    }
-}
 
 if (!session.read) {
   $("#login-block").show();
@@ -150,7 +159,7 @@ if (!session.read) {
   $("#reports").hide();
 } else {
   $("#login-block").hide();
-  $(".household-block").show();
+  $(".historic-block").show();
   
   $("#logout").show();
   $("#account").show();
@@ -170,9 +179,21 @@ if (url.searchParams!=undefined) {
     page = url.search.replace("?","");
 }
 
-if (page=="") page = "forecast";
+if (page=="") {
+  if (club_settings.has_generator) {
+    page = "forecast";
+  } else {
+    page = "household";
+  }
+}
 
-if (page=="forecast") show_page("forecast");
+if (page=="forecast") {
+  if (club_settings.has_generator) {
+    show_page("forecast");
+  } else {
+    show_page("household");
+  }
+}
 else if (page=="household") show_page("household");
 else if (page=="club") show_page("club");
 else if (page=="tips") show_page("tips");
@@ -183,7 +204,7 @@ $(".navigation li").click(function() {
     History.pushState({}, page, "?"+page);  
 });
 
-$(".block-title").click(function() {
+$(".block-title.hideable-block").click(function() {
     $(this).parent().find(".block-content").slideToggle("slow");
     $(this).find(".triangle-dropdown").toggle();
     $(this).find(".triangle-pushup").toggle();
@@ -196,6 +217,9 @@ function show_page(page) {
     // Show relevant page
     $(".page").hide();
     $(".page[name="+page+"]").show();
+
+    $("#lang-link-cy").attr("href", "?lang=cy&"+page);
+    $("#lang-link-en").attr("href", "?lang=en&"+page);
 
     if (page=="forecast") {
         club_pie_draw();
@@ -262,6 +286,7 @@ club_bargraph_load();
 if (session.read) {
     household_summary_load();
     household_bargraph_load();
+    household_comparison_bargraph_load();
 }
 
 resize();
@@ -273,17 +298,57 @@ $(".period-select").click(function(event) {
     event.stopPropagation();
 });
 
+document.querySelectorAll('.household-view-scope button').forEach(button => {
+  button.addEventListener('click', (e) => {
+    const currentDate = new Date();
+    switch (button.value) {
+    case "historic":
+      $("#your-score").show();
+      $("#historic-period-select").show();
+      $("#your-usage").show();
+      $("#realtime-power").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").hide();
+      break;
+    case "live":
+      household_realtime_load();
+      $("#historic-period-select").hide();
+      $("#your-score").hide();
+      $("#your-usage").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").hide();
+      break;
+    case "comparison":
+      $("#historic-period-select").show();
+      $(".historic-block").hide();
+      $("#realtime-power").hide();
+      $("#tariff-settings").hide();
+      $("#comparison").show();
+      break;
+    case 'tariff-settings':
+      $("#historic-period-select").hide();
+      $("#your-usage").hide();
+      $("#realtime-power").hide();
+      $("#comparison").hide();
+      $("#tariff-settings").show();
+      break;
+    default:
+      alert("Household view scope '"+button.value+"' not supported.");
+    }
+  })
+})
+
 $(".period-select").change(function(event) {
     event.stopPropagation();
-    
+
     date_selected = $(this).val();
     view.end = +new Date;
-    
+
     var period_length = 3600000*24.0*30;
-    
+
     var club_date_text = t("In the last %s, we scored:").replace('%s', t(date_selected));
     var household_date_text = t("In the last %s, you scored:").replace('%s', t(date_selected));
-    
+
     switch (date_selected) {
         case "day": view.start = view.end - (3600000*24.0*1); break;
         case "week": view.start = view.end - (3600000*24.0*7); break;
@@ -294,7 +359,7 @@ $(".period-select").change(function(event) {
             var parts = date_selected.split('-');
             var month = (parts[1]*1)-1;
             var year = parts[0]*1;
-            
+
             var date = new Date();
             date.setHours(0);
             date.setMinutes(0);
@@ -304,14 +369,14 @@ $(".period-select").change(function(event) {
             date.setMonth(month);
             date.setYear(year);
             view.start = date.getTime();
-            
+
             date.setDate(days_in_month[month]);
             view.end = date.getTime();
-            
+
             club_date_text = t("In %s, we scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
             household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
     }
-        
+
     club_bargraph_load();
     club_bargraph_draw();
     $(".period-select").val(date_selected);
@@ -320,24 +385,8 @@ $(".period-select").change(function(event) {
     $(".household_date").html(household_date_text);
     
     // Copy to household
-    household_bargraph_load()
-});
-
-// ----------------------------------------------------------------------
-// Translation
-// ----------------------------------------------------------------------
-
-// Language selection
-$("#togglelang").click(function(){
-    var ilang = $(this).html();
-    if (ilang=="Cymraeg") {
-        $(this).html("English");
-        window.location = "?lang=cy";
-    } else {
-        $(this).html("Cymraeg");
-        lang="cy_GB";
-        window.location = "?lang=en";
-    }
+    household_bargraph_load();
+    household_comparison_bargraph_load();
 });
 
 // ----------------------------------------------------------------------

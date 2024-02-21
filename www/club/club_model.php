@@ -16,11 +16,13 @@ class Club
 {
     private $mysqli;
     private $user;
+    private $feed;
 
-    public function __construct($mysqli,$user = false)
+    public function __construct($mysqli,$user = false,$feed = false)
     {
         $this->mysqli = $mysqli;
         $this->user = $user;
+        $this->feed = $feed;
         $this->log = new EmonLogger(__FILE__);
     }
 
@@ -64,7 +66,7 @@ class Club
         $row = $result->fetch_object();
         return $row->userid;
     }
-    
+
 
     // Create a new club
     public function create($name) {
@@ -150,10 +152,25 @@ class Club
             $row->created = $date->format('jS M Y');
             $row->share = (bool) $row->share;
             $row->menu = (bool) $row->menu;
+            $row->has_generator = (bool) $row->has_generator;
             $row->languages = explode(",",$row->languages);
-            $row->skip_users = explode(",",$row->skip_users);
-            
+
+            if ($row->skip_users) {
+                $row->skip_users = explode(",",$row->skip_users);
+            } else {
+                $row->skip_users = array();
+            }
+
             $clubs[] = $row;
+        }
+        return $clubs;
+    }
+
+    public function list_assoc() {
+        $result = $this->mysqli->query("SELECT `id`,`name` FROM club ORDER BY created ASC");
+        $clubs = array();
+        while ($row = $result->fetch_object()) {
+            $clubs[$row->id] = $row->name;
         }
         return $clubs;
     }
@@ -161,7 +178,15 @@ class Club
     public function get($id) {
         $id = (int) $id;
         $result = $this->mysqli->query("SELECT * FROM club WHERE id=$id");
-        return $result->fetch_object();
+        $row = $result->fetch_object();
+
+        // Automatic population of feedids
+        $row->generation_feed = $this->feed->exists_tag_name(1,"Generation",$row->key);
+        $row->consumption_feed = $this->feed->exists_tag_name(1,"Demand",$row->key);
+        $row->generation_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_gen");
+        $row->consumption_forecast_feed = $this->feed->exists_tag_name(1,"demandshaper",$row->key."_forecast_use");
+
+        return $row;
     }
 
     public function set($id, $settings) {
@@ -190,5 +215,31 @@ class Club
         $stmt->bind_param(str_repeat("s",count($params)),...$params);
         $stmt->execute();
         $stmt->close();
+    }
+
+    public function get_settings($key) {
+
+        $result = $this->mysqli->query("SELECT * FROM club WHERE `key`='$key'");
+        $club_settings = $result->fetch_array();
+
+        // Automatic population of feedids
+        $club_settings['generation_feed'] = $this->feed->exists_tag_name(1,"Generation",$key);
+        $club_settings['consumption_feed'] = $this->feed->exists_tag_name(1,"Demand",$key);
+        $club_settings['generation_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_gen");
+        $club_settings['consumption_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_use");
+
+        $club_settings['has_generator'] = $club_settings['has_generator'] > 0;
+
+        if ($club_settings['gen_scale']==null) {
+            $club_settings['gen_scale'] = 1;
+        }
+
+        if ($club_settings['skip_users']) {
+            $club_settings['skip_users'] = explode(",",$club_settings['skip_users']);
+        } else {
+            $club_settings['skip_users'] = array();
+        }
+
+        return $club_settings;
     }
 }

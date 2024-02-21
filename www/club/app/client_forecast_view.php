@@ -1,6 +1,6 @@
 <?php global $session; ?>
             <div class="block">
-                <div class="block-title" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
+                <div class="block-title hideable-block" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
                   
@@ -22,7 +22,7 @@
             </div>
             <?php /* if ($session['admin']) { ?>
             <div id="electricity_forecast" class="block">
-                <div class="block-title" style="background-color:#088400"><?php echo t("Forecast"); ?></div>
+                <div class="block-title hideable-block" style="background-color:#088400"><?php echo t("Forecast"); ?></div>
 
                 <div class="block-content">
                   <div style="background-color:#fff; color:#000">
@@ -35,7 +35,7 @@
             </div>
             <?php } */ ?>
             <div id="local_electricity_forecast" class="block">
-                <div class="block-title" style="background-color:#088400"><?php echo t("Local generator output"); ?>
+                <div class="block-title hideable-block" style="background-color:#088400"><?php echo t("Local generator output"); ?>
                 
                 <div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div>
                 <div class="visnav-block">
@@ -96,7 +96,7 @@
             </div>
             
             <div class="block">
-                <div class="block-title" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
+                <div class="block-title hideable-block" style="background-color:#005b0b"><?php echo t("Your prices for power"); ?><div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
                 <div class="block-content" style="padding: .6rem">
                     <table class="tariff table table-sm m-0">
                         <colgroup>
@@ -118,7 +118,11 @@
                                     <span class="d-sm-inline d-lg-none" style="color:<?=$t->color?>"><?=t(ucfirst($t->name))?></span>
                                     <span class="d-none d-md-inline d-lg-inline" style="color:<?=$t->color?>"> <?=t(ucfirst($t->name)." Price")?></span> 
                                     <br class="d-sm-none">
-                                    <span class="font-weight-light text-smaller-sm"><?=$t->start?> - <?=$t->end?></span>
+                                    <?php
+                                    $start = date('g', strtotime($t->start)) . ($t->start < 12 ? t('am'): t('pm'));
+                                    $end = date('g', strtotime($t->end)) . ($t->end < 12 ? t('am'): t('pm'));
+                                    ?>
+                                    <span class="font-weight-light text-smaller-sm"><?=$start?> - <?=$end?></span>
                                 </th>
                                 <td style="background-color:<?=$club_settings["generator_color"]?>"><?=number_format($t->generator*1.05,2).t('p')?></td>
                                 <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=number_format($t->import*1.05,2).t('p')?></td>

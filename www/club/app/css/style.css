@@ -79,6 +79,9 @@ a:visited {
     font-weight:bold;
     text-align:left;
     color:#fff;
+  }
+
+.hideable-block {
     cursor:pointer;
 }
 

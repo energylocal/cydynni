@@ -32,6 +32,10 @@ function household_summary_load() {
     } else if (session.feeds.meter_power != undefined) {
         household_power_feedid = session.feeds.meter_power
     }
+}
+
+
+function household_realtime_load() {
 
     if (household_power_feedid) {
         household_realtime(function () {
@@ -87,11 +91,12 @@ function draw_summary(result) {
     // COST
     for (var tariff_name in result.cost) {
         if (tariff_name != 'total') {
+            let generationCost = club_settings.has_generator ? result.generation_cost[tariff_name]: 0;
             household_pie_data_cost.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation_cost[tariff_name],
+                generation: generationCost,
                 import: result.import_cost[tariff_name],
-                color: tariff_colors[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name.toLowerCase()]
             });
         }
     }
@@ -99,19 +104,19 @@ function draw_summary(result) {
     // ENERGY
     for (var tariff_name in result.demand) {
         if (tariff_name != 'total') {
+            let generationValue = club_settings.has_generator ? result.generation[tariff_name]: 0;
             household_pie_data_energy.push({
                 name: t(ucfirst(tariff_name)),
-                generation: result.generation[tariff_name],
+                generation: generationValue,
                 import: result.import[tariff_name],
-                color: tariff_colors[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
 
     // Create aggregated legend item for hydro
     var legend = "";
-
-    if (result.generation.total != undefined) {
+    if (club_settings.has_generator && result.generation.total != undefined) {
         legend += '<tr>'
         legend += '<td><div class="key" style="background-color:' + club_settings.generator_color + '"></div></td>'
         legend += '<td><b>' + t(ucfirst(club_settings.generator)) + '</b><br>'
@@ -133,7 +138,7 @@ function draw_summary(result) {
 
             // Legend for each import tariff band
             legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:' + tariff_colors[tariff_name.toLowerCase()] + '"></div></td>'
+            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name.toLowerCase()] + '"></div></td>'
             legend += '<td><b>' + t(ucfirst(tariff_name)) + '</b><br>'
             legend += tariff_kwh.toFixed(2) + " kWh";
             if (tariff_unitcost !== false) legend += " @" + (100 * tariff_unitcost).toFixed(1) + " p/kWh<br>"; else legend += "<br>";
@@ -159,7 +164,7 @@ function draw_summary(result) {
     var total_low_cost_demand = result.generation.total;
     if (result.import.overnight != undefined) {
         total_low_cost_demand += result.import.overnight
-        household_score_description += " or low-cost power";
+        household_score_description += " or overnight power";
     }
     var score = 100;
     if (result.demand.total > 0) {
@@ -176,11 +181,11 @@ function draw_summary(result) {
         star_icon_off = "sun20yellow";
     }
 
-    if (score >= 20) star1 = star_icon_on; else star1 = star_icon_off;
-    if (score >= 40) star2 = star_icon_on; else star2 = star_icon_off;
-    if (score >= 60) star3 = star_icon_on; else star3 = star_icon_off;
-    if (score >= 80) star4 = star_icon_on; else star4 = star_icon_off;
-    if (score >= 90) star5 = star_icon_on; else star5 = star_icon_off;
+    star1 = star_icon_on;
+    if (score>=20) star2 = star_icon_on; else star2 = star_icon_off;
+    if (score>=40) star3 = star_icon_on; else star3 = star_icon_off;
+    if (score>=60) star4 = star_icon_on; else star4 = star_icon_off;
+    if (score>=80) star5 = star_icon_on; else star5 = star_icon_off;
 
     $("#household_star1").attr("src", app_path + "images/" + star1 + ".png");
     setTimeout(function () { $("#household_star2").attr("src", app_path + "images/" + star2 + ".png"); }, 100);
@@ -249,6 +254,7 @@ function household_pie_draw() {
 
 function household_bargraph_load() {
 
+    console.log("Loading household bargraph data...")
     var npoints = 800;
     interval = ((view.end - view.start) * 0.001) / npoints;
     interval = round_interval(interval);
@@ -301,19 +307,10 @@ function household_bargraph_load() {
                             series_data[c].push([time, result[z].import[c]]);
                         }
                     }
-                    series_data['generation'].push([time, result[z].generation.total]);
-
+                    if (club_settings.has_generator) {
+                    	series_data['generation'].push([time, result[z].generation.total]);
+		    }
                     household_daily_index_map[time] = z;
-                }
-
-                // Colours
-                var category_colors = {
-                    "morning": "#ffdc00",
-                    "midday": "#ffb401",
-                    "daytime": "#ffb401",
-                    "evening": "#e6602b",
-                    "overnight": "#014c2d",
-                    "generation": club_settings.generator_color
                 }
 
                 householdseries = [];
@@ -321,7 +318,7 @@ function household_bargraph_load() {
 
                 for (var c in categories) {
                     householdseries.push({
-                        stack: true, data: series_data[categories[c]], color: category_colors[categories[c].toLowerCase()],
+                        stack: true, data: series_data[categories[c]], color: tariffColorMap[categories[c].toLowerCase()],
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
                     });
                 }
@@ -422,7 +419,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                 // Import
                 for (var c in household_result[key].import) {
                     if (c != 'total') {
-                        out += "<tr><td><div class='legend-label-box' style='background-color:" + tariff_colors[c.toLowerCase()] + "'></div> " + t(ucfirst(c)) + ":</td><td>" + (household_result[key].import[c]).toFixed(2) + " kWh</td></tr>";
+                        out += "<tr><td><div class='legend-label-box' style='background-color:" + tariffColorMap[c.toLowerCase()] + "'></div> " + t(ucfirst(c)) + ":</td><td>" + (household_result[key].import[c]).toFixed(2) + " kWh</td></tr>";
                     }
                 }
 
@@ -494,6 +491,7 @@ function household_powergraph_load() {
 
     if (club_settings.club_id == 2 && household_power_interval < 60) household_power_interval = 60;
 
+
     if (household_realtime_data.time * 1000 >= household_power_start) {
         // ------------------------------------------------------------------   
         $.ajax({
@@ -510,6 +508,7 @@ function household_powergraph_load() {
                     kwh_in_window += (data[z][1] * t) / 3600000.0;
                     if (data[z][1] != null) householdpowerseries.push(data[z])
                 }
+
                 if (householdpowerseries.length > 0) $("#realtime-power").show();
                 $("#kwh_in_window").html(kwh_in_window.toFixed(2));
                 household_powergraph_draw();

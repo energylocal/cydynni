@@ -69,7 +69,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation_cost[tariff_name],
                 import: result.import_cost[tariff_name],
-                color: tariff_colors[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name.toLowerCase()]
             });
         }
     }
@@ -81,7 +81,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation[tariff_name],
                 import: result.import[tariff_name],
-                color: tariff_colors[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name.toLowerCase()]
             });
         }
     }
@@ -111,7 +111,7 @@ function draw_club_summary(result) {
 
             // Legend for each import tariff band
             legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:' + tariff_colors[tariff_name.toLowerCase()] + '"></div></td>'
+            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name.toLowerCase()] + '"></div></td>'
             legend += '<td><b>' + t(ucfirst(tariff_name)) + '</b><br>'
             legend += tariff_kwh.toFixed(2) + " kWh";
             if (tariff_unitcost !== false) legend += " @" + (100 * tariff_unitcost).toFixed(1) + " p/kWh<br>"; else legend += "<br>";
@@ -157,11 +157,11 @@ function draw_club_summary(result) {
         star_icon_off = "sun20yellow";
     }
 
-    if (score >= 20) cstar1 = star_icon_on; else cstar1 = star_icon_off;
-    if (score >= 40) cstar2 = star_icon_on; else cstar2 = star_icon_off;
-    if (score >= 60) cstar3 = star_icon_on; else cstar3 = star_icon_off;
-    if (score >= 80) cstar4 = star_icon_on; else cstar4 = star_icon_off;
-    if (score >= 90) cstar5 = star_icon_on; else cstar5 = star_icon_off;
+    if (score>=20) cstar1 = star_icon_on; else cstar1 = star_icon_off;
+    if (score>=40) cstar2 = star_icon_on; else cstar2 = star_icon_off;
+    if (score>=60) cstar3 = star_icon_on; else cstar3 = star_icon_off;
+    if (score>=80) cstar4 = star_icon_on; else cstar4 = star_icon_off;
+    if (score>=90) cstar5 = star_icon_on; else cstar5 = star_icon_off;
 
     $("#club_star1").attr("src", app_path + "images/" + cstar1 + ".png");
     setTimeout(function () { $("#club_star2").attr("src", app_path + "images/" + cstar2 + ".png"); }, 100);
@@ -264,13 +264,24 @@ function club_bargraph_load() {
     view.start = Math.floor(view.start / intervalms) * intervalms
     view.end = Math.ceil(view.end / intervalms) * intervalms
 
-    var generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
-    var club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+    var generation_data = {};
+    if (generation_feed) {
+      generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
+    }
+    var club_data = {};
+    if (consumption_feed) {
+      club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+    }
 
     var gen_forecast_data = [];
     var demand_forecast_data = [];
 
-    if (club_settings.generation_forecast_feed != undefined && club_settings.consumption_forecast_feed != undefined) {
+    if (
+      club_settings.generation_forecast_feed != undefined &&
+      club_settings.generation_forecast_feed !== false &&
+      club_settings.consumption_forecast_feed != undefined &&
+      club_settings.consumption_forecast_feed !== false
+    ) {
         gen_forecast_data = feed.getaverage(club_settings.generation_forecast_feed, view.start, view.end, interval, 0, 0);
         demand_forecast_data = feed.getaverage(club_settings.consumption_forecast_feed, view.start, view.end, interval, 0, 0);
     }
@@ -330,7 +341,7 @@ function club_bargraph_load() {
             generation = gen_forecast
         }
 
-        if (generation_feed == 1471) {
+        if (generation_feed == 1471) { // TODO - what is this???
             if (generation > 40.0) generation = 40.0;
             generation *= 0.5;
         }
@@ -348,7 +359,14 @@ function club_bargraph_load() {
 
         var imprt = 0.0;
         var exprt = 0.0;
-        if (generation <= consumption) imprt = consumption - generation; else exprt = generation - consumption;
+        
+        if (generation <= consumption) {
+            imprt = consumption - generation; 
+        } else {
+            exprt = generation - consumption;
+        
+        }
+        
         var selfuse = consumption - imprt;
 
         var unit_price = 0.0;

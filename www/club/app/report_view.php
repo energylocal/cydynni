@@ -243,7 +243,7 @@ function load()
     // var days = days_in_month[month.month-1];
     var days = month.days;
     var elec_cost = month.cost.total;
-    var standing_charge = 0.178*days;
+    var standing_charge = 0.178*days; // TODO - check if this is used / correct
     var vat = (elec_cost+standing_charge)*0.05;
     var total_cost = elec_cost + standing_charge + vat;
 
