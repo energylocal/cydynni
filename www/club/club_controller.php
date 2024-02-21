@@ -71,6 +71,8 @@ function club_controller()
 
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB"));
 
+    $is_advisor = in_array($session['userid'], $club_class->get_advisors($club_settings['id']));
+
     if ($session["read"]) {
         $userid = (int) $session["userid"];
 
@@ -135,7 +137,8 @@ function club_controller()
             'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
             'available_reports'=>$available_reports,
             'clubid'=>$club_settings['id'],
-            'standing_charge' => $standing_charge
+            'standing_charge' => $standing_charge,
+            'is_advisor' => $is_advisor
           ));
 
           return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
@@ -231,6 +234,57 @@ function club_controller()
         if ($result = $redis->get("$club:club:demandshaper-octopus")) {
             return json_decode($result);
         }
+    }
+
+    if ($route->action == "export-csv") {
+        $authorized = $session["admin"] || $is_advisor;
+        if (!$authorized) {
+          $route->format = "json";
+          return array("success"=>false, "message"=>"Not authorized");
+        }
+        $startMillis = get('start', false);
+        $endMillis = get('end', false);
+        $export = get('export', "demand");
+
+        $feed_name = "";
+        switch ($export) {
+        case "demand":
+          $feed_name = "use_hh";
+          break;
+        case "matched":
+          $feed_name = "gen_hh";
+          break;
+        default:
+          $route->format = "json";
+          return array("success"=>false, "message"=>"export param must be 'demand' or 'matched'");
+        }
+
+        $data_by_mpan = $club_class->get_club_data_by_mpan($club_settings['id'], $feed_name, $startMillis, $endMillis);
+        $durationMillis = $endMillis - $startMillis;
+        $numberOfPeriods = $durationMillis / (30 * 60 * 1000); // Calculate the number of 30-minute periods
+        $header = ",date,settlement_period";
+        foreach($data_by_mpan as $mpan => $feed_data) {
+          $header = $header.",".$mpan;
+        }
+        $doc = $header."\n";
+
+        $hh_period = 1;
+        for ($i = 0; $i <= $numberOfPeriods; $i++) {
+          $date = DateTime::createFromFormat('U', ($startMillis/1000) + ($i * 1800));
+          $formattedDate = $date->format('Y-m-d');
+          $line = "$i,$formattedDate,$hh_period";
+          foreach($data_by_mpan as $mpan => $feed_data) {
+            $line = $line.",".number_format($feed_data[$i][1], 3);
+          }
+          $doc = $doc.$line."\n";
+          $hh_period++;
+          if ($hh_period > 48) {
+            $hh_period = 1;
+          }
+        }
+
+        $route->format = "text";
+        return $doc;
     }
 
     if ($route->action == "set_fixed_user_tariff") { // used for clubless users who set their own rates
