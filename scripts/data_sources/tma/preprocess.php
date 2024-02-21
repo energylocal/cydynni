@@ -2,7 +2,7 @@
 // --------------------------------------------------------------------
 // TMA data import tool
 // --------------------------------------------------------------------
-require "config.php";
+require dirname(__FILE__)."/config.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 
 // $output_dir = "/home/cydynni/TMA";
