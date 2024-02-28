@@ -322,6 +322,7 @@ document.querySelectorAll('.household-view-scope button').forEach(button => {
     case "comparison":
       $("#historic-period-select").show();
       $(".historic-block").hide();
+      $("#your-score").hide();
       $("#realtime-power").hide();
       $("#tariff-settings").hide();
       $("#comparison").show();
