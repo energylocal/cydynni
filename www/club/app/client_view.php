@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 69;
+$v = 70;
 
 $app_path = $path."Modules/club/app/";
 
