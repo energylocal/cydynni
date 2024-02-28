@@ -63,7 +63,7 @@
             <!------------------------- Household context / period selection ------------------------->
             <div id="context-selection" class="block household-block">
               <div class="block-title bg-household" style="padding-right: 0px;">
-                <div class="btn-toolbar household-view-scope"" data-toggle="buttons-radio">
+                <div class="btn-toolbar household-view-scope" data-toggle="buttons-radio">
                   <div class="btn-group">
                     <button class="btn active" value="historic">Historic</button>
                     <button class="btn" value="live">Live</button>
@@ -86,36 +86,79 @@
                 <?php if (!$club_settings["has_generator"]) { ?>
                 <div class="box2">
                   <form class="form-horizontal">
-                    <fieldset>
-                      <legend>Tariff</legend>
-                      <div class="control-group">
+                      <legend style="text-align:center;">Tariff</legend>
+                      <div class="text-align:left;">
+                      <div class="control-group" style="text-align: left;">
+                        <label class="control-label">Tariff type:</label>
+                        <div class="controls">
+                          <label class="radio">
+                            <input type="radio" name="tariff_type" value="fixed" <?php echo (!isset($user_attributes->tariff_type) || $user_attributes->tariff_type == 'fixed') ? 'checked' : ''; ?>>
+                            Fixed Rate
+                          </label>
+                          <label class="radio">
+                            <input type="radio" name="tariff_type" value="economy7" <?php echo (isset($user_attributes->tariff_type) && $user_attributes->tariff_type == 'economy7') ? 'checked' : ''; ?>>
+                            Economy 7
+                          </label>
+                          <script>
+                            $(document).ready(function() {
+                              if ($('input[type=radio][name=tariff_type]:checked').val() == "fixed") {
+                                $('#economy7group').hide();
+                              }
+                              $('input[type=radio][name=tariff_type]').change(function() {
+                                // Check if economy7 radio button is selected
+                                if (this.value === 'economy7') {
+                                  $('#economy7group').show();
+                                  // and PUT tariff_type
+                                } else {
+                                  $('#economy7group').hide();
+                                }
+                                updateTariff();
+                              });
+                            });
+                          </script>
+                        </div>
+                      </div>
+                      <div class="control-group" style="text-align: left;">
+                        <label class="control-label" for="standing_charge">Standing charge (p/day):</label>
+                        <div class="controls">
+                          <input type="number" step="0.01" id="standing_charge" placeholder="p/day" value="<?php echo isset($user_attributes->standing_charge) ? $user_attributes->standing_charge: ''; ?>" onchange="updateTariff()">
+                          <p class="muted"><small>The daily standing charge, e.g. 60.2p/day</small></p>
+                        </div>
+                      </div>
+                      <div class="control-group" style="text-align: left;">
                         <label class="control-label" for="tariff">Tariff (p/kWh):</label>
                         <div class="controls">
                           <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->tariff) ? $user_attributes->tariff: ''; ?>" onchange="updateTariff()">
+                          <p class="muted"><small>The unit cost of your electricity, e.g. 30.7p/kWh</small></p>
                         </div>
                       </div>
-                      <p><i>The unit cost of your electricity, e.g. 30.7p/kWh</i></p>                      
+                      <div id="economy7group" class="control-group" style="text-align: left;">
+                        <label class="control-label" for="tariff">Economy 7 Overnight Tariff (p/kWh):</label>
+                        <div class="controls">
+                          <input type="number" step="0.01" id="economy7_tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->economy7tariff) ? $user_attributes->economy7tariff: ''; ?>" onchange="updateTariff()">
+                          <p class="muted"><small>The overnight unit cost e.g. 13.7p/kWh</small></p>
+                        </div>
+                      </div>
                   </form>
+                </div>
                 </div>
                 <?php } ?>
                 <div class="box2">
                   <form class="form-horizontal">
-                    <fieldset>
                       <legend>Daily Target</legend>
-                      <div class="control-group">
+                      <div class="control-group" style="text-align: left;">
                         <label class="control-label" for="dailyTargetMax">Max. daily usage target (kWh/day):</label>
                         <div class="controls">
                           <input type="number" step="0.5" id="dailyTargetMax" placeholder="kWh/day" value="<?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : ''; ?>" onchange="updateTargetMax()">
                         </div>
                       </div>
-                      <div class="control-group">
+                      <div class="control-group" style="text-align: left;">
                         <label class="control-label" for="dailyTargetMin">Min. daily usage target (kWh/day):</label>
                         <div class="controls">
                           <input type="number" step="0.5" id="dailyTargetMin" placeholder="kWh/day" value="<?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : ''; ?>" onchange="updateTargetMin()">
                         </div>
                       </div>
                       <p><i>Setting a daily target usage may help you to understand where your electricity is being used.</i></p>
-                    </fieldset>
                   </form>
                 </div>
               </div>

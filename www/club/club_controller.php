@@ -110,6 +110,12 @@ function club_controller()
             $tariffs = $tariff_class->list_periods($tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
             $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
+            if (!$club_settings["has_generator"]) {
+              $user_attributes = $user->get_attributes($userid);
+              if (property_exists($user_attributes, "standing_charge")) {
+                $standing_charge = $user_attributes->standing_charge/100;
+              }
+            }
 
 
             require "Modules/data/account_data_model.php";
@@ -233,13 +239,25 @@ function club_controller()
         }
     }
 
-    if ($route->action == "set_fixed_user_tariff") { // used for clubless users who set their own rates
+    if ($route->action == "set_fixed_user_tariff" && $session["write"]) { // used for clubless users who set their own rates
         $body = put_json();
-        $result = $user->set_attribute($session['userid'], $body['name'], $body['value']);
+        $user->set_attribute($session['userid'], 'tariff_type', $body['tariff_type']);
+        $user->set_attribute($session['userid'], 'tariff', $body['tariff']);
+        $user->set_attribute($session['userid'], 'economy7_tariff', $body['economy7_tariff']);
+        $user->set_attribute($session['userid'], 'standing_charge', $body['standing_charge']);
         require_once "Modules/tariff/tariff_model.php";
         $tariff_class = new Tariff($mysqli);
-        $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['value']);
-        return $result;
+        switch ($body['tariff_type']) {
+          case 'fixed':
+            $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['tariff']);
+            return;
+          case 'economy7':
+            $tariff_class->set_temporary_economy7_tariff($session['userid'], $body['tariff'], $body['economy7_tariff']);
+            return;
+          default:
+            throw new Exception("tariff_type unrecognised");
+        }
+//        return $result;
     }
 
     // Demandshaper v2: renamed to forecast (review, not all clubs listed here)

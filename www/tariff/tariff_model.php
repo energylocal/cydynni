@@ -513,7 +513,6 @@ class Tariff
         if ($unit_price<$amber) return "amber";
         return "red";
     }
-
     public function set_temporary_fixed_tariff($userid, $import): void {
       // If the current user tariff is called user_tariff_{USERID} then update all period's import rate
       // Used for non-club dashboards
@@ -532,6 +531,51 @@ class Tariff
         $t = $period->tariffid;
         $stmt = $this->mysqli->prepare("UPDATE tariff_periods SET import=? WHERE tariffid=? AND `index`=?");
         $stmt->bind_param("dii", $import, $period->tariffid, $period->index);
+        $stmt->execute();
+        $stmt->close();
+      }
+    }
+    public function set_temporary_economy7_tariff($userid, $daytime, $economy7): void {
+      // The current user tariff must be called user_tariff_{USERID} and have two
+      // periods, daytime and overnight
+
+      $tariffid = $this->get_user_tariff_id($userid);
+      $tariff = $this->get_tariff($tariffid);
+      $tariff_name = "user_tariff_".$userid;
+      if ($tariff->name != "user_tariff_".$userid) {
+        throw new Exception("User tariff is not called '$tariff_name'");
+      }
+
+      $periods = $this->list_periods($tariffid);
+      if (count($periods) != 2) {
+        throw new Exception("User tariff '$tariff_name' does not have two periods, not economy7 compatible");
+      }
+      foreach ($periods as $period) {
+        switch ($period->name) {
+        case "daytime":
+          break;
+        case "overnight":
+          break;
+        default:
+          throw new Exception("User tariff '$tariff_name' has periods must be daytime & overnight to be economy7 compatible; have '".$period->name."'");
+        }
+      }
+
+      $rate = 0;
+      foreach ($periods as $period) {
+        switch ($period->name) {
+        case "daytime":
+          $rate = $daytime;
+          break;
+        case "overnight":
+          $rate = $economy7;
+          break;
+        }
+        $currentRate = $period->import;
+        $index = $period->index;
+        $t = $period->tariffid;
+        $stmt = $this->mysqli->prepare("UPDATE tariff_periods SET import=? WHERE tariffid=? AND `index`=?");
+        $stmt->bind_param("dii", $rate, $period->tariffid, $period->index);
         $stmt->execute();
         $stmt->close();
       }
