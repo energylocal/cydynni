@@ -12,7 +12,7 @@
 //   3. Calculation of resulting forecasted cost of electricity
 //
 // ----------------------------------------------------------------
-define("MAX",1); 
+define("MAX",1);
 define("MIN",0);
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 require "core.php";
@@ -20,7 +20,7 @@ require "core.php";
 require_once "Modules/tariff/tariff_model.php";
 $tariff_class = new Tariff($mysqli);
 
-require "Modules/club/club_model.php";
+require_once "Modules/club/club_model.php";
 $club_class = new Club($mysqli,$user,$feed);
 $club_settings = $club_class->get_settings($club);
 

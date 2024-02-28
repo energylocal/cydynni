@@ -1,7 +1,7 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 65;
+$v = 69;
 
 $app_path = $path."Modules/club/app/";
 
@@ -45,7 +45,8 @@ $app_path = $path."Modules/club/app/";
             'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
-            'tariffs_table'=>$tariffs_table
+            'tariffs_table'=>$tariffs_table,
+            'is_advisor'=>$is_advisor
         )); ?>
     </div>
     <?php } ?>
