@@ -114,7 +114,7 @@ var tariff_colors = {
 
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
+var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31]; // leap year bug
 
 var session = <?php echo json_encode($session); ?>;
 var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : 0; ?>;
