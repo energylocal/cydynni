@@ -73,11 +73,70 @@ class Tariff
         }
 
         $time = time();
-        $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created) VALUES (?,?,?)");
+        $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created,standing_charge) VALUES (?,?,?,0)");
         $stmt->bind_param("isi",$clubid,$name,$time);
         $stmt->execute();
         $stmt->close();
         return array("success"=>true, "id"=>$this->mysqli->insert_id);
+    }
+
+    // Create a new tariff
+    public function clone(int $tariffid) {
+        $tariffid = (int) $tariffid;
+
+        $this->mysqli->begin_transaction();
+
+        $stmt = $this->mysqli->prepare("
+          INSERT INTO tariffs
+            (clubid,name,created,first_assigned,last_assigned,standing_charge)
+          SELECT
+            clubid,CONCAT('Copy of ', name),unix_timestamp(),first_assigned,last_assigned,standing_charge
+          FROM
+            tariffs
+          WHERE
+            id=?;
+        ");
+        $stmt->bind_param("i",$tariffid);
+        $stmt->execute();
+        $clonedTariffId = $stmt->insert_id;
+        $stmt->close();
+
+        $stmt = $this->mysqli->prepare("
+          INSERT INTO tariff_periods
+            (tariffid,`index`,name,weekend,start,generator,import,color,subdued_color)
+          SELECT
+            ?,`index`,name,weekend,start,generator,import,color,subdued_color
+          FROM
+            tariff_periods
+          WHERE
+            tariffid=?;
+        ");
+        $stmt->bind_param("ii",$clonedTariffId, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        $this->mysqli->commit();
+        return array("success"=>true, "id"=>$this->mysqli->insert_id);
+    }
+
+    // Assign this tariff to all the users in that club, for a given start time
+    public function assign_all_user_tariffs($tariffid, $start) {
+      $stmt = $this->mysqli->prepare("
+        INSERT INTO user_tariffs
+          (userid, tariffid, start)
+        SELECT
+          cy.userid,t.id,?
+        FROM
+          cydynni cy
+        INNER JOIN
+          tariffs t ON t.clubid=cy.clubs_id
+        WHERE
+          t.id=?;
+      ");
+      $stmt->bind_param("ii", $start, $tariffid);
+      $stmt->execute();
+      $stmt->close();
+
+      return array("success"=>true);
     }
 
     // Delete a tariff
@@ -88,7 +147,10 @@ class Tariff
         if ($this->first_assigned($tariffid)) {
             return array("success"=>false, "message"=>"Tariff has been assigned to users");
         }
-        
+
+        // Delete all tariff periods
+        $this->mysqli->query("DELETE FROM tariff_periods WHERE tariffid='$tariffid'");
+
         $stmt = $this->mysqli->prepare("DELETE FROM tariffs WHERE id=?");
         $stmt->bind_param("i",$tariffid);
         $stmt->execute();
@@ -96,8 +158,6 @@ class Tariff
         $stmt->close();
         if ($affected==0) return array("success"=>false);
 
-        // Delete all tariff periods
-        $this->mysqli->query("DELETE FROM tariff_periods WHERE tariffid='$tariffid'");
 
         // Delete all user tariffs (can only delete unassigned tariffs)
         // $this->mysqli->query("DELETE FROM user_tariffs WHERE tariffid='$tariffid'");
@@ -242,7 +302,18 @@ class Tariff
             return false;
         }
     }
-    
+
+    // Set tariff name
+    public function set_tariff_name($tariffid, $name) {
+        // TODO handle errors - return t/f
+        $stmt = $this->mysqli->prepare("UPDATE tariffs SET name=? WHERE id=?");
+        $stmt->bind_param("si", $name, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        // TODO handle errors
+        return true;
+    }
+
     // Get tariff standing charge
     public function get_tariff_standing_charge($tariffid) {
         $tariffid = (int) $tariffid;
@@ -253,6 +324,17 @@ class Tariff
             return false;
         }
     }
+
+    // Set tariff standing charge
+    public function set_tariff_standing_charge($tariffid, $charge) {
+        $stmt = $this->mysqli->prepare("UPDATE tariffs SET standing_charge=? WHERE id=?");
+        $stmt->bind_param("di", $charge, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        // TODO handle errors
+        return true;
+    }
+
 
     // User tariff methods
 
