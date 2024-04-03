@@ -81,7 +81,7 @@
 
             <!------------------------- Target & tariff section ------------------------>
             <div id="tariff-settings" class="block" style="display:none; background-color: white;">
-              <div class="block-title bg-household">Tariff & Target Settings</div>
+              <div class="block-title bg-household">Tariff &amp; Target Settings</div>
               <div class="block-content">
                 <?php if (!$club_settings["has_generator"]) { ?>
                 <div class="box2">
