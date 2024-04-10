@@ -45,7 +45,7 @@ class Account {
 
         if (!ctype_digit($u->mpan) && $u->mpan!="") return array("success"=>false, "message"=>"invalid mpan");  
         if (!ctype_alnum($u->cad_serial) && $u->cad_serial!="") return array("success"=>false, "message"=>"invalid cad_serial");  
-        if (!ctype_digit($u->owl_id) && $u->owl_id!="") return array("success"=>false, "message"=>"invalid owl_id");  
+        if (!ctype_alnum($u->owl_id) && $u->owl_id!="") return array("success"=>false, "message"=>"invalid owl_id");  
         if (!preg_match('/^\w+$/',$u->octopus_apikey) && $u->octopus_apikey!="") return array("success"=>false, "message"=>"invalid octopus_apikey");  
         if (!ctype_alnum($u->meter_serial) && $u->meter_serial!="") return array("success"=>false, "message"=>"invalid meter_serial");
         
