@@ -59,6 +59,9 @@ class Account {
         $result = $this->user->register($u->username, $u->password, $u->email, "Europe/London");
         if ($result["success"]) {
             $userid = $result["userid"];
+            if ($u->cad_serial == "") {
+              $u->cad_serial = null;
+            }
             $result = $this->add_user((int)$u->clubs_id,$userid,(int)$u->mpan,$u->cad_serial,$u->octopus_apikey,$u->meter_serial);
             include "Modules/remoteaccess/remoteaccess_userlink.php";
             remoteaccess_userlink_existing($this->mysqli,$userid);
