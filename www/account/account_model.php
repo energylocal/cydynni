@@ -113,13 +113,13 @@ class Account {
         $userid = (int) $userid;
     
         // Using NULL as dummy values for the new fields
-        $welcomedate = "not sent";
-        $reportdate = "not sent";
+        $welcomedate = 0;
+        $reportdate = 0;
         $owl_id = NULL;
         $home_mini_id = NULL;
     
         $stmt = $this->mysqli->prepare("INSERT INTO cydynni (clubs_id, userid, mpan, cad_serial, octopus_apikey, meter_serial, welcomedate, reportdate, owl_id, home_mini_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iissssssss", $club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial, $welcomedate, $reportdate, $owl_id, $home_mini_id);
+        $stmt->bind_param("iissssiiss", $club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial, $welcomedate, $reportdate, $owl_id, $home_mini_id);
         $stmt->execute();
         $stmt->close();
         

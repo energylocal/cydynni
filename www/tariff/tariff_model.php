@@ -44,7 +44,6 @@ class Tariff
             $row = $result->fetch_assoc();
             $total_club_users_count = $row['total'];
         } else {
-            // Handle query error if necessary
             $total_club_users_count = 0; // or any other default value or error handling
         }
 
@@ -329,7 +328,7 @@ class Tariff
         $stmt->execute();
         $stmt->close();
 
-        return array("success"=>true);
+        return array("success"=>true, "message"=>"User tariff added");
     }
 
     // Get user tariff

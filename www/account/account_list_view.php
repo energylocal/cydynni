@@ -103,7 +103,7 @@
                     <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
                 </select>
                 <label>User tariff start timestamp</label>
-                <select v-model="selectedTariffTimestamp" style="width:274px" @change="console.log(selectedTariff, selectedTariffTimestamp)">
+                <select v-model="selectedTariffTimestamp" style="width:274px">
                 <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
                 </select>
             </div>
@@ -169,7 +169,6 @@ var app = new Vue({
             window.location = "/graph/"+feedid
         },
         add_user: function() {
-            console.log(this.tariffs)
             let latestTariff = null;
             for (let key in this.tariffs) {
                 if (this.tariffs.hasOwnProperty(key)) {
@@ -183,7 +182,6 @@ var app = new Vue({
             this.selectedTariff = this.latestTariff['id']
             this.selectedTariffTimestamp = this.latestTariff['last_assigned_unix']
 
-            console.log("Tariff with the latest timestamp:", latestTariff);
             this.users.push({
                 userid:-1,
                 username:"",
@@ -204,8 +202,6 @@ var app = new Vue({
         },
         edit: function(index){
             this.selected_user = index
-            console.log(this.users[this.selected_user])
-            console.log(this.new_user)
             $("#editUserModalLabel").html("Edit user");
             $("#editUserModal").modal("show");            
         },
@@ -219,6 +215,7 @@ var app = new Vue({
         },
         save: function() {
             console.log("new user: "+this.new_user);
+            // if this doesn't concern a new user - edit existing user
             if (this.new_user===false) {
                 var changed = {};
                 // Find changed properties
@@ -228,10 +225,9 @@ var app = new Vue({
                     }
                 }
                 update_user(this.users[this.selected_user].userid,changed);
+            // if this does concern a new user - create new user
             } else {
-                console.log("adding user")
                 add_user(this.users[this.selected_user], this.new_user_password, function (new_userid) {
-                    console.log("Adding tariff "+this.selectedTariff+" for user: "+new_userid)
                     add_user_tariff(new_userid, this.selectedTariff)
                 }.bind(this));
             }
@@ -257,7 +253,6 @@ var app = new Vue({
             });   
         },
         resetTariffTimestamp: function() {
-            //console.log(this.tariffs[this.selectedTariff])
             this.selectedTariffTimestamp = this.tariffs[this.selectedTariff]['last_assigned_unix'] || null;
         }
     },
@@ -318,8 +313,6 @@ function add_user(user,password,callback) {
         data: "user="+JSON.stringify(user),
         dataType: 'json',
         success: function(result) {
-            console.log(result.message)
-            //alert(result.message);
             if (result.success) {
                 $("#editUserModal").modal("hide");
                 app.users[app.selected_user].userid = result.userid;
@@ -339,7 +332,7 @@ function add_user_tariff(userid, tariffid) {
         },
         dataType: 'json',
         success: function(result) {
-            alert(result.message);
+            alert("User created, user tariff created");
             if (result.success) {
                 $("#editUserModal").modal("hide");
                 app.users[app.selected_user].userid = result.userid;
@@ -347,7 +340,7 @@ function add_user_tariff(userid, tariffid) {
         },
         error: function(xhr, status, error) {
             console.error("Ajax request failed:", error);
-            console.log(xhr.responseText); // Log the raw response for debugging
+            console.log(xhr.responseText); // log the raw response for debugging
         }
     });
 }
