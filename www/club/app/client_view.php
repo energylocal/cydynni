@@ -1,7 +1,10 @@
 <?php
 
 global $path, $translation, $lang;
-$v = 64;
+// for live :
+//$v = 64;
+// for dev :
+$v = time();
 
 $app_path = $path."Modules/club/app/";
 
@@ -126,7 +129,7 @@ var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v="></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/comparison.js?v=<?php echo $v; ?>"></script>
 

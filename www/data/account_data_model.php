@@ -39,8 +39,10 @@ class AccountData
 
         // Check if user has consumption feed
         // Load half hourly data between start and end times
-        if (!$use_feedid = $this->feed->get_id($userid,"use_hh_est")) {
-            return array("success"=>false, "message"=>"Missing consumption feed");
+        if ($userid != 1) {
+            if (!$use_feedid = $this->feed->get_id($userid,"use_hh_est")) {
+                return array("success"=>false, "message"=>"Missing consumption feed");
+            }
         }
 
         $gen_feedid = $this->feed->get_id($userid,"gen_hh");

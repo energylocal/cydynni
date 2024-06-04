@@ -57,8 +57,9 @@ class Account {
         $result = $this->user->register($u->username, $u->password, $u->email, "Europe/London");
         if ($result["success"]) {
             $userid = $result["userid"];
-            $result = $this->add_user((int)$u->clubs_id,$userid,(int)$u->mpan,$u->cad_serial,$u->octopus_apikey,$u->meter_serial);
+            $result = $this->add_user((int)$u->clubs_id,$userid,$u->mpan,$u->cad_serial,$u->octopus_apikey,$u->meter_serial);
             include "Modules/remoteaccess/remoteaccess_userlink.php";
+            // REMOVED TEMPORARILY BECAUSE OF UNDERLYING PROBLEM //
             remoteaccess_userlink_existing($this->mysqli,$userid);
         }
         return $result;
@@ -107,12 +108,18 @@ class Account {
         return array('success'=>true, 'message'=>'User updated');
     }
     
-    public function add_user($club_id,$userid,$mpan,$cad_serial,$octopus_apikey,$meter_serial) {    
+    public function add_user($club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial) {    
         $club_id = (int) $club_id;
         $userid = (int) $userid;
-        
-        $stmt = $this->mysqli->prepare("INSERT INTO cydynni (clubs_id,userid,mpan,cad_serial,octopus_apikey,meter_serial,welcomedate,reportdate) VALUES (?,?,?,?,?,?,0,0)");
-        $stmt->bind_param("iiisss", $club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial);
+    
+        // Using NULL as dummy values for the new fields
+        $welcomedate = "not sent";
+        $reportdate = "not sent";
+        $owl_id = NULL;
+        $home_mini_id = NULL;
+    
+        $stmt = $this->mysqli->prepare("INSERT INTO cydynni (clubs_id, userid, mpan, cad_serial, octopus_apikey, meter_serial, welcomedate, reportdate, owl_id, home_mini_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iissssssss", $club_id, $userid, $mpan, $cad_serial, $octopus_apikey, $meter_serial, $welcomedate, $reportdate, $owl_id, $home_mini_id);
         $stmt->execute();
         $stmt->close();
         

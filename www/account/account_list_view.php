@@ -97,6 +97,16 @@
 
             <label>Meter Serial</label>
             <input type="text" v-model="users[selected_user].meter_serial" style="width:260px" />
+            <div v-if="users[selected_user].userid<0">
+                <label>User tariff</label>
+                <select v-model="selectedTariff" @change="resetTariffTimestamp" style="width:274px">
+                    <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
+                </select>
+                <label>User tariff start timestamp</label>
+                <select v-model="selectedTariffTimestamp" style="width:274px" @change="console.log(selectedTariff, selectedTariffTimestamp)">
+                <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
+                </select>
+            </div>
           </div>
           <div class="span5">
             <div v-if="users[selected_user].userid>0">
@@ -128,6 +138,7 @@ if (selected_club==null) selected_club = 1;
 var users = {}
 var original = {}
 var data_status = {}
+var tariffs = {}
 
 var clubs = <?php echo json_encode($clubs); ?>;
 
@@ -140,13 +151,39 @@ var app = new Vue({
         data_status:data_status,
         selected_user: false,
         new_user: false,
-        new_user_password: ""
+        new_user_password: "",
+        tariffs: tariffs,
+        selectedTariff: null,
+        selectedTariffTimestamp: null,
+    },
+    computed: {
+        selectedTariffDistinctStarts() {
+            if (this.selectedTariff && this.tariffs[this.selectedTariff]) {
+                return this.tariffs[this.selectedTariff].distinct_tariff_starts;
+            }
+            return [];
+        }
     },
     methods: {
         graph: function(feedid) {
             window.location = "/graph/"+feedid
         },
         add_user: function() {
+            console.log(this.tariffs)
+            let latestTariff = null;
+            for (let key in this.tariffs) {
+                if (this.tariffs.hasOwnProperty(key)) {
+                    let currentTariff = this.tariffs[key];
+                    if (!latestTariff || currentTariff.last_assigned_unix > latestTariff.last_assigned_unix) {
+                        latestTariff = currentTariff;
+                    }
+                }
+            }
+            this.latestTariff = latestTariff
+            this.selectedTariff = this.latestTariff['id']
+            this.selectedTariffTimestamp = this.latestTariff['last_assigned_unix']
+
+            console.log("Tariff with the latest timestamp:", latestTariff);
             this.users.push({
                 userid:-1,
                 username:"",
@@ -167,6 +204,8 @@ var app = new Vue({
         },
         edit: function(index){
             this.selected_user = index
+            console.log(this.users[this.selected_user])
+            console.log(this.new_user)
             $("#editUserModalLabel").html("Edit user");
             $("#editUserModal").modal("show");            
         },
@@ -190,7 +229,11 @@ var app = new Vue({
                 }
                 update_user(this.users[this.selected_user].userid,changed);
             } else {
-                add_user(this.users[this.selected_user],this.new_user_password);
+                console.log("adding user")
+                add_user(this.users[this.selected_user], this.new_user_password, function (new_userid) {
+                    console.log("Adding tariff "+this.selectedTariff+" for user: "+new_userid)
+                    add_user_tariff(new_userid, this.selectedTariff)
+                }.bind(this));
             }
         },
         send_welcome: function() {
@@ -212,6 +255,10 @@ var app = new Vue({
                     alert(result)
                 }
             });   
+        },
+        resetTariffTimestamp: function() {
+            //console.log(this.tariffs[this.selectedTariff])
+            this.selectedTariffTimestamp = this.tariffs[this.selectedTariff]['last_assigned_unix'] || null;
         }
     },
     filters: {
@@ -237,6 +284,19 @@ function load() {
             data_status = {}
         }
     });
+
+    $.ajax({
+        url: path+"tariff/list.json?clubid="+app.selected_club,
+        dataType: 'json',
+        async:true,
+        success: function(result) {
+            tariffs_dict = result.reduce((dict, tariff) => {
+                dict[tariff.id] = tariff;
+                return dict;
+            }, {});
+            app.tariffs = tariffs_dict;
+        }
+    });
     
     setTimeout(function(){
     $.ajax({
@@ -250,7 +310,7 @@ function load() {
     },100);
 }
 
-function add_user(user,password) {
+function add_user(user,password,callback) {
     user.password = password;
     $.ajax({
         type: 'POST',
@@ -258,14 +318,40 @@ function add_user(user,password) {
         data: "user="+JSON.stringify(user),
         dataType: 'json',
         success: function(result) {
+            console.log(result.message)
+            //alert(result.message);
+            if (result.success) {
+                $("#editUserModal").modal("hide");
+                app.users[app.selected_user].userid = result.userid;
+                callback(result.userid);
+            }
+        }
+    });
+}
+
+function add_user_tariff(userid, tariffid) {
+    $.ajax({
+        type: 'GET',
+        url: path + "tariff/user/set",
+        data: {
+            userid: userid,
+            tariffid: tariffid
+        },
+        dataType: 'json',
+        success: function(result) {
             alert(result.message);
             if (result.success) {
                 $("#editUserModal").modal("hide");
                 app.users[app.selected_user].userid = result.userid;
             }
+        },
+        error: function(xhr, status, error) {
+            console.error("Ajax request failed:", error);
+            console.log(xhr.responseText); // Log the raw response for debugging
         }
     });
 }
+
 
 function update_user(userid,changed) {
     $.ajax({

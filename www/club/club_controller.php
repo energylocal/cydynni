@@ -556,7 +556,7 @@ function club_controller()
 
 function t($s) {
     global $translation,$lang;
-    
+    /** @var translation $translation */
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         return $translation->$lang->$s;
     } else {
@@ -566,7 +566,7 @@ function t($s) {
 
 function translate($s,$lang) {
     global $translation;
-    
+    /** @var translation $translation */
     if (isset($translation->$lang) && isset($translation->$lang->$s)) {
         return $translation->$lang->$s;
     } else { 

@@ -38,14 +38,14 @@
 			<th>Active users</th>
 			<th>Actions</th>
 		</tr>
-		<tr v-for="(tariff,index) in tariffs">
+		<tr v-for="(tariff,index) in tariffs" :key="tariff.id">
 			<td>{{tariff.id}}</td>
 			<td>{{ tariff.name }}</td>
 			<td>{{ tariff.standing_charge }}</td>
 			<td>{{tariff.created}}</th>
 			<td>{{tariff.first_assigned}}</th>
 			<td>{{tariff.last_assigned}}</td>
-			<td>{{tariff.active_users}}</td>
+			<td :class="getClass(tariff)">({{tariff.active_users}}/{{tariff.total_club_users_count}})</td>
 			<td>
 				<button class="btn" @click="delete_tariff(tariff.id)"><i class="icon-trash"></i></button>
 				<button class="btn" @click="edit_tariff(index)"><i class="icon-pencil"></i></button>
@@ -194,6 +194,13 @@
 						});
 				}
 			},
+			getClass: function(tariff) {
+				return {
+					'text-green': tariff.active_users == tariff.total_club_users_count,
+					'text-red': tariff.active_users < tariff.total_club_users_count,
+					'text-orange': tariff.active_users > tariff.total_club_users_count
+				}
+			},
 			edit_tariff: function(index) {
 				app.selected_tariff = index;
 
@@ -309,3 +316,15 @@
 	// get list of tariffs
 	app.list_tariffs();
 </script>
+
+<style>
+.text-green {
+  color: green;
+}
+.text-red {
+  color: red;
+}
+.text-orange {
+  color: orange;
+}
+</style>

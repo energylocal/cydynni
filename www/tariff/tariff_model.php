@@ -39,9 +39,28 @@ class Tariff
             $active_user_count[$row->tariffid]++;
         }
 
+        $result = $this->mysqli->query("SELECT count(*) as total FROM cydynni WHERE clubs_id='$clubid'");
+        if ($result) {
+            $row = $result->fetch_assoc();
+            $total_club_users_count = $row['total'];
+        } else {
+            // Handle query error if necessary
+            $total_club_users_count = 0; // or any other default value or error handling
+        }
+
+        $result = $this->mysqli->query("SELECT tariffid, start FROM user_tariffs GROUP BY tariffid, start");
+        $distinct_tariff_starts = array();
+        while ($row = $result->fetch_object()) {
+            $distinct_tariff_starts[$row->tariffid][] = $row->start;
+        }
+
         $result = $this->mysqli->query("SELECT * FROM tariffs WHERE clubid='$clubid'");
         $tariffs = array();
         while ($row = $result->fetch_object()) {
+            // add total club user count to $row
+            $row->total_club_users_count = $total_club_users_count;
+            // add distinct tariff starts to $row
+            $row->distinct_tariff_starts = $distinct_tariff_starts[$row->id];
             // convert created to date 12th September 2013
             $row->created = date("jS F Y",$row->created);
 
@@ -52,9 +71,17 @@ class Tariff
             }
 
             if ($first_assigned = $this->first_assigned($row->id)) {
-                $row->last_assigned = date("jS F Y",$first_assigned);
+                $row->first_assigned = date("jS F Y",$first_assigned);
+            } else {
+                $row->first_assigned = "";
+            }
+
+            if ($last_assigned = $this->last_assigned($row->id)) {
+                $row->last_assigned = date("jS F Y",$last_assigned);
+                $row->last_assigned_unix = $last_assigned;
             } else {
                 $row->last_assigned = "";
+                $row->last_assigned_unix = "";
             }
 
             $tariffs[] = $row;
@@ -215,11 +242,19 @@ class Tariff
         return array("success"=>true);
     }
 
-    // Find when tariff was first assigned
+    // Find when tariff was first and last assigned
     public function first_assigned($tariffid) {
         $tariffid = (int) $tariffid;
 
         $result = $this->mysqli->query("SELECT `start` FROM user_tariffs WHERE tariffid='$tariffid' ORDER BY `start` ASC LIMIT 1");
+        $row = $result->fetch_object();
+        if ($row) return $row->start*1;
+        return false;
+    }
+    public function last_assigned($tariffid) {
+        $tariffid = (int) $tariffid;
+
+        $result = $this->mysqli->query("SELECT `start` FROM user_tariffs WHERE tariffid='$tariffid' ORDER BY `start` DESC LIMIT 1");
         $row = $result->fetch_object();
         if ($row) return $row->start*1;
         return false;
