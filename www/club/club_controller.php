@@ -328,6 +328,7 @@ function club_controller()
                 $format = $_GET['format'];
             }
             
+            // FIXME: clubs need to come from DB
             if (in_array($key,array("bethesda","corwen","crickhowell","bethesda_solar","repower"))) {
                 if ($format=="standard") {
                     if ($result = $redis->get("energylocal:forecast:$key")) {
