@@ -21,7 +21,7 @@ var club_score = -1;
 var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
-var showClubPrice = false;
+var showClubPrice = true;
 
 // Initial view range 24 hours
 view.end = (+new Date) + (3600000 * 24.0);

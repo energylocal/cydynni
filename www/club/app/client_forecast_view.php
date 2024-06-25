@@ -70,7 +70,7 @@
                       <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
-                      <span id="club-price-legend" class="hide">
+                      <span id="club-price-legend">
                         <div class="legend-label-box" style="background-color:#fb1a80"></div>
                         <span class="legend-label" ><?php echo t("Average price");?></span>
                       </span>
@@ -87,7 +87,7 @@
                     
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
-                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput">
+                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput" checked>
                         <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Show average club price"); ?></strong></label>
                     </div>
 
