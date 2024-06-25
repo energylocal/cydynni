@@ -227,6 +227,7 @@ class Club
         $club_settings['consumption_feed'] = $this->feed->exists_tag_name(1,"Demand",$key);
         $club_settings['generation_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_gen");
         $club_settings['consumption_forecast_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_forecast_use");
+        $club_settings['demandshaper_feed'] = $this->feed->exists_tag_name(1,"demandshaper",$key."_demandshaper");
 
         $club_settings['has_generator'] = $club_settings['has_generator'] > 0;
 
