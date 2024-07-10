@@ -111,25 +111,14 @@
                             <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($tariffs_table as $t) : ?>
-                            <tr<?=$t->rowClass?>>
-                                <th scope="row">
-                                    <span class="d-sm-inline d-lg-none" style="color:<?=$t->color?>"><?=t(ucfirst($t->name))?></span>
-                                    <span class="d-none d-md-inline d-lg-inline" style="color:<?=$t->color?>"> <?=t(ucfirst($t->name)." Price")?></span> 
-                                    <br class="d-sm-none">
-                                    <?php
-                                    $start = date('g', strtotime($t->start)) . ($t->start < 12 ? t('am'): t('pm'));
-                                    $end = date('g', strtotime($t->end)) . ($t->end < 12 ? t('am'): t('pm'));
-                                    ?>
-                                    <span class="font-weight-light text-smaller-sm"><?=$start?> - <?=$end?></span>
-                                </th>
-                                <td style="background-color:<?=$club_settings["generator_color"]?>"><?=number_format($t->generator*1.05,2).t('p')?></td>
-                                <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=number_format($t->import*1.05,2).t('p')?></td>
-                            </tr>
-                            <?php endforeach; ?>
+                        <tbody id="tariffbody">
                         </tbody>
                     </table>
-                    <div style="padding:10px; color:#888; font-size:14px"><?=t('Unit prices include VAT');?></div>
+                    <div style="padding:10px; color:#888; font-size:14px">
+                    <?=t('Unit prices include VAT');?>
+                    <input type="checkbox" class="custom-control-input m-0 mr-2" id="showVAT" checked>
+                  </div>
                 </div>
             </div>
+
+
