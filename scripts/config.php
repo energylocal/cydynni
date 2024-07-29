@@ -16,6 +16,7 @@ CLUB IDS
 12   Capel dewi
 13   Dyffryn banw
 
+15   Totnes
 */
 
 $recalc_club = false;  // false or ID of club as above/in settings.php
