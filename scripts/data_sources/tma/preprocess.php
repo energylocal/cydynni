@@ -2,7 +2,7 @@
 // --------------------------------------------------------------------
 // TMA data import tool
 // --------------------------------------------------------------------
-require "config.php";
+require dirname(__FILE__)."/config.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 
 // $output_dir = "/home/cydynni/TMA";
@@ -43,6 +43,8 @@ $mpan_data = array();
 
 // load processed files (not needed)
 // $already_processed = get_processed_files($output_dir);
+
+$ftp_dir = getenv("TMA_FTP_DIR") ?: "/home/tmaftp/data";
 
 $files = scandir($ftp_dir);
 for ($i=2; $i<count($files); $i++) {

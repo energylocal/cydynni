@@ -62,9 +62,23 @@ class Club
     // Get club userid from id
     public function get_userid($id) {
         $id = (int) $id;
-        $result = $this->mysqli->query("SELECT userid FROM club WHERE id=$id");
+        $result = $this->mysqli->query("SELECT userid FROM club WHERE id=$id"); // FIXME: prepare stmt
         $row = $result->fetch_object();
         return $row->userid;
+    }
+
+    public function get_advisors($clubid) {
+        $stmt = $this->mysqli->prepare("SELECT userid FROM club_advisors WHERE clubid=?");
+        $stmt->bind_param("i",$clubid);
+        $stmt->execute();
+        $stmt->bind_result($user_id);
+
+        $advisor_ids = [];
+        while ($stmt->fetch()) {
+          $advisor_ids[] = $user_id;
+        }
+        $stmt->close();
+        return $advisor_ids;
     }
 
 
@@ -242,4 +256,43 @@ class Club
 
         return $club_settings;
     }
+
+    public function get_club_data_by_mpan($club_id, $feed_name, $startMillis, $endMillis) {
+      $sql = "SELECT
+          u.id as user_id,
+          f.id as feed_id,
+          cy.mpan as mpan
+        FROM users u
+        INNER JOIN feeds f ON f.userid=u.id
+        INNER JOIN cydynni cy ON cy.userid=u.id
+        INNER JOIN club cl ON cl.id=cy.clubs_id
+        WHERE
+          cl.id=?
+        AND
+          f.name=?";
+      $stmt = $this->mysqli->prepare($sql);
+      $stmt->bind_param('is', $club_id, $feed_name);
+      $stmt->execute();
+      $stmt->bind_result($user_id, $feed_id, $mpan);
+
+      while ($stmt->fetch()) {
+        if (!$this->feed->exist($feed_id)) {
+          $this->log->warning("Feed $feed_id for $username missing");
+          continue;
+        }
+
+        $feed_data = $this->feed->get_data($feed_id,$startMillis,$endMillis,1800,0,0);
+        if (!$feed_data) {
+          $this->log->warning("Feed $feed_id data missing for $username missing\n");
+          continue;
+        }
+
+        $data_by_mpan[$mpan] = $feed_data;
+      }
+      $stmt->close();
+      return $data_by_mpan;
+    }
+
+
+
 }

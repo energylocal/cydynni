@@ -26,6 +26,7 @@
         <th>Email</th>
         <th>MPAN</th>
         <th>CAD Serial</th>
+        <th>Owl ID</th>
         <th>Octopus</th>
         <th style="width:100%">Meter Serial</th>
         <th>TMA</th>
@@ -41,6 +42,7 @@
         <td @click="edit(index)">{{ user.email }}</td>
         <td @click="edit(index)">{{ user.mpan }}</td>
         <td @click="edit(index)">{{ user.cad_serial }}</td>
+        <td @click="edit(index)">{{ user.owl_id }}</td>
         <td @click="edit(index)"><span style="font-size:12px">{{ user.octopus_apikey }}</span></td>
         <td @click="edit(index)">{{ user.meter_serial }}</td>
 
@@ -88,9 +90,12 @@
 
             <label>MPAN</label>
             <input type="text" v-model="users[selected_user].mpan" style="width:260px" />
-            
+
             <label>CAD Serial</label>
             <input type="text" v-model="users[selected_user].cad_serial" style="width:260px" />
+
+            <label>Owl MAC ID</label>
+            <input type="text" v-model="users[selected_user].owl_id" style="width:260px" />
 
             <label>Octopus API Key</label>
             <input type="text" v-model="users[selected_user].octopus_apikey" style="width:260px" />
@@ -154,6 +159,7 @@ var app = new Vue({
                 clubs_id:app.selected_club,         
                 mpan:"",
                 cad_serial:"",
+                owl_id:"",
                 octopus_apikey:"",       
                 meter_serial:"",
                 welcomedate:0,
