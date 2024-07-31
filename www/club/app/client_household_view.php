@@ -101,7 +101,7 @@
                 <?php if (!$club_settings["has_generator"]) { ?>
                 <div class="box2">
                   <form class="form-horizontal">
-                      <legend style="text-align:center;"><?php echo t("Tariff")</legend>
+                      <legend style="text-align:center;"><?php echo t("Tariff") ?></legend>
                       <div class="text-align:left;">
                       <div class="control-group" style="text-align: left;">
                         <label class="control-label" for="tariff">Tariff type:</label>
