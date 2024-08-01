@@ -48,7 +48,8 @@ $app_path = $path."Modules/club/app/";
             'app_path'=>$app_path,
             'club'=>$club,
             'club_settings'=>$club_settings,
-            'tariffs_table'=>$tariffs_table
+            'tariffs_table'=>$tariffs_table,
+            'is_advisor'=>$is_advisor
         )); ?>
     </div>
     <?php } ?>
@@ -116,7 +117,6 @@ var tariff_colors = {
 
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 var months_long = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 var session = <?php echo json_encode($session); ?>;
 var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes->targetMax : 0; ?>;
@@ -366,6 +366,7 @@ document.querySelectorAll('.household-view-scope button').forEach(button => {
     case "comparison":
       $("#historic-period-select").show();
       $(".historic-block").hide();
+      $("#your-score").hide();
       $("#realtime-power").hide();
       $("#tariff-settings").hide();
       $("#comparison").show();
@@ -382,6 +383,11 @@ document.querySelectorAll('.household-view-scope button').forEach(button => {
     }
   })
 })
+
+
+function daysInMonth (year, month) { // Use 0 for January, 1 for February, etc.
+  return new Date(year, month+1, 0).getDate();
+}
 
 $(".period-select").change(function(event) {
     event.stopPropagation();
@@ -415,7 +421,7 @@ $(".period-select").change(function(event) {
             date.setYear(year);
             view.start = date.getTime();
 
-            date.setDate(days_in_month[month]);
+            date.setDate(daysInMonth(year, month));
             view.end = date.getTime();
 
             club_date_text = t("In %s, we scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);

@@ -11,7 +11,7 @@
 
 	<h3>Tariffs</h3>
 
-  <p>	
+  <p>
   <div class="input-prepend">
     <span class="add-on">Select Club:</span>
     <select v-model="selected_club" @change="list_tariffs">
@@ -26,6 +26,20 @@
 		<input type="text" value="" v-model="new_tariff_name">
 		<button class="btn" style="float: right;" @click="add_tariff"><i class="icon-plus"></i> Add</button>
 	</div>
+
+<div id="assign-user-tariffs-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="assignUserModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <h3 id="assignUserModalLabel">Assign user tariffs</h3>
+  </div>
+  <div class="modal-body">
+    <p>Assign tariff "{{ tariffToAssign.name }}" to all users in the club?</p>
+    Start time: <input type="text" id="assignTariffDatePicker" v-model="assignTariffStart">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true" @click="clearTariffToAssign()">Cancel</button>
+    <button class="btn btn-primary" @click="assignAllUserTariffs()">Assign to all</button>
+  </div>
+</div>
 
 	<table class="table table-striped">
 		<tr>
@@ -49,6 +63,8 @@
 			<td>
 				<button class="btn" @click="delete_tariff(tariff.id)"><i class="icon-trash"></i></button>
 				<button class="btn" @click="edit_tariff(index)"><i class="icon-pencil"></i></button>
+				<button class="btn" @click="clone_tariff(tariff.id)"><i class="icon-share"></i></button>
+				<button class="btn" @click="showAssignTariffModal(tariff)"><i class="icon-user"></i></button>
 			</td>
 		</tr>
 	</table>
@@ -57,9 +73,12 @@
 
 		<div class="input-prepend">
 			<span class="add-on">Tariff name</span>
-			<input type="text" v-model="tariffs[selected_tariff].name">
+			<input type="text" v-model="edit_tariff_name_field">
+			<span class="add-on">Standing charge</span>
+			<input type="text" v-model="edit_standing_charge_field">
+      <button class="btn" @click="update_tariff()"><i class="icon-ok"></i></button>
 		</div>
-		
+
 		<table class="table table-striped">
 			<tr>
 				<th>Index</th>
@@ -154,7 +173,11 @@
 			tariff_periods: [],
 			edit_period_index: false,
 			selected_club: selected_club,
-			clubs: clubs
+      clubs: clubs,
+      edit_tariff_name_field: "",
+      edit_standing_charge_field: 0,
+      tariffToAssign: false,
+      assignTariffStart: 0
 		},
 		methods: {
 			add_tariff: function() {
@@ -203,6 +226,8 @@
 			},
 			edit_tariff: function(index) {
 				app.selected_tariff = index;
+        this.edit_tariff_name_field = this.tariffs[index].name;
+        this.edit_standing_charge_field = this.tariffs[index].standing_charge;
 
 				// get tariff periods
 				$.get(path + "tariff/periods", {
@@ -212,8 +237,56 @@
 						app.tariff_periods = data;
 					});
 			},
-			add_period: function() {
-				// add new period to end of list
+      clone_tariff: function(id) {
+        $.post(path + "tariff/clone", {
+          tariff_id: id
+        })
+          .done(function(data) {
+            if (data.success) {
+              app.list_tariffs();
+            } else {
+              alert("Error: " + data.message);
+            }
+          });
+      },
+      update_tariff: function() {
+				$.post(path + "tariff/update", {
+            tariff_id: app.tariffs[app.selected_tariff].id,
+						name: app.edit_tariff_name_field,
+						standing_charge: app.edit_standing_charge_field
+					})
+					.done(function(data) {
+						if (data.success) {
+							app.list_tariffs();
+						} else {
+							alert("Error: " + data.message);
+						}
+					});
+      },
+      assignAllUserTariffs: function() {
+        $.post(path + "tariff/assign_all_users", {
+            tariff_id: app.tariffToAssign.id,
+            start: app.assignTariffStart
+					})
+					.done(function(data) {
+						if (data.success) {
+							app.list_tariffs();
+						} else {
+							alert("Error: " + data.message);
+						}
+            app.clearTariffToAssign();
+					});
+      },
+      showAssignTariffModal: function(tariff) {
+        this.tariffToAssign = tariff;
+        $('#assign-user-tariffs-modal').modal({})
+      },
+      clearTariffToAssign: function() {
+        $('#assign-user-tariffs-modal').modal('hide')
+        this.tariffToAssign = false;
+      },
+      add_period: function() {
+        // add new period to end of list
 
 
 				// Default day

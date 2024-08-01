@@ -350,9 +350,18 @@ function household_bargraph_draw() {
             color: "#aaa",
             borderWidth: 0,
             hoverable: true,
-            clickable: true
+            clickable: true,
+            markings : [ // target band
+              {
+                yaxis: {
+                from: targetMin,
+                to: targetMax
+              },
+              color: "rgba(32, 158, 211, 0.3)" //"#209ED3"
+            }
+          ]
         }
-    }
+      }
 
     if ($("#household_bargraph_placeholder").width() > 0) {
         $.plot($('#household_bargraph_placeholder'), householdseries, options);

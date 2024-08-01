@@ -99,11 +99,70 @@ class Tariff
         }
 
         $time = time();
-        $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created) VALUES (?,?,?)");
+        $stmt = $this->mysqli->prepare("INSERT INTO tariffs (clubid,name,created,standing_charge) VALUES (?,?,?,0)");
         $stmt->bind_param("isi",$clubid,$name,$time);
         $stmt->execute();
         $stmt->close();
         return array("success"=>true, "id"=>$this->mysqli->insert_id);
+    }
+
+    // Create a new tariff
+    public function clone(int $tariffid) {
+        $tariffid = (int) $tariffid;
+
+        $this->mysqli->begin_transaction();
+
+        $stmt = $this->mysqli->prepare("
+          INSERT INTO tariffs
+            (clubid,name,created,first_assigned,last_assigned,standing_charge)
+          SELECT
+            clubid,CONCAT('Copy of ', name),unix_timestamp(),first_assigned,last_assigned,standing_charge
+          FROM
+            tariffs
+          WHERE
+            id=?;
+        ");
+        $stmt->bind_param("i",$tariffid);
+        $stmt->execute();
+        $clonedTariffId = $stmt->insert_id;
+        $stmt->close();
+
+        $stmt = $this->mysqli->prepare("
+          INSERT INTO tariff_periods
+            (tariffid,`index`,name,weekend,start,generator,import,color,subdued_color)
+          SELECT
+            ?,`index`,name,weekend,start,generator,import,color,subdued_color
+          FROM
+            tariff_periods
+          WHERE
+            tariffid=?;
+        ");
+        $stmt->bind_param("ii",$clonedTariffId, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        $this->mysqli->commit();
+        return array("success"=>true, "id"=>$this->mysqli->insert_id);
+    }
+
+    // Assign this tariff to all the users in that club, for a given start time
+    public function assign_all_user_tariffs($tariffid, $start) {
+      $stmt = $this->mysqli->prepare("
+        INSERT INTO user_tariffs
+          (userid, tariffid, start)
+        SELECT
+          cy.userid,t.id,?
+        FROM
+          cydynni cy
+        INNER JOIN
+          tariffs t ON t.clubid=cy.clubs_id
+        WHERE
+          t.id=?;
+      ");
+      $stmt->bind_param("ii", $start, $tariffid);
+      $stmt->execute();
+      $stmt->close();
+
+      return array("success"=>true);
     }
 
     // Delete a tariff
@@ -114,7 +173,10 @@ class Tariff
         if ($this->first_assigned($tariffid)) {
             return array("success"=>false, "message"=>"Tariff has been assigned to users");
         }
-        
+
+        // Delete all tariff periods
+        $this->mysqli->query("DELETE FROM tariff_periods WHERE tariffid='$tariffid'");
+
         $stmt = $this->mysqli->prepare("DELETE FROM tariffs WHERE id=?");
         $stmt->bind_param("i",$tariffid);
         $stmt->execute();
@@ -122,8 +184,6 @@ class Tariff
         $stmt->close();
         if ($affected==0) return array("success"=>false);
 
-        // Delete all tariff periods
-        $this->mysqli->query("DELETE FROM tariff_periods WHERE tariffid='$tariffid'");
 
         // Delete all user tariffs (can only delete unassigned tariffs)
         // $this->mysqli->query("DELETE FROM user_tariffs WHERE tariffid='$tariffid'");
@@ -276,7 +336,18 @@ class Tariff
             return false;
         }
     }
-    
+
+    // Set tariff name
+    public function set_tariff_name($tariffid, $name) {
+        // TODO handle errors - return t/f
+        $stmt = $this->mysqli->prepare("UPDATE tariffs SET name=? WHERE id=?");
+        $stmt->bind_param("si", $name, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        // TODO handle errors
+        return true;
+    }
+
     // Get tariff standing charge
     public function get_tariff_standing_charge($tariffid) {
         $tariffid = (int) $tariffid;
@@ -287,6 +358,17 @@ class Tariff
             return false;
         }
     }
+
+    // Set tariff standing charge
+    public function set_tariff_standing_charge($tariffid, $charge) {
+        $stmt = $this->mysqli->prepare("UPDATE tariffs SET standing_charge=? WHERE id=?");
+        $stmt->bind_param("di", $charge, $tariffid);
+        $stmt->execute();
+        $stmt->close();
+        // TODO handle errors
+        return true;
+    }
+
 
     // User tariff methods
 
@@ -547,7 +629,6 @@ class Tariff
         if ($unit_price<$amber) return "amber";
         return "red";
     }
-
     public function set_temporary_fixed_tariff($userid, $import): void {
       // If the current user tariff is called user_tariff_{USERID} then update all period's import rate
       // Used for non-club dashboards
@@ -566,6 +647,51 @@ class Tariff
         $t = $period->tariffid;
         $stmt = $this->mysqli->prepare("UPDATE tariff_periods SET import=? WHERE tariffid=? AND `index`=?");
         $stmt->bind_param("dii", $import, $period->tariffid, $period->index);
+        $stmt->execute();
+        $stmt->close();
+      }
+    }
+    public function set_temporary_economy7_tariff($userid, $daytime, $economy7): void {
+      // The current user tariff must be called user_tariff_{USERID} and have two
+      // periods, daytime and overnight
+
+      $tariffid = $this->get_user_tariff_id($userid);
+      $tariff = $this->get_tariff($tariffid);
+      $tariff_name = "user_tariff_".$userid;
+      if ($tariff->name != "user_tariff_".$userid) {
+        throw new Exception("User tariff is not called '$tariff_name'");
+      }
+
+      $periods = $this->list_periods($tariffid);
+      if (count($periods) != 2) {
+        throw new Exception("User tariff '$tariff_name' does not have two periods, not economy7 compatible");
+      }
+      foreach ($periods as $period) {
+        switch ($period->name) {
+        case "daytime":
+          break;
+        case "overnight":
+          break;
+        default:
+          throw new Exception("User tariff '$tariff_name' has periods must be daytime & overnight to be economy7 compatible; have '".$period->name."'");
+        }
+      }
+
+      $rate = 0;
+      foreach ($periods as $period) {
+        switch ($period->name) {
+        case "daytime":
+          $rate = $daytime;
+          break;
+        case "overnight":
+          $rate = $economy7;
+          break;
+        }
+        $currentRate = $period->import;
+        $index = $period->index;
+        $t = $period->tariffid;
+        $stmt = $this->mysqli->prepare("UPDATE tariff_periods SET import=? WHERE tariffid=? AND `index`=?");
+        $stmt->bind_param("dii", $rate, $period->tariffid, $period->index);
         $stmt->execute();
         $stmt->close();
       }
