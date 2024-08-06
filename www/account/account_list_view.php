@@ -105,11 +105,11 @@
             <div v-if="users[selected_user].userid<0">
                 <label>User tariff</label>
                 <select v-model="selectedTariff" @change="resetTariffTimestamp" style="width:274px">
-                    <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
+                  <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
                 </select>
                 <label>User tariff start timestamp</label>
                 <select v-model="selectedTariffTimestamp" style="width:274px">
-                <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
+                  <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
                 </select>
             </div>
           </div>
@@ -183,9 +183,10 @@ var app = new Vue({
                     }
                 }
             }
-            this.latestTariff = latestTariff
-            this.selectedTariff = this.latestTariff['id']
-            this.selectedTariffTimestamp = this.latestTariff['last_assigned_unix']
+            if (latestTariff !== null) {
+                this.selectedTariff = latestTariff['id']
+                this.selectedTariffTimestamp = latestTariff['last_assigned_unix']
+            }
 
             this.users.push({
                 userid:-1,
@@ -292,7 +293,10 @@ function load() {
         async:true,
         success: function(result) {
             tariffs_dict = result.reduce((dict, tariff) => {
-                dict[tariff.id] = tariff;
+                if (tariff.active_users > 0) {
+                  // only care about tariffs that are in use, otherwise we need to ask for start date
+                  dict[tariff.id] = tariff;
+                }
                 return dict;
             }, {});
             app.tariffs = tariffs_dict;
