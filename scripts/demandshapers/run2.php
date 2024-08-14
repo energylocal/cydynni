@@ -9,16 +9,22 @@ require "Modules/club/club_model.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/solcast.php";
 
-function generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $club_gen_profile, $enable_turndown, $feed, $redis, $club_settings, $tariff_class) {
+$log = new EmonLogger(__FILE__);
+
+function generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $club_gen_profile, $enable_turndown, $feed, $redis, $club_settings, $tariff_class, $log) {
     $interval = 1800;
 
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_name)){
-        echo "Error fetching Demand feed ID for $club_name";
+        $log->error("Error fetching Demand feed ID for $club_name");
         die;
     }
 
     // Fetch demand data
     $data = $feed->get_data($use_id,$demand_start,$demand_end,1800);
+    if (array_key_exists("success", $data)){
+        $log->error("Error fetching Demand feed data from feed $use_id for $club_name");
+        die;
+    }
 
     $sum = array();
     $count = array();
@@ -36,6 +42,8 @@ function generate_club_demandshaper($club_name, $demand_start, $demand_end, $gen
             if (!isset($count[$hm])) $count[$hm] = 0.0;
             $sum[$hm] += $data[$i][1];
             $count[$hm] ++;
+        } else {
+            $log->info("Null value detected in feed $use_id for $club_name. Continuing with demandshaper script.");
         }
     }
 
@@ -69,8 +77,19 @@ function generate_club_demandshaper($club_name, $demand_start, $demand_end, $gen
 
 
 
-    $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
-    $bands = $tariff_class->list_periods($current_tariff->tariffid);
+    try {
+        $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
+    } catch (MissingTariffException $e){
+        $log->error("Error fetching current tariff for $club_name");
+        $log->error($e->getMessage());
+        die;
+    }
+
+
+    if (!$bands = $tariff_class->list_periods($current_tariff->tariffid)){
+        $log->error("Error fetching tariff bands for $club_name");
+        die;
+    }
 
     $td = 0;
     for ($time=$start; $time<$end; $time+=$interval) {
@@ -94,7 +113,10 @@ function generate_club_demandshaper($club_name, $demand_start, $demand_end, $gen
         $import = -1*$balance;
         }
         
-        $band = $tariff_class->get_tariff_band($bands,$hour);
+        if (!$band = $tariff_class->get_tariff_band($bands,$hour)){
+            $log->error("Error fetching tariff band for $club_name at $hour");
+            die;
+        }
         
         $cost = ($from_generator*$band->generator) + ($import*$band->import);
         
@@ -234,9 +256,10 @@ function add_feeds($input_feeds, $output_feed, $start_time, $end_time, $interval
 }
 
 
-function create_generator_forecast($generator_key, $generator_config, $feed, $redis, $club_name, $start, $now, $end) {
+function create_generator_forecast($generator_key, $generator_config, $feed, $redis, $club_name, $start, $now, $end, $log) {
     if ($generator_config == NULL) {
-        return NULL;
+        $log->error("NULL generator config supplied for $club_name, cannot create generator forecast.");
+        die;
     }
     extract($generator_config);
 
@@ -273,6 +296,10 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
         }
         $gen_id = $generator_feedid;
     }
+
+    // Force cache reload
+    $redis->hdel("feed:$gen_id",'time');
+    $timevalue = $feed->get_timevalue($gen_id);
 
     // Load hydro forecast
     if (isset($hydro_forecast_settings)) {
@@ -366,26 +393,24 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 $query = $mysqli->query("SELECT c.id AS club_id, c.name AS club_name, g.id AS generator_id, g.`key` AS generator_key, g.config AS generator_config FROM club c JOIN generators g ON c.id = g.club_id ORDER BY c.id, g.id");
 $clubs = array();
 
-if ($query->num_rows > 0) {
-    while($row = $query->fetch_assoc()) {
-        $club_id = $row['club_id'];
-        $generator = array(
-            'generator_id' => $row['generator_id'],
-            'generator_key' => $row['generator_key'],
-            'generator_config' => json_decode($row['generator_config'], true)
+while($row = $query->fetch_assoc()) {
+    $club_id = $row['club_id'];
+    $generator = array(
+        'generator_id' => $row['generator_id'],
+        'generator_key' => $row['generator_key'],
+        'generator_config' => json_decode($row['generator_config'], true)
+    );
+
+    if (!isset($clubs[$club_id])) {
+        $clubs[$club_id] = array(
+            'club_id' => $row['club_id'],
+            'club_name' => $row['club_name'],
+            'generators' => array()
         );
+    }
 
-        if (!isset($clubs[$club_id])) {
-            $clubs[$club_id] = array(
-                'club_id' => $row['club_id'],
-                'club_name' => $row['club_name'],
-                'generators' => array()
-            );
-        }
-
-        if (!is_null($row['generator_id'])) {
-            $clubs[$club_id]['generators'][] = $generator;
-        }
+    if (!is_null($row['generator_id'])) {
+        $clubs[$club_id]['generators'][] = $generator;
     }
 }
 
@@ -398,12 +423,16 @@ foreach ($clubs as $club) {
     $club_name = strtolower($club['club_name']);
     // NOTE : preg_replace should be temporary, specifically done for Roupell Park
     $club_name = preg_replace('/\s+/', '', $club_name);
-    $use_id = $feed->exists_tag_name(1,"Demand",$club_name);
+    if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_name)){
+        $log->error("Failed to fetch ID for $club_name's Demand feed.");
+        die;
+    }
     // Force cache reload
     $redis->hdel("feed:$use_id",'time');
     // Get time period for last 7 days of demand data
     $timevalue = $feed->get_timevalue($use_id);
     if ($timevalue == NULL) {
+        $log->info("Failed to fetch timevalue for feed $use_id. Continuing to next club.");
         continue;
     }
     $demand_end = $timevalue["time"]*1000;
@@ -419,29 +448,23 @@ foreach ($clubs as $club) {
     $tariff_class = new Tariff($mysqli);
     $generator_count = count($club['generators']);
     $gen_profile_sum = [];
-    if ($generator_count < 2) {
-        $gen_profile = create_generator_forecast($club['generators'][0]['generator_key'], $club['generators'][0]['generator_config'], $feed, $redis, $club_name, $generation_forecast_start, $now, $generation_forecast_end);
-        if (!$gen_profile==NULL) {
-            generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_profile, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class);
-        }
-    } else {
-        foreach ($club['generators'] as $generator) {
-            $gen_profile = create_generator_forecast($generator['generator_key'], $generator['generator_config'], $feed, $redis, $club_name, $generation_forecast_start, $now, $generation_forecast_end);
-    
-            if ($gen_profile !== NULL) {
-                // Sum the $gen_profile values with the existing $gen_profile_sum values
-                foreach ($gen_profile as $index => $value) {
-                    if (isset($gen_profile_sum[$index])) {
-                        $gen_profile_sum[$index] += $value;
-                    } else {
-                        $gen_profile_sum[$index] = $value;
-                    }
+    // NOTE can be reduced, doesn't need to count generators or do an if/else
+    foreach ($club['generators'] as $generator) {
+        $gen_profile = create_generator_forecast($generator['generator_key'], $generator['generator_config'], $feed, $redis, $club_name, $generation_forecast_start, $now, $generation_forecast_end, $log);
+
+        if ($gen_profile !== NULL) {
+            // Sum the $gen_profile values with the existing $gen_profile_sum values
+            foreach ($gen_profile as $index => $value) {
+                if (isset($gen_profile_sum[$index])) {
+                    $gen_profile_sum[$index] += $value;
+                } else {
+                    $gen_profile_sum[$index] = $value;
                 }
             }
         }
-        if (!empty($gen_profile_sum)) {
-            generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_profile_sum, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class);
-        }
+    }
+    if (!empty($gen_profile_sum)) {
+        generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_profile_sum, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class, $log);
     }
 }
 
