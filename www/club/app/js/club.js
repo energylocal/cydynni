@@ -13,6 +13,8 @@ var club_data = [];
 var exported_generation_data = [];
 var used_generation_data = [];
 var clubseries = [];
+var gen_data_completeness = [];
+var demand_data_completeness = [];
 
 var club_pie_data_cost = [];
 var club_pie_data_energy = [];
@@ -242,202 +244,239 @@ function club_pie_draw() {
 }
 
 
+var last_actual_reading_time = 0;
+var current_hh = 0;
+
+var forecast_threshold = 100 // if a timevalue's data_completeness is below this amount (%), it will be highlighted as forecast data
+var forecast_period_start = null
+var forecast_periods = []
+
 function club_bargraph_load() {
 
-    var npoints = 200;
-    interval = ((view.end - view.start) * 0.001) / npoints;
-    interval = round_interval(interval);
-
-    // Limit interval to 1800s
-    if (interval < 1800) interval = 1800;
-    var intervalms = interval * 1000;
-
-    if (['year', 'month', 'fortnight', 'week', 'day'].indexOf(date_selected) != -1) {
-        $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
-    } else if (date_selected == "custom") {
-        $(".club_date").html(t("For the range selected in the graph") + ":");
-        $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", ucfirst(club_settings.generator)));
-    }
-
-    club_summary_load();
-
-    view.start = Math.floor(view.start / intervalms) * intervalms
-    view.end = Math.ceil(view.end / intervalms) * intervalms
-
-    var generation_data = {};
-    if (generation_feed) {
-      generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
-    }
-    var club_data = {};
-    if (consumption_feed) {
-      club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
-    }
-    var demandshaper_data = {};
+    // URL used for fetching combined club data
+    // TODO - this needs to be changed to the energylocal URL once the backend is live
+    const url = `http://localhost:8080/api/v0/clubs/bethesda/data?start=${view.start}&end=${view.end}`;
+    var generation_data = []
+    var club_data = []
+    var demandshaper_data = []
+    gen_data_completeness = []
+    demand_data_completeness = []
+    forecast_period_start = null
+    forecast_periods = []
     var demandshaper_max_val = 0;
-    if (demandshaper_feed) {
-        demandshaper_data = feed.getaverage(demandshaper_feed, view.start, view.end, interval, 0, 0)
-        for (z in demandshaper_data) {
-            if (demandshaper_data[z][1] > demandshaper_max_val) {
-                demandshaper_max_val = demandshaper_data[z][1];
+    // fetch combined club data via ajax
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // insert combined club data into verboseTimevalues
+            verboseTimevalues = data;
+            for (const key in verboseTimevalues) {
+                if (verboseTimevalues.hasOwnProperty(key)) {
+                    // for each timevalue, extract the necessary data
+                    const verboseTimevalue = verboseTimevalues[key];
+                    const timestamp = Number(key);
+                    const timestampMs = timestamp * 1000;
+                    gen_val = verboseTimevalue["combined_gen"]["val"]
+                    demand_val = verboseTimevalue["demand"]["val"]
+                    demandshaper_val = verboseTimevalue["demandshaper"]["val"]
+                    gen_data_completeness_val = verboseTimevalue["combined_gen"]["data_completeness"];
+                    demand_data_completeness_val = verboseTimevalue["demand"]["data_completeness"];
+                    // output this data into relevant arrays
+                    generation_data.push([timestampMs, gen_val]);
+                    club_data.push([timestampMs, demand_val]);
+                    demandshaper_data.push([timestampMs, demandshaper_val]);
+                    if (demandshaper_val > demandshaper_max_val) {
+                        demandshaper_max_val = demandshaper_val
+                    }
+                    gen_data_completeness.push([timestampMs, gen_data_completeness_val])
+                    demand_data_completeness.push([timestampMs, demand_data_completeness_val])
+
+                }
             }
-        }
-    }
-    var gen_forecast_data = [];
-    var demand_forecast_data = [];
-
-    if (
-      club_settings.generation_forecast_feed != undefined &&
-      club_settings.generation_forecast_feed !== false &&
-      club_settings.consumption_forecast_feed != undefined &&
-      club_settings.consumption_forecast_feed !== false
-    ) {
-        gen_forecast_data = feed.getaverage(club_settings.generation_forecast_feed, view.start, view.end, interval, 0, 0);
-        demand_forecast_data = feed.getaverage(club_settings.consumption_forecast_feed, view.start, view.end, interval, 0, 0);
-    }
-
-
-    if (generation_data.success != undefined) $("#local_electricity_forecast").hide();
-
-    // -------------------------------------------------------------------------
-    // Colour code graph
-    // -------------------------------------------------------------------------
-
-    // kWh scale
-    var scale = 1;
-    if (units == "kWh") scale = (interval / 1800);
-    if (units == "kW") scale = 2;
-
-    var data = {};
-    data.daytime = [];
-    data.evening = [];
-    data.overnight = [];
-    data.export = [];
-    data.selfuse = [];
-    data.price = [];
-    data.demandshaper_price = [];
-    data.standard = [];
-
-    data.gen_forecast = [];
-    data.demand_forecast = [];
-
-    last_actual_reading_time = 0;
-    
-    for (x in tariffs) {
-        if (data[tariffs[x].name] == undefined) {
-            data[tariffs[x].name] = [];
-        }
-    }
-
-    for (var z in club_data) {
-        var time = club_data[z][0];
-        var d = new Date(time);
-        var hour = d.getHours();
-
-        // ------------------------------------------------
-        var gen_forecast = null;
-        if (gen_forecast_data[z] != undefined) {
-            gen_forecast = gen_forecast_data[z][1] * scale * club_settings['gen_scale'];
-        }
-        var demand_forecast = null;
-        if (demand_forecast_data[z] != undefined) {
-            demand_forecast = demand_forecast_data[z][1] * scale;
-        }
-        // ------------------------------------------------
-
-        var generation = 0;
-        if (generation_data[z] != undefined && generation_data[z][1] !== null) {
-            generation = generation_data[z][1] * scale * club_settings['gen_scale'];
-        } else if (gen_forecast !== null) {
-            generation = gen_forecast
-        }
-
-        if (generation_feed == 1471) { // TODO - what is this???
-            if (generation > 40.0) generation = 40.0;
-            generation *= 0.5;
-        }
-
-        var consumption = 0;
-        if (club_data[z][1] !== null) {
-            consumption = club_data[z][1] * scale;
-            last_actual_reading_time = club_data[z][0]
-        } else if (demand_forecast !== null) {
-            consumption = demand_forecast
-        }
-
-        var exported_generation = 0;
-        var used_generation = 0;
-
-        var imprt = 0.0;
-        var exprt = 0.0;
-        
-        if (generation <= consumption) {
-            imprt = consumption - generation; 
-        } else {
-            exprt = generation - consumption;
-        
-        }
-        
-        var selfuse = consumption - imprt;
-
-        var unit_price = 0.0;
-        
-        for (x in tariffs) {
-            data[tariffs[x].name][z] = [time, 0];
-        }
-        
-        // var bands = get_tariff_bands(tariff_history,time*0.001);
-        var band = get_tariff_band(tariffs,hour);
-        if (band) {
-            unit_price = (band.import * imprt + band.generator * selfuse) / consumption
-            data[band.name][z] = [time, imprt];
-        }
-
-        var demandshaper_price
-        if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
-            demandshaper_price = (demandshaper_data[z][1] * 10)/demandshaper_max_val;
-        } else if (gen_forecast !== null) {
-            demandshaper_price = unit_price
-        }
             
-        data.export[z] = [time, exprt];
-        data.selfuse[z] = [time, selfuse];
-        data.price[z] = [time, unit_price]; // unit_price
-        data.demandshaper_price[z] = [time, demandshaper_price]
-    }
+            // populate "forecast_periods" with start/end points for each period of forecast data within the current graph
+            // this is used to highlight forecast periods in grey, so that the user knows which data is real/forecast
+            for (let i = 0; i < gen_data_completeness.length; i++) {
+                if (gen_data_completeness[i][1] < forecast_threshold) {
+                    if (forecast_period_start === null) {
+                        // mark the start of a forecast period
+                        forecast_period_start = gen_data_completeness[i][0];
+                    // if the end of gen_data_completeness has been reached, force mark the end of a forecast period if currently in one
+                    } else if (i == (gen_data_completeness.length -1)) {
+                        if (forecast_period_start !== null) {
+                            forecast_periods.push({ "start": forecast_period_start, "end": gen_data_completeness[i][0] });
+                        }
+                    }
+                }    
+                else {
+                    if (forecast_period_start !== null) {
+                        // if we reach a non-forecast value after a forecast period, record the period
+                        forecast_periods.push({ "start": forecast_period_start, "end": gen_data_completeness[i-1][0] });
+                        forecast_period_start = null;  // Reset start for the next potential period
+                    }
+                }
+            }
+            if (last_actual_reading_time == 0) {
+                last_actual_reading_time = forecast_period_start
+            }
+            var npoints = 200;
+            interval = ((view.end - view.start) * 0.001) / npoints;
+            interval = round_interval(interval);
 
-    clubseries = [];
+            // Limit interval to 1800s
+            if (interval < 1800) interval = 1800;
+            var intervalms = interval * 1000;
 
-    var widthprc = 0.75;
-    var barwidth = widthprc * interval * 1000;
-    // Actual
-    clubseries.push({
-        stack: true, data: data.selfuse, color: generator_color, label: t("Used " + ucfirst(club_settings.generator)),
-        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-    });
+            if (['year', 'month', 'fortnight', 'week', 'day'].indexOf(date_selected) != -1) {
+                $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
+            } else if (date_selected == "custom") {
+                $(".club_date").html(t("For the range selected in the graph") + ":");
+                $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", ucfirst(club_settings.generator)));
+            }
 
-    // add series data for each tariff
+            club_summary_load();
+
+            view.start = Math.floor(view.start / intervalms) * intervalms
+            view.end = Math.ceil(view.end / intervalms) * intervalms
+
+
+
+
+            // -------------------------------------------------------------------------
+            // Colour code graph
+            // -------------------------------------------------------------------------
+
+            // kWh scale
+            var scale = 1;
+            if (units == "kWh") scale = (interval / 1800);
+            if (units == "kW") scale = 2;
+
+            var data = {};
+            data.daytime = [];
+            data.evening = [];
+            data.overnight = [];
+            data.export = [];
+            data.selfuse = [];
+            data.price = [];
+            data.demandshaper_price = [];
+            data.standard = [];
+
+            data.gen_forecast = [];
+            data.demand_forecast = [];
+            
+            for (x in tariffs) {
+                if (data[tariffs[x].name] == undefined) {
+                    data[tariffs[x].name] = [];
+                }
+            }
+
+            for (var z in club_data) {
+                var time = club_data[z][0];
+                var d = new Date(time);
+                var hour = d.getHours();
+
+                // ------------------------------------------------
+                // ------------------------------------------------
+
+                var generation = 0;
+                if (generation_data[z] != undefined && generation_data[z][1] !== null) {
+                    generation = generation_data[z][1] * scale * club_settings['gen_scale'];
+                } else if (gen_forecast !== null) {
+                    generation = gen_forecast
+                }
+
+                if (generation_feed == 1471) { // TODO - what is this???
+                    if (generation > 40.0) generation = 40.0;
+                    generation *= 0.5;
+                }
+
+                var consumption = 0;
+                if (gen_data_completeness[z][1] !== 0) {
+                    consumption = club_data[z][1] * scale;
+                } else {
+                    consumption = club_data[z][1]
+                }
+
+                var exported_generation = 0;
+                var used_generation = 0;
+
+                var imprt = 0.0;
+                var exprt = 0.0;
+                
+                if (generation <= consumption) {
+                    imprt = consumption - generation; 
+                } else {
+                    exprt = generation - consumption;
+                
+                }
+                
+                var selfuse = consumption - imprt;
+
+                var unit_price = 0.0;
+                
+                for (x in tariffs) {
+                    data[tariffs[x].name][z] = [time, 0];
+                }
+                
+                // var bands = get_tariff_bands(tariff_history,time*0.001);
+                var band = get_tariff_band(tariffs,hour);
+                if (band) {
+                    unit_price = (band.import * imprt + band.generator * selfuse) / consumption
+                    data[band.name][z] = [time, imprt];
+                }
+
+                var demandshaper_price
+                if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
+                    demandshaper_price = (demandshaper_data[z][1] * 10)/demandshaper_max_val;
+                } else if (gen_forecast !== null) {
+                    demandshaper_price = unit_price
+                }
+                    
+                data.export[z] = [time, exprt];
+                data.selfuse[z] = [time, selfuse];
+                data.price[z] = [time, unit_price]; // unit_price
+                data.demandshaper_price[z] = [time, demandshaper_price]
+            }
+
+            clubseries = [];
+
+            var widthprc = 0.75;
+            var barwidth = widthprc * interval * 1000;
+            // Actual
+            clubseries.push({
+                stack: true, data: data.selfuse, color: generator_color, label: t("Used " + ucfirst(club_settings.generator)),
+                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+            });
+
+            // add series data for each tariff
+            
+            for (x in tariffs) {
+                clubseries.push({
+                    stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
+                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+                });
+            }
+
+            clubseries.push({
+                stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
+                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+            });
+
+            if (showClubPrice) {
+
+                clubseries.push({
+                    data: data.demandshaper_price, color: "#fb1a80", label: t("Price"), yaxis: 2,
+                    lines: { show: true }
+                });
+            }
+
+            club_bargraph_draw();
+        }
+    })
+
     
-    for (x in tariffs) {
-        clubseries.push({
-            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
-            bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-        });
-    }
-
-    clubseries.push({
-        stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
-        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-    });
-
-    if (showClubPrice) {
-
-        clubseries.push({
-            data: data.demandshaper_price, color: "#fb1a80", label: t("Price"), yaxis: 2,
-            lines: { show: true }
-        });
-    }
-
-    club_bargraph_draw();
 }
 
 function get_tariff_bands(tariff_history,time) {
@@ -532,6 +571,7 @@ function club_bargraph_draw() {
         ],
         selection: { mode: "x" },
         grid: {
+            aboveData: true,
             show: true,
             color: "#aaa",
             borderWidth: 0,
@@ -539,14 +579,29 @@ function club_bargraph_draw() {
             clickable: true
         }
     }
+    if (current_hh == 0 ) {
+        current_hh = Math.floor((new Date()).getTime() / 1800000) * 1800000;
+    }
 
-    var current_hh = Math.floor((new Date()).getTime() / 1800000) * 1800000;
+    var markings = [];
 
-    var markings = [
-        { color: "#f0f0f0", xaxis: { from: last_actual_reading_time + 900000 } },
-        { color: "#666", lineWidth: 2, xaxis: { from: last_actual_reading_time + 900000, to: last_actual_reading_time + 900000 } },
-        { color: "#ff0000", lineWidth: 2, xaxis: { from: current_hh - 900000, to: current_hh - 900000 } }
-    ];
+    // add each forecast period as a semi-transparent grey bargraph
+    forecast_periods.forEach(period => {
+        markings.push({
+            color: "rgba(168, 176, 191,0.3)",
+            xaxis: {
+                from: period.start,
+                to: period.end
+            }
+        });
+    });
+
+    // grey line (estimate)
+    markings.push({ color: "#666", lineWidth: 2, xaxis: { from: last_actual_reading_time + 900000, to: last_actual_reading_time + 900000 } })
+    // red line (forecast)
+    markings.push({ color: "#ff0000", lineWidth: 2, xaxis: { from: current_hh - 900000, to: current_hh - 900000 } })
+
+    
 
     options.grid.markings = markings;
 
@@ -639,15 +694,14 @@ $('.visnav-club').click(function (event) {
 });
 
 $('#club_bargraph_placeholder').bind("plotselected", function (event, ranges) {
-    view.start = ranges.xaxis.from;
-    view.end = ranges.xaxis.to;
+    view.start = Math.floor(ranges.xaxis.from);
+    view.end = Math.floor(ranges.xaxis.to);
     date_selected = "custom";
     $(".period-select").val("custom");
     club_bargraph_load();
 });
 
 $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
-
     if (item) {
         var z = item.dataIndex;
         var selected_series = clubseries[item.seriesIndex].label;
@@ -703,7 +757,12 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                     }
                 }
                 if (total_consumption) out += t("Total consumption") + ": " + (total_consumption).toFixed(1) + units;
-
+                out += "<br>";
+                out += "Generation data completeness: " + gen_data_completeness[z][1] + "%"
+                if (demand_data_completeness[z][1] < forecast_threshold) {
+                    out += "<br>";
+                    out += "Demand data completeness: " + demand_data_completeness[z][1] + "%";
+                }
             } else {
                 // Print estimate amounts
                 out += clubseries[5].label + ": " + (clubseries[5].data[z][1] * 1).toFixed(1) + units + "<br>";
