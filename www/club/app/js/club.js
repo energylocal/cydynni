@@ -69,7 +69,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation_cost[tariff_name],
                 import: result.import_cost[tariff_name],
-                color: tariffColorMap[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
@@ -81,7 +81,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation[tariff_name],
                 import: result.import[tariff_name],
-                color: tariffColorMap[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
@@ -111,7 +111,7 @@ function draw_club_summary(result) {
 
             // Legend for each import tariff band
             legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name.toLowerCase()] + '"></div></td>'
+            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name] + '"></div></td>'
             legend += '<td><b>' + t(ucfirst(tariff_name)) + '</b><br>'
             legend += tariff_kwh.toFixed(2) + " kWh";
             if (tariff_unitcost !== false) legend += " @" + (100 * tariff_unitcost).toFixed(1) + " p/kWh<br>"; else legend += "<br>";
