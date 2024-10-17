@@ -549,6 +549,12 @@ function household_powergraph_draw() {
             max: household_power_end
         },
         yaxis: {
+            tickFormatter: function(val, axis) {
+              if (val < axis.max) { // replace last value with unit
+                return val;
+              }
+              return "Watts";
+            },
             font: { size: flot_font_size, color: "#666" },
             // labelWidth:-5
             reserveSpace: false
