@@ -24,6 +24,11 @@ require_once "Modules/club/club_model.php";
 $club_class = new Club($mysqli,$user,$feed);
 $club_settings = $club_class->get_settings($club);
 
+
+require_once "Modules/account/account_model.php";
+$account_class = new Account($mysqli,$user);
+$number_of_users = $account_class->count($club_settings['id']);
+print "Number of users: $number_of_users\n";
 // ----------------------------------------------------------------
 // 1. Demand forecast based on average over the last 7 days
 // ----------------------------------------------------------------
@@ -199,10 +204,13 @@ for ($time=$start; $time<$end; $time+=$interval) {
         if ($hour>=16.0 && $hour<20.0) $turndown = 10;
         $cost *= $turndown;
     }
+    $cost_per_user = $cost / $number_of_users;
 
-    $forecast->profile[] = number_format($cost,3,'.', '')*1;
+    $forecast->profile[] = number_format($cost_per_user,3,'.', '')*1;
+
+
     
-    $demandshaper_timeseries[] = array($time,$cost);
+    $demandshaper_timeseries[] = array($time,$cost_per_user);
     $demand_timeseries[] = array($time,$use);
     $generator_timeseries[] = array($time,$gen);
     

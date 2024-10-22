@@ -13,6 +13,14 @@ class Account {
         $this->user = $user;
     }
 
+    // Return number of users in a club
+    public function count($clubid) {
+        $clubid = (int) $clubid;
+        $result = $this->mysqli->query("SELECT COUNT(*) as count FROM cydynni WHERE `clubs_id`='$clubid'");
+        $row = $result->fetch_object();
+        return $row->count;
+    }
+
     public function list($clubid) {
         $clubid = (int) $clubid;
         
