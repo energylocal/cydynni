@@ -143,7 +143,7 @@
                       <div class="control-group" style="text-align: left;">
                         <div class="controls">
                           <input type="number" step="0.01" id="tariff" placeholder="p/kWh" value="<?php echo isset($user_attributes->tariff) ? $user_attributes->tariff: ''; ?>" onchange="updateTariff()">
-                          <p class="muted"><small>?php echo t("The unit cost of your electricity, e.g. 30.7p/kWh");?></small></p>
+                          <p class="muted"><small><?php echo t("The unit cost of your electricity, e.g. 30.7p/kWh");?></small></p>
                         </div>
                       </div>
                       <div id="economy7group" class="control-group" style="text-align: left;">
