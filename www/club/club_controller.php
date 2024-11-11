@@ -191,6 +191,7 @@ function club_controller()
         $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
         $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
+        $live->source = "last_actual";
         $live->generation = number_format($gen_last_actual['value'],3)*2.0;
         $live->club = number_format($use_last_actual['value'],3)*2.0;
         
@@ -200,7 +201,8 @@ function club_controller()
                 $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
                 $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                 
-                if ($gen_forecast!=null && $use_forecast!=null) {
+                if ($gen_forecast!==null && $use_forecast!==null) {
+                    $live->source = "forecast";
                     $live->generation = number_format($gen_forecast,3)*2.0;
                     $live->club = number_format($use_forecast,3)*2.0;
                 }
