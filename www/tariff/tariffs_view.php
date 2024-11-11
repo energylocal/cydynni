@@ -37,7 +37,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn" data-dismiss="modal" aria-hidden="true" @click="clearTariffToAssign()">Cancel</button>
-    <button class="btn btn-primary" @click="assignAllUserTariffs()">Assign to all</button>
+    <button title="Assign all club members to this tariff" class="btn btn-primary" @click="assignAllUserTariffs()">Assign to all</button>
   </div>
 </div>
 
@@ -61,10 +61,10 @@
 			<td>{{tariff.last_assigned}}</td>
 			<td :class="getClass(tariff)">({{tariff.active_users}}/{{tariff.total_club_users_count}})</td>
 			<td>
-				<button class="btn" @click="delete_tariff(tariff.id)"><i class="icon-trash"></i></button>
-				<button class="btn" @click="edit_tariff(index)"><i class="icon-pencil"></i></button>
-				<button class="btn" @click="clone_tariff(tariff.id)"><i class="icon-share"></i></button>
-				<button class="btn" @click="showAssignTariffModal(tariff)"><i class="icon-user"></i></button>
+				<button title="Remove tariff" class="btn" @click="delete_tariff(tariff.id)"><i class="icon-trash"></i></button>
+				<button title="Edit tariff" class="btn" @click="edit_tariff(index)"><i class="icon-pencil"></i></button>
+				<button title="Clone tariff" class="btn" @click="clone_tariff(tariff.id)"><i class="icon-share"></i></button>
+				<button title="Assign all club members to tariff" class="btn" @click="showAssignTariffModal(tariff)"><i class="icon-user"></i></button>
 			</td>
 		</tr>
 	</table>
@@ -142,9 +142,9 @@
 					<input type="color" v-model="period.color" :disabled="edit_period_index===false" style="width:80px" />
 				</td>
 				<td>
-					<button class="btn" @click="delete_period(index)" v-if="edit_period_index===false"><i class="icon-trash"></i></button>
-					<button class="btn" @click="edit_period(index)" v-if="edit_period_index===false"><i class="icon-pencil"></i></button>
-					<button class="btn" @click="save_period(index)" v-if="edit_period_index===index"><i class="icon-ok"></i></button>
+					<button title="Remove tariff period" class="btn" @click="delete_period(index)" v-if="edit_period_index===false"><i class="icon-trash"></i></button>
+					<button title="Edit tariff period" class="btn" @click="edit_period(index)" v-if="edit_period_index===false"><i class="icon-pencil"></i></button>
+					<button title="Save changes" class="btn" @click="save_period(index)" v-if="edit_period_index===index"><i class="icon-ok"></i></button>
 				</td>
 			</tr>
 		</table>
