@@ -145,6 +145,20 @@ else if (isset($wind_forecast_settings)) {
     for ($time=$start; $time<$end; $time+=$interval) {
         $gen_profile[] = $flat_output; 
     }
+} else if (isset($external_forecast_feed_id)) {
+    $external_forecast_data = $feed->get_data($external_forecast_feed_id,$start*1000,$end*1000,1800);
+    $i=0;
+    $gen = 0;
+    for ($time=$start; $time<$end; $time+=$interval) {
+        if (isset($external_forecast_data[$i]) && $external_forecast_data[$i][1]!==null) {
+            $gen = $external_forecast_data[$i][1];
+            if ($gen<0) $gen = 0;
+        }
+
+        $gen_profile[] = $gen;
+        echo $time.": ".$gen."\n";
+        $i++;
+    }
 }
 // ----------------------------------------------------------------
 
