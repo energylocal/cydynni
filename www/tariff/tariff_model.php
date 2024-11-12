@@ -35,7 +35,7 @@ class Tariff
           $tariffId = $row['tariffid'];
           $start = $row['start'];
 
-          if (!isset($tariffMap[$tariffId])) {
+          if (!isset($distinct_tariff_starts[$tariffId])) {
             // Initialise the start array
             $distinct_tariff_starts[$tariffId] = [];
           }

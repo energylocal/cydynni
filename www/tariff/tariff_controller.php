@@ -168,7 +168,8 @@ function tariff_controller()
             $route->format = "json";
             return $tariff->set_user_tariff(
                 get('userid',true),
-                get('tariffid',true)
+                get('tariffid',true),
+                get('start',true)
             );
         }
     }

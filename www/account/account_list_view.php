@@ -235,7 +235,7 @@ var app = new Vue({
             // if this does concern a new user - create new user
             } else {
                 add_user(this.users[this.selected_user], this.new_user_password, function (new_userid) {
-                    add_user_tariff(new_userid, this.selectedTariff)
+                    add_user_tariff(new_userid, this.selectedTariff, this.selectedTariffTimestamp)
                 }.bind(this));
             }
         },
@@ -332,13 +332,14 @@ function add_user(user,password,callback) {
     });
 }
 
-function add_user_tariff(userid, tariffid) {
+function add_user_tariff(userid, tariffid, start_time) {
     $.ajax({
         type: 'GET',
         url: path + "tariff/user/set",
         data: {
             userid: userid,
-            tariffid: tariffid
+            tariffid: tariffid,
+            start: start_time
         },
         dataType: 'json',
         success: function(result) {
