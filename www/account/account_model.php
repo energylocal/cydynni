@@ -24,19 +24,73 @@ class Account {
     public function list($clubid) {
         $clubid = (int) $clubid;
         
-        $result = $this->mysqli->query("SELECT userid,mpan,cad_serial,owl_id,meter_serial,octopus_apikey,welcomedate,reportdate,clubs_id FROM cydynni WHERE `clubs_id`='$clubid' ORDER BY userid ASC");
-        $users = array();
-        while($row = $result->fetch_object()) {
-            $userid = $row->userid;
-            
-            $user_result = $this->mysqli->query("SELECT username,email,apikey_read,admin FROM users WHERE `id`='$userid'");
-            $user_row = $user_result->fetch_object();
-            if ($user_row) {
-                foreach ($user_row as $key=>$val) $row->$key = $user_row->$key;
+        // Combined query using LEFT JOINs to fetch all related data at once
+        $result = $this->mysqli->query("
+            SELECT
+                cydynni.userid, cydynni.mpan, cydynni.cad_serial, cydynni.meter_serial,
+                cydynni.octopus_apikey, cydynni.welcomedate, cydynni.reportdate,
+                cydynni.clubs_id,
+                users.username, users.email, users.apikey_read, users.admin,
+                user_tariffs.tariffid, user_tariffs.start
+            FROM
+                cydynni
+            LEFT JOIN
+                users ON cydynni.userid = users.id
+            LEFT JOIN
+                user_tariffs ON cydynni.userid = user_tariffs.userid
+            WHERE
+                cydynni.clubs_id = '$clubid'
+            ORDER BY
+                cydynni.userid, user_tariffs.start ASC
+        ");
+
+        $users = [];
+        $current_userid = null;
+        $current_user = null;
+
+        // Process the combined result
+        while ($row = $result->fetch_object()) {
+            // Check if we're processing a new user
+            if ($current_userid !== $row->userid) {
+                // Store the previous user data
+                if ($current_user) {
+                    $users[] = $current_user;
+                }
+
+                // Initialize new user data
+                $current_userid = $row->userid;
+                $current_user = (object) [
+                    'userid' => $row->userid,
+                    'mpan' => $row->mpan,
+                    'cad_serial' => $row->cad_serial,
+                    'meter_serial' => $row->meter_serial,
+                    'octopus_apikey' => $row->octopus_apikey,
+                    'welcomedate' => $row->welcomedate,
+                    'reportdate' => $row->reportdate,
+                    'clubs_id' => $row->clubs_id,
+                    'username' => $row->username,
+                    'email' => $row->email,
+                    'apikey_read' => $row->apikey_read,
+                    'admin' => $row->admin,
+                    'tariff_history' => []
+                ];
             }
             
-            $users[] = $row;
+            // Add tariff information to the current user’s tariff history
+            if ($row->tariffid !== null) {
+                $current_user->tariff_history[] = (object) [
+                    'tariffid' => $row->tariffid,
+                    'start_unix' => $row->start,
+                    'start' => date("jS F Y",$row->start)
+                ];
+            }
         }
+
+        // Add the last user
+        if ($current_user) {
+            $users[] = $current_user;
+        }
+
         return $users;
     }
 

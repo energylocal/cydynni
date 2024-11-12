@@ -105,7 +105,7 @@
             <div v-if="users[selected_user].userid<0">
                 <label>User tariff</label>
                 <select v-model="selectedTariff" @change="resetTariffTimestamp" style="width:274px">
-                  <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
+                  <option v-for="tariff in tariffs" :value="tariff.id">ID {{tariff.id}} | {{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
                 </select>
                 <label>User tariff start timestamp</label>
                 <select v-model="selectedTariffTimestamp" style="width:274px">
@@ -120,6 +120,27 @@
 
               <p>Report email <div class="input-append"><span class="add-on">{{ users[selected_user].reportdate }}</span>
               <button class="btn" @click="send_report">Send</button></div></p>
+            </div>
+            <div v-if="users[selected_user].userid>0">
+                <p>Tariff history:</p>
+                <div>
+                <!-- Show tariff history button -->
+                <button class="btn" @click="showTariffHistory = !showTariffHistory">
+                    {{ showTariffHistory ? "Hide tariff history" : "Show tariff history" }}
+                </button>
+                
+                <!-- Tariff history information, toggled based on showTariffHistory -->
+                <div v-if="showTariffHistory">
+                    <label
+                    style="font-size:75%; margin:0px; border-bottom:1px solid;"
+                    v-for="tariff in users[selected_user]['tariff_history']"
+                    :key="tariff.tariffid"
+                    :value="tariff"
+                    >
+                    ID {{ tariff.tariffid }} - Assigned {{ tariff.start }} ({{ tariff.start_unix }})
+                    </label>
+                </div>
+                </div>
             </div>
           </div>
         </div>
@@ -160,6 +181,7 @@ var app = new Vue({
         tariffs: tariffs,
         selectedTariff: null,
         selectedTariffTimestamp: null,
+        showTariffHistory: false,
     },
     computed: {
         selectedTariffDistinctStarts() {
