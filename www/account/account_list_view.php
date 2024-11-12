@@ -112,6 +112,16 @@
                   <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
                 </select>
             </div>
+            <div v-if="users[selected_user].userid>0">
+                <label>User tariff</label>
+                <select v-model="selectedTariff" @change="resetTariffTimestamp" style="width:274px">
+                    <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
+                </select>
+                <label>User tariff start timestamp</label>
+                <select v-model="selectedTariffTimestamp" style="width:274px">
+                <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
+                </select>
+            </div>
           </div>
           <div class="span5">
             <div v-if="users[selected_user].userid>0">
@@ -124,12 +134,9 @@
             <div v-if="users[selected_user].userid>0">
                 <p>Tariff history:</p>
                 <div>
-                <!-- Show tariff history button -->
                 <button class="btn" @click="showTariffHistory = !showTariffHistory">
                     {{ showTariffHistory ? "Hide tariff history" : "Show tariff history" }}
                 </button>
-                
-                <!-- Tariff history information, toggled based on showTariffHistory -->
                 <div v-if="showTariffHistory">
                     <label
                     style="font-size:75%; margin:0px; border-bottom:1px solid;"
@@ -206,8 +213,9 @@ var app = new Vue({
                 }
             }
             if (latestTariff !== null) {
-                this.selectedTariff = latestTariff['id']
-                this.selectedTariffTimestamp = latestTariff['last_assigned_unix']
+                this.latestTariff = latestTariff
+                this.selectedTariff = this.latestTariff['id']
+                this.selectedTariffTimestamp = this.latestTariff['last_assigned_unix']
             }
 
             this.users.push({
@@ -230,7 +238,22 @@ var app = new Vue({
             $("#editUserModal").modal("show");
         },
         edit: function(index){
+            let latestTariff = null;
             this.selected_user = index
+            console.log(this.users[this.selected_user]['tariff_history'])
+            for (let key in this.users[this.selected_user]['tariff_history']) {
+                if (this.users[this.selected_user]['tariff_history'].hasOwnProperty(key)) {
+                    let currentTariff = this.users[this.selected_user]['tariff_history'][key];
+                    if (!latestTariff || currentTariff['start_unix'] > latestTariff['start_unix']) {
+                        latestTariff = currentTariff;
+                    }
+                }
+            }
+            this.latestTariff = latestTariff
+            this.selectedTariff = this.latestTariff['tariffid']
+            this.startingTariff = this.selectedTariff
+            this.selectedTariffTimestamp = this.tariffs[this.selectedTariff]['last_assigned_unix']
+            this.startingTimestamp = this.latestTariff['start_unix']
             $("#editUserModalLabel").html("Edit user");
             $("#editUserModal").modal("show");            
         },
@@ -253,11 +276,21 @@ var app = new Vue({
                         changed[z] = this.users[this.selected_user][z];
                     }
                 }
-                update_user(this.users[this.selected_user].userid,changed);
+                // if these conditions are met, a new tariff has been chosen with a start timestamp ahead of user's current tariff
+                // therefore, update tariff
+                if (this.selectedTariff !== this.startingTariff && this.startingTimestamp < this.selectedTariffTimestamp) {
+                    add_user_tariff(this.users[this.selected_user].userid, this.selectedTariff, this.selectedTariffTimestamp, 0)
+                    update_user(this.users[this.selected_user].userid,changed,"New tariff added for user.");
+                    load()
+                } else if (this.selectedTariff !== this.startingTariff) {
+                    update_user(this.users[this.selected_user].userid,changed,"Selected tariff start timestamp is behind or the same as user's current tariff start timestamp. Tariff not updated.");
+                } else {
+                    update_user(this.users[this.selected_user].userid,changed,"");
+                }
             // if this does concern a new user - create new user
             } else {
                 add_user(this.users[this.selected_user], this.new_user_password, function (new_userid) {
-                    add_user_tariff(new_userid, this.selectedTariff, this.selectedTariffTimestamp)
+                    add_user_tariff(new_userid, this.selectedTariff, this.selectedTariffTimestamp, 1)
                 }.bind(this));
             }
         },
@@ -354,7 +387,7 @@ function add_user(user,password,callback) {
     });
 }
 
-function add_user_tariff(userid, tariffid, start_time) {
+function add_user_tariff(userid, tariffid, start_time, message) {
     $.ajax({
         type: 'GET',
         url: path + "tariff/user/set",
@@ -365,10 +398,11 @@ function add_user_tariff(userid, tariffid, start_time) {
         },
         dataType: 'json',
         success: function(result) {
-            alert("User created, user tariff created");
             if (result.success) {
                 $("#editUserModal").modal("hide");
-                app.users[app.selected_user].userid = result.userid;
+                if (message > 0) {
+                    alert("User created, user tariff created");
+                }
             }
         },
         error: function(xhr, status, error) {
@@ -379,7 +413,7 @@ function add_user_tariff(userid, tariffid, start_time) {
 }
 
 
-function update_user(userid,changed) {
+function update_user(userid,changed,message_addition) {
     $.ajax({
         type: 'POST',
         url: path+"account/update?userid="+userid,
@@ -387,7 +421,8 @@ function update_user(userid,changed) {
         dataType: 'json',
         async:true,
         success: function(result) {
-            alert(result.message)
+            message = result.message + "\n\n" + message_addition
+            alert(message)
             if (result.success) {
                 $("#editUserModal").modal("hide");
                 // apply changes back to original copy
