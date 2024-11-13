@@ -364,7 +364,10 @@ function club_controller()
     // new password reset routes - START
     if ($route->action == "passwordreset_generation") {
         try {
-        $base_url = $_SERVER['HTTP_REFERER'];
+        $base_url = "https://dashboard.energylocal.org.uk/?household&lang=en";
+        if ($_SESSION['lang'] == "cy_GB") {
+            $base_url = "https://dashboard.energylocal.org.uk/?household&lang=cy";
+        }
         $route->format = "json";
         $user->appname = "Cydynni";
         $data = $_POST['email'];
