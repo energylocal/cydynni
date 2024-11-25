@@ -112,6 +112,13 @@ function tariff_controller()
         return $tariff->list_periods($id);
     }
 
+    if ($route->action == 'tarifftable') {
+        $route->format = "json";
+        $id = get('id',true);
+        $tariffs = $tariff->list_periods($id);
+        return $tariff->getTariffsTable($tariffs);
+    }
+
     // Add period
     // /tariff/addperiod, POST BODY tariffid=1&name=MyPeriod&weekend=0&start=0&generator=15&import=20&color=#000 (returns json success or fail)
     if ($route->action == 'addperiod' && $session['admin']) {

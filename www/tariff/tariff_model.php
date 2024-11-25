@@ -208,6 +208,37 @@ class Tariff
         return $periods;
     }
 
+      // List tariff periods belonging to tariff from tariff_periods table
+    public function list_weekday_periods($tariffid) {
+        $tariffid = (int) $tariffid;
+        
+        $result = $this->mysqli->query("SELECT * FROM tariff_periods WHERE tariffid='$tariffid' AND weekend=0 ORDER BY `index` ASC");
+        $periods = array();
+        while ($row = $result->fetch_object()) {
+            $row->tariffid = (int) $row->tariffid;
+            $row->index = (int) $row->index;
+            $row->weekend = (int) $row->weekend;
+            $row->start = (float) $row->start / 10;
+            $periods[] = $row;
+        }
+        return $periods;
+    }
+
+    public function list_weekend_periods($tariffid) {
+      $tariffid = (int) $tariffid;
+      
+      $result = $this->mysqli->query("SELECT * FROM tariff_periods WHERE tariffid='$tariffid' AND weekend=1 ORDER BY `index` ASC");
+      $periods = array();
+      while ($row = $result->fetch_object()) {
+          $row->tariffid = (int) $row->tariffid;
+          $row->index = (int) $row->index;
+          $row->weekend = (int) $row->weekend;
+          $row->start = (float) $row->start / 10;
+          $periods[] = $row;
+      }
+      return $periods;
+  }
+
     // Add a tariff period to a tariff
     public function add_period($tariffid,$name,$weekend,$start,$generator,$import,$color) {
         $tariffid = (int) $tariffid;
@@ -489,16 +520,30 @@ class Tariff
     public function getTariffsTable($tariffs) {
         global $lang;
         $tariffs = json_decode(json_encode($tariffs));
-        // add properties and format strings...
+        $weekday_periods = array();
+        $weekend_periods = array();
+        $output = array();
         for ($i=0; $i<count($tariffs); $i++) {
-            $t = $tariffs[$i];
+          $t = $tariffs[$i];
+          if ($t->weekend == 1) {
+            $weekend_periods[] = $t;
+          } else {
+            $weekday_periods[] = $t;
+          }
+        }
+        // add properties and format strings...
+        for ($i=0; $i<count($weekday_periods); $i++) {
+            $t = $weekday_periods[$i];
             $next = $i+1;
-            if ($next<count($tariffs)) {
-              $t->end = $tariffs[$next]->start;
+            if ($next<count($weekday_periods)) {
+              // if there is a 'next' tariff period, endtime of current period becomes the start of next period
+              $t->end = $weekday_periods[$next]->start;
             } else {
-              $t->end = $tariffs[0]->start;
+              // otherwise, if this is the last tariff period, end becomes the start of the first period
+              $t->end = $weekday_periods[0]->start;
             }
 
+            // start is taken directly from this entry's start value
             $t->start = (int) $t->start;
             // convert 6.5 to 06:30
             $h = floor($t->start);
@@ -522,8 +567,49 @@ class Tariff
             // add css class names to style the title column // TODO - this would be better as a flag for the frontend to resolve
             $t->css = 'text-' . $t->name;
             $t->rowClass = $t->isCurrent ? ' class="current"': '';
+            $output[] = $t;
         }
-        return $tariffs;
+        if (count($weekend_periods) > 0) {
+          for ($i=0; $i<count($weekend_periods); $i++) {
+            $t = $weekend_periods[$i];
+            $next = $i+1;
+            if ($next<count($weekend_periods)) {
+              // if there is a 'next' tariff period, endtime of current period becomes the start of next period
+              $t->end = $weekend_periods[$next]->start;
+            } else {
+              // otherwise, if this is the last tariff period, end becomes the start of the first period
+              $t->end = $weekend_periods[0]->start;
+            }
+
+            // start is taken directly from this entry's start value
+            $t->start = (int) $t->start;
+            // convert 6.5 to 06:30
+            $h = floor($t->start);
+            if ($h<10) $h = '0' . $h;
+            $m = ($t->start-floor($t->start))*60;
+            if ($m<10) $m = '0' . $m;
+            $t->start = $h . ':' . $m;
+
+            $t->end = (int) $t->end;
+            // convert 6.5 to 06:30
+            $h = floor($t->end);
+            if ($h<10) $h = '0' . $h;
+            $m = ($t->end-floor($t->end))*60;
+            if ($m<10) $m = '0' . $m;
+            $t->end = $h . ':' . $m;
+
+            $start = intval(date('G', strtotime($t->start)));
+            $end = intval(date('G', strtotime($t->end)));
+            $now = intval(date('G'));
+            $t->isCurrent = $now >= $start && $now < $end;
+            // add css class names to style the title column // TODO - this would be better as a flag for the frontend to resolve
+            $t->css = 'text-' . $t->name;
+            $t->rowClass = $t->isCurrent ? ' class="current"': '';
+            $output[] = $t;
+          }
+        }
+
+        return $output;
     }
 
     // Get tariff bands for a given time
@@ -538,7 +624,37 @@ class Tariff
     }
 
     // Get tariff band for a given hour
-    public function get_tariff_band($bands,$hour) {
+    public function get_tariff_band($bands,$hour,$weekend) {
+        // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
+        if ($weekend == 1) {
+          for ($i=0; $i<count($bands); $i++) {
+            if ($bands[$i]->weekend == 0) {
+              continue;
+            }
+            $start = (float) $bands[$i]->start;
+
+            // calculate end
+            $next = $i+1;
+            if ($next==count($bands)) $next=0;
+            $end = (float) $bands[$next]->start;
+
+            // if start is less than end then period is within a day
+            if ($start<$end) {
+                if ($hour>=$start && $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is greater than end then period is over midnight
+            } else if ($end<$start) {
+                if ($hour>=$start || $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is equal to end then period is 24 hours
+            // flat rate tariff
+            } else if ($start==$end) {
+                return $bands[$i];
+            }
+          }
+        }
 
         // Work out which tariff period this hour falls into
         for ($i=0; $i<count($bands); $i++) {

@@ -302,6 +302,11 @@ function club_bargraph_load() {
     data.daytime = [];
     data.evening = [];
     data.overnight = [];
+    data.late = [];
+    data.weekenddaytime = [];
+    data.weekendevening = [];
+    data.weekendovernight = [];
+    data.weekendlate = [];
     data.export = [];
     data.selfuse = [];
     data.price = [];
@@ -313,15 +318,27 @@ function club_bargraph_load() {
     last_actual_reading_time = 0;
     
     for (x in tariffs) {
-        if (data[tariffs[x].name] == undefined) {
-            data[tariffs[x].name] = [];
+        if (tariffs[x].weekend == 0) {
+            if (data[tariffs[x].name] == undefined) {
+                data[tariffs[x].name] = [];
+            }
+        } else {
+            if (data["weekend"+tariffs[x].name] == undefined) {
+                data["weekend"+tariffs[x].name] = [];
+            }
         }
     }
-
+    console.log(tariffs)
     for (var z in club_data) {
         var time = club_data[z][0];
         var d = new Date(time);
         var hour = d.getHours();
+        var day = d.getDay();
+        var weekend = 0;
+        // Check if it's a weekend (Saturday or Sunday)
+        if (day === 0 || day === 6) {
+            weekend = 1;
+        }
 
         // ------------------------------------------------
         var gen_forecast = null;
@@ -372,20 +389,29 @@ function club_bargraph_load() {
         var unit_price = 0.0;
         
         for (x in tariffs) {
-            data[tariffs[x].name][z] = [time, 0];
+            if (tariffs[x].weekend == 0) {
+                data[tariffs[x].name][z] = [time, 0];
+            } else {
+                data["weekend" + tariffs[x].name][z] = [time, 0];
+            }
         }
         
         // var bands = get_tariff_bands(tariff_history,time*0.001);
-        var band = get_tariff_band(tariffs,hour);
+        var band = get_tariff_band(tariffs,hour,weekend);
         if (band) {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
-            data[band.name][z] = [time, imprt];
+            if (band.weekend == 0) {
+                data[band.name][z] = [time, imprt];
+            } else {
+                data["weekend" + band.name][z] = [time, imprt];
+            }
         }
             
         data.export[z] = [time, exprt];
         data.selfuse[z] = [time, selfuse];
         data.price[z] = [time, unit_price]; // unit_price
     }
+    console.log(data)
 
     clubseries = [];
 
@@ -400,10 +426,17 @@ function club_bargraph_load() {
     // add series data for each tariff
     
     for (x in tariffs) {
-        clubseries.push({
-            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
-            bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-        });
+        if (tariffs[x].weekend == 0) {
+            clubseries.push({
+                stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
+                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+            });
+        } else {
+            clubseries.push({
+                stack: true, data: data["weekend"+tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Weekend Tariff"),
+                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+            });
+        }
     }
 
     clubseries.push({
@@ -422,6 +455,8 @@ function club_bargraph_load() {
     club_bargraph_draw();
 }
 
+// no longer used
+/*
 function get_tariff_bands(tariff_history,time) {
     var bands = []
     for (var i in tariff_history) {
@@ -430,9 +465,41 @@ function get_tariff_bands(tariff_history,time) {
         }
     }
     return bands;
-} 
+}
+*/
 
-function get_tariff_band(bands, hour) {
+function get_tariff_band(bands, hour, weekend) {
+    // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
+    if (weekend == 1) {
+        for (let i = 0; i < bands.length; i++) {
+            if (bands[i].weekend == 0) {
+                continue
+            }
+            const start = parseFloat(bands[i].start);
+    
+            // Calculate end
+            let next = i + 1;
+            if (next === bands.length) next = 0;
+            const end = parseFloat(bands[next].start);
+    
+            // If start is less than end, then the period is within a day
+            if (start < end) {
+                if (hour >= start && hour < end) {
+                    return bands[i];
+                }
+            }
+            // If start is greater than end, then the period is over midnight
+            else if (end < start) {
+                if (hour >= start || hour < end) {
+                    return bands[i];
+                }
+            }
+            // If start is equal to end, then the period is 24 hours (flat rate tariff)
+            else if (start === end) {
+                return bands[i];
+            }
+        }
+    }
     // Work out which tariff period this hour falls into
     for (let i = 0; i < bands.length; i++) {
         const start = parseFloat(bands[i].start);
@@ -700,8 +767,22 @@ $(function () {
 
 function generateTariffsTableHTML(multiplierVAT) {
     tariffsTableBody = ""
-    for (var i=0; i<tariffsTable.length; i++){
-        tariffData = tariffsTable[i]
+    conciseTariffsTable = weekdayTariffsTable.slice();
+    if (weekendTariffsTable.length > 0) {
+        weekendTariffsTable.forEach(weekendEntry => {
+            // Find an entry in weekdayTariffsTable with the same 'start' value
+            const matchingWeekdayEntry = weekdayTariffsTable.find(weekdayEntry => weekdayEntry.start === weekendEntry.start);
+          
+            if (matchingWeekdayEntry) {
+              // Check if 'import' values are different
+              if (matchingWeekdayEntry.import !== weekendEntry.import) {
+                conciseTariffsTable.push(weekendEntry)
+              }
+            }
+          });
+    }
+    for (var i=0; i<conciseTariffsTable.length; i++){
+        tariffData = conciseTariffsTable[i]
         var tariffStart = new Date('1970-01-01T' + tariffData.start + 'Z').toLocaleTimeString('en-US',{timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}).replace(":00 AM", "").replace(":00 PM", "");
         if (Number(tariffData['start'].slice(0,2)) < 12 ){
             tariffStart += t('am')
@@ -715,22 +796,23 @@ function generateTariffsTableHTML(multiplierVAT) {
             tariffEnd += t('pm')
         }
         tariffsTableBody += `<tr>
-        <th scope="row">
-            <span class="d-sm-inline d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
-            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}</span>
-            <br class="d-sm-none">
+        <th scope="row">`
+        if (tariffData['weekend'] == 0) {
+            tariffsTableBody += `<span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
+            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}`
+        } else {
+            tariffsTableBody += `<span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)) + " (" + t("Weekend") + ")"}</span>
+            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price") + " (" + t("Weekend") + ")"}`
+        }
+
+        tariffsTableBody += `
+            </span>
+            <br>
                                                 <span class="font-weight-light text-smaller-sm">${tariffStart} - ${tariffEnd}</span>
         </th>
         <td style="background-color:${generator_color}">${(Number(tariffData['generator'])*multiplierVAT).toFixed(2)}${t("p")}</td>
-        `
-        if (clubid === 15 && tariffData['name'] == "Evening") {
-            tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}
-            <div style="font-size: 0.8em; color: #888;">${Math.ceil(23.77*multiplierVAT*100)/100}p on weekends</div></td>
-            </tr>`
-    } else {
-        tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}</td>
+        <td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}</td>
         </tr>`
-    }
     }
     return tariffsTableBody
 }

@@ -133,6 +133,11 @@ class AccountData
             $month = (int) $date->format("m");
             $day = (int) $date->format("d");
             $hour = (int) $date->format("H");
+            $iso_day = $date->format('N');
+            $weekend = 0;
+            if ($iso_day >= 6) {
+                $weekend = 1;
+            }
             
             // Slice data by day
             $slice = false;  
@@ -191,7 +196,7 @@ class AccountData
 
             // Get tariff bands for this time
             $bands = $this->get_tariff_bands($tariff_history,$time);
-            $band = $this->get_tariff_band($bands,$hour);
+            $band = $this->get_tariff_band($bands,$hour,$weekend);
             if ($band) {
                 // initialise period allocation
                 if (!isset($period_allocation[$band->name])) {
@@ -301,7 +306,37 @@ class AccountData
     }
 
     // Get tariff band for a given hour
-    public function get_tariff_band($bands,$hour) {
+    public function get_tariff_band($bands,$hour,$weekend) {
+        // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
+        if ($weekend == 1) {
+          for ($i=0; $i<count($bands); $i++) {
+            if ($bands[$i]->weekend == 0) {
+              continue;
+            }
+            $start = (float) $bands[$i]->start;
+
+            // calculate end
+            $next = $i+1;
+            if ($next==count($bands)) $next=0;
+            $end = (float) $bands[$next]->start;
+
+            // if start is less than end then period is within a day
+            if ($start<$end) {
+                if ($hour>=$start && $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is greater than end then period is over midnight
+            } else if ($end<$start) {
+                if ($hour>=$start || $hour<$end) {
+                    return $bands[$i];
+                }
+            // if start is equal to end then period is 24 hours
+            // flat rate tariff
+            } else if ($start==$end) {
+                return $bands[$i];
+            }
+          }
+        }
 
         // Work out which tariff period this hour falls into
         for ($i=0; $i<count($bands); $i++) {

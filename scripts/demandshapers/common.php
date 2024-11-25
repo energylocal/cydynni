@@ -187,6 +187,11 @@ for ($time=$start; $time<$end; $time+=$interval) {
     $date->setTimestamp($time);
     $hm = $date->format('H:i');
     $hour = $date->format('H')*1;
+    $day = $date->format('N');
+    $weekend = 0;
+    if ($day >= 6) {
+        $weekend = 1;
+    }
     
     $use = 0;
     if (isset($count[$hm])) {
@@ -203,7 +208,7 @@ for ($time=$start; $time<$end; $time+=$interval) {
        $import = -1*$balance;
     }
     
-    $band = $tariff_class->get_tariff_band($bands,$hour);
+    $band = $tariff_class->get_tariff_band($bands,$hour,$weekend);
     
     $cost = ($from_generator*$band->generator) + ($import*$band->import);
     

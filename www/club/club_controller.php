@@ -94,44 +94,95 @@ function club_controller()
         $tariffs_table = array();
 
         try {
-          require_once "Modules/tariff/tariff_model.php";
-          $tariff_class = new Tariff($mysqli);
+            require_once "Modules/tariff/tariff_model.php";
+            $tariff_class = new Tariff($mysqli);
 
-          $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
-          $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
-          $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-          $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
-
-          if ($session["read"]) {
-            $userid = (int) $session["userid"];
-
-            $tariffs_table = array();
-            $standing_charge = 0;
-
-            $tariffid = $tariff_class->get_user_tariff_id($userid);
-            $tariffs = $tariff_class->list_periods($tariffid);
+            $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
+            $tariffs = $tariff_class->list_periods($current_tariff->tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
-            $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
-            if (!$club_settings["has_generator"]) {
-              $user_attributes = $user->get_attributes($userid);
-              if (property_exists($user_attributes, "standing_charge")) {
-                $standing_charge = $user_attributes->standing_charge/100;
-              }
+            $weekday_tariffs = $tariff_class->list_weekday_periods($current_tariff->tariffid);
+            $weekday_tariffs_table = $tariff_class->getTariffsTable($weekday_tariffs);
+            $weekend_tariffs = $tariff_class->list_weekend_periods($current_tariff->tariffid);
+            $weekend_tariffs_table = $tariff_class->getTariffsTable($weekend_tariffs);
+            $concise_tariffs_table = $weekday_tariffs_table;
+            // Check if $weekend_tariffs_table has entries
+            if (count($weekend_tariffs_table) > 0) {
+                foreach ($weekend_tariffs_table as $weekend_entry) {
+                    // Find an entry in $weekday_tariffs_table with the same 'start' value
+                    $matching_weekday_entry = array_filter($weekday_tariffs_table, function($weekday_entry) use ($weekend_entry) {
+                        return $weekday_entry->start === $weekend_entry->start;
+                    });
+
+                    // If there's a matching weekday entry
+                    if (!empty($matching_weekday_entry)) {
+                        // Take the first matching entry (assuming 'start' is unique)
+                        $matching_weekday_entry = reset($matching_weekday_entry);
+
+                        // Check if 'import' values are different
+                        if ($matching_weekday_entry->import !== $weekend_entry->import) {
+                            $concise_tariffs_table[] = $weekend_entry;
+                        }
+                    }
+                }
             }
+            $standing_charge = $tariff_class->get_tariff_standing_charge($current_tariff->tariffid);
+
+            if ($session["read"]) {
+                $userid = (int) $session["userid"];
+
+                $tariffs_table = array();
+                $standing_charge = 0;
+
+                $tariffid = $tariff_class->get_user_tariff_id($userid);
+                $tariffs = $tariff_class->list_periods($tariffid);
+                $tariffs_table = $tariff_class->getTariffsTable($tariffs);
+                $weekday_tariffs = $tariff_class->list_weekday_periods($current_tariff->tariffid);
+                $weekday_tariffs_table = $tariff_class->getTariffsTable($weekday_tariffs);
+                $weekend_tariffs = $tariff_class->list_weekend_periods($current_tariff->tariffid);
+                $weekend_tariffs_table = $tariff_class->getTariffsTable($weekend_tariffs);
+
+                $concise_tariffs_table = $weekday_tariffs_table;
+                // Check if $weekend_tariffs_table has entries
+                if (count($weekend_tariffs_table) > 0) {
+                    foreach ($weekend_tariffs_table as $weekend_entry) {
+                        // Find an entry in $weekday_tariffs_table with the same 'start' value
+                        $matching_weekday_entry = array_filter($weekday_tariffs_table, function($weekday_entry) use ($weekend_entry) {
+                            return $weekday_entry->start === $weekend_entry->start;
+                        });
+
+                        // If there's a matching weekday entry
+                        if (!empty($matching_weekday_entry)) {
+                            // Take the first matching entry (assuming 'start' is unique)
+                            $matching_weekday_entry = reset($matching_weekday_entry);
+
+                            // Check if 'import' values are different
+                            if ($matching_weekday_entry->import !== $weekend_entry->import) {
+                                $concise_tariffs_table[] = $weekend_entry;
+                            }
+                        }
+                    }
+                }
+                $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
+                if (!$club_settings["has_generator"]) {
+                $user_attributes = $user->get_attributes($userid);
+                if (property_exists($user_attributes, "standing_charge")) {
+                    $standing_charge = $user_attributes->standing_charge/100;
+                }
+                }
 
 
-            require "Modules/data/account_data_model.php";
-            $account_data = new AccountData($feed, false, $tariff_class);
+                require "Modules/data/account_data_model.php";
+                $account_data = new AccountData($feed, false, $tariff_class);
 
-            $available_reports = $account_data->get_available_reports($userid);
+                $available_reports = $account_data->get_available_reports($userid);
 
-            $tmp = $feed->get_user_feeds($userid);
+                $tmp = $feed->get_user_feeds($userid);
 
-            $session["feeds"] = array();
-            foreach ($tmp as $f) {
-              $session["feeds"][$f["name"]] = (int) $f["id"];
-            }
-            if (!$session["admin"]) $redis->incr("userhits:$userid");
+                $session["feeds"] = array();
+                foreach ($tmp as $f) {
+                $session["feeds"][$f["name"]] = (int) $f["id"];
+                }
+                if (!$session["admin"]) $redis->incr("userhits:$userid");
           }
 
           $content = view("Modules/club/app/client_view.php", array(
@@ -140,6 +191,11 @@ function club_controller()
             'club_settings' => $club_settings,
             'tariffs_table' => $tariffs_table,
             'tariffs' => $tariffs,
+            'weekday_tariffs_table' => $weekday_tariffs_table,
+            'weekday_tariffs' => $weekday_tariffs,
+            'weekend_tariffs_table' => $weekend_tariffs_table,
+            'weekend_tariffs' => $weekend_tariffs,
+            'concise_tariffs_table' => $concise_tariffs_table,
             'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
             'available_reports'=>$available_reports,
             'clubid'=>$club_settings['id'],
@@ -215,8 +271,13 @@ function club_controller()
         $date = new DateTime();
         $date->setTimezone(new DateTimeZone("Europe/London"));
         $hour = (int) $date->format("H");
+        $day = $date->format('N');
+        $weekend = 0;
+        if ($day >= 6) {
+            $weekend = 1;
+        }
         
-        $band = $tariff_class->get_tariff_band($bands,$hour);
+        $band = $tariff_class->get_tariff_band($bands,$hour,$weekend);
         
         $live->tariff = $band->name;
         $live->hour = $hour;

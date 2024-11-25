@@ -71,7 +71,15 @@
 
 	<div v-if="selected_tariff!==false">
 
+		<div id="app">
+			<div class="alert-box">
+				<span class="alert-symbol">⚠️</span>
+				<span class="alert-text">If this tariff includes periods that are weekend-specific, you must describe a 24-hour weekend period in its entirety, as you would for weekdays.<br /><br />For example, if only one weekend period is given, that price will be used for all weekend hours.</span>
+			</div>
+			<br>
+		</div>
 		<div class="input-prepend">
+
 			<span class="add-on">Tariff name</span>
 			<input type="text" v-model="edit_tariff_name_field">
 			<span class="add-on">Standing charge</span>
@@ -226,8 +234,8 @@
 			},
 			edit_tariff: function(index) {
 				app.selected_tariff = index;
-        this.edit_tariff_name_field = this.tariffs[index].name;
-        this.edit_standing_charge_field = this.tariffs[index].standing_charge;
+				this.edit_tariff_name_field = this.tariffs[index].name;
+				this.edit_standing_charge_field = this.tariffs[index].standing_charge;
 
 				// get tariff periods
 				$.get(path + "tariff/periods", {
@@ -251,7 +259,7 @@
       },
       update_tariff: function() {
 				$.post(path + "tariff/update", {
-            tariff_id: app.tariffs[app.selected_tariff].id,
+				tariff_id: app.tariffs[app.selected_tariff].id,
 						name: app.edit_tariff_name_field,
 						standing_charge: app.edit_standing_charge_field
 					})
