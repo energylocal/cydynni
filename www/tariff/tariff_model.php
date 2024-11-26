@@ -237,7 +237,8 @@ class Tariff
           $periods[] = $row;
       }
       return $periods;
-  }
+    }
+    
 
     // Add a tariff period to a tariff
     public function add_period($tariffid,$name,$weekend,$start,$generator,$import,$color) {
@@ -612,77 +613,127 @@ class Tariff
         return $output;
     }
 
+    public function get_concise_tariffs_table($tariffid) {
+      $weekday_tariffs = $this->list_weekday_periods($tariffid);
+      $weekday_tariffs_table = $this->getTariffsTable($weekday_tariffs);
+      $weekend_tariffs = $this->list_weekend_periods($tariffid);
+      $weekend_tariffs_table = $this->getTariffsTable($weekend_tariffs);
+      $concise_tariffs_table = $weekday_tariffs_table;
+      // Check if $weekend_tariffs_table has entries
+      if (count($weekend_tariffs_table) > 0) {
+          foreach ($weekend_tariffs_table as $weekend_entry) {
+              // Find an entry in $weekday_tariffs_table with the same 'start' value
+              $matching_weekday_entry = array_filter($weekday_tariffs_table, function($weekday_entry) use ($weekend_entry) {
+                  return $weekday_entry->start === $weekend_entry->start;
+              });
+
+              // If there's a matching weekday entry
+              if (!empty($matching_weekday_entry)) {
+                  // Take the first matching entry (assuming 'start' is unique)
+                  $matching_weekday_entry = reset($matching_weekday_entry);
+
+                  // Check if 'import' values are different
+                  if ($matching_weekday_entry->import !== $weekend_entry->import) {
+                      $concise_tariffs_table[] = $weekend_entry;
+                  }
+              }
+          }
+      }
+      return $concise_tariffs_table;
+    }
+
     // Get tariff bands for a given time
     public function get_tariff_bands($tariff_history,$time) {
-        $bands = array();
-        foreach ($tariff_history as $tariff) {
-            if ($time>=$tariff->start) {
-                $bands = $tariff->bands;
-            }
-        }
-        return $bands;
-    }
+      $bands = array();
+      foreach ($tariff_history as $individual_tariff) {
+          if ($time>=$individual_tariff->start) {
+              $bands = $this->getTariffsTable($individual_tariff->bands);
+          }
+      }
+      $weekday_bands = array();
+      $weekend_bands = array();
+      $weekend_present = 0;
+      foreach ($bands as $band) {
+          if ($band->weekend == 0) {
+              $weekday_bands[] = $band;
+          } else if ($band->weekend == 1) {
+              $weekend_bands[] = $band;
+              $weekend_present = 1;
+          }
+      }
+      if ($weekend_present = 0) {
+          return $bands;
+      } else {
+          $concise_bands = $weekday_bands;
+          foreach ($weekend_bands as $weekend_entry) {
+              foreach ($weekday_bands as $weekday_entry) {
+                  if ($weekend_entry->start === $weekday_entry->start && $weekend_entry->import < $weekday_entry->import) {
+                      $concise_bands[] = $weekend_entry;
+                  }
+              }
+          }
+          return $concise_bands;
+      }
+  }
 
     // Get tariff band for a given hour
     public function get_tariff_band($bands,$hour,$weekend) {
-        // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
-        if ($weekend == 1) {
-          for ($i=0; $i<count($bands); $i++) {
-            if ($bands[$i]->weekend == 0) {
-              continue;
-            }
-            $start = (float) $bands[$i]->start;
+      // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
+      if ($weekend == 1) {
+        for ($i=0; $i<count($bands); $i++) {
+          if ($bands[$i]->weekend == 0) {
+            continue;
+          }
+          $start = (float) $bands[$i]->start;
 
-            // calculate end
-            $next = $i+1;
-            if ($next==count($bands)) $next=0;
-            $end = (float) $bands[$next]->start;
+          // calculate end
+          $end = (float) $bands[$i]->end;
 
-            // if start is less than end then period is within a day
-            if ($start<$end) {
-                if ($hour>=$start && $hour<$end) {
-                    return $bands[$i];
-                }
-            // if start is greater than end then period is over midnight
-            } else if ($end<$start) {
-                if ($hour>=$start || $hour<$end) {
-                    return $bands[$i];
-                }
-            // if start is equal to end then period is 24 hours
-            // flat rate tariff
-            } else if ($start==$end) {
-                return $bands[$i];
-            }
+          // if start is less than end then period is within a day
+          if ($start<$end) {
+              if ($hour>=$start && $hour<$end) {
+                  return $bands[$i];
+              }
+          // if start is greater than end then period is over midnight
+          } else if ($end<$start) {
+              if ($hour>=$start || $hour<$end) {
+                  return $bands[$i];
+              }
+          // if start is equal to end then period is 24 hours
+          // flat rate tariff
+          } else if ($start==$end) {
+              return $bands[$i];
           }
         }
+      }
 
-        // Work out which tariff period this hour falls into
-        for ($i=0; $i<count($bands); $i++) {
-            $start = (float) $bands[$i]->start;
+      // Work out which tariff period this hour falls into
+      for ($i=0; $i<count($bands); $i++) {
+          $start = (float) $bands[$i]->start;
 
-            // calculate end
-            $next = $i+1;
-            if ($next==count($bands)) $next=0;
-            $end = (float) $bands[$next]->start;
+          // calculate end
+          $next = $i+1;
+          if ($next==count($bands)) $next=0;
+          $end = (float) $bands[$next]->start;
 
-            // if start is less than end then period is within a day
-            if ($start<$end) {
-                if ($hour>=$start && $hour<$end) {
-                    return $bands[$i];
-                }
-            // if start is greater than end then period is over midnight
-            } else if ($end<$start) {
-                if ($hour>=$start || $hour<$end) {
-                    return $bands[$i];
-                }
-            // if start is equal to end then period is 24 hours
-            // flat rate tariff
-            } else if ($start==$end) {
-                return $bands[$i];
-            }
-        }
-        return false;
-    }
+          // if start is less than end then period is within a day
+          if ($start<$end) {
+              if ($hour>=$start && $hour<$end) {
+                  return $bands[$i];
+              }
+          // if start is greater than end then period is over midnight
+          } else if ($end<$start) {
+              if ($hour>=$start || $hour<$end) {
+                  return $bands[$i];
+              }
+          // if start is equal to end then period is 24 hours
+          // flat rate tariff
+          } else if ($start==$end) {
+              return $bands[$i];
+          }
+      }
+      return false;
+  }
 
     // Calculate unit price 
     public function get_unit_price($consumption, $generation, $band) {

@@ -180,6 +180,7 @@ $octopus_rows = array();
 
 $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
 $bands = $tariff_class->list_periods($current_tariff->tariffid);
+$concise_tariff_table = $tariff_class->get_concise_tariffs_table($current_tariff->tariffid);
 
 $td = 0;
 for ($time=$start; $time<$end; $time+=$interval) {
@@ -208,7 +209,7 @@ for ($time=$start; $time<$end; $time+=$interval) {
        $import = -1*$balance;
     }
     
-    $band = $tariff_class->get_tariff_band($bands,$hour,$weekend);
+    $band = $tariff_class->get_tariff_band($concise_tariff_table,$hour,$weekend);
     
     $cost = ($from_generator*$band->generator) + ($import*$band->import);
     

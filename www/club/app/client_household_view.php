@@ -1,14 +1,15 @@
 
 <script>
   const tariffsTable = <?php echo(json_encode($tariffs_table)); ?>;
-  const weekdayTariffsTable = <?php echo(json_encode($weekday_tariffs_table)); ?>;
-  const weekendTariffsTable = <?php echo(json_encode($weekend_tariffs_table)); ?>;
+  //const weekdayTariffsTable = <?php //echo(json_encode($weekday_tariffs_table)); ?>;
+  //const weekendTariffsTable = <?php //echo(json_encode($weekend_tariffs_table)); ?>;
+  const conciseTariffsTable = <?php echo(json_encode($concise_tariffs_table)); ?>;
   const tariffColorMap = {
     <?php if ($club_settings["has_generator"]) { ?>
     "generation": "<?php echo $club_settings["generator_color"]; ?>"
     <?php } ?>
   };
-  tariffsTable.forEach((entry)=> (tariffColorMap[entry.name] = entry.color));
+  conciseTariffsTable.forEach((entry)=> (tariffColorMap[entry.name] = entry.color));
   console.log(tariffColorMap)
 </script>
 

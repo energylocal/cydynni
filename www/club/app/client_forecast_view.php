@@ -66,7 +66,7 @@
                     <div style="padding-top:5px; padding-bottom:5px">
                       <?php foreach ($concise_tariffs_table as $t) : ?>
                       <div class="legend-label-box" style="background-color:<?=$t->color?>"></div>
-                      <span class="legend-label"><?=t(ucfirst($t->name)) . ($t->weekend ? " (Weekend)" : "")?></span>
+                      <span class="legend-label"><?=t(ucfirst($t->name))?></span>
                       <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
                       <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>

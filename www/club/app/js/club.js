@@ -318,17 +318,10 @@ function club_bargraph_load() {
     last_actual_reading_time = 0;
     
     for (x in tariffs) {
-        if (tariffs[x].weekend == 0) {
-            if (data[tariffs[x].name] == undefined) {
-                data[tariffs[x].name] = [];
-            }
-        } else {
-            if (data["weekend"+tariffs[x].name] == undefined) {
-                data["weekend"+tariffs[x].name] = [];
-            }
+        if (data[tariffs[x].name] == undefined) {
+            data[tariffs[x].name] = [];
         }
     }
-    console.log(tariffs)
     for (var z in club_data) {
         var time = club_data[z][0];
         var d = new Date(time);
@@ -389,29 +382,21 @@ function club_bargraph_load() {
         var unit_price = 0.0;
         
         for (x in tariffs) {
-            if (tariffs[x].weekend == 0) {
-                data[tariffs[x].name][z] = [time, 0];
-            } else {
-                data["weekend" + tariffs[x].name][z] = [time, 0];
-            }
+            data[tariffs[x].name][z] = [time, 0];
         }
         
         // var bands = get_tariff_bands(tariff_history,time*0.001);
-        var band = get_tariff_band(tariffs,hour,weekend);
+        console.log(conciseTariffsTable)
+        var band = get_tariff_band(conciseTariffsTable,hour,weekend);
         if (band) {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
-            if (band.weekend == 0) {
-                data[band.name][z] = [time, imprt];
-            } else {
-                data["weekend" + band.name][z] = [time, imprt];
-            }
+            data[band.name][z] = [time, imprt];
         }
             
         data.export[z] = [time, exprt];
         data.selfuse[z] = [time, selfuse];
         data.price[z] = [time, unit_price]; // unit_price
     }
-    console.log(data)
 
     clubseries = [];
 
@@ -426,17 +411,10 @@ function club_bargraph_load() {
     // add series data for each tariff
     
     for (x in tariffs) {
-        if (tariffs[x].weekend == 0) {
-            clubseries.push({
-                stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
-                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-            });
-        } else {
-            clubseries.push({
-                stack: true, data: data["weekend"+tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Weekend Tariff"),
-                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-            });
-        }
+        clubseries.push({
+            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
+            bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+        });
     }
 
     clubseries.push({
@@ -476,11 +454,8 @@ function get_tariff_band(bands, hour, weekend) {
                 continue
             }
             const start = parseFloat(bands[i].start);
-    
-            // Calculate end
-            let next = i + 1;
-            if (next === bands.length) next = 0;
-            const end = parseFloat(bands[next].start);
+
+            const end = parseFloat(bands[i].end);
     
             // If start is less than end, then the period is within a day
             if (start < end) {
@@ -767,20 +742,6 @@ $(function () {
 
 function generateTariffsTableHTML(multiplierVAT) {
     tariffsTableBody = ""
-    conciseTariffsTable = weekdayTariffsTable.slice();
-    if (weekendTariffsTable.length > 0) {
-        weekendTariffsTable.forEach(weekendEntry => {
-            // Find an entry in weekdayTariffsTable with the same 'start' value
-            const matchingWeekdayEntry = weekdayTariffsTable.find(weekdayEntry => weekdayEntry.start === weekendEntry.start);
-          
-            if (matchingWeekdayEntry) {
-              // Check if 'import' values are different
-              if (matchingWeekdayEntry.import !== weekendEntry.import) {
-                conciseTariffsTable.push(weekendEntry)
-              }
-            }
-          });
-    }
     for (var i=0; i<conciseTariffsTable.length; i++){
         tariffData = conciseTariffsTable[i]
         var tariffStart = new Date('1970-01-01T' + tariffData.start + 'Z').toLocaleTimeString('en-US',{timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}).replace(":00 AM", "").replace(":00 PM", "");
@@ -796,16 +757,9 @@ function generateTariffsTableHTML(multiplierVAT) {
             tariffEnd += t('pm')
         }
         tariffsTableBody += `<tr>
-        <th scope="row">`
-        if (tariffData['weekend'] == 0) {
-            tariffsTableBody += `<span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
-            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}`
-        } else {
-            tariffsTableBody += `<span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)) + " (" + t("Weekend") + ")"}</span>
-            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price") + " (" + t("Weekend") + ")"}`
-        }
-
-        tariffsTableBody += `
+        <th scope="row">
+        <span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
+            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}
             </span>
             <br>
                                                 <span class="font-weight-light text-smaller-sm">${tariffStart} - ${tariffEnd}</span>

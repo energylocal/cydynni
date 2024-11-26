@@ -119,6 +119,43 @@ function tariff_controller()
         return $tariff->getTariffsTable($tariffs);
     }
 
+    if ($route->action == 'tariffhistory') {
+        $route->format = "json";
+        $clubid = get('clubid',true);
+        return $tariff->get_club_tariff_history($clubid);
+    }
+
+    if ($route->action == 'tariffbands') {
+        $route->format = "json";
+        $clubid = get('clubid',true);
+        $time = get('time', true);
+        $tariff_history = $tariff->get_club_tariff_history($clubid);
+        foreach ($tariff_history as $individual_tariff) {
+            $individual_tariff->bands = $tariff->list_periods($individual_tariff->tariffid);
+        }
+        return $tariff->get_tariff_bands($tariff_history, $time);
+    }
+
+    if ($route->action == 'tariffband') {
+        $route->format = "json";
+        $clubid = get('clubid',true);
+        $time = get('time',true);
+        $date = new DateTime();
+        $date->setTimestamp($time);
+        $hour = $date->format('H')*1;
+        $day = $date->format('N');
+        $weekend = 0;
+        if ($day >= 6) {
+            $weekend = 1;
+        }
+        $tariff_history = $tariff->get_club_tariff_history($clubid);
+        foreach ($tariff_history as $individual_tariff) {
+            $individual_tariff->bands = $tariff->list_periods($individual_tariff->tariffid);
+        }
+        $bands = $tariff->get_tariff_bands($tariff_history, $time);
+        return $tariff->get_tariff_band($bands, $hour, $weekend);
+    }
+
     // Add period
     // /tariff/addperiod, POST BODY tariffid=1&name=MyPeriod&weekend=0&start=0&generator=15&import=20&color=#000 (returns json success or fail)
     if ($route->action == 'addperiod' && $session['admin']) {
