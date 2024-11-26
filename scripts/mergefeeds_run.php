@@ -36,10 +36,14 @@ while ($row = $result_users->fetch_object())
         $processitem = new stdClass();
         $processitem->feeds = $feeds;
         $processitem->output = $output;
-        $processitem->recalc = $recalc_period; 
-        mergefeeds4("/var/lib/phpfina/",$processitem);
-        
+        $processitem->recalc = $recalc_period;
+        if (!mergefeeds4("/var/lib/phpfina/",$processitem)) {
+          print("merge failed for user $userid / feed $output\n");
+        }
+
         $redis->hdel("feed:$output",'time');
         $timevalue = $feed->get_timevalue($output);
+    } else {
+      print("No usage feeds for user $userid");
     }
 }

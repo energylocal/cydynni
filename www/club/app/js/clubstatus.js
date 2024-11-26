@@ -101,6 +101,7 @@ function clubstatus_update() {
         // TODO move to config	
             var levels = {
                 bethesda: {high:50,medium:30,low:10},
+                totnes: {high:40,medium:20,low:10},
                 towerpower: {high:3,medium:1,low:0.5},
                 corwen: {high:50,medium:30,low:10},
                 crickhowell: {high:50,medium:30,low:10},

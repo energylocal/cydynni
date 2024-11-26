@@ -27,7 +27,7 @@ function mergefeeds4($dir,$processitem)
         }
         $meta[$feed] = getmeta($dir,$feed);
         if ($meta[$feed]->interval!=$interval) {
-            print "ERROR in merge feeds function, feeds must be half hourly\n";
+            print "ERROR in merge feeds function, feeds must be half hourly (".$feed.")\n";
             die;
         }
         print "feed:$feed start_time=".$meta[$feed]->start_time." interval=".$meta[$feed]->interval."\n";  

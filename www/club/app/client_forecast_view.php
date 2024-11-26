@@ -111,25 +111,117 @@
                             <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($tariffs_table as $t) : ?>
-                            <tr<?=$t->rowClass?>>
-                                <th scope="row">
-                                    <span class="d-sm-inline d-lg-none" style="color:<?=$t->color?>"><?=t(ucfirst($t->name))?></span>
-                                    <span class="d-none d-md-inline d-lg-inline" style="color:<?=$t->color?>"> <?=t(ucfirst($t->name)." Price")?></span> 
-                                    <br class="d-sm-none">
-                                    <?php
-                                    $start = date('g', strtotime($t->start)) . ($t->start < 12 ? t('am'): t('pm'));
-                                    $end = date('g', strtotime($t->end)) . ($t->end < 12 ? t('am'): t('pm'));
-                                    ?>
-                                    <span class="font-weight-light text-smaller-sm"><?=$start?> - <?=$end?></span>
-                                </th>
-                                <td style="background-color:<?=$club_settings["generator_color"]?>"><?=number_format($t->generator*1.05,2).t('p')?></td>
-                                <td style="background-color:#f0f0f0; color:<?=$t->color?>"><?=number_format($t->import*1.05,2).t('p')?></td>
-                            </tr>
-                            <?php endforeach; ?>
+                        <tbody id="tariffbody">
                         </tbody>
                     </table>
-                    <div style="padding:10px; color:#888; font-size:14px"><?=t('Unit prices include VAT');?></div>
+                    <div style="padding:10px; color:#888; font-size:14px">
+                    <?=t('Unit prices include VAT');?>
+                    <input type="checkbox" class="custom-control-input m-0 mr-2" id="showVAT" checked>
+                  </div>
                 </div>
             </div>
+                              
+            <?php if ($is_advisor ) { ?>
+            <div class="block">
+                <div class="block-title hideable-block" style="background-color:#005b0b">
+                <?php echo t("Data Export"); ?>
+                <div class="triangle-dropdown show"></div><div class="triangle-pushup hide"></div></div>
+                <div class="block-content" style="padding: .6rem">
+                  <form id="exportForm">
+                    <label for="startDate">Start Date:</label>
+                    <input type="text" id="startDate" name="startDate" placeholder="dd/mm/yyyy" required><br><br>
+  
+                    <label for="endDate">End Date (exclusive):</label>
+                    <input type="text" id="endDate" name="endDate" placeholder="dd/mm/yyyy" required><br><br>
+                    <button type="submit" id="exportMatchedPower">Export Matched Power</button>
+                    <button type="submit" id="exportTotalDemand">Export Total Demand</button>
+                  </form>
+                  <script>
+                    function parseDate(dateString) { //dd/mm/yyyy
+                      var parts = dateString.split('/');
+                      if (parts.length !== 3) {
+                        console.error("Invalid date format");
+                        return null;
+                      }
+                      var day = parseInt(parts[0], 10);
+                      var month = parseInt(parts[1], 10) - 1; // Month is 0-based in JavaScript
+                      var year = parseInt(parts[2], 10);
+
+                      return new Date(year, month, day);
+                    }
+                    document.getElementById('exportForm').addEventListener('submit', function(event) {
+                      event.preventDefault(); // Prevent form submission
+
+                      // Fetch start and end dates from form
+                      const startDate = parseDate(document.getElementById('startDate').value);
+                      const endDate = parseDate(document.getElementById('endDate').value);
+
+                      // Determine which button was clicked
+                      var buttonClicked = event.submitter.id;
+
+                      
+                      // Perform action based on button clicked
+                      if (buttonClicked === 'exportMatchedPower') {
+                        exportConsumptionCSV(startDate, endDate, "matched");
+                      } else if (buttonClicked === 'exportTotalDemand') {
+                        exportConsumptionCSV(startDate, endDate, "demand");
+                      }
+                    });
+
+                    function downloadCSV(filename, csvData) {
+                      // Create a hidden anchor element
+                      var hiddenElement = document.createElement('a');
+                      hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvData);
+                      hiddenElement.target = '_blank';
+                      hiddenElement.download = filename;
+                      document.body.appendChild(hiddenElement);
+                        
+                      // Trigger the download
+                      hiddenElement.click();
+
+                      // Clean up
+                      document.body.removeChild(hiddenElement);
+                    }
+
+                    function formatDate(date) { // Format the date as "dd-mm-yyyy"
+
+                      var day = date.getDate();
+                      var month = date.getMonth() + 1; // January is 0, so we add 1
+                      var year = date.getFullYear();
+
+                      // Ensure leading zeros for day and month if needed
+                      var formattedDay = (day < 10) ? '0' + day : day;
+                      var formattedMonth = (month < 10) ? '0' + month : month;
+
+                      return formattedDay + '-' + formattedMonth + '-' + year;
+                    }
+
+                    function exportConsumptionCSV(startDate, endDate, exportType) {
+                      const startMillis = startDate.getTime();
+                      const endMillis = endDate.getTime() - 1800; //exclusive end
+                      
+                      // Replace this with your export matched power logic
+                      console.log('Exporting matched power data from ' + startMillis + ' to ' + endMillis);
+                      $.ajax({
+                        url: '<?php echo $club?>/export-csv',
+                        type: 'GET',
+                        data: {
+                          start: startMillis,
+                          end: endMillis,
+                          export: exportType
+                        },
+                        dataType: 'text', // Expecting CSV as text data
+                        success: function(data) {
+                          const filename = "<?php echo $club; ?>_"+exportType+"_"+formatDate(startDate)+".csv";
+                          downloadCSV(filename, data);
+                        },
+                        error: function(xhr, status, error) {
+                          console.error('Error fetching CSV:', error);
+                        }
+                      });
+                    }
+                  </script>
+                </div>
+            </div>
+            <?php } ?>
+

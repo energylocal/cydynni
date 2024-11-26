@@ -96,7 +96,7 @@ function draw_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: generationCost,
                 import: result.import_cost[tariff_name],
-                color: tariffColorMap[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
@@ -138,7 +138,7 @@ function draw_summary(result) {
 
             // Legend for each import tariff band
             legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name.toLowerCase()] + '"></div></td>'
+            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name] + '"></div></td>'
             legend += '<td><b>' + t(ucfirst(tariff_name)) + '</b><br>'
             legend += tariff_kwh.toFixed(2) + " kWh";
             if (tariff_unitcost !== false) legend += " @" + (100 * tariff_unitcost).toFixed(1) + " p/kWh<br>"; else legend += "<br>";
@@ -318,7 +318,7 @@ function household_bargraph_load() {
 
                 for (var c in categories) {
                     householdseries.push({
-                        stack: true, data: series_data[categories[c]], color: tariffColorMap[categories[c].toLowerCase()],
+                        stack: true, data: series_data[categories[c]], color: tariffColorMap[categories[c]],
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
                     });
                 }
@@ -350,9 +350,18 @@ function household_bargraph_draw() {
             color: "#aaa",
             borderWidth: 0,
             hoverable: true,
-            clickable: true
+            clickable: true,
+            markings : [ // target band
+              {
+                yaxis: {
+                from: targetMin,
+                to: targetMax
+              },
+              color: "rgba(32, 158, 211, 0.3)" //"#209ED3"
+            }
+          ]
         }
-    }
+      }
 
     if ($("#household_bargraph_placeholder").width() > 0) {
         $.plot($('#household_bargraph_placeholder'), householdseries, options);
@@ -419,7 +428,7 @@ $('#household_bargraph_placeholder').bind("plothover", function (event, pos, ite
                 // Import
                 for (var c in household_result[key].import) {
                     if (c != 'total') {
-                        out += "<tr><td><div class='legend-label-box' style='background-color:" + tariffColorMap[c.toLowerCase()] + "'></div> " + t(ucfirst(c)) + ":</td><td>" + (household_result[key].import[c]).toFixed(2) + " kWh</td></tr>";
+                        out += "<tr><td><div class='legend-label-box' style='background-color:" + tariffColorMap[c] + "'></div> " + t(ucfirst(c)) + ":</td><td>" + (household_result[key].import[c]).toFixed(2) + " kWh</td></tr>";
                     }
                 }
 
@@ -540,6 +549,12 @@ function household_powergraph_draw() {
             max: household_power_end
         },
         yaxis: {
+            tickFormatter: function(val, axis) {
+              if (val < axis.max) { // replace last value with unit
+                return val;
+              }
+              return "Watts";
+            },
             font: { size: flot_font_size, color: "#666" },
             // labelWidth:-5
             reserveSpace: false

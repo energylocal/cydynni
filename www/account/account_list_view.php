@@ -26,6 +26,7 @@
         <th>Email</th>
         <th>MPAN</th>
         <th>CAD Serial</th>
+        <th>Owl ID</th>
         <th>Octopus</th>
         <th style="width:100%">Meter Serial</th>
         <th>TMA</th>
@@ -41,6 +42,7 @@
         <td @click="edit(index)">{{ user.email }}</td>
         <td @click="edit(index)">{{ user.mpan }}</td>
         <td @click="edit(index)">{{ user.cad_serial }}</td>
+        <td @click="edit(index)">{{ user.owl_id }}</td>
         <td @click="edit(index)"><span style="font-size:12px">{{ user.octopus_apikey }}</span></td>
         <td @click="edit(index)">{{ user.meter_serial }}</td>
 
@@ -88,9 +90,12 @@
 
             <label>MPAN</label>
             <input type="text" v-model="users[selected_user].mpan" style="width:260px" />
-            
+
             <label>CAD Serial</label>
             <input type="text" v-model="users[selected_user].cad_serial" style="width:260px" />
+
+            <label>Owl MAC ID</label>
+            <input type="text" v-model="users[selected_user].owl_id" style="width:260px" />
 
             <label>Octopus API Key</label>
             <input type="text" v-model="users[selected_user].octopus_apikey" style="width:260px" />
@@ -100,11 +105,11 @@
             <div v-if="users[selected_user].userid<0">
                 <label>User tariff</label>
                 <select v-model="selectedTariff" @change="resetTariffTimestamp" style="width:274px">
-                    <option v-for="tariff in tariffs" :value="tariff.id">{{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
+                  <option v-for="tariff in tariffs" :value="tariff.id">ID {{tariff.id}} | {{tariff.name}} - {{tariff.active_users}}/{{tariff.total_club_users_count}} users | Last assigned on {{tariff.last_assigned}}</option>
                 </select>
                 <label>User tariff start timestamp</label>
                 <select v-model="selectedTariffTimestamp" style="width:274px">
-                <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
+                  <option v-for="timestamp in selectedTariffDistinctStarts" :value="timestamp">{{timestamp}}</option>
                 </select>
             </div>
           </div>
@@ -115,6 +120,27 @@
 
               <p>Report email <div class="input-append"><span class="add-on">{{ users[selected_user].reportdate }}</span>
               <button class="btn" @click="send_report">Send</button></div></p>
+            </div>
+            <div v-if="users[selected_user].userid>0">
+                <p>Tariff history:</p>
+                <div>
+                <!-- Show tariff history button -->
+                <button class="btn" @click="showTariffHistory = !showTariffHistory">
+                    {{ showTariffHistory ? "Hide tariff history" : "Show tariff history" }}
+                </button>
+                
+                <!-- Tariff history information, toggled based on showTariffHistory -->
+                <div v-if="showTariffHistory">
+                    <label
+                    style="font-size:75%; margin:0px; border-bottom:1px solid;"
+                    v-for="tariff in users[selected_user]['tariff_history']"
+                    :key="tariff.tariffid"
+                    :value="tariff"
+                    >
+                    ID {{ tariff.tariffid }} - Assigned {{ tariff.start }} ({{ tariff.start_unix }})
+                    </label>
+                </div>
+                </div>
             </div>
           </div>
         </div>
@@ -155,6 +181,7 @@ var app = new Vue({
         tariffs: tariffs,
         selectedTariff: null,
         selectedTariffTimestamp: null,
+        showTariffHistory: false,
     },
     computed: {
         selectedTariffDistinctStarts() {
@@ -178,9 +205,10 @@ var app = new Vue({
                     }
                 }
             }
-            this.latestTariff = latestTariff
-            this.selectedTariff = this.latestTariff['id']
-            this.selectedTariffTimestamp = this.latestTariff['last_assigned_unix']
+            if (latestTariff !== null) {
+                this.selectedTariff = latestTariff['id']
+                this.selectedTariffTimestamp = latestTariff['last_assigned_unix']
+            }
 
             this.users.push({
                 userid:-1,
@@ -189,6 +217,7 @@ var app = new Vue({
                 clubs_id:app.selected_club,         
                 mpan:"",
                 cad_serial:"",
+                owl_id:"",
                 octopus_apikey:"",       
                 meter_serial:"",
                 welcomedate:0,
@@ -228,7 +257,7 @@ var app = new Vue({
             // if this does concern a new user - create new user
             } else {
                 add_user(this.users[this.selected_user], this.new_user_password, function (new_userid) {
-                    add_user_tariff(new_userid, this.selectedTariff)
+                    add_user_tariff(new_userid, this.selectedTariff, this.selectedTariffTimestamp)
                 }.bind(this));
             }
         },
@@ -286,7 +315,10 @@ function load() {
         async:true,
         success: function(result) {
             tariffs_dict = result.reduce((dict, tariff) => {
-                dict[tariff.id] = tariff;
+                if (tariff.active_users > 0) {
+                  // only care about tariffs that are in use, otherwise we need to ask for start date
+                  dict[tariff.id] = tariff;
+                }
                 return dict;
             }, {});
             app.tariffs = tariffs_dict;
@@ -322,13 +354,14 @@ function add_user(user,password,callback) {
     });
 }
 
-function add_user_tariff(userid, tariffid) {
+function add_user_tariff(userid, tariffid, start_time) {
     $.ajax({
         type: 'GET',
         url: path + "tariff/user/set",
         data: {
             userid: userid,
-            tariffid: tariffid
+            tariffid: tariffid,
+            start: start_time
         },
         dataType: 'json',
         success: function(result) {

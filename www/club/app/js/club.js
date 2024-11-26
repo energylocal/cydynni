@@ -69,7 +69,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation_cost[tariff_name],
                 import: result.import_cost[tariff_name],
-                color: tariffColorMap[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
@@ -81,7 +81,7 @@ function draw_club_summary(result) {
                 name: t(ucfirst(tariff_name)),
                 generation: result.generation[tariff_name],
                 import: result.import[tariff_name],
-                color: tariffColorMap[tariff_name.toLowerCase()]
+                color: tariffColorMap[tariff_name]
             });
         }
     }
@@ -111,7 +111,7 @@ function draw_club_summary(result) {
 
             // Legend for each import tariff band
             legend += '<tr>'
-            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name.toLowerCase()] + '"></div></td>'
+            legend += '<td><div class="key" style="background-color:' + tariffColorMap[tariff_name] + '"></div></td>'
             legend += '<td><b>' + t(ucfirst(tariff_name)) + '</b><br>'
             legend += tariff_kwh.toFixed(2) + " kWh";
             if (tariff_unitcost !== false) legend += " @" + (100 * tariff_unitcost).toFixed(1) + " p/kWh<br>"; else legend += "<br>";
@@ -721,5 +721,59 @@ $(function () {
         $('#club-price-legend').toggleClass('hide', !showClubPrice);
         club_bargraph_load();
         club_bargraph_draw();
+    })
+});
+
+function generateTariffsTableHTML(multiplierVAT) {
+    tariffsTableBody = ""
+    for (var i=0; i<tariffsTable.length; i++){
+        tariffData = tariffsTable[i]
+        var tariffStart = new Date('1970-01-01T' + tariffData.start + 'Z').toLocaleTimeString('en-US',{timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}).replace(":00 AM", "").replace(":00 PM", "");
+        if (Number(tariffData['start'].slice(0,2)) < 12 ){
+            tariffStart += t('am')
+        } else {
+            tariffStart += t('pm')
+        }
+        var tariffEnd = new Date('1970-01-01T' + tariffData.end + 'Z').toLocaleTimeString('en-US',{timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}).replace(":00 AM", "").replace(":00 PM", "");
+        if (Number(tariffData['end'].slice(0,2)) < 12 ){
+            tariffEnd += t('am')
+        } else {
+            tariffEnd += t('pm')
+        }
+        tariffsTableBody += `<tr>
+        <th scope="row">
+            <span class="d-sm-inline d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
+            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}</span>
+            <br class="d-sm-none">
+                                                <span class="font-weight-light text-smaller-sm">${tariffStart} - ${tariffEnd}</span>
+        </th>
+        <td style="background-color:${generator_color}">${(Number(tariffData['generator'])*multiplierVAT).toFixed(2)}${t("p")}</td>
+        `
+        if (clubid === 15 && tariffData['name'] == "Evening") {
+            tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}
+            <div style="font-size: 0.8em; color: #888;">${Math.ceil(23.77*multiplierVAT*100)/100}p on weekends</div></td>
+            </tr>`
+    } else {
+        tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}</td>
+        </tr>`
+    }
+    }
+    return tariffsTableBody
+}
+
+function insertTariffsTableHTML(html) {
+    var tbody = document.getElementById("tariffbody");
+    tbody.innerHTML = html;
+}
+$(function () {
+    $("#showVAT").on("input", function (event) {
+        showVAT = event.target.checked;
+        if (showVAT) {
+            var tariffsTableHTML = generateTariffsTableHTML(1.05);
+            insertTariffsTableHTML(tariffsTableHTML)
+        } else {
+            var tariffsTableHTML = generateTariffsTableHTML(1);
+            insertTariffsTableHTML(tariffsTableHTML)
+        }
     })
 });
