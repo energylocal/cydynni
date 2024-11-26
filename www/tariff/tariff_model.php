@@ -712,9 +712,7 @@ class Tariff
           $start = (float) $bands[$i]->start;
 
           // calculate end
-          $next = $i+1;
-          if ($next==count($bands)) $next=0;
-          $end = (float) $bands[$next]->start;
+          $end = (float) $bands[$i]->end;
 
           // if start is less than end then period is within a day
           if ($start<$end) {

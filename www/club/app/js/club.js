@@ -386,7 +386,6 @@ function club_bargraph_load() {
         }
         
         // var bands = get_tariff_bands(tariff_history,time*0.001);
-        console.log(conciseTariffsTable)
         var band = get_tariff_band(conciseTariffsTable,hour,weekend);
         if (band) {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
