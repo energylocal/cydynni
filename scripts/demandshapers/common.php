@@ -12,7 +12,7 @@
 //   3. Calculation of resulting forecasted cost of electricity
 //
 // ----------------------------------------------------------------
-define("MAX",1); 
+define("MAX",1);
 define("MIN",0);
 require "/opt/emoncms/modules/cydynni/scripts/lib/load_emoncms.php";
 require "core.php";
@@ -20,10 +20,15 @@ require "core.php";
 require_once "Modules/tariff/tariff_model.php";
 $tariff_class = new Tariff($mysqli);
 
-require "Modules/club/club_model.php";
+require_once "Modules/club/club_model.php";
 $club_class = new Club($mysqli,$user,$feed);
 $club_settings = $club_class->get_settings($club);
 
+
+require_once "Modules/account/account_model.php";
+$account_class = new Account($mysqli,$user);
+$number_of_users = $account_class->count($club_settings['id']);
+print "Number of users: $number_of_users\n";
 // ----------------------------------------------------------------
 // 1. Demand forecast based on average over the last 7 days
 // ----------------------------------------------------------------
@@ -140,6 +145,20 @@ else if (isset($wind_forecast_settings)) {
     for ($time=$start; $time<$end; $time+=$interval) {
         $gen_profile[] = $flat_output; 
     }
+} else if (isset($external_forecast_feed_id)) {
+    $external_forecast_data = $feed->get_data($external_forecast_feed_id,$start*1000,$end*1000,1800);
+    $i=0;
+    $gen = 0;
+    for ($time=$start; $time<$end; $time+=$interval) {
+        if (isset($external_forecast_data[$i]) && $external_forecast_data[$i][1]!==null) {
+            $gen = $external_forecast_data[$i][1];
+            if ($gen<0) $gen = 0;
+        }
+
+        $gen_profile[] = $gen;
+        echo $time.": ".$gen."\n";
+        $i++;
+    }
 }
 // ----------------------------------------------------------------
 
@@ -199,10 +218,13 @@ for ($time=$start; $time<$end; $time+=$interval) {
         if ($hour>=16.0 && $hour<20.0) $turndown = 10;
         $cost *= $turndown;
     }
+    $cost_per_user = $cost / $number_of_users;
 
-    $forecast->profile[] = number_format($cost,3,'.', '')*1;
+    $forecast->profile[] = number_format($cost_per_user,3,'.', '')*1;
+
+
     
-    $demandshaper_timeseries[] = array($time,$cost);
+    $demandshaper_timeseries[] = array($time,$cost_per_user);
     $demand_timeseries[] = array($time,$use);
     $generator_timeseries[] = array($time,$gen);
     

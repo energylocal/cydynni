@@ -238,9 +238,6 @@ function load()
     $("#household_generation_kwh").html(month.generation.total.toFixed(1));
     $("#household_generation_cost").html((month.generation_cost.total).toFixed(2));
 
-    //                   1  2  3  4  5  6  7  8  9  10 11 12
-    // var days_in_month = [31,28,31,30,31,30,31,31,30,31,30,31];
-    // var days = days_in_month[month.month-1];
     var days = month.days;
     var elec_cost = month.cost.total;
     var standing_charge = 0.178*days; // TODO - check if this is used / correct

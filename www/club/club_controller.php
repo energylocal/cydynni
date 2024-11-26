@@ -71,6 +71,8 @@ function club_controller()
 
     $translation->cy_GB = json_decode(file_get_contents("Modules/club/app/locale/cy_GB.json"));
 
+    $is_advisor = in_array($session['userid'], $club_class->get_advisors($club_settings['id']));
+
     if ($session["read"]) {
         $userid = (int) $session["userid"];
 
@@ -110,6 +112,12 @@ function club_controller()
             $tariffs = $tariff_class->list_periods($tariffid);
             $tariffs_table = $tariff_class->getTariffsTable($tariffs);
             $standing_charge = $tariff_class->get_tariff_standing_charge($tariffid);
+            if (!$club_settings["has_generator"]) {
+              $user_attributes = $user->get_attributes($userid);
+              if (property_exists($user_attributes, "standing_charge")) {
+                $standing_charge = $user_attributes->standing_charge/100;
+              }
+            }
 
 
             require "Modules/data/account_data_model.php";
@@ -135,7 +143,8 @@ function club_controller()
             'user_attributes' => isset($userid) ? $user->get_attributes($userid) : null,
             'available_reports'=>$available_reports,
             'clubid'=>$club_settings['id'],
-            'standing_charge' => $standing_charge
+            'standing_charge' => $standing_charge,
+            'is_advisor' => $is_advisor
           ));
 
           return array('content'=>$content,'page_classes'=>array('collapsed','manual'));
@@ -182,6 +191,7 @@ function club_controller()
         $gen_last_actual = $feed->get_timevalue($club_settings['generation_feed']);
         $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
+        $live->source = "last_actual";
         $live->generation = number_format($gen_last_actual['value'],3)*2.0;
         $live->club = number_format($use_last_actual['value'],3)*2.0;
         
@@ -191,7 +201,8 @@ function club_controller()
                 $gen_forecast = $feed->get_value($club_settings['generation_forecast_feed'],$this_hh);
                 $use_forecast = $feed->get_value($club_settings['consumption_forecast_feed'],$this_hh);
                 
-                if ($gen_forecast!=null && $use_forecast!=null) {
+                if ($gen_forecast!==null && $use_forecast!==null) {
+                    $live->source = "forecast";
                     $live->generation = number_format($gen_forecast,3)*2.0;
                     $live->club = number_format($use_forecast,3)*2.0;
                 }
@@ -238,13 +249,76 @@ function club_controller()
         }
     }
 
-    if ($route->action == "set_fixed_user_tariff") { // used for clubless users who set their own rates
+    if ($route->action == "export-csv") {
+        $authorized = $session["admin"] || $is_advisor;
+        if (!$authorized) {
+          $route->format = "json";
+          return array("success"=>false, "message"=>"Not authorized");
+        }
+        $startMillis = get('start', false);
+        $endMillis = get('end', false);
+        $export = get('export', "demand");
+
+        $feed_name = "";
+        switch ($export) {
+        case "demand":
+          $feed_name = "use_hh";
+          break;
+        case "matched":
+          $feed_name = "gen_hh";
+          break;
+        default:
+          $route->format = "json";
+          return array("success"=>false, "message"=>"export param must be 'demand' or 'matched'");
+        }
+
+        $data_by_mpan = $club_class->get_club_data_by_mpan($club_settings['id'], $feed_name, $startMillis, $endMillis);
+        $durationMillis = $endMillis - $startMillis;
+        $numberOfPeriods = $durationMillis / (30 * 60 * 1000); // Calculate the number of 30-minute periods
+        $header = ",date,settlement_period";
+        foreach($data_by_mpan as $mpan => $feed_data) {
+          $header = $header.",".$mpan;
+        }
+        $doc = $header."\n";
+
+        $hh_period = 1;
+        for ($i = 0; $i <= $numberOfPeriods; $i++) {
+          $date = DateTime::createFromFormat('U', ($startMillis/1000) + ($i * 1800));
+          $formattedDate = $date->format('Y-m-d');
+          $line = "$i,$formattedDate,$hh_period";
+          foreach($data_by_mpan as $mpan => $feed_data) {
+            $line = $line.",".number_format($feed_data[$i][1], 3);
+          }
+          $doc = $doc.$line."\n";
+          $hh_period++;
+          if ($hh_period > 48) {
+            $hh_period = 1;
+          }
+        }
+
+        $route->format = "text";
+        return $doc;
+    }
+
+    if ($route->action == "set_fixed_user_tariff" && $session["write"]) { // used for clubless users who set their own rates
         $body = put_json();
-        $result = $user->set_attribute($session['userid'], $body['name'], $body['value']);
+        $user->set_attribute($session['userid'], 'tariff_type', $body['tariff_type']);
+        $user->set_attribute($session['userid'], 'tariff', $body['tariff']);
+        $user->set_attribute($session['userid'], 'economy7_tariff', $body['economy7_tariff']);
+        $user->set_attribute($session['userid'], 'standing_charge', $body['standing_charge']);
         require_once "Modules/tariff/tariff_model.php";
         $tariff_class = new Tariff($mysqli);
-        $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['value']);
-        return $result;
+        switch ($body['tariff_type']) {
+          case 'fixed':
+            $tariff_class->set_temporary_fixed_tariff($session['userid'], $body['tariff']);
+            return;
+          case 'economy7':
+            $tariff_class->set_temporary_economy7_tariff($session['userid'], $body['tariff'], $body['economy7_tariff']);
+            return;
+          default:
+            throw new Exception("tariff_type unrecognised");
+        }
+//        return $result;
     }
 
     // Demandshaper v2: renamed to forecast (review, not all clubs listed here)
@@ -261,6 +335,7 @@ function club_controller()
                 $format = $_GET['format'];
             }
             
+            // FIXME: clubs need to come from DB
             if (in_array($key,array("bethesda","corwen","crickhowell","bethesda_solar","repower"))) {
                 if ($format=="standard") {
                     if ($result = $redis->get("energylocal:forecast:$key")) {
@@ -289,7 +364,7 @@ function club_controller()
     // new password reset routes - START
     if ($route->action == "passwordreset_generation") {
         try {
-        $base_url = $_SERVER['HTTP_REFERER'];
+        $base_url = "https://" . $_SERVER["SERVER_NAME"] . "/?household";
         $route->format = "json";
         $user->appname = "Cydynni";
         $data = $_POST['email'];

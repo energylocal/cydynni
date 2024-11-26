@@ -40,7 +40,7 @@ function tariff_controller()
             if (!$club_info = $club->get($clubid)) {
                 return "Club not found";
             }*/
-            
+
             require "Modules/club/club_model.php";
             $club_class = new Club($mysqli, $user);
             $clubs = $club_class->list_assoc();
@@ -60,6 +60,38 @@ function tariff_controller()
             post('club',true),
             post('name',true)
         );
+    }
+
+    if ($route->action == 'update' && $session['admin']) {
+        $route->format = "json";
+        // TODO handle errors
+        $tariffid = (int) post('tariff_id', true);
+        $tariff_name = post('name', true);
+        $standing_charge = (float) post('standing_charge', true);
+        if (!$tariff->set_tariff_name($tariffid, $tariff_name)) {
+          return array("success"=>false,"message"=>"Could not set tariff name");
+        }
+        if (!$tariff->set_tariff_standing_charge($tariffid, $standing_charge)) {
+          return array("success"=>false,"message"=>"Could not set tariff standing charge");
+        }
+        return array("success"=>true);
+    }
+
+    // Create a new tariff based on an existing one
+    // /tariff/create, POST BODY tariff_id
+    if ($route->action == 'clone' && $session['admin']) {
+        $route->format = "json";
+        return $tariff->clone(
+            post('tariff_id',true),
+        );
+    }
+
+    // Assign tariff to all the users in a club
+    if ($route->action == 'assign_all_users' && $session['admin']) {
+        $route->format = "json";
+        $tariffid = (int) post('tariff_id', true);
+        $start = (int) post('start', true); // unixtime
+        return $tariff->assign_all_user_tariffs($tariffid, $start);
     }
 
     // Delete tariff
@@ -136,7 +168,8 @@ function tariff_controller()
             $route->format = "json";
             return $tariff->set_user_tariff(
                 get('userid',true),
-                get('tariffid',true)
+                get('tariffid',true),
+                get('start',true)
             );
         }
     }
