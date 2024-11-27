@@ -394,7 +394,7 @@ function club_bargraph_load() {
 
         var demandshaper_price
         if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
-            demandshaper_price = (demandshaper_data[z][1] * 10)/demandshaper_max_val;
+            demandshaper_price = 10-((demandshaper_data[z][1] * 10)/demandshaper_max_val);
         } else if (gen_forecast !== null) {
             demandshaper_price = unit_price
         }
@@ -432,7 +432,7 @@ function club_bargraph_load() {
     if (showClubPrice) {
 
         clubseries.push({
-            data: data.demandshaper_price, color: "#fb1a80", label: t("Price"), yaxis: 2,
+            data: data.demandshaper_price, color: "#fb1a80", label: t("Good time to use?"), yaxis: 2,
             lines: { show: true }
         });
     }
@@ -681,20 +681,20 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                             translated_label = t('Used %s').replace('%s', club_settings.generator);
                         } else if (/^Unused/.test(translated_label)) {
                             translated_label = t('Unused %s').replace('%s', club_settings.generator);
-                        } else if (/Tariff$/.test(translated_label)) {
+                        } else if (selected_tariff_name != t("Good time to use?") && /Tariff$/.test(translated_label)) {
                             translated_label = t('%s tariff').replace('%s', t(selected_tariff_name).toLowerCase());
                         }
                         if (series.label != t(ucfirst(club_settings.generator) + " estimate") && series.label != t("Club estimate")) {
-                            if (series.label != t("Price")) {
+                            if (series.label != t("Good time to use?")) {
                                 out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + units + "<br>";
                             } else {
                                 out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + "/10 ";
                                 if (series.data[z][1] < 3.33) {
-                                    out += "😍";
-                                } else if (series.data[z][1] < 6.66) {
-                                    out += "🙂";
-                                } else {
                                     out += "😞";
+                                } else if (series.data[z][1] < 6.66) {
+                                    out += "😐";
+                                } else {
+                                    out += "🙂";
                                 }
                                 out += "<br>";
                             }
