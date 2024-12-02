@@ -74,7 +74,8 @@
 		<div id="app">
 			<div class="alert-box">
 				<span class="alert-symbol">⚠️</span>
-				<span class="alert-text">If this tariff includes periods that are weekend-specific, you must describe a 24-hour weekend period in its entirety, as you would for weekdays.<br /><br />For example, if only one weekend period is given, that price will be used for all weekend hours.</span>
+				<span class="alert-text">If this tariff includes periods that are weekend-specific, you must describe a 24-hour weekend period in its entirety, as you would for weekdays.<br /><br />For example, if only one weekend period is given, that price will be used for all weekend hours.
+				<br /><br />Please name weekend periods normally; for example "Morning". Their names will be changed to include "Weekend" upon being saved.</span>
 			</div>
 			<br>
 		</div>
@@ -349,6 +350,23 @@
 				app.edit_period_index = index;
 			},
 			save_period: function(index) {
+				
+				if (app.tariff_periods[index].weekend == "1") {
+					if (app.tariff_periods[index].name.indexOf("weekend") == -1 && app.tariff_periods[index].name.indexOf("Weekend") == -1) {
+						app.tariff_periods[index].name = "Weekend "+app.tariff_periods[index].name
+					}
+				}
+				
+				if (app.tariff_periods[index].weekend == "0") {
+					if (app.tariff_periods[index].name.indexOf("weekend") !== -1) {
+						app.tariff_periods[index].name = app.tariff_periods[index].name.replace("weekend", "")
+						app.tariff_periods[index].name = app.tariff_periods[index].name.replace(" ", "")
+					}
+					if (app.tariff_periods[index].name.indexOf("Weekend") !== -1) {
+						app.tariff_periods[index].name = app.tariff_periods[index].name.replace("Weekend", "")
+						app.tariff_periods[index].name = app.tariff_periods[index].name.replace(" ", "")
+					}
+				}
 				app.edit_period_index = false;
 				// save period
 				$.post(path + "tariff/saveperiod", app.tariff_periods[index])

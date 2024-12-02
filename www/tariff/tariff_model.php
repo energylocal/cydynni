@@ -621,23 +621,26 @@ class Tariff
       $concise_tariffs_table = $weekday_tariffs_table;
       // Check if $weekend_tariffs_table has entries
       if (count($weekend_tariffs_table) > 0) {
-          foreach ($weekend_tariffs_table as $weekend_entry) {
-              // Find an entry in $weekday_tariffs_table with the same 'start' value
-              $matching_weekday_entry = array_filter($weekday_tariffs_table, function($weekday_entry) use ($weekend_entry) {
-                  return $weekday_entry->start === $weekend_entry->start;
-              });
-
-              // If there's a matching weekday entry
-              if (!empty($matching_weekday_entry)) {
-                  // Take the first matching entry (assuming 'start' is unique)
-                  $matching_weekday_entry = reset($matching_weekday_entry);
-
-                  // Check if 'import' values are different
-                  if ($matching_weekday_entry->import !== $weekend_entry->import) {
-                      $concise_tariffs_table[] = $weekend_entry;
-                  }
-              }
+        // iterate over weekend and weekday tariffs to check if any weekend tariffs are distinct from the weekday tariffs
+        foreach ($weekend_tariffs_table as $weekend_tariff) {
+          $is_matching = false;
+          foreach ($weekday_tariffs_table as $weekday_tariff) {
+            // check if start and end match - in this case, import or generation must differ for it to be distinct
+            if ($weekend_tariff->start === $weekday_tariff->start) {
+                $is_matching = true;
+                // check if import or generation is different
+                if ($weekend_tariff->import !== $weekday_tariff->import || $weekend_tariff->generator !== $weekday_tariff->generator) {
+                    $concise_tariffs_table[] = $weekend_tariff;
+                }
+                // break because we found a match
+                break;
+            }
           }
+          // if no match was found for start and end, add the weekend tariff
+          if (!$is_matching) {
+              $concise_tariffs_table[] = $weekend_tariff;
+          }
+        }
       }
       return $concise_tariffs_table;
     }
