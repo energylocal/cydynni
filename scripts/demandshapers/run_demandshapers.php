@@ -77,8 +77,6 @@ function generate_club_demandshaper($club_name, $demand_start, $demand_end, $gen
 
     try {
         $current_tariff = $tariff_class->get_club_latest_tariff($club_settings["id"]);
-        echo("CURRENT TARIFF ID");
-        echo($current_tariff->tariffid);
     } catch (MissingTariffException $e){
         $log->error("Error fetching current tariff for $club_name");
         $log->error($e->getMessage());
@@ -291,7 +289,7 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 
     // NOTE - alter 'gen_id' here and in hydro_forecast_settings before passing to hydro_forecast function
     // this will only work once generation feeds have been moved from, for example, "bethesda" (tag: Generation) to "afonberthen"
-    if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$club_name)){
+    if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$generator_key)){
         if (isset($hydro_forecast_settings)) {
             $hydro_forecast_settings['gen_id'] = $generator_feedid;
         }
