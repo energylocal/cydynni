@@ -12,7 +12,7 @@ $app_path = $path."Modules/club/app/";
 <style>body { line-height:unset !important; }</style>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
 <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
-<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.time.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
@@ -141,6 +141,7 @@ var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emonc
 
 var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
+var demandshaper_feed = club_settings.demandshaper_feed;
 var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 
@@ -434,7 +435,7 @@ $(".period-select").change(function(event) {
     }
 
     club_bargraph_load();
-    club_bargraph_draw();
+    //club_bargraph_draw();
     $(".period-select").val(date_selected);
     
     $(".club_date").html(club_date_text);

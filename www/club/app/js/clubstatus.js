@@ -51,7 +51,7 @@ function clubstatus_update() {
                 trafficlight('amber');
                 $("#status-pre").html(t("Medium cost electricity"));
             } else {
-                trafficlight('red'); 
+                trafficlight('red');
                 $("#status-pre").html(t("High cost electricity"));
             }
 

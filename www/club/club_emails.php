@@ -37,7 +37,7 @@ class ClubEmails
                          
         $message = view("Modules/club/emailbound.php",array(
             "title"=>"Croeso i Ynni Lleol, Welcome to Energy Local",
-            "message"=>"Gallwch fewngofnodi nawr ar <a href='https://dashboard.energylocal.org.uk/?household&lang=cy'>dashboard.energylocal.org.uk</a> gyda enw: <b>$username</b> a chyfrinair: <b>$newpass</b>.<br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch a  cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='https://dashboard.energylocal.org.uk/?household&lang=en'>dashboard.energylocal.org.uk</a> with username: <b>$username</b> and password: <b>$newpass</b>.<br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login and then click on the My Account icon."
+            "message"=>"Gallwch fewngofnodi nawr ar <a href='https://dashboard.energylocal.org.uk/?household&lang=cy'>dashboard.energylocal.org.uk</a> gyda enw: <b>$username</b> a chyfrinair: <b>$newpass</b><br><i>Rydym yn argymell eich bod yn newid y cyfrinair a roddir uchod i gadw eich cyfrif yn ddiogel. I newid y cyfrinair: Mewngofnodwch a  cliciwch ar icon Fy Nghyfrif</i><br><br>You can now login at <a href='https://dashboard.energylocal.org.uk/?household&lang=en'>dashboard.energylocal.org.uk</a> with username: <b>$username</b> and password: <b>$newpass</b><br><i>It is recommended to change the password given above to keep your account secure. To change the password: Login and then click on the My Account icon."
         ));
 
         $emailer = new Email();
