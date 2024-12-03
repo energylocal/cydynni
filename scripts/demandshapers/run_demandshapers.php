@@ -8,8 +8,11 @@ require_once "Modules/tariff/tariff_model.php";
 require "Modules/club/club_model.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/hydro_forecast.php";
 require "/opt/emoncms/modules/cydynni/scripts/lib/solcast.php";
+require_once "Modules/account/account_model.php";
+$account_class = new Account($mysqli,$user);
+$log = new EmonLogger(__FILE__);
 
-function generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $club_gen_profile, $enable_turndown, $feed, $redis, $club_settings, $tariff_class, $log) {
+function generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $club_gen_profile, $enable_turndown, $feed, $redis, $club_settings, $tariff_class, $log, $number_of_users) {
     $interval = 1800;
 
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_name)){
@@ -131,9 +134,11 @@ function generate_club_demandshaper($club_name, $demand_start, $demand_end, $gen
             $cost *= $turndown;
         }
 
-        $forecast->profile[] = number_format($cost,3,'.', '')*1;
+        $cost_per_user = $cost / $number_of_users;
+
+        $forecast->profile[] = number_format($cost_per_user,3,'.', '')*1;
         
-        $demandshaper_timeseries[] = array($time,$cost);
+        $demandshaper_timeseries[] = array($time,$cost_per_user);
         $demand_timeseries[] = array($time,$use);
         $generator_timeseries[] = array($time,$gen);
         
@@ -444,6 +449,7 @@ foreach ($clubs as $club) {
 
     $club_class = new Club($mysqli,$user,$feed);
     $club_settings = $club_class->get_settings($club_name);
+    $number_of_users = $account_class->count($club_settings['id']);
     $tariff_class = new Tariff($mysqli);
     $generator_count = count($club['generators']);
     $gen_profile_sum = [];
@@ -470,19 +476,21 @@ foreach ($clubs as $club) {
 
         // if generation data exists, add it to $gen_profile_sum
         // this combined data will be exported to the club's Generation feed
-        if ($gen_profile !== NULL) {
-            foreach ($gen_profile as $index => $value) {
-                if (isset($gen_profile_sum[$index])) {
-                    $gen_profile_sum[$index] += $value;
-                } else {
-                    $gen_profile_sum[$index] = $value;
+        if (isset($gen_profile)) {
+            if ($gen_profile !== NULL) {
+                foreach ($gen_profile as $index => $value) {
+                    if (isset($gen_profile_sum[$index])) {
+                        $gen_profile_sum[$index] += $value;
+                    } else {
+                        $gen_profile_sum[$index] = $value;
+                    }
                 }
             }
         }
     }
     // if gen_forecast_profile_sum isn't empty, run function to calculate and extend the club's demandshaper feed
     if (!empty($gen_forecast_profile_sum)) {
-        generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_forecast_profile_sum, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class, $log);
+        generate_club_demandshaper($club_name, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_forecast_profile_sum, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class, $log, $number_of_users);
     }
 
     // if gen_profile_sum isn't empty, post it to the club's Generation feed
