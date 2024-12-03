@@ -15,19 +15,19 @@ function mergefeeds4($dir,$processitem)
     // --------------------------------------------------
 
     if (!file_exists($dir.$output.".meta")) {
-        print "output file $output.meta does not exist\n";
+        print "merge error: output file $output.meta does not exist\n";
         return false;
     }
 
     $meta = array();
     foreach ($feeds as $feed) {
         if (!file_exists($dir.$feed.".meta")) {
-            print "input file $feed.meta does not exist\n";
+            print "merge error: input file $feed.meta does not exist\n";
             return false;
         }
         $meta[$feed] = getmeta($dir,$feed);
         if ($meta[$feed]->interval!=$interval) {
-            print "ERROR in merge feeds function, feeds must be half hourly (".$feed.")\n";
+            print "merge error: feeds function, feeds must be half hourly (".$feed.")\n";
             die;
         }
         print "feed:$feed start_time=".$meta[$feed]->start_time." interval=".$meta[$feed]->interval."\n";
@@ -55,13 +55,13 @@ function mergefeeds4($dir,$processitem)
     $fh = array();
     foreach ($feeds as $feed) {
         if (!$fh[$feed] = @fopen($dir.$feed.".dat", 'rb')) {
-            echo "ERROR: could not open $dir $feed.dat\n";
+            echo "merge error: ERROR: could not open $dir $feed.dat\n";
             return false;
         }
     }
 
     if (!$output_fh = @fopen($dir.$output.".dat", 'c+')) {
-        echo "ERROR: could not open $dir $output.dat\n";
+        echo "merge error: ERROR: could not open $dir $output.dat\n";
         return false;
     }
 
