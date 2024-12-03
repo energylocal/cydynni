@@ -101,7 +101,7 @@ function clubstatus_update() {
         // TODO move to config	
             var levels = {
                 bethesda: {high:50,medium:30,low:10},
-                totnes: {high:40,medium:20,low:10},
+                totnes: {high:10,medium:5,low:3},
                 towerpower: {high:3,medium:1,low:0.5},
                 corwen: {high:50,medium:30,low:10},
                 crickhowell: {high:50,medium:30,low:10},
@@ -115,15 +115,23 @@ function clubstatus_update() {
                 dyffrynbanw: {high:8,medium:6,low:4}
                 //economy7: {high:8,medium:6,low:4}
             }
-            
+
             if (live.generation>=levels[club].high) {
                 $("#generation-status").html(t("HIGH"));
+                trafficlight('green');
+                $("#status-pre").html(t("Yes! Low cost electricity available"));
             } else if (live.generation>=levels[club].medium) {
                 $("#generation-status").html(t("MEDIUM"));
+                trafficlight('amber');
+                $("#status-pre").html(t("Medium cost electricity"));
             } else if (live.generation>=levels[club].low) {
                 $("#generation-status").html(t("LOW"));
+                trafficlight('amber');
+                $("#status-pre").html(t("Medium cost electricity"));
             } else {
                 $("#generation-status").html(t("VERY LOW"));
+                trafficlight('red');
+                $("#status-pre").html(t("High cost electricity"));
             }
             
             var generation = Math.round(live.generation||0);
