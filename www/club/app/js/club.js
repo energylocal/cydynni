@@ -26,10 +26,7 @@ var showClubPrice = true;
 // Initial view range 24 hours
 view.end = (+new Date) + (3600000 * 24.0);
 view.start = view.end - (3600000 * 24.0 * 12);
-
-// var tariffs = club_settings.tariffs;
 var day_view = 1;
-
 function club_summary_load() {
 
     let start = Math.round(view.start * 0.001);
@@ -308,14 +305,6 @@ function club_bargraph_load() {
     if (units == "kW") scale = 2;
 
     var data = {};
-    data.daytime = [];
-    data.evening = [];
-    data.overnight = [];
-    data.late = [];
-    data.weekenddaytime = [];
-    data.weekendevening = [];
-    data.weekendovernight = [];
-    data.weekendlate = [];
     data.export = [];
     data.selfuse = [];
     data.price = [];
@@ -327,9 +316,9 @@ function club_bargraph_load() {
 
     last_actual_reading_time = 0;
     
-    for (x in tariffs) {
-        if (data[tariffs[x].name] == undefined) {
-            data[tariffs[x].name] = [];
+    for (x in conciseTariffsTable) {
+        if (data[conciseTariffsTable[x].name] == undefined) {
+            data[conciseTariffsTable[x].name] = [];
         }
     }
     for (var z in club_data) {
@@ -391,11 +380,10 @@ function club_bargraph_load() {
 
         var unit_price = 0.0;
         
-        for (x in tariffs) {
-            data[tariffs[x].name][z] = [time, 0];
+        for (x in conciseTariffsTable) {
+            data[conciseTariffsTable[x].name][z] = [time, 0];
         }
         
-        // var bands = get_tariff_bands(tariff_history,time*0.001);
         var band = get_tariff_band(conciseTariffsTable,hour,weekend);
         if (band) {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
