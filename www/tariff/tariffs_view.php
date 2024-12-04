@@ -426,4 +426,21 @@
 .text-orange {
   color: orange;
 }
+.alert-box {
+    display: flex;
+    align-items: center;
+    background-color: #ffbf99;
+    border: 1px solid red;
+    padding: 10px;
+    border-radius: 5px;
+}
+.alert-symbol {
+    margin-right: 10px;
+    font-size: 20px;
+}
+.alert-text {
+	font-weight: bold;
+	padding-left: 10px;
+	color: orangered;
+}
 </style>
