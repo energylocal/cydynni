@@ -21,7 +21,7 @@ var club_score = -1;
 var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
-var showClubPrice = false;
+var showClubPrice = true;
 
 // Initial view range 24 hours
 view.end = (+new Date) + (3600000 * 24.0);
@@ -272,7 +272,16 @@ function club_bargraph_load() {
     if (consumption_feed) {
       club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
     }
-
+    var demandshaper_data = {};
+    var demandshaper_max_val = 0;
+    if (demandshaper_feed) {
+        demandshaper_data = feed.getaverage(demandshaper_feed, view.start, view.end, interval, 0, 0)
+        for (z in demandshaper_data) {
+            if (demandshaper_data[z][1] > demandshaper_max_val) {
+                demandshaper_max_val = demandshaper_data[z][1];
+            }
+        }
+    }
     var gen_forecast_data = [];
     var demand_forecast_data = [];
 
@@ -305,6 +314,7 @@ function club_bargraph_load() {
     data.export = [];
     data.selfuse = [];
     data.price = [];
+    data.demandshaper_price = [];
     data.standard = [];
 
     data.gen_forecast = [];
@@ -381,10 +391,18 @@ function club_bargraph_load() {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
             data[band.name][z] = [time, imprt];
         }
+
+        var demandshaper_price
+        if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
+            demandshaper_price = 10-((demandshaper_data[z][1] * 10)/demandshaper_max_val);
+        } else if (gen_forecast !== null) {
+            demandshaper_price = unit_price
+        }
             
         data.export[z] = [time, exprt];
         data.selfuse[z] = [time, selfuse];
         data.price[z] = [time, unit_price]; // unit_price
+        data.demandshaper_price[z] = [time, demandshaper_price]
     }
 
     clubseries = [];
@@ -414,7 +432,7 @@ function club_bargraph_load() {
     if (showClubPrice) {
 
         clubseries.push({
-            data: data.price, color: "#fb1a80", label: t("Price"), yaxis: 2,
+            data: data.demandshaper_price, color: "#fb1a80", label: t("Good time to use?"), yaxis: 2,
             lines: { show: true }
         });
     }
@@ -663,14 +681,22 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                             translated_label = t('Used %s').replace('%s', club_settings.generator);
                         } else if (/^Unused/.test(translated_label)) {
                             translated_label = t('Unused %s').replace('%s', club_settings.generator);
-                        } else if (/Tariff$/.test(translated_label)) {
+                        } else if (selected_tariff_name != t("Good time to use?") && /Tariff$/.test(translated_label)) {
                             translated_label = t('%s tariff').replace('%s', t(selected_tariff_name).toLowerCase());
                         }
                         if (series.label != t(ucfirst(club_settings.generator) + " estimate") && series.label != t("Club estimate")) {
-                            if (series.label != t("Price")) {
+                            if (series.label != t("Good time to use?")) {
                                 out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + units + "<br>";
                             } else {
-                                out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + " p/kWh<br>";
+                                out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + "/10 ";
+                                if (series.data[z][1] < 3.33) {
+                                    out += "😞";
+                                } else if (series.data[z][1] < 6.66) {
+                                    out += "😐";
+                                } else {
+                                    out += "🙂";
+                                }
+                                out += "<br>";
                             }
                             if (series.label != t("Unused " + ucfirst(club_settings.generator))) total_consumption += series.data[z][1] * 1;
                         }

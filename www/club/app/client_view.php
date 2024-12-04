@@ -139,6 +139,7 @@ var emoncmspath = window.location.protocol+"//"+window.location.hostname+"/emonc
 
 var generation_feed = club_settings.generation_feed;
 var consumption_feed = club_settings.consumption_feed;
+var demandshaper_feed = club_settings.demandshaper_feed;
 var languages = club_settings.languages;
 var session = <?php echo json_encode($session); ?>;
 
