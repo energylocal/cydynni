@@ -359,14 +359,14 @@ function club_bargraph_load() {
 
             data.gen_forecast = [];
             data.demand_forecast = [];
-            
-    for (x in conciseTariffsTable) {
-        if (data[conciseTariffsTable[x].name] == undefined) {
-            data[conciseTariffsTable[x].name] = [];
+
+            for (x in conciseTariffsTable) {
+                if (data[conciseTariffsTable[x].name] == undefined) {
+                    data[conciseTariffsTable[x].name] = [];
                 }
             }
-    for (var z in club_consumption_data) {
-        var time = club_consumption_data[z][0];
+            for (var z in club_consumption_data) {
+                var time = club_consumption_data[z][0];
                 var d = new Date(time);
                 var hour = d.getHours();
                 var day = d.getDay();
@@ -393,7 +393,7 @@ function club_bargraph_load() {
 
                 var consumption = 0;
                 if (gen_data_completeness[z][1] !== 0) {
-            consumption = club_consumption_data[z][1] * scale;
+                    consumption = club_consumption_data[z][1] * scale;
                 } else {
                     consumption = club_consumption_data[z][1]
                 }
@@ -414,11 +414,9 @@ function club_bargraph_load() {
                 var selfuse = consumption - imprt;
 
                 var unit_price = 0.0;
-                
-        for (x in conciseTariffsTable) {
-            data[conciseTariffsTable[x].name][z] = [time, 0];
+                for (x in conciseTariffsTable) {
+                    data[conciseTariffsTable[x].name][z] = [time, 0];
                 }
-                
                 var band = get_tariff_band(conciseTariffsTable,hour,weekend);
                 if (band) {
                     unit_price = (band.import * imprt + band.generator * selfuse) / consumption
@@ -427,7 +425,7 @@ function club_bargraph_load() {
 
                 var demandshaper_price
                 if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
-            demandshaper_price = 10-((demandshaper_data[z][1] * 10)/demandshaper_max_val);
+                    demandshaper_price = 10-((demandshaper_data[z][1] * 10)/demandshaper_max_val);
                 } else if (gen_forecast !== null) {
                     demandshaper_price = unit_price
                 }
@@ -444,36 +442,33 @@ function club_bargraph_load() {
             var barwidth = widthprc * interval * 1000;
             // Actual
             clubseries.push({
-        key: "used_generation",
+                key: "used_generation",
                 stack: true, data: data.selfuse, color: generator_color, label: t("Used " + ucfirst(club_settings.generator)),
                 bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
             });
 
             // add series data for each tariff
-            
-    for (x in conciseTariffsTable) {
+            for (x in conciseTariffsTable) {
                 clubseries.push({
-            key: "TOUT",
-            stack: true, data: data[conciseTariffsTable[x].name], color: conciseTariffsTable[x].color, label: t(ucfirst(conciseTariffsTable[x].name) + " Tariff"),
-                    bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-                });
-            }
-
-            clubseries.push({
-        key: "unused_generation",
-                stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
-                bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
-            });
-
-            if (showClubPrice) {
+                    key: "TOUT",
+                    stack: true, data: data[conciseTariffsTable[x].name], color: conciseTariffsTable[x].color, label: t(ucfirst(conciseTariffsTable[x].name) + " Tariff"),
+                            bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
+                        });
+                }
 
                 clubseries.push({
-            key: "good_time",
-            data: data.demandshaper_price, color: "#fb1a80", label: t("Good time to use?"), yaxis: 2,
-                    lines: { show: true }
+                key: "unused_generation",
+                        stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
+                        bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
                 });
-            }
 
+                if (showClubPrice) {
+                    clubseries.push({
+                        key: "good_time",
+                        data: data.demandshaper_price, color: "#fb1a80", label: t("Good time to use?"), yaxis: 2,
+                                lines: { show: true }
+                    });
+            }
             club_bargraph_draw();
         }
     })
