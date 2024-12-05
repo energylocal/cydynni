@@ -255,7 +255,7 @@ function club_bargraph_load() {
 
     // URL used for fetching combined club data
     // TODO - this needs to be changed to the energylocal URL once the backend is live
-    const url = `http://localhost:8080/api/v0/clubs/${clubid}/data?start=${view.start}&end=${view.end}`;
+    const url = `/api/v0/clubs/${clubid}/data?start=${view.start}&end=${view.end}`;
     var generation_data = []
     var club_data = []
     var demandshaper_data = []
