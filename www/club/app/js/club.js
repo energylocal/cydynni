@@ -9,7 +9,7 @@ var end = 0;
 var apikey = "";
 var units = "kW";
 
-var club_data = [];
+var club_consumption_data = [];
 var exported_generation_data = [];
 var used_generation_data = [];
 var clubseries = [];
@@ -265,9 +265,9 @@ function club_bargraph_load() {
     if (generation_feed) {
       generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
     }
-    var club_data = {};
+    var club_consumption_data = {};
     if (consumption_feed) {
-      club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+      club_consumption_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
     }
     var demandshaper_data = {};
     var demandshaper_max_val = 0;
@@ -321,8 +321,8 @@ function club_bargraph_load() {
             data[conciseTariffsTable[x].name] = [];
         }
     }
-    for (var z in club_data) {
-        var time = club_data[z][0];
+    for (var z in club_consumption_data) {
+        var time = club_consumption_data[z][0];
         var d = new Date(time);
         var hour = d.getHours();
         var day = d.getDay();
@@ -356,9 +356,9 @@ function club_bargraph_load() {
         }
 
         var consumption = 0;
-        if (club_data[z][1] !== null) {
-            consumption = club_data[z][1] * scale;
-            last_actual_reading_time = club_data[z][0]
+        if (club_consumption_data[z][1] !== null) {
+            consumption = club_consumption_data[z][1] * scale;
+            last_actual_reading_time = club_consumption_data[z][0]
         } else if (demand_forecast !== null) {
             consumption = demand_forecast
         }
