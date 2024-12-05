@@ -2,7 +2,7 @@
   defined('EMONCMS_EXEC') or die('Restricted access');
 
   global $path;
-  $v = 1;
+  $v = time();
 ?>
 <script src="<?php echo $path; ?>Lib/vue.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
@@ -425,5 +425,22 @@
 }
 .text-orange {
   color: orange;
+}
+.alert-box {
+    display: flex;
+    align-items: center;
+    background-color: #ffbf99;
+    border: 1px solid red;
+    padding: 10px;
+    border-radius: 5px;
+}
+.alert-symbol {
+    margin-right: 10px;
+    font-size: 20px;
+}
+.alert-text {
+	font-weight: bold;
+	padding-left: 10px;
+	color: orangered;
 }
 </style>

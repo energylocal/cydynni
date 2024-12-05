@@ -221,7 +221,8 @@
                       });
                     }
                   </script>
+                  </div>
                 </div>
-            </div>
             <?php } ?>
+
 
