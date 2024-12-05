@@ -726,7 +726,7 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                                 }
                                 out += "<br>";
                             }
-                            if (series.label != t("Unused " + ucfirst(club_settings.generator))) total_consumption += series.data[z][1] * 1;
+                            if (series.label != t("Unused " + ucfirst(club_settings.generator)) && series.label != t("Good time to use?")) total_consumption += series.data[z][1] * 1;
                         }
                     }
                 }
