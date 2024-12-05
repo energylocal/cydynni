@@ -707,10 +707,12 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                   if (series.data[z] != undefined && series.data[z][1] > 0) {
                     switch(series.key) {
                       case "used_generation":
-                      case "unused_generation":
                       case "TOUT":
                         out += series.label+": "+(series.data[z][1] * 1).toFixed(1) + units + "<br>";
                         total_consumption += series.data[z][1] * 1;
+                        break;
+                      case "unused_generation":
+                        out += series.label+": "+(series.data[z][1] * 1).toFixed(1) + units + "<br>";
                         break;
                       case "good_time":
                         out += series.label + ": " + (series.data[z][1] * 1).toFixed(1);
