@@ -415,9 +415,9 @@ function club_bargraph_load() {
 
     // add series data for each tariff
     
-    for (x in tariffs) {
+    for (x in conciseTariffsTable) {
         clubseries.push({
-            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
+            stack: true, data: data[conciseTariffsTable[x].name], color: conciseTariffsTable[x].color, label: t(ucfirst(conciseTariffsTable[x].name) + " Tariff"),
             bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
         });
     }
@@ -705,12 +705,11 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                         // captialize special cases of translated strings that are added into sentenses
                         var selected_tariff_name = selected_series.toLowerCase().replace('tariff', '').trim();
                         if (lang === 'cy_GB') selected_tariff_name = ucfirst(selected_tariff_name);
-
                         if (/^Used/.test(translated_label)) {
                             translated_label = t('Used %s').replace('%s', club_settings.generator);
                         } else if (/^Unused/.test(translated_label)) {
                             translated_label = t('Unused %s').replace('%s', club_settings.generator);
-                        } else if (selected_tariff_name != t("Good time to use?") && /Tariff$/.test(translated_label)) {
+                        } else if (selected_tariff_name.toLowerCase() != t("good time to use?") && /tariff$/.test(translated_label.toLowerCase())) {
                             translated_label = t('%s tariff').replace('%s', t(selected_tariff_name).toLowerCase());
                         }
                         if (series.label != t(ucfirst(club_settings.generator) + " estimate") && series.label != t("Club estimate")) {
