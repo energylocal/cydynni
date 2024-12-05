@@ -254,7 +254,7 @@ function club_bargraph_load() {
     // TODO - this needs to be changed to the energylocal URL once the backend is live
     const url = `/api/v0/clubs/${clubid}/data?start=${view.start}&end=${view.end}`;
     var generation_data = []
-    var club_data = []
+    var club_consumption_data = []
     var demandshaper_data = []
     gen_data_completeness = []
     demand_data_completeness = []
@@ -282,7 +282,7 @@ function club_bargraph_load() {
                     demand_data_completeness_val = verboseTimevalue["demand"]["data_completeness"];
                     // output this data into relevant arrays
                     generation_data.push([timestampMs, gen_val]);
-                    club_data.push([timestampMs, demand_val]);
+                    club_consumption_data.push([timestampMs, demand_val]);
                     demandshaper_data.push([timestampMs, demandshaper_val]);
                     if (demandshaper_val > demandshaper_max_val) {
                         demandshaper_max_val = demandshaper_val
@@ -903,4 +903,4 @@ $(function () {
             var tariffsTableHTML = generateTariffsTableHTML(1);
             insertTariffsTableHTML(tariffsTableHTML)
         }
-    })
+    })})
