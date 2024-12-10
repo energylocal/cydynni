@@ -2,8 +2,14 @@
 
 function mergefeeds4($dir,$processitem)
 {
-    if (!isset($processitem->feeds)) return false;
-    if (!isset($processitem->output)) return false;
+    if (!isset($processitem->feeds)) {
+        print "merge error: provided processitem has no input feeds";
+        return false;
+    }
+    if (!isset($processitem->output)) {
+        print "merge error: provided processitem has no output feed";
+        return false;
+    }
     if (!isset($processitem->recalc)) $processitem->recalc = 0;
 
     $feeds = $processitem->feeds;
@@ -44,8 +50,10 @@ function mergefeeds4($dir,$processitem)
     $out_meta->start_time = $start_time;
     $out_meta->interval = $interval;
     
-    if ($start_time==0) return false;
-    
+    if ($start_time==0) {
+        print "merge error: provided start time cannot be zero";
+        return false;
+    }
     print "OUT start_time=$start_time interval=$interval\n";
 
     createmeta($dir,$output,$out_meta);
