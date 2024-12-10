@@ -27,12 +27,6 @@ function mergefeeds4($dir,$processitem)
 
     $meta = array();
 
-    foreach ($feeds as $key => $feed) {
-        if ($meta[$feed]->start_time == 0) {
-            unset($feeds[$key]);
-        }
-    }
-
     foreach ($feeds as $feed) {
         if (!file_exists($dir.$feed.".meta")) {
             print "merge error: input file $feed.meta does not exist\n";
