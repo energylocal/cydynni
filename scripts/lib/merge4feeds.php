@@ -37,6 +37,15 @@ function mergefeeds4($dir,$processitem)
             print "merge error: feeds function, feeds must be half hourly (".$feed.")\n";
             return false;
         }
+    }
+
+    foreach ($feeds as $key => $feed) {
+        if ($meta[$feed]->start_time == 0) {
+            unset($feeds[$key]);
+        }
+    }
+
+    foreach ($feeds as $feed) {
         print "feed:$feed start_time=".$meta[$feed]->start_time." interval=".$meta[$feed]->interval."\n";
 
         //if ($meta[$feed]->start_time>0) {
