@@ -379,24 +379,14 @@ function club_bargraph_load() {
                 // ------------------------------------------------
                 // ------------------------------------------------
 
-                var generation = 0;
-                if (generation_data[z] != undefined && generation_data[z][1] !== null) {
-                    generation = generation_data[z][1] * scale * club_settings['gen_scale'];
-                } else if (gen_forecast !== null) {
-                    generation = gen_forecast
-                }
+                var generation = generation_data[z][1] * scale * club_settings['gen_scale'];
 
                 if (generation_feed == 1471) { // TODO - what is this???
                     if (generation > 40.0) generation = 40.0;
                     generation *= 0.5;
                 }
 
-                var consumption = 0;
-                if (gen_data_completeness[z][1] !== 0) {
-                    consumption = club_consumption_data[z][1] * scale;
-                } else {
-                    consumption = club_consumption_data[z][1]
-                }
+                var consumption = club_consumption_data[z][1] * scale;
 
                 var exported_generation = 0;
                 var used_generation = 0;
@@ -426,8 +416,8 @@ function club_bargraph_load() {
                 var demandshaper_price
                 if (demandshaper_data[z] != undefined && demandshaper_data[z][1] !== null) {
                     demandshaper_price = 10-((demandshaper_data[z][1] * 10)/demandshaper_max_val);
-                } else if (gen_forecast !== null) {
-                    demandshaper_price = unit_price
+                } else {
+                    demandshaper_price = null
                 }
                     
                 data.export[z] = [time, exprt];
