@@ -485,7 +485,7 @@ foreach ($clubs as $club) {
 
         // if Generation feed exists for this generator, fetch data from it
         if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$generator['generator_key'])){
-            $gen_profile = $feed->get_data($generator_feedid,$demand_start*1000,$demand_end*1000,1800);
+            $gen_profile = $feed->get_data($generator_feedid,$demand_start,$demand_end,1800);
         }
 
         // if generation data exists, add it to $gen_profile_sum
