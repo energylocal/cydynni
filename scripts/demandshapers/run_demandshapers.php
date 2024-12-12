@@ -495,9 +495,9 @@ foreach ($clubs as $club) {
                 foreach ($gen_profile as $index => $value) {
                     if ($value !== NULL) {
                         if (isset($gen_profile_sum[$index])) {
-                            $gen_profile_sum[$index] += $value;
+                            $gen_profile_sum[$index][1] += $value[1];
                         } else {
-                            $gen_profile_sum[$index] = $value;
+                            $gen_profile_sum[$index][1] = $value[1];
                         }
                     }
                 }
@@ -510,15 +510,14 @@ foreach ($clubs as $club) {
     }
 
     // if gen_profile_sum isn't empty, post it to the club's Generation feed
-    if ($club_key == 'totnes') {
-        echo("gen_profile_sum");
-        var_dump($gen_profile_sum);
-    }
     if (!empty($gen_profile_sum)) {
-        if ($club_gen_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
-            foreach ($gen_profile_sum as $timevalue) {
-                $feed->post($club_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
-            }
+        if (!$club_gen_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
+            $result = $feed->create($admin_userid,"Generation",$club_key,5,json_decode('{"interval":1800}'));
+            if (!$result['success']) { echo json_encode($result)."\n"; die; }
+            $club_gen_feedid = $result['feedid'];
+        }
+        foreach ($gen_profile_sum as $timevalue) {
+            $feed->post($club_gen_feedid,$timevalue[0]/1000,$timevalue[0]/1000,$timevalue[1]);
         }
     }
 }
