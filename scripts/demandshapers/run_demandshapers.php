@@ -485,14 +485,14 @@ foreach ($clubs as $club) {
 
         // if Generation feed exists for this generator, fetch data from it
         if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$generator['generator_key'])){
-            $gen_profile = $feed->get_data($generator_feedid,$generation_forecast_start*1000,$generation_forecast_end*1000,1800);
+            $gen_profile = $feed->get_data($generator_feedid,$demand_start*1000,$demand_end*1000,1800);
         }
 
         // if generation data exists, add it to $gen_profile_sum
         // this combined data will be exported to the club's Generation feed
         if (isset($gen_profile)) {
-            if ($gen_profile !== NULL) {
-                foreach ($gen_profile as $index => $value) {
+            foreach ($gen_profile as $index => $value) {
+                if ($value !== NULL) {
                     if (isset($gen_profile_sum[$index])) {
                         $gen_profile_sum[$index] += $value;
                     } else {
