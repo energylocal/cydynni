@@ -771,10 +771,10 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                 }
                 if (total_consumption) out += t("Total consumption") + ": " + (total_consumption).toFixed(1) + units;
                 out += "<br>";
-                out += "Generation data completeness: " + gen_data_completeness[z][1] + "%"
+                out += t("Generation data completeness: ") + gen_data_completeness[z][1] + "%"
                 if (demand_data_completeness[z][1] < forecast_threshold) {
                     out += "<br>";
-                    out += "Demand data completeness: " + demand_data_completeness[z][1] + "%";
+                    out += t("Demand data completeness: ") + demand_data_completeness[z][1] + "%";
                 }
             } else {
                 // Print estimate amounts
