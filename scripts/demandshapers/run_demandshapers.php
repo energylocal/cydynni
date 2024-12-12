@@ -491,12 +491,14 @@ foreach ($clubs as $club) {
         // if generation data exists, add it to $gen_profile_sum
         // this combined data will be exported to the club's Generation feed
         if (isset($gen_profile)) {
-            foreach ($gen_profile as $index => $value) {
-                if ($value !== NULL) {
-                    if (isset($gen_profile_sum[$index])) {
-                        $gen_profile_sum[$index] += $value;
-                    } else {
-                        $gen_profile_sum[$index] = $value;
+            if ($gen_profile !== NULL) {
+                foreach ($gen_profile as $index => $value) {
+                    if ($value !== NULL) {
+                        if (isset($gen_profile_sum[$index])) {
+                            $gen_profile_sum[$index] += $value;
+                        } else {
+                            $gen_profile_sum[$index] = $value;
+                        }
                     }
                 }
             }
