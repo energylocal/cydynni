@@ -285,12 +285,12 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 
     // NOTE - this if statement is to be removed. Only included to support current Generation names (e.g bethesda, instead of afonberthen)
     // $club_key can also be removed as an argument for this function
-    if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
+    /*if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
         if (isset($hydro_forecast_settings)) {
             $hydro_forecast_settings['gen_id'] = $generator_feedid;
         }
         $gen_id = $generator_feedid;
-    }
+    }*/
 
     // NOTE - alter 'gen_id' here and in hydro_forecast_settings before passing to hydro_forecast function
     // this will only work once generation feeds have been moved from, for example, "bethesda" (tag: Generation) to "afonberthen"
