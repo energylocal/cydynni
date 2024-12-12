@@ -509,7 +509,7 @@ foreach ($clubs as $club) {
 
     // if gen_profile_sum isn't empty, post it to the club's Generation feed
     if (!empty($gen_profile_sum)) {
-        if ($club_gen_feedid = $feed->exists_tag_name(1,"Generation",$club)){
+        if ($club_gen_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
             foreach ($gen_profile_sum as $timevalue) {
                 $feed->post($club_gen_feedid,$timevalue[0],$timevalue[0],$timevalue[1]);
             }
