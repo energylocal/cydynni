@@ -245,15 +245,6 @@ function add_feeds($input_feeds, $output_feed, $start_time, $end_time, $interval
         }
         
         $output_data[] = array($timestamp, $val);
-        
-        if ($val > 0) {
-            echo "Val1 : " . (isset($data[0][$i][1]) ? $data[0][$i][1] : 'N/A');
-            echo PHP_EOL;
-            echo "Val2 : " . (isset($data[1][$i][1]) ? $data[1][$i][1] : 'N/A');
-            echo PHP_EOL;
-            echo "Val3 : " . $output_data[$i][1];
-            echo PHP_EOL;
-        }
     }
     
     $feed->post_multiple($output_feed,$output_data);
@@ -362,7 +353,6 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
             }
     
             $gen_profile[] = $gen;
-            echo $time.": ".$gen."\n";
             $i++;
         }
     }
