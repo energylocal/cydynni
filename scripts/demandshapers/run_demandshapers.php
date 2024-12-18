@@ -180,19 +180,19 @@ function generate_club_demandshaper($club_key, $demand_start, $demand_end, $gene
     $admin_userid = 1;
 
     if (!$demandshaper_feedid = $feed->get_id($admin_userid,$club_key."_demandshaper")) {
-        $result = $feed->create($admin_userid,"demandshaper",$club_key."_demandshaper",5,json_decode('{"interval":1800}'));
+        $result = $feed->create_public($admin_userid,"demandshaper",$club_key."_demandshaper",5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $demandshaper_feedid = $result['feedid'];
     }
 
     if (!$demandshaper_gen_feedid = $feed->get_id($admin_userid,$club_key."_forecast_gen")) {
-        $result = $feed->create($admin_userid,"demandshaper",$club_key."_forecast_gen",5,json_decode('{"interval":1800}'));
+        $result = $feed->create_public($admin_userid,"demandshaper",$club_key."_forecast_gen",5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $demandshaper_gen_feedid = $result['feedid'];
     }
 
     if (!$demandshaper_use_feedid = $feed->get_id($admin_userid,$club_key."_forecast_use")) {
-        $result = $feed->create($admin_userid,"demandshaper",$club_key."_forecast_use",5,json_decode('{"interval":1800}'));
+        $result = $feed->create_public($admin_userid,"demandshaper",$club_key."_forecast_use",5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $demandshaper_use_feedid = $result['feedid'];
     }
@@ -392,7 +392,7 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 
 
     if (!$demandshaper_gen_feedid = $feed->get_id(1,$generator_key."_forecast_gen")) {
-        $result = $feed->create(1,"demandshaper",$generator_key."_forecast_gen",5,json_decode('{"interval":1800}'));
+        $result = $feed->create_public(1,"demandshaper",$generator_key."_forecast_gen",5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $demandshaper_gen_feedid = $result['feedid'];
     }
@@ -513,7 +513,7 @@ foreach ($clubs as $club) {
     // if gen_profile_sum isn't empty, post it to the club's Generation feed
     if (!empty($gen_profile_sum)) {
         if (!$club_gen_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
-            $result = $feed->create(1,"Generation",$club_key,5,json_decode('{"interval":1800}'));
+            $result = $feed->create_public(1,"Generation",$club_key,5,json_decode('{"interval":1800}'));
             if (!$result['success']) { echo json_encode($result)."\n"; die; }
             $club_gen_feedid = $result['feedid'];
         }
