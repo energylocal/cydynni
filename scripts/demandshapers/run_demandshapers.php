@@ -274,18 +274,7 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 
     $gen_profile = array();
 
-    // NOTE - this if statement is to be removed. Only included to support current Generation names (e.g bethesda, instead of afonberthen)
-    // $club_key can also be removed as an argument for this function
-    /*if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$club_key)){
-        if (isset($hydro_forecast_settings)) {
-            $hydro_forecast_settings['gen_id'] = $generator_feedid;
-        }
-        $gen_id = $generator_feedid;
-    }*/
-
-    // NOTE - alter 'gen_id' here and in hydro_forecast_settings before passing to hydro_forecast function
-    // this will only work once generation feeds have been moved from, for example, "bethesda" (tag: Generation) to "afonberthen"
-    if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$generator_key)){
+    if ($generator_feedid = $feed->exists_tag_name(1,"Generators",$generator_key)){
         if (isset($hydro_forecast_settings)) {
             $hydro_forecast_settings['gen_id'] = $generator_feedid;
         }
@@ -382,7 +371,7 @@ function create_generator_forecast($generator_key, $generator_config, $feed, $re
 
 
     if (!$demandshaper_gen_feedid = $feed->get_id(1,$generator_key."_forecast_gen")) {
-        $result = $feed->create_public(1,"demandshaper",$generator_key."_forecast_gen",5,json_decode('{"interval":1800}'));
+        $result = $feed->create_public(1,"Generators",$generator_key."_forecast_gen",5,json_decode('{"interval":1800}'));
         if (!$result['success']) { echo json_encode($result)."\n"; die; }
         $demandshaper_gen_feedid = $result['feedid'];
     }
@@ -474,7 +463,7 @@ foreach ($clubs as $club) {
         }
 
         // if Generation feed exists for this generator, fetch data from it
-        if ($generator_feedid = $feed->exists_tag_name(1,"Generation",$generator['generator_key'])){
+        if ($generator_feedid = $feed->exists_tag_name(1,"Generators",$generator['generator_key'])){
             $gen_profile = $feed->get_data($generator_feedid,$demand_start,$demand_end,1800);
         }
 
