@@ -491,7 +491,7 @@ foreach ($clubs as $club) {
         }
 
     }
-    if ($club_key == 'southormsby') {
+    if ($club['club_key'] == 'southormsby') {
         var_dump($gen_profile_sum);
     }
     // if gen_forecast_profile_sum isn't empty, run function to calculate and extend the club's demandshaper feed
