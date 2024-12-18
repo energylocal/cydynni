@@ -471,7 +471,7 @@ foreach ($clubs as $club) {
         }
 
         // calculate gen_forecast profile for this generator
-        if ($generator['generator_config'] == NULL) {
+        if (!$generator['generator_config']) {
             echo("Skipping forecast generation for ".$generator['generator_key']." due to no config.");
             continue;
         }
