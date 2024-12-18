@@ -448,20 +448,6 @@ foreach ($clubs as $club) {
     $gen_profile_sum = [];
     $gen_forecast_profile_sum = [];
     foreach ($club['generators'] as $generator) {
-        // calculate gen_forecast profile for this generator
-        $gen_forecast_profile = create_generator_forecast($generator['generator_key'], $generator['generator_config'], $feed, $redis, $club_key, $generation_forecast_start, $now, $generation_forecast_end, $log);
-
-        // add gen_forecast_profile values to gen_forecast_profile_sum
-        if ($gen_forecast_profile !== NULL) {
-            foreach ($gen_forecast_profile as $index => $value) {
-                if (isset($gen_forecast_profile_sum[$index])) {
-                    $gen_forecast_profile_sum[$index] += $value;
-                } else {
-                    $gen_forecast_profile_sum[$index] = $value;
-                }
-            }
-        }
-
         // if Generation feed exists for this generator, fetch data from it
         if ($generator_feedid = $feed->exists_tag_name(1,"Generators",$generator['generator_key'])){
             $gen_profile = $feed->get_data($generator_feedid,$demand_start,$demand_end,1800);
@@ -483,6 +469,25 @@ foreach ($clubs as $club) {
                 }
             }
         }
+
+        // calculate gen_forecast profile for this generator
+        if ($generator['generator_config'] == NULL) {
+            echo("Skipping forecast generation for ".$generator['generator_key']." due to no config.");
+            continue;
+        }
+        $gen_forecast_profile = create_generator_forecast($generator['generator_key'], $generator['generator_config'], $feed, $redis, $club_key, $generation_forecast_start, $now, $generation_forecast_end, $log);
+
+        // add gen_forecast_profile values to gen_forecast_profile_sum
+        if ($gen_forecast_profile !== NULL) {
+            foreach ($gen_forecast_profile as $index => $value) {
+                if (isset($gen_forecast_profile_sum[$index])) {
+                    $gen_forecast_profile_sum[$index] += $value;
+                } else {
+                    $gen_forecast_profile_sum[$index] = $value;
+                }
+            }
+        }
+
     }
     // if gen_forecast_profile_sum isn't empty, run function to calculate and extend the club's demandshaper feed
     if (!empty($gen_forecast_profile_sum)) {
@@ -502,7 +507,5 @@ foreach ($clubs as $club) {
     }
 }
 
-//$feeds_test = array(4035,2059);
-//add_feeds($feeds_test, 2945, $generation_forecast_start, $generation_forecast_end, 1800, $feed);
 ?>
 
