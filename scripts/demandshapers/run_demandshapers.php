@@ -418,8 +418,6 @@ foreach ($clubs as $club) {
     echo(PHP_EOL);
 
     $club_key = $club['club_key'];
-    // NOTE : preg_replace should be temporary, specifically done for Roupell Park
-    $club_key = preg_replace('/\s+/', '', $club_key);
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_key)){
         $log->error("Failed to fetch ID for $club_key's Demand feed. Using Generation feed to calculate start/end time instead.");
         if (!$use_id = $feed->exists_tag_name(1,"Generation",$club_key)) {
