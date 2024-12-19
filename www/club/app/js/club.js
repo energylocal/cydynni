@@ -24,6 +24,10 @@ var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
 var showClubPrice = true;
+if (club_settings.key == "totnes") {
+  showClubPrice = false;
+}
+$("#showClubPriceInput").prop('checked', showClubPrice);
 
 // Initial view range 24 hours
 view.end = (+new Date) + (3600000 * 24.0);

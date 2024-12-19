@@ -2,8 +2,14 @@
 
 function mergefeeds4($dir,$processitem)
 {
-    if (!isset($processitem->feeds)) return false;
-    if (!isset($processitem->output)) return false;
+    if (!isset($processitem->feeds)) {
+        print "merge error: provided processitem has no input feeds";
+        return false;
+    }
+    if (!isset($processitem->output)) {
+        print "merge error: provided processitem has no output feed";
+        return false;
+    }
     if (!isset($processitem->recalc)) $processitem->recalc = 0;
 
     $feeds = $processitem->feeds;
@@ -20,6 +26,7 @@ function mergefeeds4($dir,$processitem)
     }
 
     $meta = array();
+
     foreach ($feeds as $feed) {
         if (!file_exists($dir.$feed.".meta")) {
             print "merge error: input file $feed.meta does not exist\n";
@@ -28,8 +35,17 @@ function mergefeeds4($dir,$processitem)
         $meta[$feed] = getmeta($dir,$feed);
         if ($meta[$feed]->interval!=$interval) {
             print "merge error: feeds function, feeds must be half hourly (".$feed.")\n";
-            die;
+            return false;
         }
+    }
+
+    foreach ($feeds as $key => $feed) {
+        if ($meta[$feed]->start_time == 0) {
+            unset($feeds[$key]);
+        }
+    }
+
+    foreach ($feeds as $feed) {
         print "feed:$feed start_time=".$meta[$feed]->start_time." interval=".$meta[$feed]->interval."\n";
 
         //if ($meta[$feed]->start_time>0) {
@@ -44,8 +60,10 @@ function mergefeeds4($dir,$processitem)
     $out_meta->start_time = $start_time;
     $out_meta->interval = $interval;
     
-    if ($start_time==0) return false;
-    
+    if ($start_time==0) {
+        print "merge error: provided start time cannot be zero";
+        return false;
+    }
     print "OUT start_time=$start_time interval=$interval\n";
 
     createmeta($dir,$output,$out_meta);
