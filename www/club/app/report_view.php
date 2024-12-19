@@ -336,6 +336,7 @@ function t(s) {
         return translation[lang][s];
     } else {
         return s;
+        console.log("Translation for '"+s+"' not found.")
     }
 }
 

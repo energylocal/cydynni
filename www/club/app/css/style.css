@@ -605,7 +605,7 @@ table.tariff tbody tr.current th:first-child span:last-child::after{
     font-size: .8em;
 }
 table.tariff {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: #3d7b97;
 }
 table.tariff .text-midday {
@@ -639,7 +639,7 @@ table.tariff .bg-evening {
         font-size: inherit;
     }
     table.tariff {
-        font-size: 3vw;
+        font-size: 2.6vw;
     }
     table.tariff [scope=col] {
         width: 23vw;
@@ -655,7 +655,7 @@ table.tariff .bg-evening {
         display: inline!important;
     }
     table.tariff {
-        font-size: 2.4vw;
+        font-size: 1.8vw;
     }
 }
 @media screen and (min-width: 992px) {
@@ -668,7 +668,7 @@ table.tariff .bg-evening {
 }
 @media screen and (min-width: 1200px) {
     table.tariff {
-        font-size: 23px;
+        font-size: 20px;
     }
     table.tariff [scope=col] {
         width: 28%;

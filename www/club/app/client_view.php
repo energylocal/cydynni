@@ -49,6 +49,7 @@ $app_path = $path."Modules/club/app/";
             'club'=>$club,
             'club_settings'=>$club_settings,
             'tariffs_table'=>$tariffs_table,
+            'concise_tariffs_table' => $concise_tariffs_table,
             'is_advisor'=>$is_advisor
         )); ?>
     </div>
@@ -61,7 +62,8 @@ $app_path = $path."Modules/club/app/";
             'club_settings'=>$club_settings,
             'tariffs'=>$tariffs,
             'user_attributes'=>$user_attributes,
-            'tariffs_table'=>$tariffs_table
+            'tariffs_table'=>$tariffs_table,
+            'concise_tariffs_table' => $concise_tariffs_table,
         )); ?>
     </div>
    

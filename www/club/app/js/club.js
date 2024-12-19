@@ -9,7 +9,7 @@ var end = 0;
 var apikey = "";
 var units = "kW";
 
-var club_data = [];
+var club_consumption_data = [];
 var exported_generation_data = [];
 var used_generation_data = [];
 var clubseries = [];
@@ -22,14 +22,15 @@ var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
 var showClubPrice = true;
+if (club_settings.key == "totnes") {
+  showClubPrice = false;
+}
+$("#showClubPriceInput").prop('checked', showClubPrice);
 
 // Initial view range 24 hours
 view.end = (+new Date) + (3600000 * 24.0);
 view.start = view.end - (3600000 * 24.0 * 12);
-
-// var tariffs = club_settings.tariffs;
 var day_view = 1;
-
 function club_summary_load() {
 
     let start = Math.round(view.start * 0.001);
@@ -268,9 +269,9 @@ function club_bargraph_load() {
     if (generation_feed) {
       generation_data = feed.getaverage(generation_feed, view.start, view.end, interval, 0, 0);
     }
-    var club_data = {};
+    var club_consumption_data = {};
     if (consumption_feed) {
-      club_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
+      club_consumption_data = feed.getaverage(consumption_feed, view.start, view.end, interval, 0, 0);
     }
     var demandshaper_data = {};
     var demandshaper_max_val = 0;
@@ -308,9 +309,6 @@ function club_bargraph_load() {
     if (units == "kW") scale = 2;
 
     var data = {};
-    data.daytime = [];
-    data.evening = [];
-    data.overnight = [];
     data.export = [];
     data.selfuse = [];
     data.price = [];
@@ -322,16 +320,21 @@ function club_bargraph_load() {
 
     last_actual_reading_time = 0;
     
-    for (x in tariffs) {
-        if (data[tariffs[x].name] == undefined) {
-            data[tariffs[x].name] = [];
+    for (x in conciseTariffsTable) {
+        if (data[conciseTariffsTable[x].name] == undefined) {
+            data[conciseTariffsTable[x].name] = [];
         }
     }
-
-    for (var z in club_data) {
-        var time = club_data[z][0];
+    for (var z in club_consumption_data) {
+        var time = club_consumption_data[z][0];
         var d = new Date(time);
         var hour = d.getHours();
+        var day = d.getDay();
+        var weekend = 0;
+        // Check if it's a weekend (Saturday or Sunday)
+        if (day === 0 || day === 6) {
+            weekend = 1;
+        }
 
         // ------------------------------------------------
         var gen_forecast = null;
@@ -357,9 +360,9 @@ function club_bargraph_load() {
         }
 
         var consumption = 0;
-        if (club_data[z][1] !== null) {
-            consumption = club_data[z][1] * scale;
-            last_actual_reading_time = club_data[z][0]
+        if (club_consumption_data[z][1] !== null) {
+            consumption = club_consumption_data[z][1] * scale;
+            last_actual_reading_time = club_consumption_data[z][0]
         } else if (demand_forecast !== null) {
             consumption = demand_forecast
         }
@@ -381,12 +384,11 @@ function club_bargraph_load() {
 
         var unit_price = 0.0;
         
-        for (x in tariffs) {
-            data[tariffs[x].name][z] = [time, 0];
+        for (x in conciseTariffsTable) {
+            data[conciseTariffsTable[x].name][z] = [time, 0];
         }
         
-        // var bands = get_tariff_bands(tariff_history,time*0.001);
-        var band = get_tariff_band(tariffs,hour);
+        var band = get_tariff_band(conciseTariffsTable,hour,weekend);
         if (band) {
             unit_price = (band.import * imprt + band.generator * selfuse) / consumption
             data[band.name][z] = [time, imprt];
@@ -411,20 +413,23 @@ function club_bargraph_load() {
     var barwidth = widthprc * interval * 1000;
     // Actual
     clubseries.push({
+        key: "used_generation",
         stack: true, data: data.selfuse, color: generator_color, label: t("Used " + ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
     });
 
     // add series data for each tariff
     
-    for (x in tariffs) {
+    for (x in conciseTariffsTable) {
         clubseries.push({
-            stack: true, data: data[tariffs[x].name], color: tariffs[x].color, label: t(ucfirst(tariffs[x].name) + " Tariff"),
+            key: "TOUT",
+            stack: true, data: data[conciseTariffsTable[x].name], color: conciseTariffsTable[x].color, label: t(ucfirst(conciseTariffsTable[x].name) + " Tariff"),
             bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
         });
     }
 
     clubseries.push({
+        key: "unused_generation",
         stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
     });
@@ -432,6 +437,7 @@ function club_bargraph_load() {
     if (showClubPrice) {
 
         clubseries.push({
+            key: "good_time",
             data: data.demandshaper_price, color: "#fb1a80", label: t("Good time to use?"), yaxis: 2,
             lines: { show: true }
         });
@@ -440,6 +446,8 @@ function club_bargraph_load() {
     club_bargraph_draw();
 }
 
+// no longer used
+/*
 function get_tariff_bands(tariff_history,time) {
     var bands = []
     for (var i in tariff_history) {
@@ -448,9 +456,38 @@ function get_tariff_bands(tariff_history,time) {
         }
     }
     return bands;
-} 
+}
+*/
 
-function get_tariff_band(bands, hour) {
+function get_tariff_band(bands, hour, weekend) {
+    // first, if the requested hour falls within a weekend, check if there's a weekend tariff period that matches
+    if (weekend == 1) {
+        for (let i = 0; i < bands.length; i++) {
+            if (bands[i].weekend == 0) {
+                continue
+            }
+            const start = parseFloat(bands[i].start);
+
+            const end = parseFloat(bands[i].end);
+    
+            // If start is less than end, then the period is within a day
+            if (start < end) {
+                if (hour >= start && hour < end) {
+                    return bands[i];
+                }
+            }
+            // If start is greater than end, then the period is over midnight
+            else if (end < start) {
+                if (hour >= start || hour < end) {
+                    return bands[i];
+                }
+            }
+            // If start is equal to end, then the period is 24 hours (flat rate tariff)
+            else if (start === end) {
+                return bands[i];
+            }
+        }
+    }
     // Work out which tariff period this hour falls into
     for (let i = 0; i < bands.length; i++) {
         const start = parseFloat(bands[i].start);
@@ -669,38 +706,33 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
                 // Draw non estimate tooltip
                 var total_consumption = 0;
                 for (var i in clubseries) {
-                    var series = clubseries[i];
-                    // Only show tooltip item if defined and more than zero
-                    if (series.data[z] != undefined && series.data[z][1] > 0) {
-                        var translated_label = series.label;
-                        // captialize special cases of translated strings that are added into sentenses
-                        var selected_tariff_name = selected_series.toLowerCase().replace('tariff', '').trim();
-                        if (lang === 'cy_GB') selected_tariff_name = ucfirst(selected_tariff_name);
-
-                        if (/^Used/.test(translated_label)) {
-                            translated_label = t('Used %s').replace('%s', club_settings.generator);
-                        } else if (/^Unused/.test(translated_label)) {
-                            translated_label = t('Unused %s').replace('%s', club_settings.generator);
-                        } else if (selected_tariff_name != t("Good time to use?") && /Tariff$/.test(translated_label)) {
-                            translated_label = t('%s tariff').replace('%s', t(selected_tariff_name).toLowerCase());
+                  var series = clubseries[i];
+                  // Only show tooltip item if defined and more than zero
+                  if (series.data[z] != undefined && series.data[z][1] > 0) {
+                    switch(series.key) {
+                      case "used_generation":
+                      case "TOUT":
+                        out += series.label+": "+(series.data[z][1] * 1).toFixed(1) + units + "<br>";
+                        total_consumption += series.data[z][1] * 1;
+                        break;
+                      case "unused_generation":
+                        out += series.label+": "+(series.data[z][1] * 1).toFixed(1) + units + "<br>";
+                        break;
+                      case "good_time":
+                        out += series.label + ": " + (series.data[z][1] * 1).toFixed(1);
+                        if (series.data[z][1] < 3.33) {
+                          out += "😞";
+                        } else if (series.data[z][1] < 6.66) {
+                          out += "😐";
+                        } else {
+                          out += "🙂";
                         }
-                        if (series.label != t(ucfirst(club_settings.generator) + " estimate") && series.label != t("Club estimate")) {
-                            if (series.label != t("Good time to use?")) {
-                                out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + units + "<br>";
-                            } else {
-                                out += ucfirst(translated_label) + ": " + (series.data[z][1] * 1).toFixed(1) + "/10 ";
-                                if (series.data[z][1] < 3.33) {
-                                    out += "😞";
-                                } else if (series.data[z][1] < 6.66) {
-                                    out += "😐";
-                                } else {
-                                    out += "🙂";
-                                }
-                                out += "<br>";
-                            }
-                            if (series.label != t("Unused " + ucfirst(club_settings.generator))) total_consumption += series.data[z][1] * 1;
-                        }
+                        out += "<br>";
+                        break;
+                      default:
+                        alert("Unsupported series: "+series.label);
                     }
+                  }
                 }
                 if (total_consumption) out += t("Total consumption") + ": " + (total_consumption).toFixed(1) + units;
 
@@ -726,8 +758,8 @@ $(function () {
 
 function generateTariffsTableHTML(multiplierVAT) {
     tariffsTableBody = ""
-    for (var i=0; i<tariffsTable.length; i++){
-        tariffData = tariffsTable[i]
+    for (var i=0; i<conciseTariffsTable.length; i++){
+        tariffData = conciseTariffsTable[i]
         var tariffStart = new Date('1970-01-01T' + tariffData.start + 'Z').toLocaleTimeString('en-US',{timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}).replace(":00 AM", "").replace(":00 PM", "");
         if (Number(tariffData['start'].slice(0,2)) < 12 ){
             tariffStart += t('am')
@@ -742,21 +774,15 @@ function generateTariffsTableHTML(multiplierVAT) {
         }
         tariffsTableBody += `<tr>
         <th scope="row">
-            <span class="d-sm-inline d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
-            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}</span>
-            <br class="d-sm-none">
+        <span class="d-sm-inline d-md-none d-lg-none" style="color:${tariffData['color']}">${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1))}</span>
+            <span class="d-none d-md-inline d-lg-inline" style="color:${tariffData['color']}"> ${t(tariffData['name'].charAt(0).toUpperCase() + tariffData['name'].slice(1)+" Price")}
+            </span>
+            <br>
                                                 <span class="font-weight-light text-smaller-sm">${tariffStart} - ${tariffEnd}</span>
         </th>
         <td style="background-color:${generator_color}">${(Number(tariffData['generator'])*multiplierVAT).toFixed(2)}${t("p")}</td>
-        `
-        if (clubid === 15 && tariffData['name'] == "Evening") {
-            tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}
-            <div style="font-size: 0.8em; color: #888;">${Math.ceil(23.77*multiplierVAT*100)/100}p on weekends</div></td>
-            </tr>`
-    } else {
-        tariffsTableBody += `<td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}</td>
+        <td style="background-color:#f0f0f0; color:${tariffData['color']}">${(Number(tariffData['import'])*multiplierVAT).toFixed(2)}${t("p")}</td>
         </tr>`
-    }
     }
     return tariffsTableBody
 }

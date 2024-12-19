@@ -64,7 +64,7 @@
 
                   <div style="padding:10px">
                     <div style="padding-top:5px; padding-bottom:5px">
-                      <?php foreach ($tariffs_table as $t) : ?>
+                      <?php foreach ($concise_tariffs_table as $t) : ?>
                       <div class="legend-label-box" style="background-color:<?=$t->color?>"></div>
                       <span class="legend-label"><?=t(ucfirst($t->name))?></span>
                       <?php endforeach; ?>
@@ -87,7 +87,7 @@
                     
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
-                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput" checked>
+                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput">
                         <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Best time to use power 10/10, worst time 0/10"); ?></strong></label>
                     </div>
 
