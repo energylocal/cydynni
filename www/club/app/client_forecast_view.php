@@ -87,7 +87,7 @@
                     
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
-                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput" checked>
+                        <input type="checkbox" class="custom-control-input m-0 mr-2" id="showClubPriceInput">
                         <label class="custom-control-label m-0" for="showClubPriceInput"><strong><?php echo t("Best time to use power 10/10, worst time 0/10"); ?></strong></label>
                     </div>
 
