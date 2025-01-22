@@ -495,7 +495,6 @@ foreach ($clubs as $club) {
     if (!empty($gen_forecast_profile_sum)) {
         generate_club_demandshaper($club_key, $demand_start, $demand_end, $generation_forecast_start, $generation_forecast_end, $gen_forecast_profile_sum, $club['generators'][0]['generator_config']['enable_turndown'], $feed, $redis, $club_settings, $tariff_class, $log, $number_of_users);
     }
-    $gen_forecast_profile_sum = [];
 
     // if gen_profile_sum isn't empty, post it to the club's Generation feed
     if (!empty($gen_profile_sum)) {
