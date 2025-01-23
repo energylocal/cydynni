@@ -112,7 +112,8 @@ function clubstatus_update() {
                 bridport: {high:40,medium:20,low:10},
                 llandysul: {high:40,medium:20,low:10},
                 test: {high:40,medium:20,low:10},
-                dyffrynbanw: {high:8,medium:6,low:4}
+                dyffrynbanw: {high:8,medium:6,low:4},
+                northoxfordshire: {high:20,medium:10,low:5}
                 //economy7: {high:8,medium:6,low:4}
             }
 
