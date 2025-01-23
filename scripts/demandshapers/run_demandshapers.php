@@ -461,9 +461,12 @@ foreach ($clubs as $club) {
 
     $generation_start = NULL;
     $generation_end = NULL;
-    $generation_start = $feed->get_timevalue($club_gen_id);
-    if ($generation_start == NULL) {
-        echo("Failed to fetch timevalue for feed $use_id. Continuing to next club.");
+    $gen_start_timevalue = $feed->get_timevalue($club_gen_id);
+    if ($gen_start_timevalue == NULL) {
+        error("Failed to fetch timevalue for feed $club_gen_id. Continuing to next club.");
+        continue;
+    } else {
+        $generation_start = $gen_start_timevalue["time"]*1000;
     }
 
     $interval = 1800;
@@ -481,7 +484,13 @@ foreach ($clubs as $club) {
     foreach ($club['generators'] as $generator) {
         // if Generation feed exists for this generator, fetch data from it
         if ($generator_feedid = $feed->exists_tag_name(1,"Generators",$generator['generator_key'])){
-            $gen_end = $feed->get_timevalue($generator_feedid);
+            $gen_end_timevalue = $feed->get_timevalue($generator_feedid);
+            if ($gen_end_timevalue == NULL) {
+                error("Failed to fetch timevalue for generator feed $generator_feedid, continuing to next generator.");
+                continue;
+            } else {
+                $gen_end = $gen_end_timevalue["time"]*1000;
+            }
             if ($generation_end == NULL || $generation_end > $gen_end) {
                 $generation_end = $gen_end;
             }
