@@ -418,11 +418,16 @@ foreach ($clubs as $club) {
     echo(PHP_EOL);
 
     $club_key = $club['club_key'];
+    if (!$club_gen_id = $feed->exists_tag_name(1,"Generation",$club_key)) {
+        echo("Failed to fetch ID for $club_key's Generation feed");
+    }
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_key)){
-        $log->error("Failed to fetch ID for $club_key's Demand feed. Using Generation feed to calculate start/end time instead.");
-        if (!$use_id = $feed->exists_tag_name(1,"Generation",$club_key)) {
-            $log->error("Failed to fetch ID for $club_key's Generation feed to replace Demand feed. Skipping club.");
+        echo("Failed to fetch ID for $club_key's Demand feed. Using Generation feed to calculate start/end time instead.");
+        if (!$club_gen_id) {
+            echo("Failed to replace use_id with club_gen_id, as club_gen_id is null. Skipping club.");
             continue;
+        } else {
+            $use_id = $club_gen_id;
         }
     }
     // Force cache reload
@@ -435,6 +440,13 @@ foreach ($clubs as $club) {
     }
     $demand_end = $timevalue["time"]*1000;
     $demand_start = $demand_end - (3600*24.0*7*1000);
+
+    $generation_start = NULL;
+    $generation_end = NULL;
+    $generation_start = $feed->get_timevalue($club_gen_id);
+    if ($generation_start == NULL) {
+        echo("Failed to fetch timevalue for feed $use_id. Continuing to next club.");
+    }
 
     $interval = 1800;
     $generation_forecast_start = floor(($demand_end*0.001)/$interval)*$interval;
@@ -451,7 +463,17 @@ foreach ($clubs as $club) {
     foreach ($club['generators'] as $generator) {
         // if Generation feed exists for this generator, fetch data from it
         if ($generator_feedid = $feed->exists_tag_name(1,"Generators",$generator['generator_key'])){
-            $gen_profile = $feed->get_data($generator_feedid,$demand_start,$demand_end,1800);
+            $gen_end = $feed->get_timevalue($generator_feedid);
+            if ($generation_end == NULL || $generation_end > $gen_end) {
+                $generation_end = $gen_end;
+            }
+            if ($generation_start > $demand_start) {
+                $generation_start = $demand_start;
+            }
+            if ($generation_end < $demand_end) {
+                $generation_end = $demand_end;
+            }
+            $gen_profile = $feed->get_data($generator_feedid,$generation_start,$generation_end,1800);
         }
 
         // if generation data exists, add it to $gen_profile_sum
