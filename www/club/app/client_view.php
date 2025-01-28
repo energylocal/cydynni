@@ -326,15 +326,13 @@ $(".period-select").val(date_selected);
 var flot_font_size = 12;
 var previousPoint = false;
 
-if (!session.read) {
-    clubstatus_update();
+clubstatus_update();
 
-    club_summary_load();
-    club_bargraph_load();
-    // generate inner HTML for tariffs table body, insert into table
-    var tariffsTableHTML = generateTariffsTableHTML(1.05);
-    insertTariffsTableHTML(tariffsTableHTML);
-}
+club_summary_load();
+club_bargraph_load();
+// generate inner HTML for tariffs table body, insert into table
+var tariffsTableHTML = generateTariffsTableHTML(1.05);
+insertTariffsTableHTML(tariffsTableHTML)
 
 if (session.read) {
     household_summary_load();
