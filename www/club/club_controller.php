@@ -346,7 +346,7 @@ function club_controller()
             }
             
             // FIXME: clubs need to come from DB
-            if (in_array($key,array(if (in_array($key,array("bethesda","bridport","capeldewi","corwen","crickhowell","bethesda_solar","machynlleth","northoxfordshire","repower","totnes"))) {
+            if (in_array($key,array("bethesda","bridport","capeldewi","corwen","crickhowell","bethesda_solar","machynlleth","northoxfordshire","repower","totnes"))) {
                 if ($format=="standard") {
                     if ($result = $redis->get("energylocal:forecast:$key")) {
                         return json_decode($result);
