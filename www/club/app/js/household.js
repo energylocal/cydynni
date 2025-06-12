@@ -396,7 +396,7 @@ $('#household_bargraph_placeholder').bind("plotselected", function (event, range
     $(".period-select").val("custom");
 
     household_bargraph_load();
-    club_bargraph_load();
+    club_bargraph_load(false);
     club_bargraph_draw();
 });
 

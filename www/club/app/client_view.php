@@ -327,10 +327,10 @@ var flot_font_size = 12;
 var previousPoint = false;
 
 <?php if ($club_settings["has_generator"]) { ?>
-clubstatus_update();
+
 
 club_summary_load();
-club_bargraph_load();
+club_bargraph_load(true);
 // generate inner HTML for tariffs table body, insert into table
 var tariffsTableHTML = generateTariffsTableHTML(1.05);
 insertTariffsTableHTML(tariffsTableHTML)
@@ -436,7 +436,7 @@ $(".period-select").change(function(event) {
             household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
     }
 
-    club_bargraph_load();
+    club_bargraph_load(false);
     //club_bargraph_draw();
     $(".period-select").val(date_selected);
     
