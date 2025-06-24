@@ -125,8 +125,6 @@ var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes
 var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : 0; ?>;
 
 </script>
-
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
