@@ -129,6 +129,13 @@ a:visited {
     text-align:center;
 }
 
+.block-tooltip {
+    margin-bottom:8px;
+    overflow:visible;
+    transition: height linear 0.2s;
+    text-align:center;
+}
+
 .block-title {
     padding:10px;
     /*height: 20px;*/

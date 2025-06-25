@@ -339,7 +339,24 @@ function clubstatus_update(data) {
                   if (prc_gen>=1.0) {
                       $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+" "+t("approx")+" <b>"+prc_gen+"%</b> "+t("of club consumption."));
                   } else {
-                      $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+                        if (club == 'totnes') {
+                            $("#gen-prc").html(t("No local "+club_settings.generator+" currently available.")+`
+                                <div class="tooltip-container">
+                                    <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                    <div class="tooltip-text long-tooltip">
+                                        <p>Totnes is proud to have two hydro turbines helping to generate local, renewable electricity. This clean energy is first used by the KEVICC School and Precision Casting's foundry.</p>
+                                        <p>Any surplus electricity after their use is then exported to our Energy Local club members.</p>
+                                        <p>So if you see 0kW of export here, don't worry - it doesn't mean the turbines have stopped generating. It only means that, at that moment, all the energy is being used by your local school & foundry.</p>
+                                    </div>
+                                </div>
+                            `);
+                        } else {
+                            $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+                        }
                   }
               } else {
                   $("#gen-prc").html("");

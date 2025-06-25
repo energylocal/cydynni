@@ -1,5 +1,5 @@
 <?php global $session; ?>
-            <div class="block">
+            <div class="block-tooltip">
                 <div class="block-title hideable-block" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
