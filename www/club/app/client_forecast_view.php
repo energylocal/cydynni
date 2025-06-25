@@ -73,7 +73,6 @@
                           echo t("Generating") . ' <span id="generation-power">0</span> kW ' . t("now");
                         }
                       ?>
-                      </div>
                     </div>
                   </div>
                   
