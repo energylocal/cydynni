@@ -24,7 +24,7 @@ var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
 var showClubPrice = true;
-if (club_settings.key == "totnes") {
+if (club_settings.key == "totnes" || club_settings.key == "dyffrynbanw") {
   showClubPrice = false;
 }
 $("#showClubPriceInput").prop('checked', showClubPrice);
