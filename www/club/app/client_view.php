@@ -129,7 +129,7 @@ var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v="></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/comparison.js?v=<?php echo $v; ?>"></script>
 
@@ -226,20 +226,20 @@ if (token!=="") {
             // if token exists and hasn't expired
             if (result['success'] == true) {
                 $("#login-block").hide();
-                $("#passwordreset-block-new").show(); 
+                $("#finish-passwordreset-block").show(); 
                 user_id = result['user_id']
             // if token has expired
             } else if (result.token_expired) {
                     $("#login-block").hide();
-                    $("#passwordreset-block-new").show(); 
-                    $("#passwordreset-new-input").hide();
-                    $("#passwordreset-new-title").html(t("Password reset link has expired. Please repeat the password reset process to receive a new one."));
+                    $("#finish-passwordreset-block").show(); 
+                    $("#finish-passwordreset-input").hide();
+                    $("#finish-passwordreset-title").html(t("Password reset link has expired. Please repeat the password reset process to receive a new one."));
             // if token does not exist
             } else if (!result.token_exists) {
                 $("#login-block").hide();
-                $("#passwordreset-block-new").show(); 
-                $("#passwordreset-new-input").hide();
-                $("#passwordreset-new-title").html(t("Incorrect password reset link. Please verify that you have copied this link correctly."));
+                $("#finish-passwordreset-block").show(); 
+                $("#finish-passwordreset-input").hide();
+                $("#finish-passwordreset-title").html(t("Incorrect password reset link. Please verify that you have copied this link correctly."));
             }
         }
     }) 
