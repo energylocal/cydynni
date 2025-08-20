@@ -248,7 +248,7 @@ function club_pie_draw() {
 var last_actual_reading_time = 0;
 var current_hh = 0;
 
-var forecast_threshold = 100 // if a timevalue's data_completeness is below this amount (%), it will be highlighted as forecast data
+var forecast_threshold = 50 // if a timevalue's data_completeness is below this amount (%), it will be highlighted as forecast data
 var forecast_period_start = null
 var forecast_periods = []
 
