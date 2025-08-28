@@ -52,9 +52,9 @@
                 <br>
                 <!--
                 <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?></div>
+                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings['generator_types_message']['lower_case']." power!"); ?></div>
                 </div>-->
-                <?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?><br><br>
+                <?php echo t("in the local area by using your local resource ".$club_settings['generator_types_message']['lower_case']." power!"); ?><br><br>
                   
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 
                     <!--
                     <div class="bg-club2">
-                      <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), ucfirst($club_settings["generator"]),t('fortnight')) . "."; ?></div>
+                      <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), $club_settings['generator_types_message']['upper_case_first'],t('fortnight')) . "."; ?></div>
                     </div>
                     
                     <div class="no-padding">
@@ -121,7 +121,7 @@
                     <div style="clear:both"></div>
 
                     <!--<div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings["generator"].", the more money stays in the local club."); ?></div>
+                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings['generator_types_message']['lower_case'].", the more money stays in the local club."); ?></div>
                     </div>-->
                     
                 </div>

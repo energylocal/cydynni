@@ -91,7 +91,7 @@
                       <span class="legend-label"><?=t(ucfirst($t->name))?></span>
                       <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
-                      <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
+                      <span class="legend-label" ><?php echo t($club_settings['generator_types_message']['upper_case_all']); ?></span>
                       <span id="club-price-legend">
                         <div class="legend-label-box" style="background-color:#fb1a80"></div>
                         <span class="legend-label" ><?php echo t("Best times to use power (0-10)");?></span>
@@ -104,8 +104,8 @@
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <div id="status-summary"><?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?></div>
-                  <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>-->
+                  <div id="status-summary"><?php echo t($club_settings['generator_types_message']['upper_case_first']." output is currently exceeding club consumption"); ?></div>
+                  <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings['generator_types_message']['lower_case']." output and club consumption up to the present time"); ?></span>-->
                     
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
@@ -129,7 +129,7 @@
                         <thead>
                             <tr>
                             <th></th>
-                            <th scope="col" style="background-color:<?=$club_settings["generator_color"]?>"><?=t(ucfirst($club_settings["generator"])); ?></th>
+                            <th scope="col" style="background-color:<?=$club_settings["generator_color"]?>"><?=t($club_settings['generator_types_message']['upper_case_all']); ?></th>
                             <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>

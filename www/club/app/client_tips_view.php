@@ -7,7 +7,7 @@
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("DISHWASHER") ?></h2>
                             </div>
-                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your dishwasher can be moved to avoid morning and evening peaks and take advantage of ".$club_settings['generator_types_message']['lower_case']." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>
@@ -47,7 +47,7 @@
                             <div class="tips-appliance-name">
                                 <h2><?php echo t("WASHING MACHINE") ?></h2>
                             </div>
-                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of ".$club_settings["generator"]." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
+                            <?php echo t("The time you run your washing machine can be moved to avoid morning and evening peaks and take advantage of ".$club_settings['generator_types_message']['lower_case']." power and the cheaper prices in the daytime (11am - 4pm) and overnight (8pm - 6am).")
                             ?>
                         </figcaption>
                     </figure>

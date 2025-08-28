@@ -95,7 +95,7 @@ function draw_club_summary(result) {
     if (result.generation.total != undefined) {
         legend += '<tr>'
         legend += '<td><div class="key" style="background-color:' + club_settings.generator_color + '"></div></td>'
-        legend += '<td><b>' + t(ucfirst(club_settings.generator)) + '</b><br>'
+        legend += '<td><b>' + t(club_settings.generator_types_message.upper_case_all) + '</b><br>'
         legend += result.generation.total.toFixed(2) + " kWh "
         if (result.generation.total > 0) legend += "@" + (100 * result.generation_cost.total / result.generation.total).toFixed(2) + " p/kWh"
         legend += "<br>"
@@ -174,13 +174,13 @@ function draw_club_summary(result) {
 
     setTimeout(function () {
         if (score < 30) {
-            $("#club_statusmsg").html(t("We are not using much " + club_settings.generator + " at the moment"));
+            $("#club_statusmsg").html(t("We are not using much " + club_settings.generator_types_message.lower_case + " at the moment"));
         }
         if (score >= 30 && score < 70) {
-            $("#club_statusmsg").html(t("We could do more to make the most of the " + club_settings.generator + " power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
+            $("#club_statusmsg").html(t("We could do more to make the most of the " + club_settings.generator_types_message.lower_case + " power and power at cheaper times of day. Can we move more electricity use away from peak times?"));
         }
         if (score >= 70) {
-            $("#club_statusmsg").html(t("We're doing really well using the " + club_settings.generator + " and cheaper power"));
+            $("#club_statusmsg").html(t("We're doing really well using the " + club_settings.generator_types_message.lower_case + " and cheaper power"));
         }
     }, 400);
 
@@ -335,12 +335,7 @@ function clubstatus_update(data) {
               // if (tariff_name=="DAYTIME") tariff_name = "DAY TIME";
               // $("#status-title").html(t(tariff_name));
               
-              if (live.club>0) {
-                  if (prc_gen>=1.0) {
-                      $("#gen-prc").html(ucfirst(club_settings.generator)+" "+t("currently providing")+" "+t("approx")+" <b>"+prc_gen+"%</b> "+t("of club consumption."));
-                  } else {
-                        if (club == 'totnes') {
-                            $("#gen-prc").html(t("No local "+club_settings.generator+" currently available.")+`
+              var totnes_hydro_tooltip = `
                                 <div class="tooltip-container">
                                     <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
@@ -353,9 +348,27 @@ function clubstatus_update(data) {
                                         <p>So if you see 0kW of export here, don't worry - it doesn't mean the turbines have stopped generating. It only means that, at that moment, all the energy is being used by your local school & foundry.</p>
                                     </div>
                                 </div>
-                            `);
+                            `
+              if (live.club>0) {
+                  if (prc_gen>=1.0) {
+                    if (club == 'totnes') {
+                        $("#gen-prc").html(club_settings.generator_types_message.upper_case_first+" "+t("currently providing")+" "+t("approx")+" <b>"+prc_gen+"%</b> "+t("of club consumption.")+totnes_hydro_tooltip);
+                    } else {
+                        $("#gen-prc").html(club_settings.generator_types_message.upper_case_first+" "+t("currently providing")+" "+t("approx")+" <b>"+prc_gen+"%</b> "+t("of club consumption."));
+                    }
+                  } else {
+                        if (club_settings.generator_types_message.lower_case === 'local generation') {
+                            if (club == 'totnes') {
+                                $("#gen-prc").html(t("No local generation currently available.")+totnes_hydro_tooltip);
+                            } else {
+                                $("#gen-prc").html(t("No local generation currently available."));
+                            }
                         } else {
-                            $("#gen-prc").html(t("No local "+club_settings.generator+" currently available."));
+                            if (club == 'totnes') {
+                                $("#gen-prc").html(t("No local "+club_settings.generator_types_message.lower_case+" currently available.")+totnes_hydro_tooltip);
+                            } else {
+                                $("#gen-prc").html(t("No local "+club_settings.generator_types_message.lower_case+" currently available."));
+                            }
                         }
                   }
               } else {
@@ -418,11 +431,11 @@ function clubstatus_update(data) {
               var consumption = Math.round(live.club||0);
               
               if (generation > consumption ) {
-                  $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently exceeding club consumption'));
+                  $('#status-summary').text(t(club_settings.generator_types_message.upper_case_first+' output is currently exceeding club consumption'));
               } else if (generation == consumption) {
-                  $('#status-summary').text(t(ucfirst(club_settings.generator)+' output currently matches club consumption'));
+                  $('#status-summary').text(t(club_settings.generator_types_message.upper_case_first+' output currently matches club consumption'));
               } else {
-                  $('#status-summary').text(t(ucfirst(club_settings.generator)+' output is currently lower than club consumption'));
+                  $('#status-summary').text(t(club_settings.generator_types_message.upper_case_first+' output is currently lower than club consumption'));
               }
           }
       });
@@ -531,7 +544,7 @@ function club_bargraph_load(update_clubstatus) {
                 $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(date_selected)));
             } else if (date_selected == "custom") {
                 $(".club_date").html(t("For the range selected in the graph") + ":");
-                $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", ucfirst(club_settings.generator)));
+                $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s for the range selected").replace("%s", club_settings.generator_types_message.upper_case_first));
             }
 
             club_summary_load();
@@ -560,7 +573,7 @@ function club_bargraph_load(update_clubstatus) {
 
             data.gen_forecast = [];
             data.demand_forecast = [];
-
+            console.log(conciseTariffsTable)
             for (x in conciseTariffsTable) {
                 if (data[conciseTariffsTable[x].name] == undefined) {
                     data[conciseTariffsTable[x].name] = [];
@@ -634,7 +647,7 @@ function club_bargraph_load(update_clubstatus) {
             // Actual
             clubseries.push({
                 key: "used_generation",
-                stack: true, data: data.selfuse, color: generator_color, label: t("Used " + ucfirst(club_settings.generator)),
+                stack: true, data: data.selfuse, color: generator_color, label: t("Used " + club_settings.generator_types_message.upper_case_all),
                 bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
             });
 
@@ -649,7 +662,7 @@ function club_bargraph_load(update_clubstatus) {
 
                 clubseries.push({
                 key: "unused_generation",
-                        stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator)),
+                        stack: true, data: data.export, color: export_color, label: t("Unused " + ucfirst(club_settings.generator_types_message.upper_case_all)),
                         bars: { show: true, align: "center", barWidth: barwidth, fill: 1.0, lineWidth: 0 }
                 });
 
@@ -910,7 +923,7 @@ $(".club-right").click(function (event) {
 
 $('.visnav-club').click(function (event) {
     var range = Object.values(event.target.classList).join('').replace('visnav-club', '').replace('club-', '');
-    $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s in the last %s").replace("%s", ucfirst(club_settings.generator)).replace("%s", t(range)) + ":");
+    $(".club_breakdown").html(t("How much of the electricity the club used, came from the %s in the last %s").replace("%s", club_settings.generator_types_message.lower_case).replace("%s", t(range)) + ":");
     $(".club_date").html(t("In the last %s, we scored:").replace('%s', t(range)));
 });
 
@@ -939,7 +952,7 @@ $('#club_bargraph_placeholder').bind("plothover", function (event, pos, item) {
             var out = moment(d).format('h:mma ddd, MMM Do') + "<br>";
 
             // Non estimate part of the graph
-            if (selected_series != t(ucfirst(club_settings.generator) + " estimate") && selected_series != t("Club estimate")) {
+            if (selected_series != t(club_settings.generator_types_message.upper_case_first + " estimate") && selected_series != t("Club estimate")) {
 
                 // Draw non estimate tooltip
                 var total_consumption = 0;
