@@ -17,6 +17,7 @@ class Club
     private $mysqli;
     private $user;
     private $feed;
+    private $log;
 
     public function __construct($mysqli,$user = false,$feed = false)
     {
