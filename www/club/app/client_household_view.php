@@ -254,7 +254,19 @@
                 <?php if ($club_settings["has_generator"]) { ?>
                 <div class="bg-household">
                   <b><span class="household_date"></span></b>
-                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100</div>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100
+                    <div class="tooltip-container">
+                      <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                      <div class="tooltip-text long-tooltip">
+                        <p>Your household score represents the percentage of energy consumed by you which came from local generation.</p>
+                        <p>For example, if 50% of your energy usage came from local generation within a period of time, your household score would be 50/100.</p>
+                      </div>
+                    </div>
+                  </div>
                   <!--<div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score"></span>/100</div>-->
                 </div>
                 
