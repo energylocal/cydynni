@@ -76,11 +76,13 @@ foreach ($clubs as $club)
                         $result = $feed->create($userid,"user","gen_hh",5,json_decode('{"interval":1800}'));
                         if (!$result['success']) { echo json_encode($result)."\n"; die; }
                         $gen_hh_id = $result['feedid'];
+                        print "Creating gen_hh meta for userid: ".$userid." with start_time: ".pdate($meta_tmp->start_time)."\n";
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     }
                     if (($recalc_club && $clubid==$recalc_club) || $recalc_all) {
                         $feed->clear($gen_hh_id);
                         createmeta($dir,$gen_hh_id,$meta_tmp);
+                        print "Creating gen_hh meta via recalc for userid: ".$userid." with start_time: ".pdate($meta_tmp->start_time)."\n";
                     }
                     
                     $fh[$gen_hh_id] = fopen($dir."$gen_hh_id.dat", 'c+');
