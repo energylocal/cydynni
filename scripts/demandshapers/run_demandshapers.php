@@ -443,7 +443,9 @@ foreach ($clubs as $club) {
         if (!$club_gen_id) {
             error("Club doesn't have Demand or Generation feed - creating feeds ready for sharing algorithm, then continuing to next club");
             $result = $feed->create_public(1,"Generation",$club_key,5,json_decode('{"interval":1800}'));
+            if (!$result['success']) { echo json_encode($result)."\n"; fail(); }
             $result = $feed->create_public(1,"Demand",$club_key,5,json_decode('{"interval":1800}'));
+            if (!$result['success']) { echo json_encode($result)."\n"; fail(); }
             continue;
         } else {
             $use_id = $club_gen_id;

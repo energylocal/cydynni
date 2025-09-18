@@ -40,6 +40,10 @@ while($row = $result->fetch_array()) {
 
 foreach ($clubs as $club)
 {
+    // if demandshaper hasn't yet output an aggregated club generation feed, skip club
+    if (!$gen_id) {
+        continue;
+    }
     // ----------------------------------------------------------------
     // 1. Start by finding out the start time of the feeds to aggregate
     // ----------------------------------------------------------------
