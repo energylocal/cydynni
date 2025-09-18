@@ -441,7 +441,9 @@ foreach ($clubs as $club) {
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_key)){
         error("Failed to fetch ID for $club_key's Demand feed. Using Generation feed to calculate start/end time instead.");
         if (!$club_gen_id) {
-            error("Failed to replace use_id with club_gen_id, as club_gen_id is null. Skipping club.");
+            error("Club doesn't have Demand or Generation feed - creating feeds ready for sharing algorithm, then continuing to next club");
+            $result = $feed->create_public(1,"Generation",$club_key,5,json_decode('{"interval":1800}'));
+            $result = $feed->create_public(1,"Demand",$club_key,5,json_decode('{"interval":1800}'));
             continue;
         } else {
             $use_id = $club_gen_id;
