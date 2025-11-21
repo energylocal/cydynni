@@ -10,7 +10,8 @@ $params = array(
 // ------------------------------------------------
 // Find users
 // ------------------------------------------------
-$result = $mysqli->query("SELECT * FROM cydynni");
+$result = $mysqli->query("
+SELECT cy.* FROM cydynni cy INNER JOIN club c ON c.id=cy.clubs_id INNER JOIN suppliers s ON s.id=c.supplier_id WHERE s.`key`='octopus';");
 while ($row = $result->fetch_object()) {
 
     $mpan = $row->mpan;
