@@ -8,7 +8,19 @@
                   <div style="background-color:#ffb401; color:#fff">
                   
                     <b><span class="club_date"><?= sprintf(t('In the last %s, we scored:'),t("fortnight")) ?></span></b>
-                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score">50</span>/100</div>
+                    <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score">50</span>/100
+                      <div class="tooltip-container">
+                        <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="16" x2="12" y2="12"></line>
+                          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <div class="tooltip-text long-tooltip">
+                          <p>Your club's score represents the percentage of energy consumed by the club which came from local generation.</p>
+                          <p>For example, if 50% of your club's energy usage came from local generation within a period of time, your club's score would be 50/100.</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   <div class="no-padding">
@@ -52,9 +64,9 @@
                 <br>
                 <!--
                 <div style="background-color:#ffb401; color:#fff; padding:20px">
-                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?></div>
+                    <div class="bound"><?php echo t("in the local area by using your local resource ".$club_settings['generator_types_message']['lower_case']." power!"); ?></div>
                 </div>-->
-                <?php echo t("in the local area by using your local resource ".$club_settings["generator"]." power!"); ?><br><br>
+                <?php echo t("in the local area by using your local resource ".$club_settings['generator_types_message']['lower_case']." power!"); ?><br><br>
                   
                 </div>
             </div>
@@ -66,7 +78,7 @@
                 
                     <!--
                     <div class="bg-club2">
-                      <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), ucfirst($club_settings["generator"]),t('fortnight')) . "."; ?></div>
+                      <div class="bound club_breakdown"><?php printf(t("How much of the electricity the club used, came from the %s in the last %s"), $club_settings['generator_types_message']['upper_case_first'],t('fortnight')) . "."; ?></div>
                     </div>
                     
                     <div class="no-padding">
@@ -121,7 +133,7 @@
                     <div style="clear:both"></div>
 
                     <!--<div class="bg-club2" style="padding:20px">
-                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings["generator"].", the more money stays in the local club."); ?></div>
+                      <div class="bound"><?php echo t("The bigger the percentage of ".$club_settings['generator_types_message']['lower_case'].", the more money stays in the local club."); ?></div>
                     </div>-->
                     
                 </div>

@@ -47,31 +47,31 @@
                 </div>
             </div>
 
-            <div id="passwordreset-block" class="block" style="display:none">
+            <div id="start-passwordreset-block" class="block" style="display:none">
                 <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                     <div class="bg-household" style="padding:20px">
-                        <p id="passwordreset-title"></p>
+                        <p id="start-passwordreset-title"></p>
                         <p>
-                          <input id="passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
-                          <button id="passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
+                          <input id="start-passwordreset-email" type="text" placeholder="Email..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <button id="start-passwordreset" class="btn"><?php echo t("Reset password");?></button> <button id="start-passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
                         </p>
-                        <div id="passwordreset-alert"></div>
+                        <div id="start-passwordreset-alert"></div>
                     </div>
                 </div>
             </div>
 
-            <div id="passwordreset-block-new" class="block" style="display:none">
+            <div id="finish-passwordreset-block" class="block" style="display:none">
                 <div class="block-title hideable-block bg-household"><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                     <div class="bg-household" style="padding:20px">
-                        <p id="passwordreset-new-title">Please enter your new password</p>
-                        <p id="passwordreset-new-input">
-                          <input id="passwordreset-new-password" type="password" placeholder="New password..." style="border: 1px solid rgb(41,171,226)"><br><br>
-                          <input id="passwordreset-new-confirm" type="password" placeholder="Confirm new password..." style="border: 1px solid rgb(41,171,226)"><br><br>
-                          <button id="passwordreset-new" class="btn"><?php echo t("Change password");?></button> <button id="passwordreset-new-cancel" class="btn"><?php echo t("Cancel");?></button><br>
+                        <p id="finish-passwordreset-title">Please enter your new password</p>
+                        <p id="finish-passwordreset-input">
+                          <input id="finish-passwordreset-password" type="password" placeholder="New password..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <input id="finish-passwordreset-confirm" type="password" placeholder="Confirm new password..." style="border: 1px solid rgb(41,171,226)"><br><br>
+                          <button id="finish-passwordreset" class="btn"><?php echo t("Change password");?></button> <button id="finish-passwordreset-cancel" class="btn"><?php echo t("Cancel");?></button><br>
                         </p>
-                        <div id="passwordreset-new-alert"></div>
+                        <div id="finish-passwordreset-alert"></div>
                     </div>
                 </div>
             </div>
@@ -254,7 +254,19 @@
                 <?php if ($club_settings["has_generator"]) { ?>
                 <div class="bg-household">
                   <b><span class="household_date"></span></b>
-                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100</div>
+                  <div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="household_score">100</span>/100
+                    <div class="tooltip-container">
+                      <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                      <div class="tooltip-text long-tooltip">
+                        <p>Your household score represents the percentage of energy consumed by you which came from local generation.</p>
+                        <p>For example, if 50% of your energy usage came from local generation within a period of time, your household score would be 50/100.</p>
+                      </div>
+                    </div>
+                  </div>
                   <!--<div style="font-size:22px; font-weight:bold; padding-top:5px"><span class="club_score"></span>/100</div>-->
                 </div>
                 

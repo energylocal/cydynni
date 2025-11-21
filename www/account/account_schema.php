@@ -11,8 +11,8 @@ $schema['club_accounts'] = array(
 $schema['cydynni'] = array(
     'userid' => array('type' => 'int(11)', 'Null'=>'NO', 'Key'=>'PRI', 'Extra'=>'auto_increment'),
     'mpan' => array('type' => 'varchar(32)', "default"=>""),
-    'welcomedate' => array('type' => 'varchar(32)', "default"=>"not sent"),
-    'reportdate' => array('type' => 'varchar(32)', "default"=>"not sent"),
+    'welcomedate' => array('type' => 'varchar(32)', "default"=>"0"),
+    'reportdate' => array('type' => 'varchar(32)', "default"=>"0"),
     'clubs_id' => array('type'=>'int(11)'),
     'cad_serial' => array('type' => 'varchar(11)', "default"=>""),
     'meter_serial' => array('type' => 'varchar(11)', "default"=>""),

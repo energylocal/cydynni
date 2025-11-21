@@ -12,7 +12,7 @@ $app_path = $path."Modules/club/app/";
 <style>body { line-height:unset !important; }</style>
 <link rel="stylesheet" type="text/css" href="<?php echo $app_path; ?>css/style.css?v=<?php echo $v; ?>" />
 <!--[if IE]><script language="javascript" type="text/javascript" src="lib/excanvas.min.js"></script><![endif]-->    
-<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.min.js"></script>
+<script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.time.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.selection.min.js"></script>
 <script type="text/javascript" src="<?php echo $path; ?>Lib/flot/jquery.flot.stack.min.js"></script>
@@ -125,13 +125,11 @@ var targetMax = <?php echo isset($user_attributes->targetMax) ? $user_attributes
 var targetMin = <?php echo isset($user_attributes->targetMin) ? $user_attributes->targetMin : 0; ?>;
 
 </script>
-
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/clubstatus.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/pie.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/household_settings.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/club.js?v=<?php echo $v; ?>"></script>
-<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v="></script>
+<script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/user.js?v=<?php echo $v; ?>"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/jquery.history.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $app_path; ?>js/comparison.js?v=<?php echo $v; ?>"></script>
 
@@ -228,20 +226,20 @@ if (token!=="") {
             // if token exists and hasn't expired
             if (result['success'] == true) {
                 $("#login-block").hide();
-                $("#passwordreset-block-new").show(); 
+                $("#finish-passwordreset-block").show(); 
                 user_id = result['user_id']
             // if token has expired
             } else if (result.token_expired) {
                     $("#login-block").hide();
-                    $("#passwordreset-block-new").show(); 
-                    $("#passwordreset-new-input").hide();
-                    $("#passwordreset-new-title").html(t("Password reset link has expired. Please repeat the password reset process to receive a new one."));
+                    $("#finish-passwordreset-block").show(); 
+                    $("#finish-passwordreset-input").hide();
+                    $("#finish-passwordreset-title").html(t("Password reset link has expired. Please repeat the password reset process to receive a new one."));
             // if token does not exist
             } else if (!result.token_exists) {
                 $("#login-block").hide();
-                $("#passwordreset-block-new").show(); 
-                $("#passwordreset-new-input").hide();
-                $("#passwordreset-new-title").html(t("Incorrect password reset link. Please verify that you have copied this link correctly."));
+                $("#finish-passwordreset-block").show(); 
+                $("#finish-passwordreset-input").hide();
+                $("#finish-passwordreset-title").html(t("Incorrect password reset link. Please verify that you have copied this link correctly."));
             }
         }
     }) 
@@ -326,13 +324,15 @@ $(".period-select").val(date_selected);
 var flot_font_size = 12;
 var previousPoint = false;
 
-clubstatus_update();
+<?php if ($club_settings["has_generator"]) { ?>
+
 
 club_summary_load();
-club_bargraph_load();
+club_bargraph_load(true);
 // generate inner HTML for tariffs table body, insert into table
 var tariffsTableHTML = generateTariffsTableHTML(1.05);
 insertTariffsTableHTML(tariffsTableHTML)
+<?php } ?>
 
 if (session.read) {
     household_summary_load();
@@ -434,8 +434,8 @@ $(".period-select").change(function(event) {
             household_date_text = t("In %s, you scored:").replace('%s', t(months_long[parts[1]-1])+" "+parts[0]);
     }
 
-    club_bargraph_load();
-    club_bargraph_draw();
+    club_bargraph_load(false);
+    //club_bargraph_draw();
     $(".period-select").val(date_selected);
     
     $(".club_date").html(club_date_text);

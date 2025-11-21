@@ -346,7 +346,7 @@ function club_controller()
             }
             
             // FIXME: clubs need to come from DB
-            if (in_array($key,array("bethesda","corwen","crickhowell","bethesda_solar","repower"))) {
+            if (in_array($key,array("bethesda","bridport","capeldewi","corwen","crickhowell","bethesda_solar","machynlleth","northoxfordshire","repower","totnes"))) {
                 if ($format=="standard") {
                     if ($result = $redis->get("energylocal:forecast:$key")) {
                         return json_decode($result);
@@ -489,7 +489,7 @@ function club_controller()
     // Admin register email
     if ($route->action == "admin-registeremail" && $session['admin']) {
         $route->format = "text";
-        require("Lib/email.php");
+        require("Lib/symfony_email.php");
         require("Modules/club/club_emails.php");
         $club_emails = new ClubEmails($mysqli);
         return $club_emails->registeremail(get('userid'));
@@ -511,7 +511,7 @@ function club_controller()
     // Admin send report
     if ($route->action == "admin-sendreport" && $session['admin']) {
         $route->format = "text";
-        require("Lib/email.php");
+        require("Lib/symfony_email.php");
         require("Modules/club/club_emails.php");
         $club_emails = new ClubEmails($mysqli);
         return $club_emails->send_report_email(get('userid'));

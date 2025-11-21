@@ -15,7 +15,7 @@
     <div class="input-prepend">
         <span class="add-on">Select Club:</span>
         <select v-model="selected_club" @change="load">
-          <option v-for="(key,id) in clubs" :value="id">{{ key }}</option>
+          <option v-for="([id,key]) in sortedClubs" :value="id">{{ key }}</option>
         </select>
     </div>
 
@@ -167,6 +167,7 @@ var data_status = {}
 var tariffs = {}
 
 var clubs = <?php echo json_encode($clubs); ?>;
+var sortedClubs = Object.entries(clubs).sort((a, b) => a[1].localeCompare(b[1]));
 
 var app = new Vue({
     el: '#app',

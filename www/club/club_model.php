@@ -17,6 +17,7 @@ class Club
     private $mysqli;
     private $user;
     private $feed;
+    private $log;
 
     public function __construct($mysqli,$user = false,$feed = false)
     {
@@ -235,7 +236,31 @@ class Club
 
         $result = $this->mysqli->query("SELECT * FROM club WHERE `key`='$key'");
         $club_settings = $result->fetch_array();
+        $club_id = $club_settings['id'];
 
+        $stmt = $this->mysqli->prepare("SELECT DISTINCT gt.name FROM generator_types gt INNER JOIN generators g ON gt.id = g.generator_type_id WHERE g.club_id = ?");
+        $stmt->bind_param("s", $club_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $club_settings['generator_types'] = array_column($result->fetch_all(MYSQLI_ASSOC), 'name');
+
+        switch (count($club_settings['generator_types'])) {
+            case 1:
+                $club_settings['generator_types_message']['lower_case'] = strtolower($club_settings['generator_types'][0]);
+                $club_settings['generator_types_message']['upper_case_first'] = $club_settings['generator_types'][0];
+                $club_settings['generator_types_message']['upper_case_all'] = $club_settings['generator_types'][0];
+                break;
+            case 2:
+                $club_settings['generator_types_message']['lower_case'] = strtolower($club_settings['generator_types'][0]) . ' & ' . strtolower($club_settings['generator_types'][1]);
+                $club_settings['generator_types_message']['upper_case_first'] = $club_settings['generator_types'][0] . ' & ' . strtolower($club_settings['generator_types'][1]);
+                $club_settings['generator_types_message']['upper_case_all'] = $club_settings['generator_types'][0] . ' & ' . $club_settings['generator_types'][1];
+                break;
+            default:
+                $club_settings['generator_types_message']['lower_case'] = 'local generation';
+                $club_settings['generator_types_message']['upper_case_first'] = 'Local generation';
+                $club_settings['generator_types_message']['upper_case_all'] = 'Local Generation';
+                break;
+        }
         // Automatic population of feedids
         $club_settings['generation_feed'] = $this->feed->exists_tag_name(1,"Generation",$key);
         $club_settings['consumption_feed'] = $this->feed->exists_tag_name(1,"Demand",$key);

@@ -1,5 +1,5 @@
 <?php global $session; ?>
-            <div class="block">
+            <div class="block-tooltip">
                 <div class="block-title hideable-block" style="background-color:#39aa1a"><?php echo t("Good time to use?"); ?><div class="triangle-dropdown hide"></div><div class="triangle-pushup show"></div></div>
                 <div class="block-content">
                   <div style="background-color:#39aa1a; color:#fff">
@@ -51,7 +51,29 @@
 
                   <div style="background-color:#088400; color:#fff">
                     <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("---"); ?></div>
-                    <?php echo t("Generating"); ?> <span id="generation-power">0</span> kW <?php echo t("now"); ?>
+                    <div style="display: inline-flex; align-items: center; gap: 6px;">
+                      <?php 
+                        if ($club == 'totnes') {
+                          echo t("Exporting") . ' <span id="generation-power">0</span> kW ' . t("now");
+                      ?>
+                          <div class="tooltip-container">
+                            <svg class="tooltip-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="12" y1="16" x2="12" y2="12"></line>
+                              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <div class="tooltip-text long-tooltip">
+                              <p>Totnes is proud to have two hydro turbines helping to generate local, renewable electricity. This clean energy is first used by the KEVICC School and Precision Casting's foundry.</p>
+                              <p>Any surplus electricity after their use is then exported to our Energy Local club members.</p>
+                              <p>So if you see 0kW of export here, don't worry - it doesn't mean the turbines have stopped generating. It only means that, at that moment, all the energy is being used by your local school & foundry.</p>
+                            </div>
+                          </div>
+                      <?php
+                        } else {
+                          echo t("Generating") . ' <span id="generation-power">0</span> kW ' . t("now");
+                        }
+                      ?>
+                    </div>
                   </div>
                   
                   <div class="no-padding">
@@ -69,7 +91,7 @@
                       <span class="legend-label"><?=t(ucfirst($t->name))?></span>
                       <?php endforeach; ?>
                       <div class="legend-label-box" style="background-color:<?php echo $club_settings["generator_color"]; ?>"></div>
-                      <span class="legend-label" ><?php echo t(ucfirst($club_settings["generator"])); ?></span>
+                      <span class="legend-label" ><?php echo t($club_settings['generator_types_message']['upper_case_all']); ?></span>
                       <span id="club-price-legend">
                         <div class="legend-label-box" style="background-color:#fb1a80"></div>
                         <span class="legend-label" ><?php echo t("Best times to use power (0-10)");?></span>
@@ -82,8 +104,8 @@
                   </div>
                   
                   <div style="background-color:#088400; color:#fff; padding:20px">
-                  <div id="status-summary"><?php echo t(ucfirst($club_settings["generator"])." output is currently exceeding club consumption"); ?></div>
-                  <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings["generator"]." output and club consumption up to the present time"); ?></span>-->
+                  <div id="status-summary"><?php echo t($club_settings['generator_types_message']['upper_case_first']." output is currently exceeding club consumption"); ?></div>
+                  <!--<span style="font-size:14px; color:rgba(255,255,255,0.8)"><?php echo t("Light and dark grey portion indicates estimated ".$club_settings['generator_types_message']['lower_case']." output and club consumption up to the present time"); ?></span>-->
                     
                   <!-- show/hide club price series on chart -->
                     <div id="showClubPrice" class="custom-control custom-checkbox d-flex justify-content-center pt-2" title="<?php echo t("Overlay the average club price offset by the available hydro") ?>">
@@ -107,7 +129,7 @@
                         <thead>
                             <tr>
                             <th></th>
-                            <th scope="col" style="background-color:<?=$club_settings["generator_color"]?>"><?=t(ucfirst($club_settings["generator"])); ?></th>
+                            <th scope="col" style="background-color:<?=$club_settings["generator_color"]?>"><?=t($club_settings['generator_types_message']['upper_case_all']); ?></th>
                             <th scope="col"><?php echo t("Extra electricity") ?></th>
                             </tr>
                         </thead>
@@ -224,5 +246,3 @@
                   </div>
                 </div>
             <?php } ?>
-
-

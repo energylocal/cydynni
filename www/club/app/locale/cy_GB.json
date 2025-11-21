@@ -105,7 +105,7 @@
 "Now is a good time to use electricity":"Mae rŵan yn amser da i ddefnyddio trydan",
 "After that the next best time to use power<br>is <b>8pm - 6am.</b>":"Ar ôl hynny, yr amser gorau wedyn i ddefnyddio pŵer <br>ydi <b>8pm - 6am.</b>",
 "Best times to use power (0-10)":"Y amseroedd gorau i ddefnyddio pŵer (0-10)",
-"Yr amser gorau i ddefnyddio pŵer 10/10":"Yr amser gwaethaf 0/10",
+"Best time to use power 10/10, worst time 0/10":"Yr amser gorau i ddefnyddio pŵer 10/10, yr amser gwaethaf 0/10",
 
 
 "Why? overnight price coming up":"Pam? Pris dros nos cyn bo hir",
@@ -213,6 +213,17 @@
 "Overnight Tariff":"Tariff Dros Nos",
 "Daytime Tariff":"Tariff Dydd",
 "Night Tariff":"Tariff Nos",
+"Weekend Evening Tariff": "Tariff Nos Penwythnos",
+"Weekend Morning Tariff": "Tariff Bore Penwythnos",
+"Weekend Midday Tariff": "Tariff Canol Dydd Penwythnos",
+"Weekend Overnight Tariff": "Tariff Dros Nos Penwythnos",
+"Weekend Daytime Tariff": "Tariff Dydd Penwythnos",
+"Weekend Night Tariff": "Tariff Nos Penwythnos",
+"Weekend Morning": "Bore Penwythnos",
+"Weekend Midday": "Canol Dydd Penwythnos",
+"Weekend Overnight": "Dros Nos Penwythnos",
+"Weekend Daytime": "Dydd Penwythnos",
+"Weekend Night": "Nos Penwythnos",
 
 "WEEK":"WYTHNOS",
 "DAY":"DIWRNOD",
@@ -422,6 +433,23 @@
 "Club estimate": "Amcangyfrif y clwb",
 "Hydro estimate": "Amcangyfrif Hydro",
 "Solar estimate": "Amcangyfrif Solar",
+
+"Password recovery email sent! Please check your email inbox.": "Anfon e-bost adfer cyfrinair! Edrychwch ar eich mewnflwch e-bost.",
+
+"Password reset in progress..": "Ailosod cyfrinair ar y gweill..",
+
+"A password reset was requested for your Energy Local account.": "Gofynnwyd am ailosod cyfrinair ar gyfer eich cyfrif Ynni Lleol.",
+
+"You can reset your password at the following link:": "Gallwch ailosod eich cyfrinair ar y ddolen ganlynol:",
+
+"Generation data completeness: ": "Cyflawnrwydd data Cynhyrchu: ",
+
+"Demand data completeness: ": "Mynnu cyflawnrwydd data: ",
+
+"Late": "Hwyr",
+"Late Tariff": "Tariff Hwyr",
+"Weekend": "Penwythnos",
+"Weekend Evening": "Nos Penwythnos",
 
 "Used Wind": "Gwynt a ddefnyddwyd",
 "Unused Wind": "Allforwyd Gwynt",

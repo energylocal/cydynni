@@ -40,7 +40,7 @@ function mergefeeds4($dir,$processitem)
     }
 
     foreach ($feeds as $key => $feed) {
-        if ($meta[$feed]->start_time == 0) {
+        if ($meta[$feed]->start_time == 0 && count($feeds) > 1) {
             unset($feeds[$key]);
         }
     }
@@ -53,8 +53,9 @@ function mergefeeds4($dir,$processitem)
             if ($meta[$feed]->end_time>$end_time) $end_time = (int) $meta[$feed]->end_time;
         //}
     }
-
-    $start_time = floor($start_time / $interval) * $interval;
+    if ($start_time > 0) {
+        $start_time = floor($start_time / $interval) * $interval;
+    }
 
     $out_meta = new stdClass();
     $out_meta->start_time = $start_time;

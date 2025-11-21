@@ -85,26 +85,40 @@ $("#logout").click(function(event) {
 // Start of password reset - 
 // displays necessary HTML elements for the user to enter their recovery email
 $("#passwordreset-start").click(function() {
+    console.log('reset start');
     $("#login-block").hide();
-    $("#passwordreset-block").show();
-    $("#passwordreset-title").html(t("Please enter email address to reset password"));
-    $("#passwordreset-cancel").html(t("Cancel"));
+    $("#start-passwordreset-block").show();
+    $("#start-passwordreset-email").show();
+    $("#start-passwordreset").show();
+    $("#start-passwordreset-title").html(t("Please enter email address to reset password"));
+    $("#start-passwordreset-cancel").html(t("Cancel"));
 });
 
-$("#passwordreset-new-cancel").click(function() {
-    $("#passwordreset-block").hide();
+$("#start-passwordreset-cancel").click(function() {
+    console.log('cancelling')
+    $("#finish-passwordreset-block").hide();
+    $("#start-passwordreset-block").hide();
     $("#login-block").show();
 });
+
+$("#finish-passwordreset-cancel").click(function() {
+    console.log('cancelling')
+    $("#finish-passwordreset-block").hide();
+    $("#start-passwordreset-block").hide();
+    $("#login-block").show();
+});
+
+
 
 // Second stage of password reset -
 // takes users recovery email, 
 // then sends an ajax request to generate a password reset token and supply this token via email
-$("#passwordreset").click(function() {
-    var email = $("#passwordreset-email").val();
-    $("#passwordreset").hide();
-    $("#passwordreset-email").hide();
-    $("#passwordreset-alert").html("");
-    $("#passwordreset-title").html(t("Password reset in progress.."));
+$("#start-passwordreset").click(function() {
+    var email = $("#start-passwordreset-email").val();
+    $("#start-passwordreset").hide();
+    $("#start-passwordreset-email").hide();
+    $("#start-passwordreset-alert").html("");
+    $("#start-passwordreset-title").html(t("Password reset in progress.."));
     $.ajax({                                      
         // routes are laid out in club_controller.php
         // this ajax request is then routed to the 'passwordreset_generation' function in user_model.php
@@ -114,15 +128,15 @@ $("#passwordreset").click(function() {
         dataType: 'json',
         success: function(result) {
             if (result.success===undefined) {
-                $("#passwordreset-alert").html(result);
+                $("#start-passwordreset-alert").html(result);
                 return;
             }
             if (!result.success) {
-                $("#passwordreset-alert").html(result.message);
+                $("#start-passwordreset-alert").html(result.message);
                 return;
             }
-            $("#passwordreset-title").html(t("Password recovery email sent! Please check your email inbox."));
-            $("#passwordreset-cancel").html(t("Return to Login"));
+            $("#start-passwordreset-title").html(t("Password recovery email sent! Please check your email inbox."));
+            $("#start-passwordreset-cancel").html(t("Return to Login"));
                     
         },
         error: function(result) {
@@ -135,9 +149,9 @@ $("#passwordreset").click(function() {
 // Final stage of password reset - 
 // takes users new password, checks that they have entered it correctly twice
 // then sends an ajax request to change their password.
-$("#passwordreset-new").click(function() {
-    var new_password = $("#passwordreset-new-password").val();
-    var new_password_confirm = $("#passwordreset-new-confirm").val();
+$("#finish-passwordreset").click(function() {
+    var new_password = $("#finish-passwordreset-password").val();
+    var new_password_confirm = $("#finish-passwordreset-confirm").val();
     if (new_password == new_password_confirm) {
         $.ajax({                                 
             // routes are laid out in club_controller.php
@@ -151,18 +165,18 @@ $("#passwordreset-new").click(function() {
             dataType: 'json',
             success: function(result) {
                 if (result.success == true) {
-                    $("#passwordreset-new-input").hide();
-                    $("#passwordreset-new-title").html(t("Password successfully changed!"));
+                    $("#finish-passwordreset-input").hide();
+                    $("#finish-passwordreset-title").html(t("Password successfully changed!"));
                 } else if (result.duplicate) {
-                    $("#passwordreset-new-title").html(t("Please enter a password that isn't the same as your current password."));
+                    $("#finish-passwordreset-title").html(t("Please enter a password that isn't the same as your current password."));
                 } else if (!result.duplicate) {
-                    $("#passwordreset-new-title").html(t("Password reset token cannot be found - it may have expired. Please restart the password reset process."));
+                    $("#finish-passwordreset-title").html(t("Password reset token cannot be found - it may have expired. Please restart the password reset process."));
                 }
             }
         })
     } else {
         // if user has not correctly entered the same password twice - alert them, and let them try again
-        $("#passwordreset-new-title").html(t("Passwords do not match. Please try again."));
+        $("#finish-passwordreset-title").html(t("Passwords do not match. Please try again."));
     }
 })
 
