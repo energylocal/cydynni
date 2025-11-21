@@ -24,7 +24,7 @@ var club_generation_use = 0;
 var club_view = "bargraph";
 var club_height = 0;
 var showClubPrice = true;
-if (club_settings.key == "totnes" || club_settings.key == "dyffrynbanw") {
+if (club_settings.key == "totnes" || club_settings.key == "dyffrynbanw" || club_settings.key == "settle") {
   showClubPrice = false;
 }
 $("#showClubPriceInput").prop('checked', showClubPrice);
@@ -404,6 +404,8 @@ function clubstatus_update(data) {
                   llandysul: {high:40,medium:20,low:10},
                   test: {high:40,medium:20,low:10},
                   dyffrynbanw: {high:8,medium:6,low:4},
+                  settle: {high: 20,medium:10,low:4},
+                  scilly: {high: 4, medium:2,low:1},
                   northoxfordshire: {high:20,medium:10,low:5}
                   //economy7: {high:8,medium:6,low:4}
               }
