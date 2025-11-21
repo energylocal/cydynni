@@ -125,7 +125,7 @@ while(true) {
     }
     
     // Check for timeout before requesting power and voltage
-    if ($subscribed && (time()-$last_power_req)>=10) {
+    if ($subscribed && (time()-$last_power_req)>=60) {
         $last_power_req = time();
         
         // timeout can be noted in log file
