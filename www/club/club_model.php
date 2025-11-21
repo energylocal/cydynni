@@ -156,7 +156,7 @@ class Club
 
     // Return a list of clubs
     public function list() {
-        $result = $this->mysqli->query("SELECT * FROM club ORDER BY created ASC");
+        $result = $this->mysqli->query("SELECT id,name,created,userid,`key`,menu,share,generator,generator_color,export_color,languages,unitprice_comparison,gen_scale,gen_limit,skip_users,has_generator,supplier_id FROM club ORDER BY created ASC");
         $clubs = array();
         while ($row = $result->fetch_object()) {
             // Convert unix timestamp to date Europe/London
@@ -192,7 +192,7 @@ class Club
 
     public function get($id) {
         $id = (int) $id;
-        $result = $this->mysqli->query("SELECT * FROM club WHERE id=$id");
+        $result = $this->mysqli->query("SELECT id,name,created,userid,`key`,menu,share,generator,generator_color,export_color,languages,unitprice_comparison,gen_scale,gen_limit,skip_users,has_generator,supplier_id FROM club WHERE id=$id");
         $row = $result->fetch_object();
 
         // Automatic population of feedids
@@ -234,7 +234,7 @@ class Club
 
     public function get_settings($key) {
 
-        $result = $this->mysqli->query("SELECT * FROM club WHERE `key`='$key'");
+      $result = $this->mysqli->query("SELECT id,name,created,userid,`key`,menu,share,generator,generator_color,export_color,languages,unitprice_comparison,gen_scale,gen_limit,skip_users,has_generator,supplier_id FROM club WHERE `key`='$key'");
         $club_settings = $result->fetch_array();
         $club_id = $club_settings['id'];
 

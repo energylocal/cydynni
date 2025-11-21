@@ -18,7 +18,7 @@ $dir = "/var/lib/phpfina/";
 
 $clubs = array();
 
-$result = $mysqli->query("SELECT * FROM club WHERE share=1");
+$result = $mysqli->query("SELECT id,name,created,userid,`key`,menu,share,generator,generator_color,export_color,languages,unitprice_comparison,gen_scale,gen_limit,skip_users,has_generator,supplier_id FROM club WHERE share=1");
 while($row = $result->fetch_array()) {
 
     $c = array(
