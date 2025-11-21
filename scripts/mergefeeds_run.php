@@ -44,6 +44,6 @@ while ($row = $result_users->fetch_object())
         $redis->hdel("feed:$output",'time');
         $timevalue = $feed->get_timevalue($output);
     } else {
-      print("No usage feeds for user $userid");
+      print("No usage feeds for user $userid\n");
     }
 }
