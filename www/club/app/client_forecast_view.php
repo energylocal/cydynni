@@ -17,6 +17,13 @@
                     <!--<div id="status-title" style="font-size:32px; font-weight:bold; height:32px"></div>-->
                     <!--<div id="status-until" style="height:16px; padding:10px;"></div>-->
                     <div id="gen-prc" style="height:16px; padding:10px;"></div><br>
+                      <p>
+                      <?php 
+                        if ($club == 'machynlleth') {
+                          echo t("NB: A known fault has been causing a fuse at the hydro to trip periodically, requring manual intervention to restart.<br>SP Energy Networks are due to visit the site to investigate.");
+                        }
+                      ?>
+                      </p>
                   </div>
                 </div>
             </div>
@@ -34,6 +41,7 @@
                 </div>
             </div>
             <?php } */ ?>
+
             <div id="local_electricity_forecast" class="block">
                 <div class="block-title hideable-block" style="background-color:#088400"><?php echo t("Local generator output"); ?>
                 
@@ -47,7 +55,7 @@
                 
                 
                 </div>
-                <div class="block-content">
+               <div class="block-content">
 
                   <div style="background-color:#088400; color:#fff">
                     <div id="generation-status" style="font-size:32px; font-weight:bold"><?php echo t("---"); ?></div>
