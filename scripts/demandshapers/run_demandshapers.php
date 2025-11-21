@@ -30,7 +30,7 @@ function generate_club_demandshaper($club_key, $demand_start, $demand_end, $gene
 
     // Fetch demand data
     $data = $feed->get_data($use_id,$demand_start,$demand_end,1800);
-    if (array_key_exists("success", $data)){
+    if (array_key_exists("success", $data) && $data["success"] === false){
         error("Error fetching Demand feed data from feed $use_id for $club_key");
         fail();
     }
