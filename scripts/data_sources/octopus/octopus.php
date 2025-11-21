@@ -15,16 +15,28 @@ SELECT cy.* FROM cydynni cy INNER JOIN club c ON c.id=cy.clubs_id INNER JOIN sup
 while ($row = $result->fetch_object()) {
 
     $mpan = $row->mpan;
-    $meter_serial = $row->meter_serial;    
+    $meter_serial = $row->meter_serial;
     $octopus_apikey = $row->octopus_apikey;
-    
+
     $valid_mpan = false;
     $valid_meter_serial = false;
     $valid_octopus_apikey = false;
-    
-    if (strlen("$mpan")==13 && $mpan==(int)$mpan) $valid_mpan = true;
-    if (strlen("$meter_serial")==10) $valid_meter_serial = true;
-    if (strlen("$octopus_apikey")==32 && strpos($octopus_apikey,"sk_live_")==0) $valid_octopus_apikey = true;
+
+    if (strlen("$mpan")==13 && $mpan==(int)$mpan) {
+      $valid_mpan = true;
+    } else {
+      print "user: ".$row->userid." has bad MPAN '$mpan'\n";
+    }
+    if (strlen("$meter_serial")==10) {
+      $valid_meter_serial = true;
+    } else {
+      print "user: ".$row->userid." has bad MSN '$meter_serial'\n";
+    }
+    if (strlen("$octopus_apikey") >= 32 && strpos($octopus_apikey,"sk_live_")==0) {
+      $valid_octopus_apikey = true;
+    } else {
+      print "user: ".$row->userid." has bad Octopus API key '$octopus_apikey'\n";
+    }
 
     if ($valid_mpan && $valid_meter_serial && $valid_octopus_apikey) {
         print "user: ".$row->userid." ".$row->mpan." ".$row->meter_serial." ".$row->octopus_apikey."\n";

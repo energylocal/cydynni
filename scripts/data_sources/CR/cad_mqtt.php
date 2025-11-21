@@ -150,7 +150,7 @@ while(true) {
         foreach ($meters as $cad_serial=>$item) {
             if ((time()-$last_received_push[$cad_serial])>300) {
                 $meters[$cad_serial]["reply"] = false;
-                $log->info("REQUEST $cad_serial");
+                $log->error("REQUEST $cad_serial");
                 $mqtt_client->publish("openenergy/0/get/$cad_serial/meter/read","{}",0);
                 $mqtt_client->publish("openenergy/0/get/$cad_serial/meter/volt","{}",0);
             }

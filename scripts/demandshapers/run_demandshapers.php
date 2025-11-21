@@ -436,7 +436,7 @@ foreach ($clubs as $club) {
 
     $club_key = $club['club_key'];
     if (!$club_gen_id = $feed->exists_tag_name(1,"Generation",$club_key)) {
-        echo("Failed to fetch ID for $club_key's Generation feed");
+        echo("Failed to fetch ID for $club_key's Generation feed\n");
     }
     if (!$use_id = $feed->exists_tag_name(1,"Demand",$club_key)){
         error("Failed to fetch ID for $club_key's Demand feed. Using Generation feed to calculate start/end time instead.");
@@ -457,7 +457,7 @@ foreach ($clubs as $club) {
     // Get time period for last 7 days of demand data
     $timevalue = $feed->get_timevalue($use_id);
     if ($timevalue == NULL) {
-        error("Failed to fetch timevalue for feed $use_id. Continuing to next club.");
+        error("Failed to fetch timevalue for demand feed $use_id. Continuing to next club.");
         continue;
     }
     $demand_end = $timevalue["time"]*1000;
@@ -467,7 +467,7 @@ foreach ($clubs as $club) {
     $generation_end = NULL;
     $gen_start_timevalue = $feed->get_timevalue($club_gen_id);
     if ($gen_start_timevalue == NULL) {
-        error("Failed to fetch timevalue for feed $club_gen_id. Continuing to next club.");
+        error("Failed to fetch timevalue for club generation feed $club_gen_id. Continuing to next club.");
         continue;
     } else {
         $generation_start = $gen_start_timevalue["time"]*1000;
