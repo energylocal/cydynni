@@ -140,6 +140,14 @@ foreach ($clubs as $club)
     print "start_time: ".pdate($start_time)."\n";
 
     $n=0;
+echo "Original now: " . date('Y-m-d H:i:s', floor(time()/1800)*1800) . "\n";
+echo "Original start_time: " . date('Y-m-d H:i:s', $now - $recalc_period) . "\n";
+echo "gen_id: $gen_id\n";
+echo "meta start_time: " . date('Y-m-d H:i:s', $meta[$gen_id]->start_time) . "\n";
+echo "meta end_time: " . date('Y-m-d H:i:s', $meta[$gen_id]->end_time) . "\n";
+echo "Final start_time: " . date('Y-m-d H:i:s', $start_time) . "\n";
+echo "Final now: " . date('Y-m-d H:i:s', $now) . "\n";
+echo "Loop condition (start < now): " . ($start_time < $now ? 'true' : 'false') . "\n";
     for ($time=$start_time; $time<$now; $time+=1800) {
 
         // --------------------------------------------------
