@@ -41,7 +41,7 @@ while($row = $result->fetch_array()) {
 foreach ($clubs as $club)
 {
     // if demandshaper hasn't yet output an aggregated club generation feed, skip club
-    if (!$gen_id) {
+    if (!$club["gen_id"]) {
         continue;
     }
     // ----------------------------------------------------------------
@@ -85,7 +85,7 @@ foreach ($clubs as $club)
                         createmeta($dir,$gen_hh_id,$meta_tmp);
                     } else {
                         $gen_meta = getmeta($dir, $gen_hh_id);
-                            if (($recalc_club && $clubid==$recalc_club) || $recalc_all || $gen_meta->start_time > $meta_tmp->start_time) {
+                            if (($recalc_club && $club["clubid"]==$recalc_club) || $recalc_all || $gen_meta->start_time > $meta_tmp->start_time) {
                             $feed->clear($gen_hh_id);
                             createmeta($dir,$gen_hh_id,$meta_tmp);
                             print "Creating gen_hh meta via recalc for userid: ".$userid." with start_time: ".pdate($meta_tmp->start_time)."\n";
