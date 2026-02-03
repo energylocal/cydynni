@@ -195,7 +195,13 @@ function club_controller()
         $use_last_actual = $feed->get_timevalue($club_settings['consumption_feed']);
 
         $live->source = "last_actual";
-        $live->generation = number_format($gen_last_actual['value'],3)*2.0;
+        $live->generation = 0.0;
+        if ($gen_last_actual['value'] != null) {
+          $live->generation = number_format($gen_last_actual['value'],3)*2.0;
+        } else {
+          $gen_last_actual['time'] = 0; // if null count as old gen data
+        }
+
         $live->club = number_format($use_last_actual['value'],3)*2.0;
         
         // Use generation and consumption prediction from forecast if actual data is old
